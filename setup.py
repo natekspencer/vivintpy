@@ -10,7 +10,7 @@ install_requires = [
 
 setup(
     name='pyvivint',
-    version='0.1.2',
+    version='0.1.3',
     description='Python module to interact with VivintSky API.',
     long_description=open('README.md').read(),
     author='Ovidiu Stateina',
