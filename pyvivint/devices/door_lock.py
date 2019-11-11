@@ -7,7 +7,7 @@ class DoorLock(VivintDevice):
     """Represents a vivint door lock device."""
 
     @property
-    def batery_level(self) -> int:
+    def battery_level(self) -> int:
         """Door lock's battery level."""
         return self.data[Attributes.BatteryLevel]
 
@@ -16,9 +16,15 @@ class DoorLock(VivintDevice):
         """Returns True if battery level is low."""
         return self.data[Attributes.LowBattery]
 
+    @property
     def is_locked(self) -> bool:
         """Returns True if door lock is locked."""
         return self.data[Attributes.State]
+
+    @property
+    def node_online(self) -> bool:
+        """Returns True if the node is online."""
+        return self.data[Attributes.NodeOnline]
 
     async def set_state(self, locked: bool) -> None:
         """Set door lock's state."""

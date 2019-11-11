@@ -58,6 +58,11 @@ class WirelessSensor(VivintDevice):
                 return device_type
 
     @property
+    def is_bypassed(self) -> bool:
+        """Return True if the sensor is bypassed."""
+        return self.data[Attributes.IdBypassed]
+
+    @property
     def is_on(self) -> bool:
         """Return True if the sensor's state is on."""
         return self.data[Attributes.State]

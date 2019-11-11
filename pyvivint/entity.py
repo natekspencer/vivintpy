@@ -10,6 +10,7 @@ _LOGGER = logging.getLogger(__name__)
 
 class Entity:
     """Describe a vivint entity."""
+
     def __init__(self, data: dict):
         self.__data = data
         self.__update_callbacks: Callable = list()
@@ -25,6 +26,8 @@ class Entity:
             self.__data = new_val
         else:
             self.__data.update(new_val)
+
+        self._fire_callbacks(self.__update_callbacks)
 
     def handle_pubnub_message(self, message: dict) -> None:
         """Handles a pubnub message directed to this entity."""
@@ -43,4 +46,6 @@ class Entity:
             try:
                 add_async_job(callback)
             except Exception:
-                _LOGGER.exception(f'failed to execute callback for entity {self.__repr__()}')
+                _LOGGER.exception(
+                    f"failed to execute callback for entity {self.__repr__()}"
+                )

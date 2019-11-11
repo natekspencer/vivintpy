@@ -27,7 +27,6 @@ class VivintDevice(Entity):
     def __init__(self, data: dict, alarm_panel: 'pyvivint.devices.alarm_panel.AlarmPanel' = None):
         super().__init__(data)
         self.alarm_panel = alarm_panel
-        self.__update_callbacks = list()
 
     def __repr__(self):
         """Custom repr method"""

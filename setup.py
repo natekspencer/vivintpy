@@ -4,7 +4,7 @@
 from setuptools import setup, find_packages
 
 install_requires = [
-    'aiohttp>=3.5',
+    'aiohttp>=3.6',
     'certifi>=2019.9.11'
 ]
 
