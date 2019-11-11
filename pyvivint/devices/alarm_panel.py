@@ -78,7 +78,7 @@ class AlarmPanel(VivintDevice):
         """Set the alarm to armed away."""
         await self.set_armed_state(ArmedStates.ArmedAway)
 
-    def get_devices(self, device_types: Set(int) = None, include_unknown_devices: bool = False) -> List[VivintDevice]:
+    def get_devices(self, device_types: Set[int] = None, include_unknown_devices: bool = False) -> List[VivintDevice]:
         """Get a list of associated devices."""
         devices = self.devices
 
