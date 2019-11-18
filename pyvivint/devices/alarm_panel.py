@@ -94,6 +94,21 @@ class AlarmPanel(VivintDevice):
 
         return devices
 
+    def refresh(self, data: dict) -> None:
+        """Refreshes the alarm panel."""
+        self.update_data(data, override=True)
+
+        # update all associated devices
+        for device_data in self.data[Attributes.Devices]:
+            device = first_or_none(
+                    self.devices, lambda device: device.id == device_data[Attributes.Id]
+            )
+            if device:
+                device.update_data(device_data, override=True)
+            else:
+                device = get_device_class(device_data[Attributes.DeviceType])(device_data, self)
+                self.devices.append(device)
+
     def handle_pubnub_message(self, message: dict) -> None:
         """Handles a pubnub message."""
         data = message.get(MessageAttributes.Data)
