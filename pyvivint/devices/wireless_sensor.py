@@ -1,9 +1,9 @@
 """Module that implements the WirelessSensor class."""
 import logging
 
+from pyvivint.constants import WirelessSensorAttribute as Attributes
 from pyvivint.devices import VivintDevice
-from pyvivint.enums import WirelessSensorAttributes as Attributes
-
+from pyvivint.enums import EquipmentCode, EquipmentType, SensorType
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -11,68 +11,59 @@ _LOGGER = logging.getLogger(__name__)
 class WirelessSensor(VivintDevice):
     """Represents a Vivint wireless sensor device."""
 
-    DEVICE_TYPE_TO_EQUIPMENT_CODE = {
-        'COSensor': ['1026', '1266', '692'],
-        'EntrySensor': ['1251', '1252', '862', '863', '655'],
-        'FloodSensor': ['1128', '1264', '556'],
-        'GarageDoor': ['1061', '2831'],
-        'GlassBreakSensor': ['1248', '475', '864'],
-        'HeatSensor': ['708'],
-        'KeyFob': ['866', '577', '1250'],
-        'Keypad': ['867'],
-        'MotionSensor': ['1249', '609'],
-        'PanicSensor': ['1253', '561', '868'],
-        'Sensor': [
-            '2830',
-            '2832',
-            '873',
-            '941',
-            '1208',
-            '2081',
-            '1144',
-            '869',
-            '1063',
-            '1269',
-            '0',
-        ],
-        'SmokeSensor': ['1058', '1066', '1267', '616'],
-    }
-
     def __repr__(self) -> str:
-        return f'<{self.__class__.__name__}|{self.device_class} {self.id}, {self.name}>'
+        return (
+            f"<{self.__class__.__name__}|{self.equipment_type} {self.id}, {self.name}>"
+        )
+
+    @property
+    def model(self) -> str:
+        """Return the equipment_code as the model of this sensor."""
+        return self.equipment_code.name
+
+    @property
+    def software_version(self) -> str:
+        """Return the software version of this device, if any."""
+        return self.data.get(Attributes.SENSOR_FIRMWARE_VERSION) or None
 
     @property
     def battery_level(self) -> int:
         """Sensor's battery level."""
-        return self.data[Attributes.BatteryLevel]
+        battery_level = self.data.get(Attributes.BATTERY_LEVEL)
+        return (
+            battery_level
+            if battery_level is not None
+            else 0
+            if self.low_battery
+            else 100
+        )
 
     @property
-    def device_class(self):
-        equipment_code = self.data.get(Attributes.EquipmentCode)
-        if not equipment_code:
-            _LOGGER.debug("device has no equipment code")
-            return
+    def equipment_code(self):
+        """Return the equipment code of this sensor."""
+        return EquipmentCode(self.data.get(Attributes.EQUIPMENT_CODE))
 
-        for device_type, codes in self.DEVICE_TYPE_TO_EQUIPMENT_CODE.items():
-            if str(equipment_code) in codes:
-                return device_type
+    @property
+    def equipment_type(self):
+        """Return the equipment type of this sensor."""
+        return EquipmentType(self.data.get(Attributes.EQUIPMENT_TYPE))
+
+    @property
+    def sensor_type(self):
+        """Return the sensor type of this sensor."""
+        return SensorType(self.data.get(Attributes.SENSOR_TYPE))
 
     @property
     def is_bypassed(self) -> bool:
         """Return True if the sensor is bypassed."""
-        return self.data[Attributes.IdBypassed]
+        return self.data[Attributes.BYPASSED] != 0
 
     @property
     def is_on(self) -> bool:
         """Return True if the sensor's state is on."""
-        return self.data[Attributes.State]
+        return self.data[Attributes.STATE]
 
     @property
     def low_battery(self) -> bool:
         """Return true if battery's level is low."""
-        return self.data[Attributes.LowBattery]
-
-    @property
-    def serial_number(self) -> str:
-        """Return sensor' serial number."""
-        return self.data[Attributes.SerialNumber]
+        return self.data[Attributes.LOW_BATTERY]

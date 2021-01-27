@@ -13,9 +13,9 @@ class VivintSkyApiAuthenticationError(VivintSkyApiError):
     """VivintSky API authentication related error occurred."""
 
 
-class VivintSkyApiExpiredTokenError(VivintSkyApiError):
-    """VivintSky API token expired error occurred."""
+class VivintSkyApiExpiredCookieError(VivintSkyApiError):
+    """VivintSky API cookie expired error occurred."""
 
 
-class VivintSkyApiMissingTokenError(VivintSkyApiError):
-    """VivintSky API missing id token error occurred."""
+class VivintSkyApiMissingCookieError(VivintSkyApiError):
+    """VivintSky API missing cookie error occurred."""
