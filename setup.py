@@ -10,6 +10,7 @@ setup(
     version="2021.1.1",
     description="Python module to interact with VivintSky API.",
     long_description=open("README.md").read(),
+    long_description_content_type="text/markdown",
     author="Ovidiu Stateina, Nathan Spencer",
     author_email="ovidiurs@gmail.com",
     license="MIT",
