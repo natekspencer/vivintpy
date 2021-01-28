@@ -87,7 +87,7 @@ class Camera(VivintDevice):
     async def get_thumbnail_url(self) -> str:
         """Returns the latest camera thumbnail URL."""
         camera_thumbnail_date = datetime.strptime(
-            self.data[Attributes.CAMERA_THUMBNAIL_DATE], "%Y-%m-%dT%H:%M:%S.%fZ"
+            self.data[Attributes.CAMERA_THUMBNAIL_DATE], "%Y-%m-%dT%H:%M:%S.%f"
         )
         thumbnail_timestamp = int(camera_thumbnail_date.timestamp() * 1000)
 
