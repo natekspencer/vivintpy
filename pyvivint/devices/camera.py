@@ -86,8 +86,11 @@ class Camera(VivintDevice):
 
     async def get_thumbnail_url(self) -> str:
         """Returns the latest camera thumbnail URL."""
+        # Sometimes this date field comes back with a "Z" at the end
+        # and sometimes it doesn't, so let's just safely remove it.
         camera_thumbnail_date = datetime.strptime(
-            self.data[Attributes.CAMERA_THUMBNAIL_DATE], "%Y-%m-%dT%H:%M:%S.%f"
+            self.data[Attributes.CAMERA_THUMBNAIL_DATE].replace("Z", ""),
+            "%Y-%m-%dT%H:%M:%S.%f",
         )
         thumbnail_timestamp = int(camera_thumbnail_date.timestamp() * 1000)
 
