@@ -26,22 +26,33 @@ class AuthUserAttribute(Constant):
     RELAY_SERVER = "rs"
     USERS = "u"
 
-    class UserAttribute(Constant):
-        """User Attributes"""
 
-        DOCUMENT_SEQUENCE = "DocumentSequence"
-        EMAIL = "e"
-        GHOME = "ghome"
-        GROUP_IDS = "grpid"
-        ID = "_id"
-        MESSAGE_BROADCAST_CHANNEL = "mbc"
-        NAME = "n"
-        PING_ID = "pngid"
-        RESTRICTED_SYSTEM = "rsystem"
-        SMART_HOME_SYSTEM = "smarthomesystem"
-        SETTINGS = "stg"
-        SYSTEM = "system"
-        TIMESTAMP = "ts"
+class UserAttribute(Constant):
+    """User attributes."""
+
+    DOCUMENT_SEQUENCE = "DocumentSequence"
+    EMAIL = "e"
+    GHOME = "ghome"
+    GROUP_IDS = "grpid"
+    ID = "_id"
+    MESSAGE_BROADCAST_CHANNEL = "mbc"
+    NAME = "n"
+    PING_ID = "pngid"
+    RESTRICTED_SYSTEM = "rsystem"
+    SMART_HOME_SYSTEM = "smarthomesystem"
+    SETTINGS = "stg"
+    SYSTEM = "system"
+    TIMESTAMP = "ts"
+
+
+class SystemAttribute(Constant):
+    """System attributes."""
+
+    PANEL_ID = "panid"
+    PARTITION = "par"
+    PARTITION_ID = "parid"
+    SYSTEM = "system"
+    SYSTEM_NICKNAME = "sn"
 
 
 class PubNubMessageAttribute(Constant):

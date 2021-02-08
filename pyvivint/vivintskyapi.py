@@ -280,6 +280,9 @@ class VivintSkyApi:
         if path != "login" and not self.is_session_valid():
             await self.connect()
 
+        if self.__client_session.closed:
+            raise VivintSkyApiError("The client session has been closed.")
+
         return await method(
             f"{VIVINT_API_ENDPOINT}/{path}",
             headers=headers,

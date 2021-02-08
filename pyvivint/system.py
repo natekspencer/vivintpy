@@ -4,6 +4,7 @@ from typing import List
 
 import pyvivint.devices.alarm_panel
 from pyvivint.constants import PubNubMessageAttribute as MessageAttributes
+from pyvivint.constants import SystemAttribute
 from pyvivint.entity import Entity
 from pyvivint.utils import first_or_none
 from pyvivint.vivintskyapi import VivintSkyApi
@@ -20,13 +21,15 @@ class System(Entity):
         self.vivintskyapi = vivintskyapi
         self.alarm_panels: List[pyvivint.devices.alarm_panel.AlarmPanel] = [
             pyvivint.devices.alarm_panel.AlarmPanel(panel_data, self)
-            for panel_data in self.data["system"]["par"]
+            for panel_data in self.data[SystemAttribute.SYSTEM][
+                SystemAttribute.PARTITION
+            ]
         ]
 
     @property
     def id(self) -> str:
         """System's id"""
-        return self.data["system"]["panid"]
+        return self.data[SystemAttribute.SYSTEM][SystemAttribute.PANEL_ID]
 
     @property
     def name(self) -> str:
@@ -37,11 +40,13 @@ class System(Entity):
         """Reloads system's data from VivintSky API."""
         system_data = await self.vivintskyapi.get_system_data(self.id)
 
-        for panel_data in system_data["system"]["par"]:
+        for panel_data in system_data[SystemAttribute.SYSTEM][
+            SystemAttribute.PARTITION
+        ]:
             alarm_panel = first_or_none(
                 self.alarm_panels,
-                lambda panel: panel.id == panel_data["panid"]
-                and panel.partition_id == panel_data["parid"],
+                lambda panel: panel.id == panel_data[SystemAttribute.PANEL_ID]
+                and panel.partition_id == panel_data[SystemAttribute.PARTITION_ID],
             )
             if alarm_panel:
                 alarm_panel.refresh(panel_data)
