@@ -1,5 +1,4 @@
 """Module that implements the Vivint class."""
-import asyncio
 import logging
 from typing import List, Optional
 
@@ -126,7 +125,9 @@ class Vivint:
         pnconfig.subscribe_key = PN_SUBSCRIBE_KEY
         pnconfig.ssl = True
         pnconfig.reconnect_policy = PNReconnectionPolicy.LINEAR
-        pnconfig.heartbeat_notification_options = PNHeartbeatNotificationOptions.ALL
+        pnconfig.heartbeat_notification_options = (
+            PNHeartbeatNotificationOptions.FAILURES
+        )
 
         self.__pubnub = PubNubAsyncio(pnconfig)
         self.__pubnub_listener = VivintPubNubSubscribeListener(

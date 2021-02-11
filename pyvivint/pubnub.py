@@ -8,6 +8,8 @@ import pubnub.pubnub
 import pubnub.pubnub_asyncio
 from pubnub.callbacks import SubscribeCallback
 
+from . import pubnub_patches
+
 PN_SUBSCRIBE_KEY = "sub-c-6fb03d68-6a78-11e2-ae8f-12313f022c90"
 PN_CHANNEL = "PlatformChannel"
 

@@ -3,7 +3,7 @@
 
 from setuptools import find_packages, setup
 
-install_requires = ["aiohttp>=3.6", "certifi>=2019.9.11", "pubnub>=5.0.0"]
+install_requires = ["aiohttp>=3.6", "certifi>=2019.9.11", "pubnub>=5.0.1"]
 
 setup(
     name="pyvivint",
