@@ -157,3 +157,12 @@ class SensorType(IntEnum):
     @classmethod
     def _missing_(cls, value):
         return cls.UNUSED
+
+
+@unique
+class ZoneBypass(IntEnum):
+    """Zone bypass statuses."""
+
+    UNBYPASSED = 0
+    FORCE_BYPASSED = 1
+    MANUALLY_BYPASSED = 2
