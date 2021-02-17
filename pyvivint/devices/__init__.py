@@ -15,12 +15,15 @@ def get_device_class(device_type: str) -> Callable:
     from pyvivint.devices.camera import Camera
     from pyvivint.devices.door_lock import DoorLock
     from pyvivint.devices.garage_door import GarageDoor
+    from pyvivint.devices.switch import MultilevelSwitch, BinarySwitch
     from pyvivint.devices.wireless_sensor import WirelessSensor
 
     mapping = {
+        DeviceType.BINARY_SWITCH: BinarySwitch,
         DeviceType.CAMERA: Camera,
         DeviceType.DOOR_LOCK: DoorLock,
         DeviceType.GARAGE_DOOR: GarageDoor,
+        DeviceType.MULTILEVEL_SWITCH: MultilevelSwitch,
         DeviceType.WIRELESS_SENSOR: WirelessSensor,
     }
 

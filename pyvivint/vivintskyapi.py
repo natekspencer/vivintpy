@@ -11,7 +11,7 @@ import aiohttp
 import certifi
 from aiohttp.client_reqrep import ClientResponse
 
-from pyvivint.constants import VivintDeviceAttribute
+from pyvivint.constants import SwitchAttribute, VivintDeviceAttribute
 from pyvivint.enums import ArmedState, GarageDoorState
 from pyvivint.exceptions import VivintSkyApiAuthenticationError, VivintSkyApiError
 
@@ -169,6 +169,44 @@ class VivintSkyApi:
                 )
                 raise VivintSkyApiError(f"failed to update lock status")
 
+    async def set_switch_state(
+        self,
+        panel_id: int,
+        partition_id: int,
+        device_id: int,
+        on: Optional[bool] = None,
+        level: Optional[int] = None,
+    ) -> None:
+        """Set switch state."""
+        # validate input
+        if on is None and level is None:
+            raise VivintSkyApiError('Either "on" or "level" must be provided.')
+        elif level and (0 > level or level > 100):
+            raise VivintSkyApiError('The value for "level" must be between 0 and 100.')
+
+        resp = await self.__put(
+            f"{panel_id}/{partition_id}/switches/{device_id}",
+            headers={
+                "Content-Type": "application/json;charset=utf-8",
+            },
+            data=json.dumps(
+                {
+                    SwitchAttribute.ID: device_id,
+                    **(
+                        {SwitchAttribute.STATE: on}
+                        if level is None
+                        else {SwitchAttribute.VALUE: level}
+                    ),
+                }
+            ).encode("utf-8"),
+        )
+        async with resp:
+            if resp.status != 200:
+                _LOGGER.info(
+                    f"Failed to set {'on' if level is None else 'level'} to {on if level is None else level} for switch: {device_id} @ {panel_id}:{partition_id}."
+                )
+                raise VivintSkyApiError("Failed to update switch state.")
+
     async def request_camera_thumbnail(
         self, panel_id: int, partition_id: int, device_id: int
     ) -> None:
@@ -290,6 +328,8 @@ class VivintSkyApi:
 
     async def get_zwave_details(self, manufacturer_id, product_id, product_type_id):
         """Gets the zwave details by looking up the details on the openzwave device database."""
+        UNKNOWN_RESULT = ["Unknown", "Unknown"]
+
         zwave_lookup = f"{manufacturer_id}:{product_id}:{product_type_id}"
         device_info = self.__zwave_device_info.get(zwave_lookup)
         if device_info is not None:
@@ -301,9 +341,13 @@ class VivintSkyApi:
             ) as response:
                 if response.status == 200:
                     text = await response.text()
-                    d = re.search("<title>(.*)</title>", text, re.IGNORECASE)
-                    result = self.__zwave_device_info[zwave_lookup] = d[1].split(" - ")
+                    title = re.search("<title>(.*)</title>", text, re.IGNORECASE)[1]
+                    result = self.__zwave_device_info[zwave_lookup] = (
+                        UNKNOWN_RESULT
+                        if title == "Device Database"
+                        else title.split(" - ")
+                    )
                     return result
                 else:
                     response.raise_for_status()
-                    return None
+                    return UNKNOWN_RESULT

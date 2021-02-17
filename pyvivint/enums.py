@@ -23,10 +23,11 @@ class ArmedState(IntEnum):
 class DeviceType(Enum):
     """Vivint supported device types."""
 
+    BINARY_SWITCH = "binary_switch_device"
     CAMERA = "camera_device"
     DOOR_LOCK = "door_lock_device"
     GARAGE_DOOR = "garage_door_device"
-    LIGHT_MODULE = "multilevel_switch_device"
+    MULTILEVEL_SWITCH = "multilevel_switch_device"
     THERMOSTAT = "thermostat_device"
     TOUCH_PANEL = "primary_touch_link_device"
     WIRELESS_SENSOR = "wireless_sensor"
