@@ -11,8 +11,8 @@ import aiohttp
 import certifi
 from aiohttp.client_reqrep import ClientResponse
 
-from pyvivint.constants import VivintDeviceAttribute
-from pyvivint.enums import ArmedState, GarageDoorState
+from pyvivint.constants import VivintDeviceAttribute, WirelessSensorAttribute
+from pyvivint.enums import ArmedState, GarageDoorState, ZoneBypass
 from pyvivint.exceptions import VivintSkyApiAuthenticationError, VivintSkyApiError
 
 _LOGGER = logging.getLogger(__name__)
@@ -168,6 +168,31 @@ class VivintSkyApi:
                     f"failed to set status locked: {locked} for lock: {device_id} @ {panel_id}:{partition_id}"
                 )
                 raise VivintSkyApiError(f"failed to update lock status")
+
+    async def set_sensor_state(
+        self, panel_id: int, partition_id: int, device_id: int, bypass: bool
+    ) -> None:
+        """Bypass/unbypass a sensor."""
+        resp = await self.__put(
+            f"{panel_id}/{partition_id}/sensors/{device_id}",
+            headers={
+                "Content-Type": "application/json;charset=utf-8",
+            },
+            data=json.dumps(
+                {
+                    WirelessSensorAttribute.BYPASSED: ZoneBypass.MANUALLY_BYPASSED
+                    if bypass
+                    else ZoneBypass.UNBYPASSED,
+                    VivintDeviceAttribute.ID: device_id,
+                }
+            ).encode("utf-8"),
+        )
+        async with resp:
+            if resp.status != 200:
+                _LOGGER.info(
+                    f"Failed to set bypass: {bypass} for sensor: {device_id} @ {panel_id}:{partition_id}"
+                )
+                raise VivintSkyApiError(f"Failed to update sensor status.")
 
     async def request_camera_thumbnail(
         self, panel_id: int, partition_id: int, device_id: int
