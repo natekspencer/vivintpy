@@ -93,6 +93,30 @@ class CameraAttribute(VivintDeviceAttribute):
     WIRELESS_SIGNAL_STRENGTH = "wiss"
 
 
+class ThermostatAttribute(VivintDeviceAttribute):
+    """Thermostat attributes."""
+
+    AUTO_SET_POINTS = "auto"
+    AWAY_STATE = "awst"
+    COOL_SET_POINT = "csp"
+    CURRENT_TEMPERATURE = "val"
+    DEHUMIDIFIER_SET_POINT = "dhmdrsp"
+    FAN_MODE = "fm"
+    FAN_STATE = "fs"
+    HEAT_SET_POINT = "hsp"
+    HOLD_MODE = "hm"
+    HUMIDIFIER_SET_POINT = "hmdrsp"
+    HUMIDITY = "hmdt"
+    OPERATING_MODE = "om"
+    OPERATING_STATE = "os"
+    WEEKDAY_COOL_SCHEDULE = "wdcs"
+    WEEKDAY_HEAT_SCHEDULE = "wdhs"
+    WEEKEND_COOL_SCHEDULE = "wecs"
+    WEEKEND_HEAT_SCHEDULE = "wehs"
+    SMART_COMFORT_COOL_TARGET = "scct"
+    SMART_COMFORT_HEAT_TARGET = "scht"
+
+
 class WirelessSensorAttribute(VivintDeviceAttribute):
     """Wireless sensor attributes."""
 

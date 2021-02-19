@@ -39,7 +39,7 @@ class DeviceType(Enum):
 
 @unique
 class EquipmentCode(IntEnum):
-    """Vivint equipment code."""
+    """Equipment code."""
 
     APOLLO_COMBO_CO = 1422
     APOLLO_COMBO_SMOKE = 1322
@@ -106,7 +106,7 @@ class EquipmentCode(IntEnum):
 
 @unique
 class EquipmentType(IntEnum):
-    """Vivint equipment type."""
+    """Equipment type."""
 
     CONTACT = 1
     EMERGENCY = 11
@@ -122,6 +122,24 @@ class EquipmentType(IntEnum):
 
 
 @unique
+class FanMode(IntEnum):
+    """Fan mode."""
+
+    AUTO_LOW = 0
+    ON_LOW = 1
+    AUTO_HIGH = 2
+    ON_HIGH = 3
+    TIMER_15 = 99
+    TIMER_30 = 100
+    TIMER_60 = 101
+    TIMER_45 = 102
+    TIMER_120 = 103
+    TIMER_240 = 104
+    TIMER_480 = 105
+    TIMER_960 = 106
+
+
+@unique
 class GarageDoorState(IntEnum):
     """Garage door state."""
 
@@ -134,8 +152,39 @@ class GarageDoorState(IntEnum):
 
 
 @unique
+class HoldMode(IntEnum):
+    """Hold mode."""
+
+    BY_SCHEDULE = 0
+    UNTIL_NEXT = 1
+    TWO_HOURS = 2
+    PERMANENT = 3
+
+
+@unique
+class OperatingMode(IntEnum):
+    """Operating mode."""
+
+    OFF = 0
+    HEAT = 1
+    COOL = 2
+    AUTO = 3
+    EMERGENCY_HEAT = 4
+    RESUME = 5
+    FAN_ONLY = 6
+    FURNACE = 7
+    DRY_AIR = 8
+    MOIST_AIR = 9
+    AUTO_CHANGEOVER = 10
+    ENERGY_SAVE_HEAT = 11
+    ENERGY_SAVE_COOL = 12
+    AWAY = 13
+    ECO = 100
+
+
+@unique
 class SensorType(IntEnum):
-    """Vivint sensor type."""
+    """Sensor type."""
 
     AUDIBLE_ALARM = 7
     AUXILIARY_ALARM = 8

@@ -169,6 +169,28 @@ class VivintSkyApi:
                 )
                 raise VivintSkyApiError(f"failed to update lock status")
 
+    async def set_thermostat_state(
+        self, panel_id: int, partition_id: int, device_id: int, **kwargs
+    ) -> None:
+        """Set thermostat state."""
+        resp = await self.__put(
+            f"{panel_id}/{partition_id}/thermostats/{device_id}",
+            headers={
+                "Content-Type": "application/json;charset=utf-8",
+            },
+            data=json.dumps(kwargs).encode("utf-8"),
+        )
+        async with resp:
+            if resp.status != 200:
+                _LOGGER.info(
+                    "Failed to set state to: %s for thermostat: %s @ %s:%s",
+                    kwargs,
+                    device_id,
+                    panel_id,
+                    partition_id,
+                )
+                raise VivintSkyApiError(f"Failed to update thermostat state")
+
     async def request_camera_thumbnail(
         self, panel_id: int, partition_id: int, device_id: int
     ) -> None:
