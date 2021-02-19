@@ -19,6 +19,7 @@ It currently has support for the following device types:
 - switches:
   - binary
   - multilevel
+- thermostats
 - wireless sensors:
   - carbon monoxide
   - door/window
@@ -39,6 +40,6 @@ See demo.py for a demonstration on how to use this library.
 - write a better readme
 - add tests
 - write some documentation
-- add device support for:
+- add advanced support for:
   - thermostats
 - implement 2FA
