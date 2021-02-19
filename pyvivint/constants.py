@@ -124,6 +124,8 @@ class ThermostatAttribute(VivintDeviceAttribute):
     HOLD_MODE = "hm"
     HUMIDIFIER_SET_POINT = "hmdrsp"
     HUMIDITY = "hmdt"
+    MAXIMUM_TEMPERATURE = "maxt"
+    MINIMUM_TEMPERATURE = "mint"
     OPERATING_MODE = "om"
     OPERATING_STATE = "os"
     WEEKDAY_COOL_SCHEDULE = "wdcs"
