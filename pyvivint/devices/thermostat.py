@@ -13,7 +13,7 @@ class Thermostat(VivintDevice):
 
     @property
     def cool_set_point(self) -> float:
-        return self.celsius_to_fahrenheit(self.data.get(Attribute.COOL_SET_POINT))
+        return self.data.get(Attribute.COOL_SET_POINT)
 
     @property
     def fan_mode(self) -> FanMode:
@@ -21,7 +21,7 @@ class Thermostat(VivintDevice):
 
     @property
     def heat_set_point(self) -> float:
-        return self.celsius_to_fahrenheit(self.data.get(Attribute.HEAT_SET_POINT))
+        return self.data.get(Attribute.HEAT_SET_POINT)
 
     @property
     def hold_mode(self) -> HoldMode:
@@ -40,12 +40,20 @@ class Thermostat(VivintDevice):
         return self.data.get(Attribute.OPERATING_STATE) == 1
 
     @property
+    def maximum_temperature(self) -> float:
+        return self.data.get(Attribute.MAXIMUM_TEMPERATURE)
+
+    @property
+    def minimum_temperature(self) -> float:
+        return self.data.get(Attribute.MINIMUM_TEMPERATURE)
+
+    @property
     def operating_mode(self) -> OperatingMode:
         return OperatingMode(self.data.get(Attribute.OPERATING_MODE))
 
     @property
     def temperature(self) -> float:
-        return self.celsius_to_fahrenheit(self.data.get(Attribute.CURRENT_TEMPERATURE))
+        return self.data.get(Attribute.CURRENT_TEMPERATURE)
 
     @staticmethod
     def celsius_to_fahrenheit(celsius: float) -> int:
@@ -58,8 +66,8 @@ class Thermostat(VivintDevice):
 
         _LOGGER.debug(f"{self.name} updated")
 
-    async def set_temperature(self, **kwargs) -> None:
-        """Set the temperature of the thermostat."""
+    async def set_state(self, **kwargs) -> None:
+        """Set the state of the thermostat."""
         await self.vivintskyapi.set_thermostat_state(
             self.alarm_panel.id, self.alarm_panel.partition_id, self.id, **kwargs
         )
