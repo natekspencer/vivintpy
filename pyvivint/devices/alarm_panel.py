@@ -1,12 +1,17 @@
 """Module that implements the AlarmPanel class."""
 import logging
-from typing import List, Set
+from typing import List, Optional, Set
 
-from pyvivint.constants import AlarmPanelAttribute as Attributes
-from pyvivint.constants import PubNubMessageAttribute as MessageAttributes
+from pyvivint.constants import (
+    AlarmPanelAttribute,
+    PubNubMessageAttribute,
+    PubNubOperatorAttribute,
+    SystemAttribute,
+)
 from pyvivint.devices import UnknownDevice, VivintDevice, get_device_class
 from pyvivint.enums import ArmedState, DeviceType
-from pyvivint.utils import first_or_none
+from pyvivint.exceptions import VivintSkyApiError
+from pyvivint.utils import add_async_job, first_or_none
 from pyvivint.vivintskyapi import VivintSkyApi
 
 _LOGGER = logging.getLogger(__name__)
@@ -16,20 +21,20 @@ class AlarmPanel(VivintDevice):
     """Describe a Vivint alarm panel."""
 
     def __init__(self, data: dict, system: "pyvivint.system.System"):
-        super().__init__(data)
         self.system = system
+        super().__init__(data)
         self.__panel_credentials = None
 
         # initialize devices
         self.devices: List[VivintDevice] = [
-            get_device_class(device_data[Attributes.TYPE])(device_data, self)
-            for device_data in self.data[Attributes.DEVICES]
+            get_device_class(device_data[AlarmPanelAttribute.TYPE])(device_data, self)
+            for device_data in self.data[AlarmPanelAttribute.DEVICES]
         ]
 
         # store a reference to the physical panel device
         self.__panel = first_or_none(
             self.devices,
-            lambda device: DeviceType(device.data.get(Attributes.TYPE))
+            lambda device: DeviceType(device.data.get(AlarmPanelAttribute.TYPE))
             == DeviceType.TOUCH_PANEL,
         )
 
@@ -41,7 +46,7 @@ class AlarmPanel(VivintDevice):
     @property
     def id(self) -> int:
         """Panel's id."""
-        return self.data[Attributes.PANEL_ID]
+        return self.data[AlarmPanelAttribute.PANEL_ID]
 
     @property
     def name(self) -> str:
@@ -70,7 +75,7 @@ class AlarmPanel(VivintDevice):
     @property
     def partition_id(self) -> int:
         """Panel's partition id."""
-        return self.data[Attributes.PARTITION_ID]
+        return self.data[AlarmPanelAttribute.PARTITION_ID]
 
     @property
     def is_disarmed(self) -> bool:
@@ -89,7 +94,7 @@ class AlarmPanel(VivintDevice):
 
     def get_armed_state(self):
         """Return the panel's arm state."""
-        return self.data[Attributes.STATE]
+        return self.data[AlarmPanelAttribute.STATE]
 
     async def set_armed_state(self, state: int) -> None:
         """Set the armed state for a panel."""
@@ -126,7 +131,7 @@ class AlarmPanel(VivintDevice):
             devices = [
                 device
                 for device in self.devices
-                if device.data[Attributes.TYPE] in device_types
+                if device.data[AlarmPanelAttribute.TYPE] in device_types
             ]
 
         if not include_unknown_devices:
@@ -136,26 +141,33 @@ class AlarmPanel(VivintDevice):
 
         return devices
 
-    def refresh(self, data: dict) -> None:
+    def refresh(self, data: dict, new_device: bool = False) -> None:
         """Refreshes the alarm panel."""
-        self.update_data(data, override=True)
+        if not new_device:
+            self.update_data(data, override=True)
+        else:
+            self.data[AlarmPanelAttribute.DEVICES].extend(
+                data[AlarmPanelAttribute.DEVICES]
+            )
 
-        # update all associated devices
-        for device_data in self.data[Attributes.DEVICES]:
+        # update associated devices
+        for device_data in data[AlarmPanelAttribute.DEVICES]:
             device = first_or_none(
-                self.devices, lambda device: device.id == device_data[Attributes.ID]
+                self.devices,
+                lambda device: device.id == device_data[AlarmPanelAttribute.ID],
             )
             if device:
                 device.update_data(device_data, override=True)
             else:
-                device = get_device_class(device_data[Attributes.TYPE])(
+                device = get_device_class(device_data[AlarmPanelAttribute.TYPE])(
                     device_data, self
                 )
                 self.devices.append(device)
 
     def handle_pubnub_message(self, message: dict) -> None:
         """Handles a pubnub message."""
-        data = message.get(MessageAttributes.DATA)
+        operation = message.get(PubNubMessageAttribute.OPERATION)
+        data = message.get(PubNubMessageAttribute.DATA)
         if not data:
             _LOGGER.debug(
                 f"ignoring account_partition message for panel {self.id}, partition {self.partition_id} - "
@@ -163,34 +175,51 @@ class AlarmPanel(VivintDevice):
             )
             return
 
-        if not data.get(MessageAttributes.DEVICES):
+        if not data.get(PubNubMessageAttribute.DEVICES):
             # this message is for the panel itself
             self.update_data(data)
         else:
             # this is a message for one (or more) of the attached devices
-            devices_data = data[MessageAttributes.DEVICES]
+            devices_data = data[PubNubMessageAttribute.DEVICES]
 
             for device_data in devices_data:
                 device_id = device_data.get("_id")
                 if not device_id:
-                    _LOGGER.debug("no device id")
+                    _LOGGER.debug("No device id")
                     continue
 
-                device = first_or_none(
-                    self.devices, lambda device: device.id == device_id
-                )
-                if not device:
-                    _LOGGER.debug(
-                        f"ignoring message for device {device_id}. Device not found"
+                if operation == PubNubOperatorAttribute.CREATE:
+                    add_async_job(self.handle_new_device, device_id)
+                else:
+                    device = first_or_none(
+                        self.devices, lambda device: device.id == device_id
                     )
-                    continue
+                    if not device:
+                        _LOGGER.debug(
+                            "Ignoring message for device %s: device not found",
+                            device_id,
+                        )
+                        continue
 
-                device.handle_pubnub_message(device_data)
+                    # for the sake of consistency, we also need to update the panel's raw data
+                    raw_device_data = first_or_none(
+                        self.data[AlarmPanelAttribute.DEVICES],
+                        lambda raw_device_data: raw_device_data["_id"]
+                        == device_data["_id"],
+                    )
 
-                # for the sake of consistency, we need to also update the panel's raw data
-                raw_device_data = first_or_none(
-                    self.data[Attributes.DEVICES],
-                    lambda raw_device_data: raw_device_data["_id"]
-                    == device_data["_id"],
-                )
-                raw_device_data.update(device_data)
+                    if operation == PubNubOperatorAttribute.DELETE:
+                        self.devices.remove(device)
+                        self.data[AlarmPanelAttribute.DEVICES].remove(raw_device_data)
+                    else:
+                        device.handle_pubnub_message(device_data)
+                        raw_device_data.update(device_data)
+
+    async def handle_new_device(self, device_id: int) -> None:
+        """Handle a new device."""
+        try:
+            resp = await self.vivintskyapi.get_device_data(self.id, device_id)
+            data = resp[SystemAttribute.SYSTEM][SystemAttribute.PARTITION][0]
+            self.refresh(data, new_device=True)
+        except VivintSkyApiError:
+            _LOGGER.error("Error getting new device data for device %s", device_id)

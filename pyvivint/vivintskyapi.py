@@ -11,8 +11,12 @@ import aiohttp
 import certifi
 from aiohttp.client_reqrep import ClientResponse
 
-from pyvivint.constants import VivintDeviceAttribute
-from pyvivint.enums import ArmedState, GarageDoorState
+from pyvivint.constants import (
+    SwitchAttribute,
+    VivintDeviceAttribute,
+    WirelessSensorAttribute,
+)
+from pyvivint.enums import ArmedState, GarageDoorState, ZoneBypass
 from pyvivint.exceptions import VivintSkyApiAuthenticationError, VivintSkyApiError
 
 _LOGGER = logging.getLogger(__name__)
@@ -97,6 +101,18 @@ class VivintSkyApi:
             else:
                 raise VivintSkyApiError("Unable to retrieve system data.")
 
+    async def get_device_data(self, panel_id: int, device_id: int) -> dict:
+        """Gets the raw data for a device."""
+        resp = await self.__get(
+            f"system/{panel_id}/device/{device_id}",
+            headers={"Accept-Encoding": "application/json"},
+        )
+        async with resp:
+            if resp.status == 200:
+                return await resp.json(encoding="utf-8")
+            else:
+                raise VivintSkyApiError("Unable to retrieve device data.")
+
     async def set_alarm_state(
         self, panel_id: int, partition_id: int, state: bool
     ) -> aiohttp.ClientResponse:
@@ -168,6 +184,91 @@ class VivintSkyApi:
                     f"failed to set status locked: {locked} for lock: {device_id} @ {panel_id}:{partition_id}"
                 )
                 raise VivintSkyApiError(f"failed to update lock status")
+
+    async def set_sensor_state(
+        self, panel_id: int, partition_id: int, device_id: int, bypass: bool
+    ) -> None:
+        """Bypass/unbypass a sensor."""
+        resp = await self.__put(
+            f"{panel_id}/{partition_id}/sensors/{device_id}",
+            headers={
+                "Content-Type": "application/json;charset=utf-8",
+            },
+            data=json.dumps(
+                {
+                    WirelessSensorAttribute.BYPASSED: ZoneBypass.MANUALLY_BYPASSED
+                    if bypass
+                    else ZoneBypass.UNBYPASSED,
+                    VivintDeviceAttribute.ID: device_id,
+                }
+            ).encode("utf-8"),
+        )
+        async with resp:
+            if resp.status != 200:
+                _LOGGER.info(
+                    f"Failed to set bypass: {bypass} for sensor: {device_id} @ {panel_id}:{partition_id}"
+                )
+                raise VivintSkyApiError(f"Failed to update sensor status.")
+
+    async def set_switch_state(
+        self,
+        panel_id: int,
+        partition_id: int,
+        device_id: int,
+        on: Optional[bool] = None,
+        level: Optional[int] = None,
+    ) -> None:
+        """Set switch state."""
+        # validate input
+        if on is None and level is None:
+            raise VivintSkyApiError('Either "on" or "level" must be provided.')
+        elif level and (0 > level or level > 100):
+            raise VivintSkyApiError('The value for "level" must be between 0 and 100.')
+
+        resp = await self.__put(
+            f"{panel_id}/{partition_id}/switches/{device_id}",
+            headers={
+                "Content-Type": "application/json;charset=utf-8",
+            },
+            data=json.dumps(
+                {
+                    SwitchAttribute.ID: device_id,
+                    **(
+                        {SwitchAttribute.STATE: on}
+                        if level is None
+                        else {SwitchAttribute.VALUE: level}
+                    ),
+                }
+            ).encode("utf-8"),
+        )
+        async with resp:
+            if resp.status != 200:
+                _LOGGER.info(
+                    f"Failed to set {'on' if level is None else 'level'} to {on if level is None else level} for switch: {device_id} @ {panel_id}:{partition_id}."
+                )
+                raise VivintSkyApiError("Failed to update switch state.")
+
+    async def set_thermostat_state(
+        self, panel_id: int, partition_id: int, device_id: int, **kwargs
+    ) -> None:
+        """Set thermostat state."""
+        resp = await self.__put(
+            f"{panel_id}/{partition_id}/thermostats/{device_id}",
+            headers={
+                "Content-Type": "application/json;charset=utf-8",
+            },
+            data=json.dumps(kwargs).encode("utf-8"),
+        )
+        async with resp:
+            if resp.status != 200:
+                _LOGGER.info(
+                    "Failed to set state to: %s for thermostat: %s @ %s:%s",
+                    kwargs,
+                    device_id,
+                    panel_id,
+                    partition_id,
+                )
+                raise VivintSkyApiError(f"Failed to update thermostat state")
 
     async def request_camera_thumbnail(
         self, panel_id: int, partition_id: int, device_id: int
@@ -293,6 +394,8 @@ class VivintSkyApi:
 
     async def get_zwave_details(self, manufacturer_id, product_id, product_type_id):
         """Gets the zwave details by looking up the details on the openzwave device database."""
+        UNKNOWN_RESULT = ["Unknown", "Unknown"]
+
         zwave_lookup = f"{manufacturer_id}:{product_id}:{product_type_id}"
         device_info = self.__zwave_device_info.get(zwave_lookup)
         if device_info is not None:
@@ -304,9 +407,13 @@ class VivintSkyApi:
             ) as response:
                 if response.status == 200:
                     text = await response.text()
-                    d = re.search("<title>(.*)</title>", text, re.IGNORECASE)
-                    result = self.__zwave_device_info[zwave_lookup] = d[1].split(" - ")
+                    title = re.search("<title>(.*)</title>", text, re.IGNORECASE)[1]
+                    result = self.__zwave_device_info[zwave_lookup] = (
+                        UNKNOWN_RESULT
+                        if title == "Device Database"
+                        else title.split(" - ")
+                    )
                     return result
                 else:
                     response.raise_for_status()
-                    return None
+                    return UNKNOWN_RESULT
