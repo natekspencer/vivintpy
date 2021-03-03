@@ -45,6 +45,13 @@ class UserAttribute(Constant):
     TIMESTAMP = "ts"
 
 
+class PanelCredentialAttribute(Constant):
+    """Panel credential attributes."""
+
+    NAME = "n"
+    PASSWORD = "pswd"
+
+
 class SystemAttribute(Constant):
     """System attributes."""
 
@@ -66,10 +73,21 @@ class PubNubMessageAttribute(Constant):
     TYPE = "t"
 
 
+class PubNubOperatorAttribute(Constant):
+    """PubNub operator attributes."""
+
+    CREATE = "c"
+    DELETE = "d"
+    UPDATE = "u"
+    UPDATE_ALL = "ua"
+
+
 class VivintDeviceAttribute(Constant):
     """Vivint device attributes."""
 
     BATTERY_LEVEL = "bl"
+    CAPABILITY = "ca"
+    CAPABILITY_CATEGORY = "caca"
     CURRENT_SOFTWARE_VERSION = "csv"
     FIRMWARE_VERSION = "fwv"
     ID = "_id"
@@ -94,13 +112,18 @@ class CameraAttribute(VivintDeviceAttribute):
     """Camera attributes."""
 
     ACTUAL_TYPE = "act"
+    CAMERA_DIRECT_AVAILABLE = "cda"
+    CAMERA_DIRECT_STREAM_PATH = "cdp"
+    CAMERA_DIRECT_STREAM_PATH_STANDARD = "cdps"
     CAMERA_IP_ADDRESS = "caip"
     CAMERA_IP_PORT = "cap"
     CAMERA_MAC = "cmac"
     CAMERA_PRIVACY = "cpri"
     CAMERA_THUMBNAIL_DATE = "ctd"
     CAPTURE_CLIP_ON_MOTION = "ccom"
+    PASSWORD = "pswd"
     SOFTWARE_VERSION = "sv"
+    USERNAME = "un"
     WIRELESS_SIGNAL_STRENGTH = "wiss"
 
 
@@ -113,6 +136,7 @@ class SwitchAttribute(VivintDeviceAttribute):
 class ThermostatAttribute(VivintDeviceAttribute):
     """Thermostat attributes."""
 
+    ACTUAL_TYPE = "act"
     AUTO_SET_POINTS = "auto"
     AWAY_STATE = "awst"
     COOL_SET_POINT = "csp"

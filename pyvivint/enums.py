@@ -20,6 +20,113 @@ class ArmedState(IntEnum):
 
 
 @unique
+class CapabilityCategoryType(IntEnum):
+    """Capability category type."""
+
+    CAMERA = 1
+    DOORBELL = 2
+    SWITCH = 3
+    THERMOSTAT = 4
+    ZWAVE = 5
+    TOUCHLINK = 6
+    DOOR_LOCK = 7
+    MOBILE_BLACKLIST = 8
+    GARAGE_DOOR = 9
+
+    # Handle unknown/future capability categories
+    UNKNOWN = 0
+
+    @classmethod
+    def _missing_(cls, value):
+        return cls.UNKNOWN
+
+
+class CapabilityType(IntEnum):
+    """Capability type."""
+
+    ANIMAL_DETECTION = 42
+    BINARY_ON_OFF = 7
+    CAMERA_DVR_CAPABLE = 72
+    CANNOT_REPORT_STATUS = 33
+    CAN_CHIME = 4
+    CAN_INITIATE_CALL = 66
+    CAN_LOCK_UNLOCK = 30
+    CHIME_EXTENDER = 36
+    CLIP_CAPTURE = 3
+    DELETE_ALL_EVENTS = 63
+    DETER = 45
+    DETER_LIGHT = 52
+    DETER_LINGER_DURATION = 53
+    DETER_SCHEDULE = 50
+    DETER_TONE = 51
+    DETER_ZONE = 49
+    DIMMABLE = 8
+    DOORBELL_CHIME_SELECTABLE = 56
+    DOOR_STATE = 71
+    FAN120_MINUTE = 23
+    FAN15_MINUTE = 18
+    FAN240_MINUTE = 24
+    FAN30_MINUTE = 19
+    FAN45_MINUTE = 20
+    FAN480_MINUTE = 25
+    FAN60_MINUTE = 21
+    FAN960_MINUTE = 26
+    HAS_MICROPHONE = 46
+    HSB_LIGHTING = 9
+    HUMIDITY = 64
+    HUMIDITY_CONTROL = 65
+    IN_HOME_CHIME_VOLUME = 54
+    LIVE_VIDEO = 6
+    LURKER_DETECTION = 38
+    MAINTAIN_ZOOM = 48
+    MAXIMUM_TEMPERATURE = 12
+    MAX_COOL_LOCK_SET_POINT = 69
+    MAX_HEAT_LOCK_SET_POINT = 67
+    MINIMUM_TEMPERATURE = 11
+    MIN_COOL_LOCK_SET_POINT = 70
+    MIN_HEAT_LOCK_SET_POINT = 68
+    MIN_SETPOINT_DIFFERENCE_C = 13
+    MIN_SETPOINT_DIFFERENCE_F = 14
+    MOBILE_BLACKLISTABLE = 31
+    MOTION_DETECTION = 1
+    MUTE_CHIME = 55
+    NIGHT_VISION = 60
+    PACKAGE_DETECTION = 39
+    PACKAGE_MOVE_DETECTION = 40
+    PERSON_DETECTION = 16
+    PINCH_TO_ZOOM = 32
+    POLYGON_ROI = 44
+    PREVIEW_CHIME_IN_HOME = 58
+    PRIVACY_MODE = 15
+    QUIET_MODE = 17
+    REBOOT_CAMERA = 62
+    RECT_ROI = 47
+    RESTORE_DEFAULTS = 61
+    ROTATE_IMAGE = 34
+    SECURITY_2_0 = 27
+    SET_POINT_LOCK = 66
+    SIREN_EXTENDER = 37
+    SOFT_DIP_SWITCH = 29
+    STATUS_LIGHT_TOGGLE = 35
+    TEMPERATURE_DETECTION = 10
+    TWO_WAY_AUDIO = 5
+    VEHICLE_DETECTION = 41
+    VIDEO_QUALITY = 59
+    VISITOR_CHIME_SELECTABLE = 57
+    VISITOR_DETECTION = 2
+    WARPED = 43
+    WI_FI = 28
+    ZWAVE_DIAGNOSTICS = 22
+
+    # Handle unknown/future capabilities
+    UNKNOWN = 0
+
+    @classmethod
+    def _missing_(cls, value):
+        return cls.UNKNOWN
+
+
+@unique
 class DeviceType(Enum):
     """Vivint supported device types."""
 

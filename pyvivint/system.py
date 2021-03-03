@@ -3,8 +3,7 @@ import logging
 from typing import List
 
 import pyvivint.devices.alarm_panel
-from pyvivint.constants import PubNubMessageAttribute as MessageAttributes
-from pyvivint.constants import SystemAttribute
+from pyvivint.constants import PubNubMessageAttribute, SystemAttribute
 from pyvivint.entity import Entity
 from pyvivint.utils import first_or_none
 from pyvivint.vivintskyapi import VivintSkyApi
@@ -58,17 +57,17 @@ class System(Entity):
     def handle_pubnub_message(self, message: dict) -> None:
         """Handles a pubnub message."""
 
-        if message[MessageAttributes.TYPE] == "account_system":
+        if message[PubNubMessageAttribute.TYPE] == "account_system":
             # this is a system message
-            operation = message.get(MessageAttributes.OPERATION)
-            data = message.get(MessageAttributes.DATA)
+            operation = message.get(PubNubMessageAttribute.OPERATION)
+            data = message.get(PubNubMessageAttribute.DATA)
 
             if data and operation == "u":
                 self.update_data(data)
 
-        elif message[MessageAttributes.TYPE] == "account_partition":
+        elif message[PubNubMessageAttribute.TYPE] == "account_partition":
             # this is a message for one of the devices attached to this system
-            partition_id = message.get(MessageAttributes.PARTITION_ID)
+            partition_id = message.get(PubNubMessageAttribute.PARTITION_ID)
             if not partition_id:
                 _LOGGER.debug(
                     f"ignoring account_partition message. No partition_id specified for system {self.id}"

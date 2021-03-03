@@ -3,13 +3,23 @@ import logging
 
 from pyvivint.constants import ThermostatAttribute as Attribute
 from pyvivint.devices import VivintDevice
+from pyvivint.devices.alarm_panel import AlarmPanel
 from pyvivint.enums import FanMode, HoldMode, OperatingMode
 
 _LOGGER = logging.getLogger(__name__)
 
+NEST_DEVICE = "pod_nest_thermostat_device"
+
 
 class Thermostat(VivintDevice):
     """Represents a Vivint thermostat device."""
+
+    def __init__(self, data: dict, alarm_panel: AlarmPanel):
+        """Initialize a thermostat."""
+        super().__init__(data, alarm_panel)
+
+        if data.get(Attribute.ACTUAL_TYPE) == NEST_DEVICE:
+            [self._manufacturer, self._model] = ["Google", "Nest"]
 
     @property
     def cool_set_point(self) -> float:

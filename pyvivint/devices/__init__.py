@@ -1,11 +1,11 @@
 """This package contains the various devices attached to a vivint system."""
 import asyncio
 import concurrent.futures
-from typing import Callable
+from typing import Callable, Dict, List, Optional
 
-from pyvivint.constants import VivintDeviceAttribute as Attributes
+from pyvivint.constants import VivintDeviceAttribute as Attribute
 from pyvivint.entity import Entity
-from pyvivint.enums import DeviceType
+from pyvivint.enums import CapabilityCategoryType, CapabilityType, DeviceType
 from pyvivint.vivintskyapi import VivintSkyApi
 
 
@@ -40,8 +40,19 @@ class VivintDevice(Entity):
     ):
         super().__init__(data)
         self.alarm_panel = alarm_panel
-        self.__manufacturer = None
-        self.__model = None
+        self._manufacturer = None
+        self._model = None
+        self._capabilities = (
+            {
+                CapabilityCategoryType(capability_category.get(Attribute.TYPE)): [
+                    CapabilityType(capability)
+                    for capability in capability_category.get(Attribute.CAPABILITY)
+                ]
+                for capability_category in data.get(Attribute.CAPABILITY_CATEGORY)
+            }
+            if data.get(Attribute.CAPABILITY_CATEGORY)
+            else None
+        )
 
     def __repr__(self):
         """Custom repr method"""
@@ -50,33 +61,40 @@ class VivintDevice(Entity):
     @property
     def id(self) -> int:
         """Device's id."""
-        return self.data[Attributes.ID]
+        return self.data[Attribute.ID]
 
     @property
-    def name(self) -> str:
+    def name(self) -> Optional[str]:
         """Device's name."""
-        return self.data[Attributes.NAME]
+        return self.data.get(Attribute.NAME)
+
+    @property
+    def capabilities(
+        self,
+    ) -> Optional[Dict[CapabilityCategoryType, List[CapabilityType]]]:
+        """Device capabilities."""
+        return self._capabilities
 
     @property
     def manufacturer(self):
         """Return the manufacturer for this device."""
-        if not self.__manufacturer and self.data.get("zpd"):
+        if not self._manufacturer and self.data.get("zpd"):
             self.get_zwave_details()
-        return self.__manufacturer
+        return self._manufacturer
 
     @property
     def model(self):
         """Return the model for this device."""
-        if not self.__model and self.data.get("zpd"):
+        if not self._model and self.data.get("zpd"):
             self.get_zwave_details()
-        return self.__model
+        return self._model
 
     @property
     def serial_number(self) -> str:
         """Return the serial number for this device."""
-        serial_number = self.data.get(Attributes.SERIAL_NUMBER_32_BIT)
+        serial_number = self.data.get(Attribute.SERIAL_NUMBER_32_BIT)
         serial_number = (
-            serial_number if serial_number else self.data.get(Attributes.SERIAL_NUMBER)
+            serial_number if serial_number else self.data.get(Attribute.SERIAL_NUMBER)
         )
         return serial_number
 
@@ -84,13 +102,13 @@ class VivintDevice(Entity):
     def software_version(self) -> str:
         """Return the software version of this device, if any."""
         # panels
-        current_software_version = self.data.get(Attributes.CURRENT_SOFTWARE_VERSION)
+        current_software_version = self.data.get(Attribute.CURRENT_SOFTWARE_VERSION)
         # z-wave devices (some)
         firmware_version = (
             ".".join(
                 [
                     str(i)
-                    for s in self.data.get(Attributes.FIRMWARE_VERSION) or []
+                    for s in self.data.get(Attribute.FIRMWARE_VERSION) or []
                     for i in s
                 ]
             )
@@ -119,7 +137,7 @@ class VivintDevice(Entity):
         result = await self.vivintskyapi.get_zwave_details(
             manufacturer_id, product_id, product_type_id
         )
-        [self.__manufacturer, self.__model] = result
+        [self._manufacturer, self._model] = result
         return result
 
 
@@ -127,4 +145,4 @@ class UnknownDevice(VivintDevice):
     """Describe an unknown/unsupported vivint device."""
 
     def __repr__(self) -> str:
-        return f"<{self.__class__.__name__}|{self.data[Attributes.TYPE]} {self.id}>"
+        return f"<{self.__class__.__name__}|{self.data[Attribute.TYPE]} {self.id}>"

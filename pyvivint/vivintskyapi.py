@@ -101,6 +101,18 @@ class VivintSkyApi:
             else:
                 raise VivintSkyApiError("Unable to retrieve system data.")
 
+    async def get_device_data(self, panel_id: int, device_id: int) -> dict:
+        """Gets the raw data for a device."""
+        resp = await self.__get(
+            f"system/{panel_id}/device/{device_id}",
+            headers={"Accept-Encoding": "application/json"},
+        )
+        async with resp:
+            if resp.status == 200:
+                return await resp.json(encoding="utf-8")
+            else:
+                raise VivintSkyApiError("Unable to retrieve device data.")
+
     async def set_alarm_state(
         self, panel_id: int, partition_id: int, state: bool
     ) -> aiohttp.ClientResponse:
