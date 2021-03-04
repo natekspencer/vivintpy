@@ -2,8 +2,7 @@
 import logging
 from typing import Callable, List
 
-from pyvivint.utils import add_async_job
-
+from .utils import add_async_job
 
 _LOGGER = logging.getLogger(__name__)
 

@@ -2,11 +2,11 @@
 import logging
 from typing import List
 
-import pyvivint.devices.alarm_panel
-from pyvivint.constants import PubNubMessageAttribute, SystemAttribute
-from pyvivint.entity import Entity
-from pyvivint.utils import first_or_none
-from pyvivint.vivintskyapi import VivintSkyApi
+from .const import PubNubMessageAttribute, SystemAttribute
+from .devices.alarm_panel import AlarmPanel
+from .entity import Entity
+from .utils import first_or_none
+from .vivintskyapi import VivintSkyApi
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -18,8 +18,8 @@ class System(Entity):
         super().__init__(data)
         self.__name = name
         self.vivintskyapi = vivintskyapi
-        self.alarm_panels: List[pyvivint.devices.alarm_panel.AlarmPanel] = [
-            pyvivint.devices.alarm_panel.AlarmPanel(panel_data, self)
+        self.alarm_panels: List[AlarmPanel] = [
+            AlarmPanel(panel_data, self)
             for panel_data in self.data[SystemAttribute.SYSTEM][
                 SystemAttribute.PARTITION
             ]
@@ -50,9 +50,7 @@ class System(Entity):
             if alarm_panel:
                 alarm_panel.refresh(panel_data)
             else:
-                self.alarm_panels.append(
-                    pyvivint.devices.alarm_panel.AlarmPanel(panel_data, self)
-                )
+                self.alarm_panels.append(AlarmPanel(panel_data, self))
 
     def handle_pubnub_message(self, message: dict) -> None:
         """Handles a pubnub message."""

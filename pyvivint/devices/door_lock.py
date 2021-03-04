@@ -1,6 +1,6 @@
 """Module that implements the DoorLock class."""
-from pyvivint.constants import ZWaveDeviceAttribute as Attributes
-from pyvivint.devices import VivintDevice
+from ..const import ZWaveDeviceAttribute as Attributes
+from . import VivintDevice
 
 
 class DoorLock(VivintDevice):

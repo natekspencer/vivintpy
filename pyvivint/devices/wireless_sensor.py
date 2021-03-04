@@ -1,9 +1,9 @@
 """Module that implements the WirelessSensor class."""
 import logging
 
-from pyvivint.constants import WirelessSensorAttribute as Attributes
-from pyvivint.devices import VivintDevice
-from pyvivint.enums import EquipmentCode, EquipmentType, SensorType, ZoneBypass
+from ..const import WirelessSensorAttribute as Attributes
+from ..enums import EquipmentCode, EquipmentType, SensorType, ZoneBypass
+from . import VivintDevice
 
 _LOGGER = logging.getLogger(__name__)
 

@@ -1,18 +1,23 @@
 """Module that implements the AlarmPanel class."""
-import logging
-from typing import List, Optional, Set
+from __future__ import annotations
 
-from pyvivint.constants import (
+import logging
+from typing import TYPE_CHECKING, List, Set, Type
+
+from ..const import (
     AlarmPanelAttribute,
     PubNubMessageAttribute,
     PubNubOperatorAttribute,
     SystemAttribute,
 )
-from pyvivint.devices import UnknownDevice, VivintDevice, get_device_class
-from pyvivint.enums import ArmedState, DeviceType
-from pyvivint.exceptions import VivintSkyApiError
-from pyvivint.utils import add_async_job, first_or_none
-from pyvivint.vivintskyapi import VivintSkyApi
+from ..enums import ArmedState, DeviceType
+from ..exceptions import VivintSkyApiError
+from ..utils import add_async_job, first_or_none
+from ..vivintskyapi import VivintSkyApi
+from . import UnknownDevice, VivintDevice, get_device_class
+
+if TYPE_CHECKING:
+    from ..system import System
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -20,7 +25,7 @@ _LOGGER = logging.getLogger(__name__)
 class AlarmPanel(VivintDevice):
     """Describe a Vivint alarm panel."""
 
-    def __init__(self, data: dict, system: "pyvivint.system.System"):
+    def __init__(self, data: dict, system: System):
         self.system = system
         super().__init__(data)
         self.__panel_credentials = None
@@ -122,22 +127,18 @@ class AlarmPanel(VivintDevice):
         return self.__panel_credentials
 
     def get_devices(
-        self, device_types: Set[int] = None, include_unknown_devices: bool = False
+        self,
+        device_types: Set[Type[VivintDevice]] = None,
     ) -> List[VivintDevice]:
         """Get a list of associated devices."""
-        devices = self.devices
+        devices: List[VivintDevice] = None
 
         if device_types:
             devices = [
-                device
-                for device in self.devices
-                if device.data[AlarmPanelAttribute.TYPE] in device_types
+                device for device in self.devices if device.__class__ in device_types
             ]
-
-        if not include_unknown_devices:
-            devices = [
-                device for device in devices if not isinstance(device, UnknownDevice)
-            ]
+        else:
+            devices = self.devices
 
         return devices
 

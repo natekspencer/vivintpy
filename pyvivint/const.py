@@ -1,23 +1,7 @@
-"""Module that defines various constants."""
+"""Module that defines various constants for interacting with the Vivint Sky API."""
 
 
-class Constant:
-
-    __names = {}
-
-    @classmethod
-    def name(cls, state):
-        if not cls.__names:
-            cls.__names = {
-                value: key
-                for key, value in cls.__dict__.items()
-                if isinstance(value, int)
-            }
-
-        return cls.__names[state]
-
-
-class AuthUserAttribute(Constant):
+class AuthUserAttribute:
     """AuthUser attributes."""
 
     ID_TOKEN = "id_token"
@@ -27,7 +11,7 @@ class AuthUserAttribute(Constant):
     USERS = "u"
 
 
-class UserAttribute(Constant):
+class UserAttribute:
     """User attributes."""
 
     DOCUMENT_SEQUENCE = "DocumentSequence"
@@ -45,14 +29,14 @@ class UserAttribute(Constant):
     TIMESTAMP = "ts"
 
 
-class PanelCredentialAttribute(Constant):
+class PanelCredentialAttribute:
     """Panel credential attributes."""
 
     NAME = "n"
     PASSWORD = "pswd"
 
 
-class SystemAttribute(Constant):
+class SystemAttribute:
     """System attributes."""
 
     PANEL_ID = "panid"
@@ -62,7 +46,7 @@ class SystemAttribute(Constant):
     SYSTEM_NICKNAME = "sn"
 
 
-class PubNubMessageAttribute(Constant):
+class PubNubMessageAttribute:
     """PubNub message attributes."""
 
     DATA = "da"
@@ -73,7 +57,7 @@ class PubNubMessageAttribute(Constant):
     TYPE = "t"
 
 
-class PubNubOperatorAttribute(Constant):
+class PubNubOperatorAttribute:
     """PubNub operator attributes."""
 
     CREATE = "c"
@@ -82,7 +66,7 @@ class PubNubOperatorAttribute(Constant):
     UPDATE_ALL = "ua"
 
 
-class VivintDeviceAttribute(Constant):
+class VivintDeviceAttribute:
     """Vivint device attributes."""
 
     BATTERY_LEVEL = "bl"
@@ -171,7 +155,7 @@ class WirelessSensorAttribute(VivintDeviceAttribute):
 
 
 class ZWaveDeviceAttribute(VivintDeviceAttribute):
-    """ZWave device attributes."""
+    """Z-Wave device attributes."""
 
     OPERATION_COUNT = "opc"
     OPERATION_FAULT_CODE = "opfc"

@@ -1,7 +1,7 @@
 """Module that implements the GarageDoor class."""
-from pyvivint.constants import ZWaveDeviceAttribute as Attributes
-from pyvivint.devices import VivintDevice
-from pyvivint.enums import GarageDoorState
+from ..const import ZWaveDeviceAttribute as Attributes
+from ..enums import GarageDoorState
+from . import VivintDevice
 
 
 class GarageDoor(VivintDevice):

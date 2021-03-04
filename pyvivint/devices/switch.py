@@ -1,8 +1,8 @@
 """Module that implements the Switch class."""
 from typing import Optional
 
-from pyvivint.constants import SwitchAttribute, ZWaveDeviceAttribute
-from pyvivint.devices import VivintDevice
+from ..const import SwitchAttribute, ZWaveDeviceAttribute
+from . import VivintDevice
 
 
 class Switch(VivintDevice):

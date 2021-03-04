@@ -1,23 +1,29 @@
-"""This package contains the various devices attached to a vivint system."""
+"""This package contains the various devices attached to a Vivint system."""
+from __future__ import annotations
+
 import asyncio
 import concurrent.futures
-from typing import Callable, Dict, List, Optional
+from typing import TYPE_CHECKING, Callable, Dict, List, Optional
 
-from pyvivint.constants import VivintDeviceAttribute as Attribute
-from pyvivint.entity import Entity
-from pyvivint.enums import CapabilityCategoryType, CapabilityType, DeviceType
-from pyvivint.vivintskyapi import VivintSkyApi
+from ..const import VivintDeviceAttribute as Attribute
+from ..entity import Entity
+from ..enums import CapabilityCategoryType, CapabilityType
+from ..vivintskyapi import VivintSkyApi
+
+if TYPE_CHECKING:
+    from .alarm_panel import AlarmPanel
 
 
 def get_device_class(device_type: str) -> Callable:
     """Maps a device_type string to the class that implements that device."""
-    from pyvivint.devices import UnknownDevice
-    from pyvivint.devices.camera import Camera
-    from pyvivint.devices.door_lock import DoorLock
-    from pyvivint.devices.garage_door import GarageDoor
-    from pyvivint.devices.switch import BinarySwitch, MultilevelSwitch
-    from pyvivint.devices.thermostat import Thermostat
-    from pyvivint.devices.wireless_sensor import WirelessSensor
+    from ..enums import DeviceType
+    from . import UnknownDevice
+    from .camera import Camera
+    from .door_lock import DoorLock
+    from .garage_door import GarageDoor
+    from .switch import BinarySwitch, MultilevelSwitch
+    from .thermostat import Thermostat
+    from .wireless_sensor import WirelessSensor
 
     mapping = {
         DeviceType.BINARY_SWITCH: BinarySwitch,
@@ -35,9 +41,7 @@ def get_device_class(device_type: str) -> Callable:
 class VivintDevice(Entity):
     """Class to implement a generic vivint device."""
 
-    def __init__(
-        self, data: dict, alarm_panel: "pyvivint.devices.alarm_panel.AlarmPanel" = None
-    ):
+    def __init__(self, data: dict, alarm_panel: AlarmPanel = None):
         super().__init__(data)
         self.alarm_panel = alarm_panel
         self._manufacturer = None

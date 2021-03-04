@@ -6,25 +6,25 @@ import aiohttp
 from aiohttp.client_exceptions import ClientConnectionError
 
 import pubnub
-import pyvivint.system
 from pubnub.enums import PNHeartbeatNotificationOptions, PNReconnectionPolicy
 from pubnub.pnconfiguration import PNConfiguration
 from pubnub.pubnub_asyncio import PubNubAsyncio
-from pyvivint.constants import (
+
+from .const import (
     AuthUserAttribute,
     PubNubMessageAttribute,
     SystemAttribute,
     UserAttribute,
 )
-from pyvivint.pubnub import PN_CHANNEL, PN_SUBSCRIBE_KEY, VivintPubNubSubscribeListener
-from pyvivint.system import System
-from pyvivint.utils import first_or_none
-from pyvivint.vivintskyapi import VivintSkyApi
+from .pubnub import PN_CHANNEL, PN_SUBSCRIBE_KEY, VivintPubNubSubscribeListener
+from .system import System
+from .utils import first_or_none
+from .vivintskyapi import VivintSkyApi
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class Vivint:
+class Account:
     """Class for interacting with VivintSky API using asyncio"""
 
     def __init__(
@@ -37,7 +37,7 @@ class Vivint:
         self.__pubnub: PubNubAsyncio = None
         self.__pubnub_listener: VivintPubNubSubscribeListener = None
         self.vivintskyapi = VivintSkyApi(username, password, client_session)
-        self.systems: List[pyvivint.system.System] = []
+        self.systems: List[System] = []
 
     @property
     def connected(self):

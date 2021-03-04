@@ -1,10 +1,10 @@
 """Module that implements the Thermostat class."""
 import logging
 
-from pyvivint.constants import ThermostatAttribute as Attribute
-from pyvivint.devices import VivintDevice
-from pyvivint.devices.alarm_panel import AlarmPanel
-from pyvivint.enums import FanMode, HoldMode, OperatingMode
+from ..const import ThermostatAttribute as Attribute
+from ..enums import FanMode, HoldMode, OperatingMode
+from . import VivintDevice
+from .alarm_panel import AlarmPanel
 
 _LOGGER = logging.getLogger(__name__)
 

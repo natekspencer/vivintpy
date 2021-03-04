@@ -11,13 +11,9 @@ import aiohttp
 import certifi
 from aiohttp.client_reqrep import ClientResponse
 
-from pyvivint.constants import (
-    SwitchAttribute,
-    VivintDeviceAttribute,
-    WirelessSensorAttribute,
-)
-from pyvivint.enums import ArmedState, GarageDoorState, ZoneBypass
-from pyvivint.exceptions import VivintSkyApiAuthenticationError, VivintSkyApiError
+from .const import SwitchAttribute, VivintDeviceAttribute, WirelessSensorAttribute
+from .enums import ArmedState, GarageDoorState, ZoneBypass
+from .exceptions import VivintSkyApiAuthenticationError, VivintSkyApiError
 
 _LOGGER = logging.getLogger(__name__)
 
