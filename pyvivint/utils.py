@@ -1,5 +1,9 @@
 import asyncio
+import logging
 from typing import Callable
+from warnings import warn
+
+_LOGGER = logging.getLogger(__name__)
 
 
 def first_or_none(lst, predicate):
@@ -18,3 +22,13 @@ def add_async_job(target: Callable, *args):
         task = loop.run_in_executor(None, target, *args)
 
     return task
+
+
+def send_deprecation_warning(old_name, new_name):
+    message = f"{old_name} has been deprecated in favor of {new_name}, the alias will be removed in the future"
+    warn(
+        message,
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    _LOGGER.warn(message, stacklevel=2)
