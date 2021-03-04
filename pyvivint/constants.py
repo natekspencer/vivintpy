@@ -93,6 +93,12 @@ class CameraAttribute(VivintDeviceAttribute):
     WIRELESS_SIGNAL_STRENGTH = "wiss"
 
 
+class SwitchAttribute(VivintDeviceAttribute):
+    """Switch attributes."""
+
+    VALUE = "val"
+
+
 class WirelessSensorAttribute(VivintDeviceAttribute):
     """Wireless sensor attributes."""
 
