@@ -3,7 +3,7 @@ import logging
 
 from pyvivint.constants import WirelessSensorAttribute as Attributes
 from pyvivint.devices import VivintDevice
-from pyvivint.enums import EquipmentCode, EquipmentType, SensorType
+from pyvivint.enums import EquipmentCode, EquipmentType, SensorType, ZoneBypass
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -56,7 +56,7 @@ class WirelessSensor(VivintDevice):
     @property
     def is_bypassed(self) -> bool:
         """Return True if the sensor is bypassed."""
-        return self.data[Attributes.BYPASSED] != 0
+        return self.data[Attributes.BYPASSED] != ZoneBypass.UNBYPASSED
 
     @property
     def is_on(self) -> bool:
@@ -67,3 +67,17 @@ class WirelessSensor(VivintDevice):
     def low_battery(self) -> bool:
         """Return true if battery's level is low."""
         return self.data[Attributes.LOW_BATTERY]
+
+    async def set_bypass(self, bypass: bool) -> None:
+        """Bypass/unbypass the sensor."""
+        await self.vivintskyapi.set_sensor_state(
+            self.alarm_panel.id, self.alarm_panel.partition_id, self.id, bypass
+        )
+
+    async def bypass(self) -> None:
+        """Bypass the sensor."""
+        await self.set_bypass(True)
+
+    async def unbypass(self) -> None:
+        """Unbypass the sensor."""
+        await self.set_bypass(False)
