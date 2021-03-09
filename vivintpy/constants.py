@@ -10,5 +10,5 @@ from .utils import send_deprecation_warning
 
 def __getattr__(name):
     """Log a warning."""
-    send_deprecation_warning("pyvivint.constants", "pyvivint.const")
+    send_deprecation_warning("vivintpy.constants", "vivintpy.const")
     return name

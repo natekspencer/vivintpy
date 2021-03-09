@@ -14,5 +14,5 @@ class Vivint(Account):
         password: str,
         client_session: Optional[aiohttp.ClientSession] = None,
     ):
-        send_deprecation_warning("pyvivint.vivint.Vivint", "pyvivint.account.Account")
+        send_deprecation_warning("vivintpy.vivint.Vivint", "vivintpy.account.Account")
         return super().__init__(username, password, client_session)

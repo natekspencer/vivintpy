@@ -2,19 +2,19 @@ import asyncio
 import logging
 import os
 
-from pyvivint.vivint import Vivint
+from vivintpy.account import Account
 
 
 async def main():
     logging.getLogger().setLevel(logging.DEBUG)
     logging.info("demo started")
 
-    vivint = Vivint(username=os.environ["username"], password=os.environ["password"])
+    account = Account(username=os.environ["username"], password=os.environ["password"])
 
-    await vivint.connect(load_devices=True, subscribe_for_realtime_updates=True)
+    await account.connect(load_devices=True, subscribe_for_realtime_updates=True)
 
     logging.info("discovered systems & devices:")
-    for system in vivint.systems:
+    for system in account.systems:
         logging.info(f"\tsystem {system.id}")
         for alarm_panel in system.alarm_panels:
             logging.info(f"\t\talarm panel {alarm_panel.id}:{alarm_panel.partition_id}")
@@ -26,7 +26,7 @@ async def main():
         while True:
             await asyncio.sleep(1)
     finally:
-        await vivint.disconnect()
+        await account.disconnect()
 
 
 if __name__ == "__main__":
