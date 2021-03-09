@@ -1,4 +1,4 @@
-"""pyvivint setup script."""
+"""vivintpy setup script."""
 import setuptools
 
 setuptools.setup()

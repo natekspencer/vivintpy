@@ -1,8 +1,8 @@
-"""The exceptions used by the pyvivint library."""
+"""The exceptions used by the vivintpy library."""
 
 
 class VivintError(Exception):
-    """General pyvivint exception occurred."""
+    """General vivintpy exception occurred."""
 
 
 class VivintSkyApiError(VivintError):
