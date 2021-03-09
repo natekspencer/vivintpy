@@ -43,3 +43,15 @@ See demo.py for a demonstration on how to use this library.
   - thermostats
 - implement 2FA
 - add tests
+
+---
+
+## Support Me
+
+I'm not employed by Vivint, and provide this python package as-is.
+
+If you don't already own a Vivint system, please consider using [my referal code (kaf164)](https://www.vivint.com/get?refCode=kaf164&exid=165211vivint.com/get?refCode=kaf164&exid=165211) to get $50 off your bill (as well as a tip to me in appreciation)!
+
+If you already own a Vivint system and still want to donate, consider buying me a coffee ☕ (or beer 🍺) instead by using the link below:
+
+<a href="https://www.buymeacoffee.com/natekspencer" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-blue.png" alt="Buy Me A Coffee" height="41" width="174"></a>
