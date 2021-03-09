@@ -1,12 +1,5 @@
-"""File for various patches to Pubnub until fixed in module."""
-
-import asyncio
-from asyncio import Event
-
-from aiohttp.client_exceptions import ClientConnectorError
-
-import pubnub
-from pubnub import utils
+"""File for various patches to PubNub until fixed in module."""
+from pubnub import pubnub, pubnub_asyncio, utils
 from pubnub.endpoints.presence.heartbeat import Heartbeat
 from pubnub.endpoints.pubsub.subscribe import Subscribe
 from pubnub.enums import (
@@ -21,7 +14,7 @@ from pubnub.errors import (
     PNERR_REQUEST_CANCELLED,
 )
 from pubnub.exceptions import PubNubException
-from pubnub.pubnub_asyncio import PubNubAsyncioException, logger
+from pubnub.pubnub_asyncio import PubNubAsyncioException, aiohttp, asyncio, logger
 
 
 async def patched_request_future(self, options_func, cancellation_event):
@@ -57,7 +50,7 @@ async def patched_request_future(self, options_func, cancellation_event):
                 exception=PubNubException(pn_error=PNERR_REQUEST_CANCELLED),
             ),
         )
-    except ClientConnectorError:
+    except aiohttp.client_exceptions.ClientConnectorError:
         return PubNubAsyncioException(
             result=None,
             status=options_func().create_status(
@@ -76,7 +69,7 @@ async def patched_request_future(self, options_func, cancellation_event):
         )
 
 
-pubnub.pubnub_asyncio.PubNubAsyncio.request_future = patched_request_future
+pubnub_asyncio.PubNubAsyncio.request_future = patched_request_future
 
 
 async def patched_register_heartbeat_timer(self):
@@ -109,7 +102,7 @@ async def patched_register_heartbeat_timer(self):
                 self._connection_errors += 1
 
 
-pubnub.pubnub_asyncio.AsyncioReconnectionManager._register_heartbeat_timer = (
+pubnub_asyncio.AsyncioReconnectionManager._register_heartbeat_timer = (
     patched_register_heartbeat_timer
 )
 
@@ -188,7 +181,7 @@ async def patched_start_subscribe_loop(self):
     self._subscription_lock.release()
 
 
-pubnub.pubnub_asyncio.AsyncioSubscriptionManager._start_subscribe_loop = (
+pubnub_asyncio.AsyncioSubscriptionManager._start_subscribe_loop = (
     patched_start_subscribe_loop
 )
 
@@ -206,7 +199,7 @@ async def patched_perform_heartbeat_loop(self):
         # TODO: cancel call
         pass
 
-    cancellation_event = Event()
+    cancellation_event = asyncio.Event()
     state_payload = self._subscription_state.state_payload()
     presence_channels = self._subscription_state.prepare_channel_list(False)
     presence_groups = self._subscription_state.prepare_channel_group_list(False)
@@ -246,14 +239,12 @@ async def patched_perform_heartbeat_loop(self):
         cancellation_event.set()
 
 
-pubnub.pubnub_asyncio.AsyncioSubscriptionManager._perform_heartbeat_loop = (
+pubnub_asyncio.AsyncioSubscriptionManager._perform_heartbeat_loop = (
     patched_perform_heartbeat_loop
 )
 
 
-old_endpoint_name_for_operation = (
-    pubnub.pubnub.TelemetryManager.endpoint_name_for_operation
-)
+old_endpoint_name_for_operation = pubnub.TelemetryManager.endpoint_name_for_operation
 
 
 @staticmethod
@@ -272,6 +263,6 @@ def patched_endpoint_name_for_operation(operation_type):
     )
 
 
-pubnub.pubnub.TelemetryManager.endpoint_name_for_operation = (
+pubnub.TelemetryManager.endpoint_name_for_operation = (
     patched_endpoint_name_for_operation
 )

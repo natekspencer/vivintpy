@@ -1,3 +1,4 @@
+"""Utilities module."""
 import asyncio
 import logging
 from typing import Callable
@@ -31,4 +32,4 @@ def send_deprecation_warning(old_name, new_name):
         DeprecationWarning,
         stacklevel=2,
     )
-    _LOGGER.warn(message, stacklevel=2)
+    _LOGGER.warn(message)

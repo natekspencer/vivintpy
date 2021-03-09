@@ -8,7 +8,6 @@ from aiohttp.client_exceptions import ClientConnectionError
 import pubnub
 from pubnub.enums import PNHeartbeatNotificationOptions, PNReconnectionPolicy
 from pubnub.pnconfiguration import PNConfiguration
-from pubnub.pubnub_asyncio import PubNubAsyncio
 
 from .const import (
     AuthUserAttribute,
@@ -16,7 +15,12 @@ from .const import (
     SystemAttribute,
     UserAttribute,
 )
-from .pubnub import PN_CHANNEL, PN_SUBSCRIBE_KEY, VivintPubNubSubscribeListener
+from .pubnub import (
+    PN_CHANNEL,
+    PN_SUBSCRIBE_KEY,
+    VivintPubNubSubscribeListener,
+    pubnub_asyncio,
+)
 from .system import System
 from .utils import first_or_none
 from .vivintskyapi import VivintSkyApi
@@ -34,7 +38,7 @@ class Account:
         client_session: Optional[aiohttp.ClientSession] = None,
     ):
         self.__connected = False
-        self.__pubnub: PubNubAsyncio = None
+        self.__pubnub: pubnub_asyncio.PubNubAsyncio = None
         self.__pubnub_listener: VivintPubNubSubscribeListener = None
         self.vivintskyapi = VivintSkyApi(username, password, client_session)
         self.systems: List[System] = []
@@ -129,7 +133,7 @@ class Account:
             PNHeartbeatNotificationOptions.FAILURES
         )
 
-        self.__pubnub = PubNubAsyncio(pnconfig)
+        self.__pubnub = pubnub_asyncio.PubNubAsyncio(pnconfig)
         self.__pubnub_listener = VivintPubNubSubscribeListener(
             self.handle_pubnub_message
         )
