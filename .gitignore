@@ -130,3 +130,6 @@ dmypy.json
 
 # VS Code Settings / Launch files
 .vscode/
+
+# Temp directory
+.tmp/

@@ -387,30 +387,3 @@ class VivintSkyApi:
             data=data,
             allow_redirects=allow_redirects,
         )
-
-    async def get_zwave_details(self, manufacturer_id, product_id, product_type_id):
-        """Gets the zwave details by looking up the details on the openzwave device database."""
-        UNKNOWN_RESULT = ["Unknown", "Unknown"]
-
-        # zwave_lookup = f"{manufacturer_id}:{product_id}:{product_type_id}"
-        # device_info = self.__zwave_device_info.get(zwave_lookup)
-        # if device_info is not None:
-        #     return device_info
-
-        # async with aiohttp.ClientSession() as session:
-        #     async with session.get(
-        #         url=f"http://openzwave.net/device-database/{zwave_lookup}"
-        #     ) as response:
-        #         if response.status == 200:
-        #             text = await response.text()
-        #             title = re.search("<title>(.*)</title>", text, re.IGNORECASE)[1]
-        #             result = self.__zwave_device_info[zwave_lookup] = (
-        #                 UNKNOWN_RESULT
-        #                 if title == "Device Database"
-        #                 else title.split(" - ")
-        #             )
-        #             return result
-        #         else:
-        #             response.raise_for_status()
-        #             return UNKNOWN_RESULT
-        return UNKNOWN_RESULT
