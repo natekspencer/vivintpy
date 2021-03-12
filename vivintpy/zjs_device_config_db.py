@@ -19,7 +19,7 @@ ZJS_TAR_FILE = os.path.join(TMP_DIR, "zjs.tar.gz")
 ZJS_TAR_URL = "http://github.com/zwave-js/node-zwave-js/archive/master.tar.gz"
 ZJS_TAR_CONFIG_BASE = "node-zwave-js-master/packages/config/config/"
 ZJS_DEVICE_CONFIG_DB_FILE = os.path.join(
-    os.path.dirname(__file__), ".zjs_device_config_db.json"
+    os.path.dirname(__file__), "zjs_device_config_db.json"
 )
 
 __MUTEX = threading.Lock()
@@ -45,7 +45,10 @@ def get_zjs_device_config_db() -> dict:
 
 def _device_config_db_file_exists() -> bool:
     """Returns True if the device config db file exists."""
-    return os.path.exists(ZJS_DEVICE_CONFIG_DB_FILE)
+    return (
+        os.path.isfile(ZJS_DEVICE_CONFIG_DB_FILE)
+        and os.path.getsize(ZJS_DEVICE_CONFIG_DB_FILE) > 0
+    )
 
 
 def _load_db_from_file() -> dict:
