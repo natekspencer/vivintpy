@@ -1,14 +1,13 @@
 """This package contains the various devices attached to a Vivint system."""
 from __future__ import annotations
 
-import asyncio
-import concurrent.futures
 from typing import TYPE_CHECKING, Callable, Dict, List, Optional
 
 from ..const import VivintDeviceAttribute as Attribute
 from ..entity import Entity
 from ..enums import CapabilityCategoryType, CapabilityType
 from ..vivintskyapi import VivintSkyApi
+from ..zjs_device_config_db import get_zwave_device_info
 
 if TYPE_CHECKING:
     from .alarm_panel import AlarmPanel
@@ -130,19 +129,27 @@ class VivintDevice(Entity):
         if self.data.get("zpd") is None:
             return None
 
-        pool = concurrent.futures.ThreadPoolExecutor()
-        result = pool.submit(asyncio.run, self.get_zwave_details_async()).result()
-        return result
-
-    async def get_zwave_details_async(self):
-        manufacturer_id = f"{self.data.get('manid'):04x}"
-        product_id = f"{self.data.get('prid'):04x}"
-        product_type_id = f"{self.data.get('prtid'):04x}"
-        result = await self.vivintskyapi.get_zwave_details(
-            manufacturer_id, product_id, product_type_id
+        result = get_zwave_device_info(
+            self.data.get("manid"),
+            self.data.get("prtid"),
+            self.data.get("prid"),
         )
-        [self._manufacturer, self._model] = result
-        return result
+
+        self._manufacturer = result.get("manufacturer", "Unknown")
+
+        label = result.get("label")
+        description = result.get("description")
+
+        if label and description:
+            self._model = f"{description} ({label})"
+        elif label:
+            self._model = label
+        elif description:
+            self._model = description
+        else:
+            self._model = "Unknown"
+
+        return [self._manufacturer, self._model]
 
 
 class UnknownDevice(VivintDevice):
