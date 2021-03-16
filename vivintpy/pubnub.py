@@ -4,10 +4,9 @@ from enum import IntEnum, unique
 from typing import Callable
 
 from pubnub.callbacks import SubscribeCallback
-from pubnub.models.consumer.common import PNStatus
 from pubnub.models.consumer.pubsub import PNMessageResult
 
-from .pubnub_patches import pubnub_asyncio
+from .pubnub_patches import PNStatus, pubnub_asyncio
 
 PN_SUBSCRIBE_KEY = "sub-c-6fb03d68-6a78-11e2-ae8f-12313f022c90"
 PN_CHANNEL = "PlatformChannel"
@@ -78,7 +77,8 @@ class PubNubStatusCategory(IntEnum):
 
     @classmethod
     def _missing_(cls, _):
-        _LOGGER.error("Unexpected status category: %s", _)
+        if _ is not None:
+            _LOGGER.error("Unexpected status category: %s", _)
         return cls.UNEXPECTED_STATUS_CATEGORY
 
 
@@ -152,5 +152,6 @@ class PubNubOperationType(IntEnum):
 
     @classmethod
     def _missing_(cls, _):
-        _LOGGER.error("Unexpected operation type: %s", _)
+        if _ is not None:
+            _LOGGER.error("Unexpected operation type: %s", _)
         return cls.UNEXPECTED_OPERATION_TYPE

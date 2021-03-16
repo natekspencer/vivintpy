@@ -14,6 +14,7 @@ from pubnub.errors import (
     PNERR_REQUEST_CANCELLED,
 )
 from pubnub.exceptions import PubNubException
+from pubnub.models.consumer.common import PNStatus
 from pubnub.pubnub_asyncio import PubNubAsyncioException, aiohttp, asyncio, logger
 
 
@@ -242,6 +243,18 @@ async def patched_perform_heartbeat_loop(self):
 pubnub_asyncio.AsyncioSubscriptionManager._perform_heartbeat_loop = (
     patched_perform_heartbeat_loop
 )
+
+
+def patched_is_error(self):
+    """
+    Patched `is_error` function on pubnub's `PNStatus` class.
+
+    See https://github.com/pubnub/python/pull/101 for when this can be removed.
+    """
+    return self.error not in [None, False]
+
+
+PNStatus.is_error = patched_is_error
 
 
 old_endpoint_name_for_operation = pubnub.TelemetryManager.endpoint_name_for_operation
