@@ -128,16 +128,21 @@ class Camera(VivintDevice):
         """Handles a pubnub message addressed to this camera."""
         super().handle_pubnub_message(message)
 
+        event = None
+
         if message.get(Attribute.CAMERA_THUMBNAIL_DATE):
-            self.emit(THUMBNAIL_READY, message)
+            event = THUMBNAIL_READY
         elif message.get(Attribute.DING_DONG):
-            self.emit(DOORBELL_DING, message)
+            event = DOORBELL_DING
         elif message.keys() == set([Attribute.ID, Attribute.TYPE]):
-            self.emit(VIDEO_READY, message)
+            event = VIDEO_READY
         elif message.get(Attribute.VISITOR_DETECTED) or message.keys() in [
             set([Attribute.ID, Attribute.ACTUAL_TYPE, Attribute.STATE]),
             set([Attribute.ID, Attribute.DETER_ON_DUTY, Attribute.TYPE]),
         ]:
-            self.emit(MOTION_DETECTED, message)
+            event = MOTION_DETECTED
+
+        if event is not None:
+            self.emit(event, {"message": message})
 
         _LOGGER.debug("Message received by %s: %s", self.name, message)

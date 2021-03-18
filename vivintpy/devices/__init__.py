@@ -12,6 +12,8 @@ from ..zjs_device_config_db import get_zwave_device_info
 if TYPE_CHECKING:
     from .alarm_panel import AlarmPanel
 
+DEVICE = "device"
+
 
 def get_device_class(device_type: str) -> Callable:
     """Maps a device_type string to the class that implements that device."""
@@ -157,15 +159,11 @@ class VivintDevice(Entity):
         return [self._manufacturer, self._model]
 
     def emit(self, event_name: str, data: dict) -> None:
-        """Add identifying device data and then send to parent."""
-        super().emit(
-            event_name,
-            {
-                "name": self.name,
-                "panel_id": self.panel_id,
-                **data,
-            },
-        )
+        """Add device data and then send to parent."""
+        if data.get(DEVICE) is None:
+            data.update({DEVICE: self})
+
+        super().emit(event_name, data)
 
 
 class UnknownDevice(VivintDevice):

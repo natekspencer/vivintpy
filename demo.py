@@ -5,6 +5,7 @@ import os
 import pubnub
 
 from vivintpy.account import Account
+from vivintpy.devices import VivintDevice
 from vivintpy.devices.camera import MOTION_DETECTED, Camera
 
 pubnub.set_stream_logger(name="pubnub", level=logging.ERROR)
@@ -14,8 +15,8 @@ async def main():
     logging.getLogger().setLevel(logging.DEBUG)
     logging.debug("Demo started")
 
-    def camera_motion_callback(**kwargs):
-        logging.debug("Motion detected from camera: %s", kwargs)
+    def camera_motion_callback(device: VivintDevice) -> None:
+        logging.debug("Motion detected from camera: %s", device)
 
     account = Account(username=os.environ["username"], password=os.environ["password"])
 
@@ -32,7 +33,8 @@ async def main():
                 logging.debug(f"\t\t\tDevice: {device}")
                 if isinstance(device, Camera):
                     device.on(
-                        MOTION_DETECTED, lambda event: camera_motion_callback(**event)
+                        MOTION_DETECTED,
+                        lambda event: camera_motion_callback(event["device"]),
                     )
 
     try:
