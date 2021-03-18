@@ -1,10 +1,7 @@
 """Module that implements the Entity class."""
-import logging
 from typing import Callable, Dict, List
 
-from .utils import add_async_job, send_deprecation_warning
-
-_LOGGER = logging.getLogger(__name__)
+from .utils import send_deprecation_warning
 
 UPDATE = "update"
 
@@ -28,7 +25,7 @@ class Entity:
         else:
             self.__data.update(new_val)
 
-        self.emit(UPDATE, new_val)
+        self.emit(UPDATE, {"data": new_val})
 
     def handle_pubnub_message(self, message: dict) -> None:
         """Handles a pubnub message directed to this entity."""
@@ -57,21 +54,6 @@ class Entity:
         return unsubscribe
 
     def emit(self, event_name: str, data: dict) -> None:
-        """Run all callbacks for an event.
-
-        Handles both sync and async callbacks.
-        """
+        """Run all callbacks for an event."""
         for listener in self._listeners.get(event_name, []):
-            try:
-                add_async_job(
-                    listener,
-                    {
-                        "name": self.name,
-                        "panel_id": self.panel_id,
-                        **data,
-                    },
-                )
-            except Exception:
-                _LOGGER.exception(
-                    "Failed to execute callback for entity %s", self.__repr__()
-                )
+            listener(data)

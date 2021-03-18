@@ -14,7 +14,7 @@ from ..enums import ArmedState, DeviceType
 from ..exceptions import VivintSkyApiError
 from ..utils import add_async_job, first_or_none
 from ..vivintskyapi import VivintSkyApi
-from . import UnknownDevice, VivintDevice, get_device_class
+from . import VivintDevice, get_device_class
 
 if TYPE_CHECKING:
     from ..system import System
