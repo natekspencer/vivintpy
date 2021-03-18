@@ -74,8 +74,6 @@ class Thermostat(VivintDevice):
         """Handles a pubnub message directed to this entity."""
         super().handle_pubnub_message(message)
 
-        _LOGGER.debug(f"{self.name} updated")
-
     async def set_state(self, **kwargs) -> None:
         """Set the state of the thermostat."""
         await self.vivintskyapi.set_thermostat_state(

@@ -86,7 +86,7 @@ async def patched_register_heartbeat_timer(self):
 
         await asyncio.sleep(self._timer_interval)
 
-        logger.debug("reconnect loop at: %s" % utils.datetime_now())
+        logger.debug("Reconnect loop at: %s" % utils.datetime_now())
 
         try:
             result = await self._pubnub.time().future()
@@ -98,7 +98,7 @@ async def patched_register_heartbeat_timer(self):
         except Exception:
             if self._pubnub.config.reconnect_policy == PNReconnectionPolicy.EXPONENTIAL:
                 logger.debug(
-                    "reconnect interval increment at: %s" % utils.datetime_now()
+                    "Reconnect interval increment at: %s" % utils.datetime_now()
                 )
                 self._connection_errors += 1
 

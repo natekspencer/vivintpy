@@ -3,7 +3,7 @@ from .utils import send_deprecation_warning
 
 
 class Vivint(Account):
-    """(deprecated) Vivint class (for backwards compatibility).
+    """(deprecated) Vivint class.
 
     This class has been deprecated in favor of `Account`.
     """

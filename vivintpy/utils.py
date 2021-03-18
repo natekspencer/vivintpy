@@ -26,6 +26,7 @@ def add_async_job(target: Callable, *args):
 
 
 def send_deprecation_warning(old_name, new_name):
+    """Sends a deprecation warning."""
     message = f"{old_name} has been deprecated in favor of {new_name}, the alias will be removed in the future"
     warn(
         message,

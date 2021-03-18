@@ -93,6 +93,11 @@ class VivintDevice(Entity):
         return self._model
 
     @property
+    def panel_id(self):
+        """Return the id of the panel this device is associated to."""
+        return self.data.get(Attribute.PANEL_ID)
+
+    @property
     def serial_number(self) -> str:
         """Return the serial number for this device."""
         serial_number = self.data.get(Attribute.SERIAL_NUMBER_32_BIT)
@@ -150,6 +155,17 @@ class VivintDevice(Entity):
             self._model = "Unknown"
 
         return [self._manufacturer, self._model]
+
+    def emit(self, event_name: str, data: dict) -> None:
+        """Add identifying device data and then send to parent."""
+        super().emit(
+            event_name,
+            {
+                "name": self.name,
+                "panel_id": self.panel_id,
+                **data,
+            },
+        )
 
 
 class UnknownDevice(VivintDevice):

@@ -53,26 +53,26 @@ class Account:
         load_devices: bool = False,
         subscribe_for_realtime_updates: bool = False,
     ) -> None:
-        """Connects to vivintsky cloud service."""
+        """Connects to the VivintSky API."""
 
-        _LOGGER.debug("connecting to vivintsky")
+        _LOGGER.debug("Connecting to VivintSky")
         # initialize the vivintsky cloud session
         authuser_data = await self.vivintskyapi.connect()
 
         # load all systems, panels and devices
         if load_devices:
-            _LOGGER.debug("loading devices")
+            _LOGGER.debug("Loading devices")
             await self.refresh(authuser_data)
 
         # subscribe to pubnub for realtime updates
         if subscribe_for_realtime_updates:
-            _LOGGER.debug("subscribing to pubnub for realtime updates")
+            _LOGGER.debug("Subscribing to PubNub for realtime updates")
             await self.subscribe_for_realtime_updates(authuser_data)
 
         self.__connected = True
 
     async def disconnect(self) -> None:
-        _LOGGER.debug("disconnecting from vivintsky")
+        _LOGGER.debug("Disconnecting from VivintSky")
         if self.connected:
             if self.__pubnub:
                 self.__pubnub.remove_listener(self.__pubnub_listener)
@@ -114,7 +114,8 @@ class Account:
                     )
 
             _LOGGER.debug(
-                f"Refreshed {len(authuser_data[AuthUserAttribute.USERS][UserAttribute.SYSTEM])} system(s)."
+                "Refreshed %s system(s)",
+                len(authuser_data[AuthUserAttribute.USERS][UserAttribute.SYSTEM]),
             )
 
     async def subscribe_for_realtime_updates(self, authuser_data: dict = None) -> None:
@@ -122,8 +123,6 @@ class Account:
         # make a call to vivint's authuser endpoint to get message broadcast channel if not supplied
         if not authuser_data:
             authuser_data = await self.vivintskyapi.get_authuser_data()
-
-        pubnub.set_stream_logger("pubnub", logging.INFO)
 
         pnconfig = PNConfiguration()
         pnconfig.subscribe_key = PN_SUBSCRIBE_KEY
@@ -146,12 +145,15 @@ class Account:
         """Handles a pubnub message."""
         panel_id = message.get(PubNubMessageAttribute.PANEL_ID)
         if not panel_id:
-            _LOGGER.info("No panel id specified - ignoring pubnub message.")
+            _LOGGER.debug(
+                "PubNub message ignored (no panel id specified): %s",
+                message,
+            )
             return
 
         system = first_or_none(self.systems, lambda system: system.id == panel_id)
         if not system:
-            _LOGGER.info(f"No system found with id {panel_id}.")
+            _LOGGER.debug("No system found with id %s: %s", panel_id, message)
             return
 
         system.handle_pubnub_message(message)

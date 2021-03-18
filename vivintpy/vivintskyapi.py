@@ -1,7 +1,6 @@
 """Module that implements the VivintSkyApi class."""
 import json
 import logging
-import re
 import ssl
 from datetime import datetime
 from types import MethodType
@@ -33,7 +32,6 @@ class VivintSkyApi:
         self.__password = password
         self.__client_session = client_session or self.__get_new_client_session()
         self.__has_custom_client_session = client_session is not None
-        self.__zwave_device_info = {}
 
     def is_session_valid(self) -> dict:
         """Return the state of the current session."""
@@ -153,10 +151,14 @@ class VivintSkyApi:
         )
         async with resp:
             if resp.status != 200:
-                _LOGGER.info(
-                    f"failed to set state to {GarageDoorState.name(state)} for garage door: {device_id} @ {panel_id}:{partition_id}"
+                _LOGGER.debug(
+                    "Failed to set state to %s for garage door: %s @ %s:%s",
+                    GarageDoorState.name(state),
+                    device_id,
+                    panel_id,
+                    partition_id,
                 )
-                raise VivintSkyApiError(f"failed to update garage door state")
+                raise VivintSkyApiError(f"Failed to update garage door state")
 
     async def set_lock_state(
         self, panel_id: int, partition_id: int, device_id: int, locked: bool
@@ -176,10 +178,14 @@ class VivintSkyApi:
         )
         async with resp:
             if resp.status != 200:
-                _LOGGER.info(
-                    f"failed to set status locked: {locked} for lock: {device_id} @ {panel_id}:{partition_id}"
+                _LOGGER.debug(
+                    "Failed to set locked status to %s for lock: %s @ %s:%s",
+                    locked,
+                    device_id,
+                    panel_id,
+                    partition_id,
                 )
-                raise VivintSkyApiError(f"failed to update lock status")
+                raise VivintSkyApiError(f"Failed to update lock status")
 
     async def set_sensor_state(
         self, panel_id: int, partition_id: int, device_id: int, bypass: bool
@@ -201,10 +207,14 @@ class VivintSkyApi:
         )
         async with resp:
             if resp.status != 200:
-                _LOGGER.info(
-                    f"Failed to set bypass: {bypass} for sensor: {device_id} @ {panel_id}:{partition_id}"
+                _LOGGER.debug(
+                    "Failed to set bypass status to %s for sensor: %s @ %s:%s",
+                    bypass,
+                    device_id,
+                    panel_id,
+                    partition_id,
                 )
-                raise VivintSkyApiError(f"Failed to update sensor status.")
+                raise VivintSkyApiError(f"Failed to update sensor status")
 
     async def set_switch_state(
         self,
@@ -239,8 +249,14 @@ class VivintSkyApi:
         )
         async with resp:
             if resp.status != 200:
-                _LOGGER.info(
-                    f"Failed to set {'on' if level is None else 'level'} to {on if level is None else level} for switch: {device_id} @ {panel_id}:{partition_id}."
+                [attribute, value] = ["on", on] if level is None else ["level", level]
+                _LOGGER.debug(
+                    "Failed to set %s to %s for switch: %s @ %s:%s.",
+                    attribute,
+                    value,
+                    device_id,
+                    panel_id,
+                    partition_id,
                 )
                 raise VivintSkyApiError("Failed to update switch state.")
 
@@ -257,8 +273,8 @@ class VivintSkyApi:
         )
         async with resp:
             if resp.status != 200:
-                _LOGGER.info(
-                    "Failed to set state to: %s for thermostat: %s @ %s:%s",
+                _LOGGER.debug(
+                    "Failed to set state to %s for thermostat: %s @ %s:%s",
                     kwargs,
                     device_id,
                     panel_id,
@@ -274,8 +290,10 @@ class VivintSkyApi:
         )
         async with resp:
             if resp.status < 200 or resp.status > 299:
-                _LOGGER.info(
-                    f"failed to request thumbnail for camera id {self.id}. Error code: {resp.status}"
+                _LOGGER.debug(
+                    "Failed to request thumbnail for camera id %s with error code: %s",
+                    self.id,
+                    resp.status,
                 )
 
     async def get_camera_thumbnail_url(
@@ -292,8 +310,10 @@ class VivintSkyApi:
         )
         async with resp:
             if resp.status != 302:
-                _LOGGER.info(
-                    f"failed to request thumbnail for camera id {self.id}. Status code: {resp.status}"
+                _LOGGER.debug(
+                    "Failed to get thumbnail for camera id %s with status code: %s",
+                    self.id,
+                    resp.status,
                 )
                 return
 
@@ -378,7 +398,7 @@ class VivintSkyApi:
             await self.connect()
 
         if self.__client_session.closed:
-            raise VivintSkyApiError("The client session has been closed.")
+            raise VivintSkyApiError("The client session has been closed")
 
         return await method(
             f"{VIVINT_API_ENDPOINT}/{path}",

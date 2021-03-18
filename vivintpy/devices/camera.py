@@ -1,11 +1,15 @@
 """Module that implements the Camera class."""
+import logging
 from datetime import datetime
-from typing import Callable, List
+from typing import Callable
 
 from ..const import CameraAttribute as Attribute
 from ..const import PanelCredentialAttribute
+from ..utils import send_deprecation_warning
 from . import VivintDevice
 from .alarm_panel import AlarmPanel
+
+_LOGGER = logging.getLogger(__name__)
 
 # Some Vivint supported cameras may be connected directly to your local network
 # and the Vivint API reports these as having direct access availiable (cda).
@@ -17,23 +21,20 @@ from .alarm_panel import AlarmPanel
 # on very rare occasions. As such, we want to skip this model from direct access.
 SKIP_DIRECT = ["alpha_cs6022_camera_device"]
 
+DOORBELL_DING = "doorbell_ding"
+MOTION_DETECTED = "motion_detected"
+THUMBNAIL_READY = "thumbnail_ready"
+VIDEO_READY = "video_ready"
+
 
 class Camera(VivintDevice):
-    """Represents a vivint camera device."""
+    """Represents a Vivint camera."""
 
     def __init__(self, data: dict, alarm_panel: AlarmPanel):
         super().__init__(data, alarm_panel)
-        self.__thumbnail_ready_callbacks: List[Callable] = list()
-
-    @property
-    def manufacturer(self):
-        """Return the camera manufacturer."""
-        return self.data.get(Attribute.ACTUAL_TYPE).split("_")[0].title()
-
-    @property
-    def model(self):
-        """Return the camera model."""
-        return self.data.get(Attribute.ACTUAL_TYPE).split("_")[1].upper()
+        manufacturer_and_model = self.data.get(Attribute.ACTUAL_TYPE).split("_")[0:2]
+        self._manufacturer = manufacturer_and_model[0].title()
+        self._model = manufacturer_and_model[1].upper()
 
     @property
     def serial_number(self) -> str:
@@ -76,8 +77,14 @@ class Camera(VivintDevice):
         return self.data[Attribute.WIRELESS_SIGNAL_STRENGTH]
 
     def add_thumbnail_ready_callback(self, callback: Callable) -> None:
-        """Register a thumbnail_ready callback."""
-        self.__thumbnail_ready_callbacks.append(callback)
+        """.. deprecated::
+
+        (deprecated) Use `on("thumbnail_ready", callback)` instead.
+        """
+        send_deprecation_warning(
+            "add_thumbnail_ready_callback(callback)", "on('thumbnail_ready', callback)"
+        )
+        self.on(THUMBNAIL_READY, callback)
 
     async def request_thumbnail(self) -> None:
         """Request a new thumbnail for the camera."""
@@ -122,4 +129,15 @@ class Camera(VivintDevice):
         super().handle_pubnub_message(message)
 
         if message.get(Attribute.CAMERA_THUMBNAIL_DATE):
-            self._fire_callbacks(self.__thumbnail_ready_callbacks)
+            self.emit(THUMBNAIL_READY, message)
+        elif message.get(Attribute.DING_DONG):
+            self.emit(DOORBELL_DING, message)
+        elif message.keys() == set([Attribute.ID, Attribute.TYPE]):
+            self.emit(VIDEO_READY, message)
+        elif message.get(Attribute.VISITOR_DETECTED) or message.keys() in [
+            set([Attribute.ID, Attribute.ACTUAL_TYPE, Attribute.STATE]),
+            set([Attribute.ID, Attribute.DETER_ON_DUTY, Attribute.TYPE]),
+        ]:
+            self.emit(MOTION_DETECTED, message)
+
+        _LOGGER.debug("Message received by %s: %s", self.name, message)
