@@ -151,7 +151,7 @@ class Account:
 
         system = first_or_none(self.systems, lambda system: system.id == panel_id)
         if not system:
-            _LOGGER.info(f"No system found with id {panel_id}.")
+            _LOGGER.info("No system found with id %s", panel_id)
             return
 
         system.handle_pubnub_message(message)

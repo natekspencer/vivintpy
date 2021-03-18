@@ -105,9 +105,12 @@ class CameraAttribute(VivintDeviceAttribute):
     CAMERA_PRIVACY = "cpri"
     CAMERA_THUMBNAIL_DATE = "ctd"
     CAPTURE_CLIP_ON_MOTION = "ccom"
+    DETER_ON_DUTY = "deter_on_duty"
+    DING_DONG = "dng"
     PASSWORD = "pswd"
     SOFTWARE_VERSION = "sv"
     USERNAME = "un"
+    VISITOR_DETECTED = "vdt"
     WIRELESS_SIGNAL_STRENGTH = "wiss"
 
 
