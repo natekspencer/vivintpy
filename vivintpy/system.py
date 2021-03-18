@@ -68,7 +68,9 @@ class System(Entity):
             partition_id = message.get(PubNubMessageAttribute.PARTITION_ID)
             if not partition_id:
                 _LOGGER.debug(
-                    f"ignoring account_partition message. No partition_id specified for system {self.id}"
+                    "Ignoring account partition message (no partition id specified for system %s): %s",
+                    self.id,
+                    message,
                 )
                 return
 
@@ -80,7 +82,9 @@ class System(Entity):
 
             if not alarm_panel:
                 _LOGGER.debug(
-                    f"no alarm panel found for system {self.id}, partition {partition_id}"
+                    "No alarm panel found for system %s, partition %s",
+                    self.id,
+                    partition_id,
                 )
                 return
 

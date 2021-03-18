@@ -37,7 +37,7 @@ class VivintPubNubSubscribeListener(SubscribeCallback):
                 status.error_data.information,
             )
         else:
-            _LOGGER.info(
+            _LOGGER.debug(
                 "PubNub status update - operation: %s, category: %s",
                 operation,
                 category,

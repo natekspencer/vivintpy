@@ -1,7 +1,7 @@
 """This package contains the various devices attached to a Vivint system."""
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional
+from typing import TYPE_CHECKING, Callable, Dict, List, Optional
 
 from ..const import VivintDeviceAttribute as Attribute
 from ..entity import Entity

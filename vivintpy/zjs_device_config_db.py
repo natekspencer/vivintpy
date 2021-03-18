@@ -64,7 +64,7 @@ async def download_zjs_device_config_db():
     """Downloads the Z-Wave JS device config database."""
     with __MUTEX:
         if not _device_config_db_file_exists():
-            _LOGGER.info("Beginning download process")
+            _LOGGER.debug("Beginning download process")
             _clean_temp_directory(create=True)
             await _download_zjs_tarfile()
             _extract_zjs_config_files()
@@ -78,17 +78,17 @@ async def download_zjs_device_config_db():
 def _clean_temp_directory(create: bool = False) -> None:
     """Ensures the temp directory is empty and creates it if specified."""
     if os.path.exists(TMP_DIR):
-        _LOGGER.info("Removing temp directory")
+        _LOGGER.debug("Removing temp directory")
         shutil.rmtree(TMP_DIR)
 
     if create:
-        _LOGGER.info("Creating temp directory")
+        _LOGGER.debug("Creating temp directory")
         os.mkdir(TMP_DIR)
 
 
 async def _download_zjs_tarfile() -> None:
     """Downloads the Z-Wave JS tarfile from http://github.com/zwave-js/node-zwave-js."""
-    _LOGGER.info("Downloading tarfile from Z-Wave JS")
+    _LOGGER.debug("Downloading tarfile from Z-Wave JS")
     async with aiohttp.ClientSession() as session:
         async with async_timeout.timeout(120):
             async with session.get(ZJS_TAR_URL) as response:
@@ -113,14 +113,14 @@ def _extract_zjs_config_files() -> None:
                 member.path = member.path[l:]
                 yield member
 
-    _LOGGER.info("Extracting config files from download")
+    _LOGGER.debug("Extracting config files from download")
     with tarfile.open(ZJS_TAR_FILE) as tar:
         tar.extractall(members=members(tar), path=TMP_DIR)
 
 
 def _create_db_from_zjs_config_files() -> dict:
     """Parses the Z-Wave JSON config files and creates a consolidated device db."""
-    _LOGGER.info("Parsing extracted config files")
+    _LOGGER.debug("Parsing extracted config files")
     json_files = Path(os.path.join(TMP_DIR, "devices")).glob("**/*.json")
 
     device_db = {}
@@ -151,7 +151,7 @@ def _create_db_from_zjs_config_files() -> dict:
                 "description": description,
             }
 
-    _LOGGER.info("Creating consolidated device db")
+    _LOGGER.debug("Creating consolidated device db")
     with open(ZJS_DEVICE_CONFIG_DB_FILE, "w") as device_file:
         device_file.write(json.dumps(device_db))
 

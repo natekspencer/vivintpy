@@ -1,4 +1,5 @@
 """Module that implements the Camera class."""
+import logging
 from datetime import datetime
 from typing import Callable
 
@@ -7,6 +8,8 @@ from ..const import PanelCredentialAttribute
 from ..utils import send_deprecation_warning
 from . import VivintDevice
 from .alarm_panel import AlarmPanel
+
+_LOGGER = logging.getLogger(__name__)
 
 # Some Vivint supported cameras may be connected directly to your local network
 # and the Vivint API reports these as having direct access availiable (cda).
@@ -136,3 +139,5 @@ class Camera(VivintDevice):
             set([Attribute.ID, Attribute.DETER_ON_DUTY, Attribute.TYPE]),
         ]:
             self.emit(MOTION_DETECTED, message)
+
+        _LOGGER.debug("Message received by %s: %s", self.name, message)

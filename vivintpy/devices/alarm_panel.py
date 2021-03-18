@@ -103,7 +103,7 @@ class AlarmPanel(VivintDevice):
 
     async def set_armed_state(self, state: int) -> None:
         """Set the armed state for a panel."""
-        _LOGGER.debug(f"setting {self.name} to {ArmedState(state).name}")
+        _LOGGER.debug("Setting %s to %s", self.name, ArmedState(state).name)
         await self.vivintskyapi.set_alarm_state(self.id, self.partition_id, state)
 
     async def disarm(self) -> None:
@@ -171,8 +171,10 @@ class AlarmPanel(VivintDevice):
         data = message.get(PubNubMessageAttribute.DATA)
         if not data:
             _LOGGER.debug(
-                f"ignoring account_partition message for panel {self.id}, partition {self.partition_id} - "
-                "no data provided"
+                "Ignoring account partition message for panel %s, partition %s (no data provided): %s",
+                self.id,
+                self.partition_id,
+                message,
             )
             return
 
@@ -197,7 +199,7 @@ class AlarmPanel(VivintDevice):
                     )
                     if not device:
                         _LOGGER.debug(
-                            "Ignoring message for device %s: device not found",
+                            "Ignoring message for device %s (device not found)",
                             device_id,
                         )
                         continue
