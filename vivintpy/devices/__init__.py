@@ -42,7 +42,7 @@ def get_device_class(device_type: str) -> Callable:
 class VivintDevice(Entity):
     """Class to implement a generic vivint device."""
 
-    def __init__(self, data: dict, alarm_panel: AlarmPanel = None):
+    def __init__(self, data: dict, alarm_panel: AlarmPanel = None) -> None:
         super().__init__(data)
         self.alarm_panel = alarm_panel
         self._manufacturer = None
@@ -59,7 +59,7 @@ class VivintDevice(Entity):
             else None
         )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Custom repr method"""
         return f"<{self.__class__.__name__} {self.id}, {self.name}>"
 
@@ -81,26 +81,26 @@ class VivintDevice(Entity):
         return self._capabilities
 
     @property
-    def manufacturer(self):
+    def manufacturer(self) -> Optional[str]:
         """Return the manufacturer for this device."""
         if not self._manufacturer and self.data.get("zpd"):
             self.get_zwave_details()
         return self._manufacturer
 
     @property
-    def model(self):
+    def model(self) -> Optional[str]:
         """Return the model for this device."""
         if not self._model and self.data.get("zpd"):
             self.get_zwave_details()
         return self._model
 
     @property
-    def panel_id(self):
+    def panel_id(self) -> int:
         """Return the id of the panel this device is associated to."""
         return self.data.get(Attribute.PANEL_ID)
 
     @property
-    def serial_number(self) -> str:
+    def serial_number(self) -> Optional[str]:
         """Return the serial number for this device."""
         serial_number = self.data.get(Attribute.SERIAL_NUMBER_32_BIT)
         serial_number = (
