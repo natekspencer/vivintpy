@@ -1,14 +1,4 @@
 {
-  "0x0000:0x0000:0x0000": {
-    "description": "9 endpoints",
-    "label": "PowerStrip",
-    "manufacturer": "Sigma Designs (Former Zensys)"
-  },
-  "0x0000:0x0000:0x0003": {
-    "description": "endpoints for dimming and on/off",
-    "label": "ZM5202",
-    "manufacturer": "Sigma Designs (Former Zensys)"
-  },
   "0x0000:0x0001:0x0001": {
     "description": "QuickStick Combo",
     "label": "HUSBZB-1",
@@ -35,9 +25,9 @@
     "manufacturer": "Sigma Designs (Former Zensys)"
   },
   "0x0000:0x0003:0x0008": {
-    "description": "Smart Temperature & Humidity Sensor",
-    "label": "M417_9E",
-    "manufacturer": "Sigma Designs (Former Zensys)"
+    "description": "Z-Wave 500 Series Controller",
+    "label": "ACC-UZB3",
+    "manufacturer": "Silicon Labs"
   },
   "0x0000:0x0003:0x000b": {
     "description": "Z-wave 9 channel_module",
@@ -436,7 +426,7 @@
   },
   "0x000c:0x4447:0x3034": {
     "description": "Scene Capable Wall Dimmer Switch",
-    "label": "WD-100",
+    "label": "HS-WD100+",
     "manufacturer": "HomeSeer Technologies"
   },
   "0x000c:0x4447:0x3035": {
@@ -451,7 +441,7 @@
   },
   "0x000c:0x4744:0x3032": {
     "description": "Scene Capable Wall Dimmer Switch",
-    "label": "WD-100",
+    "label": "HS-WD100+",
     "manufacturer": "HomeSeer Technologies"
   },
   "0x0010:0x0001:0x0001": {
@@ -530,9 +520,9 @@
     "manufacturer": "Cyberhouse"
   },
   "0x0014:0x4457:0x3034": {
-    "description": "Linear -1",
-    "label": "WD500Z",
-    "manufacturer": "Cyberhouse"
+    "description": "Dimmer Switch",
+    "label": "WD500Z-1",
+    "manufacturer": "Linear"
   },
   "0x0014:0x4742:0x3030": {
     "description": "Linear -1",
@@ -754,6 +744,11 @@
     "label": "RFWC5",
     "manufacturer": "Eaton"
   },
+  "0x001a:0x574d:0xcc09": {
+    "description": "5-Scene Keypad",
+    "label": "RFWDC",
+    "manufacturer": "Eaton"
+  },
   "0x001d:0x0001:0x0001": {
     "description": "Touchpad Electronic Deadbolt",
     "label": "914TRL",
@@ -794,6 +789,11 @@
     "label": "ZW4SF",
     "manufacturer": "Leviton"
   },
+  "0x001d:0x0101:0x0328": {
+    "description": "Scene Capable Plug-In Appliance Module, 300W",
+    "label": "VRP15",
+    "manufacturer": "Leviton"
+  },
   "0x001d:0x0101:0x0334": {
     "description": "Scene Capable Plug-In Appliance Module, 300W",
     "label": "VRP15",
@@ -815,12 +815,12 @@
     "manufacturer": "Leviton"
   },
   "0x001d:0x0301:0x0209": {
-    "description": "Scene Capable Push On/Off",
+    "description": "Scene Capable Switch On/Off",
     "label": "VRS15",
     "manufacturer": "Leviton"
   },
   "0x001d:0x0301:0x0334": {
-    "description": "Scene Capable Push On/Off",
+    "description": "Scene Capable Switch On/Off",
     "label": "VRS15",
     "manufacturer": "Leviton"
   },
@@ -837,6 +837,11 @@
   "0x001d:0x0401:0x0334": {
     "description": "Incandescent Scene Capable Dimmer",
     "label": "VRI06",
+    "manufacturer": "Leviton"
+  },
+  "0x001d:0x0501:0x0206": {
+    "description": "Dimmer switch 1000w incandescent",
+    "label": "RZI10-1L",
     "manufacturer": "Leviton"
   },
   "0x001d:0x0501:0x0209": {
@@ -877,6 +882,11 @@
   "0x001d:0x0802:0x0261": {
     "description": "4-Scene Controller",
     "label": "VRCS4",
+    "manufacturer": "Leviton"
+  },
+  "0x001d:0x0901:0x0215": {
+    "description": "1-Scene Controller",
+    "label": "VRCS1",
     "manufacturer": "Leviton"
   },
   "0x001d:0x0902:0x0215": {
@@ -965,7 +975,7 @@
     "manufacturer": "Leviton"
   },
   "0x001d:0x1902:0x0334": {
-    "description": "Lamp Module",
+    "description": "Plug-in Lamp Dimming Module",
     "label": "DZPD3",
     "manufacturer": "Leviton"
   },
@@ -995,7 +1005,7 @@
     "manufacturer": "Leviton"
   },
   "0x001d:0x3201:0x0001": {
-    "description": "600W Dimmer",
+    "description": "In-Wall 600W Dimmer",
     "label": "DZ6HD",
     "manufacturer": "Leviton"
   },
@@ -1005,12 +1015,12 @@
     "manufacturer": "Leviton"
   },
   "0x001d:0x3401:0x0001": {
-    "description": "Scene Capable Push On/Off",
+    "description": "Scene Capable Switch On/Off",
     "label": "DZ15S",
     "manufacturer": "Leviton"
   },
   "0x001d:0x3501:0x0001": {
-    "description": "Lamp Module",
+    "description": "Plug-in Lamp Dimming Module",
     "label": "DZPD3",
     "manufacturer": "Leviton"
   },
@@ -2099,6 +2109,11 @@
     "label": "14287 / ZW4002",
     "manufacturer": "GE/Jasco"
   },
+  "0x0063:0x4944:0x3132": {
+    "description": "In-Wall Smart Toggle Dimmer",
+    "label": "14296 / ZW3011",
+    "manufacturer": "GE/Jasco"
+  },
   "0x0063:0x4944:0x3135": {
     "description": "In-Wall Dimmer",
     "label": "14321",
@@ -2391,7 +2406,7 @@
   },
   "0x0063:0x4c42:0x3031": {
     "description": "Enbrighten 60W Dimmable Light Bulb",
-    "label": "35931",
+    "label": "35931 / 39723",
     "manufacturer": "GE/Jasco"
   },
   "0x0063:0x4c42:0x3035": {
@@ -3215,7 +3230,7 @@
     "manufacturer": "AEON Labs"
   },
   "0x0086:0x0002:0x0005": {
-    "description": "4 in One MultiSensor",
+    "description": "4 in 1 MultiSensor",
     "label": "DSB05",
     "manufacturer": "AEON Labs"
   },
@@ -3245,7 +3260,7 @@
     "manufacturer": "AEON Labs"
   },
   "0x0086:0x0002:0x004a": {
-    "description": "4 in One MultiSensor (G5)",
+    "description": "MultiSensor Gen5",
     "label": "ZW074",
     "manufacturer": "AEON Labs"
   },
@@ -3255,7 +3270,7 @@
     "manufacturer": "AEON Labs"
   },
   "0x0086:0x0002:0x005f": {
-    "description": "Home Energy Meter - Gen 5",
+    "description": "Home Energy Meter - Gen5",
     "label": "ZW095",
     "manufacturer": "AEON Labs"
   },
@@ -3280,7 +3295,7 @@
     "manufacturer": "AEON Labs"
   },
   "0x0086:0x0002:0x0078": {
-    "description": "Door/Window sensor Gen5",
+    "description": "Door/Window Sensor Gen5",
     "label": "ZW120",
     "manufacturer": "AEON Labs"
   },
@@ -3290,7 +3305,7 @@
     "manufacturer": "AEON Labs"
   },
   "0x0086:0x0002:0x0081": {
-    "description": "Dual Wallmote",
+    "description": "Wallmote Duo",
     "label": "ZW129",
     "manufacturer": "AEON Labs"
   },
@@ -3361,7 +3376,7 @@
   },
   "0x0086:0x0003:0x001a": {
     "description": "Micro Switch G2",
-    "label": "DSC26103-ZW",
+    "label": "DSC26",
     "manufacturer": "AEON Labs"
   },
   "0x0086:0x0003:0x001b": {
@@ -3380,7 +3395,7 @@
     "manufacturer": "AEON Labs"
   },
   "0x0086:0x0003:0x004b": {
-    "description": "Smart Energy Switch 3rd Edition",
+    "description": "Smart Switch Gen5",
     "label": "ZW075",
     "manufacturer": "AEON Labs"
   },
@@ -3395,7 +3410,7 @@
     "manufacturer": "AEON Labs"
   },
   "0x0086:0x0003:0x0062": {
-    "description": "LED Bulb",
+    "description": "LED Bulb Gen5",
     "label": "ZW098",
     "manufacturer": "AEON Labs"
   },
@@ -3435,12 +3450,12 @@
     "manufacturer": "AEON Labs"
   },
   "0x0086:0x0003:0x008d": {
-    "description": "ZW141",
-    "label": "Nano Shutter Controller",
+    "description": "Nano Shutter V.2",
+    "label": "ZW141",
     "manufacturer": "AEON Labs"
   },
   "0x0086:0x0003:0xa10d": {
-    "description": "4 group single colour touch panel secondary controller",
+    "description": "4 Group Touch Panel Secondary Controller",
     "label": "ZV9001T4-DIM",
     "manufacturer": "AEON Labs"
   },
@@ -3455,7 +3470,7 @@
     "manufacturer": "AEON Labs"
   },
   "0x0086:0x0004:0x0050": {
-    "description": "Outlet Plugable Siren",
+    "description": "Siren Gen5",
     "label": "DSD31",
     "manufacturer": "AEON Labs"
   },
@@ -3474,6 +3489,11 @@
     "label": "DSD37",
     "manufacturer": "AEON Labs"
   },
+  "0x0086:0x001b:0x0048": {
+    "description": "Smart Switch Gen5",
+    "label": "ZW075",
+    "manufacturer": "AEON Labs"
+  },
   "0x0086:0x0101:0x0058": {
     "description": "4 button keyfob - Gen 5",
     "label": "ZW088",
@@ -3485,7 +3505,7 @@
     "manufacturer": "AEON Labs"
   },
   "0x0086:0x0102:0x004a": {
-    "description": "4 in One MultiSensor (G5)",
+    "description": "MultiSensor Gen5",
     "label": "ZW074",
     "manufacturer": "AEON Labs"
   },
@@ -3495,7 +3515,7 @@
     "manufacturer": "AEON Labs"
   },
   "0x0086:0x0102:0x005f": {
-    "description": "Home Energy Meter - Gen 5",
+    "description": "Home Energy Meter - Gen5",
     "label": "ZW095",
     "manufacturer": "AEON Labs"
   },
@@ -3515,7 +3535,7 @@
     "manufacturer": "AEON Labs"
   },
   "0x0086:0x0102:0x0078": {
-    "description": "Door/Window sensor Gen5",
+    "description": "Door/Window Sensor Gen5",
     "label": "ZW120",
     "manufacturer": "AEON Labs"
   },
@@ -3525,7 +3545,7 @@
     "manufacturer": "AEON Labs"
   },
   "0x0086:0x0102:0x0081": {
-    "description": "Dual Wallmote",
+    "description": "Wallmote Duo",
     "label": "ZW129",
     "manufacturer": "AEON Labs"
   },
@@ -3540,7 +3560,7 @@
     "manufacturer": "AEON Labs"
   },
   "0x0086:0x0103:0x004b": {
-    "description": "Smart Energy Switch 3rd Edition",
+    "description": "Smart Switch Gen5",
     "label": "ZW075",
     "manufacturer": "AEON Labs"
   },
@@ -3555,7 +3575,7 @@
     "manufacturer": "AEON Labs"
   },
   "0x0086:0x0103:0x0062": {
-    "description": "LED Bulb",
+    "description": "LED Bulb Gen5",
     "label": "ZW098",
     "manufacturer": "AEON Labs"
   },
@@ -3595,8 +3615,8 @@
     "manufacturer": "AEON Labs"
   },
   "0x0086:0x0103:0x008d": {
-    "description": "ZW141",
-    "label": "Nano Shutter Controller",
+    "description": "Nano Shutter V.2",
+    "label": "ZW141",
     "manufacturer": "AEON Labs"
   },
   "0x0086:0x0104:0x0038": {
@@ -3635,7 +3655,7 @@
     "manufacturer": "AEON Labs"
   },
   "0x0086:0x0202:0x004a": {
-    "description": "4 in One MultiSensor (G5)",
+    "description": "MultiSensor Gen5",
     "label": "ZW074",
     "manufacturer": "AEON Labs"
   },
@@ -3660,7 +3680,7 @@
     "manufacturer": "AEON Labs"
   },
   "0x0086:0x0202:0x0078": {
-    "description": "Door/Window sensor Gen5",
+    "description": "Door/Window Sensor Gen5",
     "label": "ZW120",
     "manufacturer": "AEON Labs"
   },
@@ -3670,7 +3690,7 @@
     "manufacturer": "AEON Labs"
   },
   "0x0086:0x0202:0x0081": {
-    "description": "Dual Wallmote",
+    "description": "Wallmote Duo",
     "label": "ZW129",
     "manufacturer": "AEON Labs"
   },
@@ -3685,7 +3705,7 @@
     "manufacturer": "AEON Labs"
   },
   "0x0086:0x0203:0x004b": {
-    "description": "Smart Energy Switch 3rd Edition",
+    "description": "Smart Switch Gen5",
     "label": "ZW075",
     "manufacturer": "AEON Labs"
   },
@@ -3700,7 +3720,7 @@
     "manufacturer": "AEON Labs"
   },
   "0x0086:0x0203:0x0062": {
-    "description": "LED Bulb",
+    "description": "LED Bulb Gen5",
     "label": "ZW098",
     "manufacturer": "AEON Labs"
   },
@@ -3734,6 +3754,11 @@
     "label": "ZW139",
     "manufacturer": "AEON Labs"
   },
+  "0x0086:0x0203:0x008c": {
+    "description": "Dual Nano Switch",
+    "label": "ZW140",
+    "manufacturer": "AEON Labs"
+  },
   "0x0086:0x0204:0x0038": {
     "description": "Doorbell",
     "label": "ZW056",
@@ -3750,8 +3775,63 @@
     "manufacturer": "AEON Labs"
   },
   "0x0086:0x0300:0xa10b": {
-    "description": "4 group single colour touch panel secondary controller",
+    "description": "4 Group Touch Panel Secondary Controller",
     "label": "ZV9001T4-DIM",
+    "manufacturer": "AEON Labs"
+  },
+  "0x0086:0x0302:0x0064": {
+    "description": "MultiSensor 6",
+    "label": "ZW100",
+    "manufacturer": "AEON Labs"
+  },
+  "0x0086:0x0302:0x0070": {
+    "description": "Door/Window Sensor 6",
+    "label": "ZW112",
+    "manufacturer": "AEON Labs"
+  },
+  "0x0086:0x0302:0x0078": {
+    "description": "Door/Window Sensor Gen5",
+    "label": "ZW120",
+    "manufacturer": "AEON Labs"
+  },
+  "0x0086:0x0302:0x0082": {
+    "description": "WallMote Quad",
+    "label": "ZW130",
+    "manufacturer": "AEON Labs"
+  },
+  "0x0086:0x0303:0x0060": {
+    "description": "Smart Switch 6",
+    "label": "ZW096",
+    "manufacturer": "AEON Labs"
+  },
+  "0x0086:0x0303:0x0062": {
+    "description": "LED Bulb Gen5",
+    "label": "ZW098",
+    "manufacturer": "AEON Labs"
+  },
+  "0x0086:0x0303:0x006f": {
+    "description": "Nano Dimmer",
+    "label": "ZW111",
+    "manufacturer": "AEON Labs"
+  },
+  "0x0086:0x0303:0x0079": {
+    "description": "Aeotec LED Strip",
+    "label": "ZW121",
+    "manufacturer": "AEON Labs"
+  },
+  "0x0086:0x0303:0x008b": {
+    "description": "Nano Switch Gen5 (without meter)",
+    "label": "ZW139",
+    "manufacturer": "AEON Labs"
+  },
+  "0x0086:0x0303:0x008c": {
+    "description": "Dual Nano Switch",
+    "label": "ZW140",
+    "manufacturer": "AEON Labs"
+  },
+  "0x0086:0x0303:0x008d": {
+    "description": "Nano Shutter V.2",
+    "label": "ZW141",
     "manufacturer": "AEON Labs"
   },
   "0x0086:0x0304:0x0038": {
@@ -3759,14 +3839,44 @@
     "label": "ZW056",
     "manufacturer": "AEON Labs"
   },
+  "0x0086:0x0902:0x0082": {
+    "description": "WallMote Quad",
+    "label": "ZW130",
+    "manufacturer": "AEON Labs"
+  },
+  "0x0086:0x0903:0x0074": {
+    "description": "Aeotec Nano Switch",
+    "label": "ZW116",
+    "manufacturer": "AEON Labs"
+  },
+  "0x0086:0x0903:0x0084": {
+    "description": "Dual Nano Switch with Energy Metering",
+    "label": "ZW132",
+    "manufacturer": "AEON Labs"
+  },
+  "0x0086:0x0903:0x008d": {
+    "description": "Nano Shutter V.2",
+    "label": "ZW141",
+    "manufacturer": "AEON Labs"
+  },
   "0x0086:0x0904:0x0038": {
     "description": "Doorbell",
     "label": "ZW056",
     "manufacturer": "AEON Labs"
   },
+  "0x0086:0x0a02:0x0070": {
+    "description": "Door/Window Sensor 6",
+    "label": "ZW112",
+    "manufacturer": "AEON Labs"
+  },
   "0x0086:0x0a04:0x0038": {
     "description": "Doorbell",
     "label": "ZW056",
+    "manufacturer": "AEON Labs"
+  },
+  "0x0086:0x0a04:0x0075": {
+    "description": "Range Extender 6",
+    "label": "ZW117",
     "manufacturer": "AEON Labs"
   },
   "0x0086:0x1a02:0x0064": {
@@ -3782,6 +3892,16 @@
   "0x0086:0x1a04:0x0038": {
     "description": "Doorbell",
     "label": "ZW056",
+    "manufacturer": "AEON Labs"
+  },
+  "0x0086:0x1c02:0x0070": {
+    "description": "Door/Window Sensor 6",
+    "label": "ZW112",
+    "manufacturer": "AEON Labs"
+  },
+  "0x0086:0x1c04:0x0075": {
+    "description": "Range Extender 6",
+    "label": "ZW117",
     "manufacturer": "AEON Labs"
   },
   "0x0086:0x1d02:0x0070": {
@@ -4144,6 +4264,11 @@
     "label": "916",
     "manufacturer": "Kwikset"
   },
+  "0x0090:0x0003:0x0000": {
+    "description": "Smart Code with Home Connect Technology",
+    "label": "910",
+    "manufacturer": "Kwikset"
+  },
   "0x0090:0x0003:0x0236": {
     "description": "Door Lock",
     "label": "912",
@@ -4152,6 +4277,11 @@
   "0x0090:0x0003:0x0238": {
     "description": "Smart Code with Home Connect Technology",
     "label": "910",
+    "manufacturer": "Kwikset"
+  },
+  "0x0090:0x0003:0x0336": {
+    "description": "Door Lock",
+    "label": "912",
     "manufacturer": "Kwikset"
   },
   "0x0090:0x0003:0x0339": {
@@ -4189,9 +4319,19 @@
     "label": "914",
     "manufacturer": "Kwikset"
   },
+  "0x0090:0x0006:0x0339": {
+    "description": "SmartCode 5 Touchpad Electronic Lever",
+    "label": "GED1455",
+    "manufacturer": "Weiser"
+  },
   "0x0090:0x0006:0x0440": {
     "description": "SmartCode 10 Touchpad Electronic Deadbolt",
     "label": "GED1800",
+    "manufacturer": "Weiser"
+  },
+  "0x0090:0x0006:0x0642": {
+    "description": "SmartCode 10 Touchscreen Electronic Deadbolt",
+    "label": "GED2150",
     "manufacturer": "Weiser"
   },
   "0x0090:0x0006:0x0742": {
@@ -4360,18 +4500,18 @@
     "manufacturer": "Wintop"
   },
   "0x0097:0x1182:0x4500": {
-    "description": "Wintop iDoorSensor",
+    "description": "iDoorSensor",
+    "label": "82",
+    "manufacturer": "Wintop"
+  },
+  "0x0097:0x1182:0x5101": {
+    "description": "iDoorSensor",
     "label": "82",
     "manufacturer": "Wintop"
   },
   "0x0097:0x1200:0x5502": {
     "description": "DHS Z-Wave Micro Dimmer",
     "label": "DHSZWDMIW01",
-    "manufacturer": "Wintop"
-  },
-  "0x0097:0x4501:0x6131": {
-    "description": "Keypad with alarm activation rfid tag",
-    "label": "MINI KEYPAD RFID",
     "manufacturer": "Wintop"
   },
   "0x0097:0x6123:0x4500": {
@@ -4555,6 +4695,11 @@
     "manufacturer": "Radio Thermostat Company of America (RTC)"
   },
   "0x0098:0x6501:0x000d": {
+    "description": "Z-Wave Thermostat",
+    "label": "CT101",
+    "manufacturer": "Radio Thermostat Company of America (RTC)"
+  },
+  "0x0098:0x6501:0x00fd": {
     "description": "Z-Wave Thermostat",
     "label": "CT101",
     "manufacturer": "Radio Thermostat Company of America (RTC)"
@@ -5384,6 +5529,11 @@
     "label": "FGS211 / FGS221",
     "manufacturer": "Fibargroup"
   },
+  "0x010f:0x0200:0x400a": {
+    "description": "Double Relay Switch 2x1.5kW",
+    "label": "FGS211 / FGS221",
+    "manufacturer": "Fibargroup"
+  },
   "0x010f:0x0202:0x1002": {
     "description": "Double Relay Switch 2x1.5kW",
     "label": "FGS222",
@@ -5430,6 +5580,11 @@
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0204:0x1000": {
+    "description": "Double Smart Module",
+    "label": "FGS224",
+    "manufacturer": "FIBARO System"
+  },
+  "0x010f:0x0204:0x3000": {
     "description": "Double Smart Module",
     "label": "FGS224",
     "manufacturer": "FIBARO System"
@@ -5634,12 +5789,22 @@
     "label": "FGWPE/F-101",
     "manufacturer": "Fibargroup"
   },
+  "0x010f:0x0600:0x4000": {
+    "description": "Metered Wall Plug Switch",
+    "label": "FGWPE/F-101",
+    "manufacturer": "Fibargroup"
+  },
   "0x010f:0x0602:0x1001": {
     "description": "Metered Wall Plug Switch",
     "label": "FGWP102",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0602:0x1003": {
+    "description": "Metered Wall Plug Switch",
+    "label": "FGWP102",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0602:0x4003": {
     "description": "Metered Wall Plug Switch",
     "label": "FGWP102",
     "manufacturer": "Fibargroup"
@@ -5655,6 +5820,11 @@
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0700:0x3000": {
+    "description": "Door Opening Sensor",
+    "label": "FGK101",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0700:0x4000": {
     "description": "Door Opening Sensor",
     "label": "FGK101",
     "manufacturer": "Fibargroup"
@@ -5784,6 +5954,21 @@
     "label": "FGRGBW-442",
     "manufacturer": "Fibargroup"
   },
+  "0x010f:0x0902:0x2000": {
+    "description": "RGBW CONTROLLER 2",
+    "label": "FGRGBW-442",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0902:0x3000": {
+    "description": "RGBW CONTROLLER 2",
+    "label": "FGRGBW-442",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0902:0x4000": {
+    "description": "RGBW CONTROLLER 2",
+    "label": "FGRGBW-442",
+    "manufacturer": "Fibargroup"
+  },
   "0x010f:0x0b00:0x1001": {
     "description": "Flood Sensor",
     "label": "FGFS101",
@@ -5810,6 +5995,11 @@
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0b01:0x2002": {
+    "description": "Flood Sensor",
+    "label": "FGFS101",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0b01:0x2003": {
     "description": "Flood Sensor",
     "label": "FGFS101",
     "manufacturer": "Fibargroup"
@@ -5924,6 +6114,11 @@
     "label": "FGKF601",
     "manufacturer": "Fibargroup"
   },
+  "0x010f:0x1001:0x4000": {
+    "description": "Keyfob",
+    "label": "FGKF601",
+    "manufacturer": "Fibargroup"
+  },
   "0x010f:0x1201:0x1000": {
     "description": "Carbon Monoxide Sensor",
     "label": "FGCD001",
@@ -5947,6 +6142,11 @@
   "0x010f:0x1401:0x2000": {
     "description": "Fibaro Wall Plug",
     "label": "FGWPB-121",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x1501:0x1000": {
+    "description": "Fibaro Wall Plug",
+    "label": "FGWPG-121",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x1701:0x2000": {
@@ -6060,7 +6260,7 @@
     "manufacturer": "Evolve"
   },
   "0x0113:0x5246:0x3133": {
-    "description": "",
+    "description": "20A Relay Fixture Module",
     "label": "LFM-20",
     "manufacturer": "Evolve"
   },
@@ -6213,6 +6413,11 @@
     "description": "Z-Wave Remote Control+",
     "label": "ZME_RC2",
     "manufacturer": "Z-Wave.Me"
+  },
+  "0x0115:0xf111:0x1111": {
+    "description": "MultiRelay",
+    "label": "RS-10PM2",
+    "manufacturer": "Haseman"
   },
   "0x0115:0xf222:0x2111": {
     "description": "4x Relay and 4x Universal Dimmer",
@@ -6444,6 +6649,11 @@
     "label": "GR308",
     "manufacturer": "TKB Home"
   },
+  "0x011a:0x0101:0x0101": {
+    "description": "Binary Switch",
+    "label": "ZW15S",
+    "manufacturer": "Wenzhou MTLC Electric Appliances Co., Ltd."
+  },
   "0x011a:0x0101:0x0102": {
     "description": "Binary Switch",
     "label": "ZW15S",
@@ -6466,12 +6676,12 @@
   },
   "0x011a:0x0101:0x5605": {
     "description": "Smart Relay Switch Module",
-    "label": "ZWN-RSM1-PLUS",
+    "label": "ZWN-RSM1 / ZWN-RSM1-PLUS",
     "manufacturer": "Wenzhou MTLC Electric Appliances Co., Ltd."
   },
   "0x011a:0x0101:0x5606": {
     "description": "Smart Dual Relay Switch Module",
-    "label": "ZWN-RSM1 / ZWN-RSM2",
+    "label": "ZWN-RSM2 / ZWN-RSM2-PLUS",
     "manufacturer": "Wenzhou MTLC Electric Appliances Co., Ltd."
   },
   "0x011a:0x0102:0x0201": {
@@ -6510,13 +6720,13 @@
     "manufacturer": "Wenzhou MTLC Electric Appliances Co., Ltd."
   },
   "0x011a:0x0111:0x0605": {
-    "description": "Smart Dual Relay Switch Module",
-    "label": "ZWN-RSM1 / ZWN-RSM2",
+    "description": "Smart Relay Switch Module",
+    "label": "ZWN-RSM1 / ZWN-RSM1-PLUS",
     "manufacturer": "Wenzhou MTLC Electric Appliances Co., Ltd."
   },
   "0x011a:0x0111:0x0606": {
     "description": "Smart Dual Relay Switch Module",
-    "label": "ZWN-RSM1 / ZWN-RSM2",
+    "label": "ZWN-RSM2 / ZWN-RSM2-PLUS",
     "manufacturer": "Wenzhou MTLC Electric Appliances Co., Ltd."
   },
   "0x011a:0x0601:0x0901": {
@@ -6724,6 +6934,11 @@
     "label": "YRD210",
     "manufacturer": "Yale"
   },
+  "0x0129:0x0004:0xffff": {
+    "description": "Push Button Deadbolt",
+    "label": "YRD210",
+    "manufacturer": "Yale"
+  },
   "0x0129:0x0006:0x0000": {
     "description": "Smart Living Keyfree Smart Lock",
     "label": "YDM3109 / YDM4109",
@@ -6757,6 +6972,11 @@
   "0x0129:0x0066:0x0000": {
     "description": "Conexis L1",
     "label": "SD-L1000-CH",
+    "manufacturer": "Yale"
+  },
+  "0x0129:0x0600:0x0000": {
+    "description": "Keyfree Connected Lock",
+    "label": "YKFCON",
     "manufacturer": "Yale"
   },
   "0x0129:0x2022:0x0209": {
@@ -7160,7 +7380,7 @@
     "manufacturer": "Philio Technology Corp"
   },
   "0x013c:0x0001:0x0003": {
-    "description": "In Wall Dual Relay(1 Way) Switch Module 2x 1.5kW with power meter",
+    "description": "In Wall Dual Relay Switch Module 2x1.5kW with power meter",
     "label": "PAN04",
     "manufacturer": "Philio Technology Corp"
   },
@@ -7195,7 +7415,7 @@
     "manufacturer": "Philio Technology Corp"
   },
   "0x013c:0x0001:0x0012": {
-    "description": "In Wall Dual Relay(1 Way) Switch Module 2x 1.5kW with power meter",
+    "description": "In Wall Dual Relay Switch Module 2x1.5kW with power meter",
     "label": "PAN04",
     "manufacturer": "Philio Technology Corp"
   },
@@ -7205,7 +7425,7 @@
     "manufacturer": "Philio Technology Corp"
   },
   "0x013c:0x0001:0x0014": {
-    "description": "In Wall Dual Relay(1 Way) Switch Module 2x 1.5kW with power meter",
+    "description": "In Wall Dual Relay Switch Module 2x1.5kW with power meter",
     "label": "PAN04",
     "manufacturer": "Philio Technology Corp"
   },
@@ -7230,7 +7450,7 @@
     "manufacturer": "Philio Technology Corp"
   },
   "0x013c:0x0001:0x0061": {
-    "description": "In Wall Dual Relay(1 Way) Switch Module 2x 1.5kW with power meter",
+    "description": "In Wall Dual Relay Switch Module 2x1.5kW with power meter",
     "label": "PAN04",
     "manufacturer": "Philio Technology Corp"
   },
@@ -7664,6 +7884,11 @@
     "label": "WF00Z",
     "manufacturer": "Nortek Security & Control LLC"
   },
+  "0x014f:0x2024:0x2401": {
+    "description": "PIR Motion Detector",
+    "label": "PIR-200",
+    "manufacturer": "Nortek Security & Control LLC"
+  },
   "0x014f:0x4153:0x3031": {
     "description": "ADT Security Hub",
     "label": "Security Hub",
@@ -7726,7 +7951,7 @@
   },
   "0x014f:0x5053:0x3531": {
     "description": "Appliance Module",
-    "label": "PS15EMZ51",
+    "label": "PS15EMZ5-1",
     "manufacturer": "Nortek Security & Control LLC"
   },
   "0x014f:0x5246:0x3133": {
@@ -7939,14 +8164,19 @@
     "label": "POPE700397",
     "manufacturer": "Popp & Co"
   },
+  "0x0154:0x0003:0x0512": {
+    "description": "Flow Stop",
+    "label": "POPE009501",
+    "manufacturer": "Popp & Co"
+  },
   "0x0154:0x0003:0x1002": {
     "description": "Power Plug",
     "label": "700793",
     "manufacturer": "Popp & Co"
   },
   "0x0154:0x0004:0x0002": {
-    "description": "POPP Solar Outdoor Siren 2",
-    "label": "700854",
+    "description": "Solar Powered Outdoor Siren",
+    "label": "005107",
     "manufacturer": "Popp & Co"
   },
   "0x0154:0x0004:0x0003": {
@@ -7967,6 +8197,11 @@
   "0x0154:0x0004:0x0008": {
     "description": "Water Leakage Sensor",
     "label": "POPE700052",
+    "manufacturer": "Popp & Co"
+  },
+  "0x0154:0x0004:0x000d": {
+    "description": "10-Years Smoke Detector Without Siren",
+    "label": "POPE700342",
     "manufacturer": "Popp & Co"
   },
   "0x0154:0x0004:0x0011": {
@@ -7990,8 +8225,8 @@
     "manufacturer": "Popp & Co"
   },
   "0x0154:0x0005:0x0003": {
-    "description": "Popp 09501 Flow Stop",
-    "label": "009501",
+    "description": "Flow Stop 2",
+    "label": "POPE701479",
     "manufacturer": "Popp & Co"
   },
   "0x0154:0x0100:0x0101": {
@@ -8189,6 +8424,11 @@
     "label": "ZMNKID",
     "manufacturer": "Qubino"
   },
+  "0x0159:0x0006:0x0051": {
+    "description": "Smart Leak Protector",
+    "label": "ZMNHMD",
+    "manufacturer": "Qubino"
+  },
   "0x0159:0x0007:0x0052": {
     "description": "Smart Meter",
     "label": "ZMNHTD",
@@ -8349,6 +8589,11 @@
     "label": "NZW30T",
     "manufacturer": "Willis Electric Co., Ltd."
   },
+  "0x015d:0x1e01:0x1e01": {
+    "description": "Inovelli In-Wall Switch (On/Off) Scene Enabled",
+    "label": "NZW30T",
+    "manufacturer": "Willis Electric Co., Ltd."
+  },
   "0x015d:0x1e02:0x1e02": {
     "description": "Inovelli In-Wall Switch (On/Off) Scene Enabled",
     "label": "NZW30T",
@@ -8459,6 +8704,11 @@
     "label": "MH6-HP",
     "manufacturer": "McoHome Technology Co., Ltd."
   },
+  "0x015f:0x0604:0x5101": {
+    "description": "Programmable Thermostat",
+    "label": "MH6-HP",
+    "manufacturer": "McoHome Technology Co., Ltd."
+  },
   "0x015f:0x0701:0x5102": {
     "description": "Water / Electrical Heating Thermostat",
     "label": "MH7H",
@@ -8545,7 +8795,12 @@
     "manufacturer": "McoHome Technology Co., Ltd."
   },
   "0x015f:0x2121:0x1352": {
-    "description": "Mini Combo Switch",
+    "description": "Mini Combo Switch Two-load",
+    "label": "MH-S212",
+    "manufacturer": "McoHome Technology Co., Ltd."
+  },
+  "0x015f:0x2121:0x1353": {
+    "description": "Mini Combo Switch Two-load",
     "label": "MH-S212",
     "manufacturer": "McoHome Technology Co., Ltd."
   },
@@ -8554,7 +8809,17 @@
     "label": "MH-P220",
     "manufacturer": "McoHome Technology Co., Ltd."
   },
+  "0x015f:0x220a:0x5101": {
+    "description": "Micro Dimmer",
+    "label": "MH-P220",
+    "manufacturer": "McoHome Technology Co., Ltd."
+  },
   "0x015f:0x220a:0x5102": {
+    "description": "Micro Dimmer",
+    "label": "MH-P220",
+    "manufacturer": "McoHome Technology Co., Ltd."
+  },
+  "0x015f:0x220a:0x5103": {
     "description": "Micro Dimmer",
     "label": "MH-P220",
     "manufacturer": "McoHome Technology Co., Ltd."
@@ -8639,9 +8904,9 @@
     "label": "MH-S412",
     "manufacturer": "McoHome Technology Co., Ltd."
   },
-  "0x015f:0x5111:0x1406": {
-    "description": "MCOHome touch switch Relay",
-    "label": "MH-S511-IL",
+  "0x015f:0x5111:0x5103": {
+    "description": "Touch Panel Switch",
+    "label": "MH-S511",
     "manufacturer": "McoHome Technology Co., Ltd."
   },
   "0x015f:0x511a:0x1452": {
@@ -8649,19 +8914,24 @@
     "label": "MH-P311",
     "manufacturer": "McoHome Technology Co., Ltd."
   },
-  "0x015f:0x5121:0x1406": {
-    "description": "MCOHome Touch Dual Switch Relay",
-    "label": "MH-S512-IL",
-    "manufacturer": "McoHome Technology Co., Ltd."
-  },
   "0x015f:0x5121:0x5103": {
     "description": "Touch Panel Switch 2-Way",
     "label": "MH-S512",
     "manufacturer": "McoHome Technology Co., Ltd."
   },
+  "0x015f:0x5131:0x5101": {
+    "description": "Touch Panel Switch",
+    "label": "MH-S510",
+    "manufacturer": "McoHome Technology Co., Ltd."
+  },
   "0x015f:0x5131:0x5103": {
     "description": "Touch Panel Switch 3-Way",
     "label": "MH-S513",
+    "manufacturer": "McoHome Technology Co., Ltd."
+  },
+  "0x015f:0xa803:0x135a": {
+    "description": "9 in 1 MULTI-SENSOR",
+    "label": "A8-9",
     "manufacturer": "McoHome Technology Co., Ltd."
   },
   "0x015f:0xc221:0x5102": {
@@ -8685,13 +8955,23 @@
     "manufacturer": "McoHome Technology Co., Ltd."
   },
   "0x015f:0xd311:0x5102": {
-    "description": "MCOHome Dimmer Switch",
-    "label": "MH-DT311/MH-DT411",
+    "description": "Dimmer Switch",
+    "label": "MH-DT311 / MH-DT411 / MH-DT511",
     "manufacturer": "McoHome Technology Co., Ltd."
   },
   "0x015f:0xd411:0x5102": {
-    "description": "MCOHome Dimmer Switch",
-    "label": "MH-DT311/MH-DT411",
+    "description": "Dimmer Switch",
+    "label": "MH-DT311 / MH-DT411 / MH-DT511",
+    "manufacturer": "McoHome Technology Co., Ltd."
+  },
+  "0x015f:0xd511:0x5103": {
+    "description": "Dimmer Switch",
+    "label": "MH-DT311 / MH-DT411 / MH-DT511",
+    "manufacturer": "McoHome Technology Co., Ltd."
+  },
+  "0x015f:0xf501:0x7102": {
+    "description": "Fan Coil Thermostat",
+    "label": "MH5-2A",
     "manufacturer": "McoHome Technology Co., Ltd."
   },
   "0x0160:0x0001:0x0001": {
@@ -8854,6 +9134,21 @@
     "label": "FT101",
     "manufacturer": "Fantem"
   },
+  "0x016a:0x0202:0x004a": {
+    "description": "Door/Window Sensor 6",
+    "label": "FT112",
+    "manufacturer": "Fantem"
+  },
+  "0x016a:0x0202:0x0064": {
+    "description": "Oomi Multisensor",
+    "label": "FT100",
+    "manufacturer": "Fantem"
+  },
+  "0x016a:0x0202:0x0070": {
+    "description": "Door/Window Sensor 6",
+    "label": "FT112",
+    "manufacturer": "Fantem"
+  },
   "0x016a:0x0203:0x0060": {
     "description": "Plug-in Switch",
     "label": "FT096",
@@ -8875,8 +9170,8 @@
     "manufacturer": "Fantem"
   },
   "0x016a:0x1d02:0x0070": {
-    "description": "Door / Window Sensor",
-    "label": "FT112-K",
+    "description": "Door/Window Sensor 6",
+    "label": "FT112",
     "manufacturer": "Fantem"
   },
   "0x016a:0x1d02:0x0082": {
@@ -8890,8 +9185,8 @@
     "manufacturer": "Fantem"
   },
   "0x016a:0x1d03:0x006f": {
-    "description": "In-Wall Dimmer",
-    "label": "FT111-K",
+    "description": "Nano Dimmer",
+    "label": "FT111",
     "manufacturer": "Fantem"
   },
   "0x016b:0x0001:0x0002": {
@@ -9414,6 +9709,11 @@
     "label": "Z-Smoke 230V",
     "manufacturer": "Heatit"
   },
+  "0x019b:0x0003:0x0018": {
+    "description": "Wireless Smoke Detector",
+    "label": "Z-Smoke Battery",
+    "manufacturer": "Heatit"
+  },
   "0x019b:0x0003:0x0201": {
     "description": "ZWave Thermostat",
     "label": "TF016",
@@ -9463,6 +9763,11 @@
     "description": "Battery operated thermostat",
     "label": "Z-Temp2",
     "manufacturer": "ThermoFloor AS"
+  },
+  "0x019b:0x0004:0x3500": {
+    "description": "Heatit ZM Single Relay 16A",
+    "label": "4512671",
+    "manufacturer": "HeatIt"
   },
   "0x019b:0x0300:0xa305": {
     "description": "Wall Mounted Switch",
@@ -10050,23 +10355,53 @@
     "manufacturer": "Logic Group"
   },
   "0x0234:0x0003:0x010d": {
-    "description": "DIN-rail module with 10 digital ouputs and 4 digital inputs",
-    "label": "LHC5020",
+    "description": "DIN Rail Interface",
+    "label": "ZIF5020",
     "manufacturer": "Logic Group"
   },
   "0x0234:0x0003:0x0111": {
-    "description": "DIN Mount Multiple Actuator Controller for Floor Heating",
-    "label": "LHC5031",
+    "description": "DIN Rail Interface",
+    "label": "ZIF5031",
     "manufacturer": "Logic Group"
   },
   "0x0234:0x0003:0x0112": {
-    "description": "6 relay switches and 6 digital inputs module for DIN rail",
-    "label": "ZIF5028 / HeatIt Z-DIN 616",
+    "description": "DIN Rail Interface",
+    "label": "ZIF5028",
     "manufacturer": "Logic Group"
   },
   "0x0234:0x0003:0x0121": {
-    "description": "MATRIX Switch with Dimmer and Backlight",
+    "description": "Wall Controller",
     "label": "ZDB5100",
+    "manufacturer": "Logic Group"
+  },
+  "0x0234:0x0003:0x0122": {
+    "description": "DIN Rail Metering",
+    "label": "ZIF5029",
+    "manufacturer": "Logic Group"
+  },
+  "0x0234:0x0003:0x0123": {
+    "description": "Dimmer",
+    "label": "ZDI5200",
+    "manufacturer": "Logic Group"
+  },
+  "0x0234:0x0003:0x0124": {
+    "description": "Wall Controller",
+    "label": "ZDB5400",
+    "manufacturer": "Logic Group"
+  },
+  "0x0234:0x0003:0x0125": {
+    "description": "Wall Controller",
+    "label": "ZRB5120",
+    "manufacturer": "Logic Group"
+  },
+  "0x0234:0x0003:0x012a": {
+    "description": "Wall Socket",
+    "label": "ZSO7300",
+    "manufacturer": "Logic Group"
+  },
+  "0x0234:0x0004:0x0129": {
+    "description": "Battery Wall Controller",
+    "label": "ZBA7140",
     "manufacturer": "Logic Group"
   },
   "0x0236:0x0003:0x0002": {
@@ -10244,6 +10579,11 @@
     "label": "DN3G6JA062",
     "manufacturer": "Z-works Inc."
   },
+  "0x024e:0x0021:0x0014": {
+    "description": "Garage Door Opener",
+    "label": "DHS-WIN-GDC-02",
+    "manufacturer": "zConnect"
+  },
   "0x024f:0x0003:0x1002": {
     "description": "Multifunction Switch",
     "label": "FMS01",
@@ -10286,7 +10626,7 @@
   },
   "0x0258:0x0003:0x0083": {
     "description": "PIR Motion Sensor",
-    "label": "Motion Sensor",
+    "label": "NAS-PD01Z",
     "manufacturer": "Shenzhen Neo Electronics Co., Ltd."
   },
   "0x0258:0x0003:0x0085": {
@@ -10310,8 +10650,8 @@
     "manufacturer": "Shenzhen Neo Electronics Co., Ltd."
   },
   "0x0258:0x0003:0x008d": {
-    "description": "PIR Motion Sensor",
-    "label": "Motion Sensor",
+    "description": "PIR Motion Sensor 2",
+    "label": "NAS-PD02Z",
     "manufacturer": "Shenzhen Neo Electronics Co., Ltd."
   },
   "0x0258:0x0003:0x1082": {
@@ -10321,7 +10661,7 @@
   },
   "0x0258:0x0003:0x1083": {
     "description": "PIR Motion Sensor",
-    "label": "Motion Sensor",
+    "label": "NAS-PD01Z",
     "manufacturer": "Shenzhen Neo Electronics Co., Ltd."
   },
   "0x0258:0x0003:0x1085": {
@@ -10355,8 +10695,8 @@
     "manufacturer": "Shenzhen Neo Electronics Co., Ltd."
   },
   "0x0258:0x0003:0x108d": {
-    "description": "PIR Motion Sensor with Temperature Sensor",
-    "label": "PD03Z",
+    "description": "PIR Motion Sensor 3",
+    "label": "NAS-PD03Z",
     "manufacturer": "Shenzhen Neo Electronics Co., Ltd."
   },
   "0x0258:0x0003:0x108f": {
@@ -10376,7 +10716,7 @@
   },
   "0x0258:0x0003:0x2083": {
     "description": "PIR Motion Sensor",
-    "label": "Motion Sensor",
+    "label": "NAS-PD01Z",
     "manufacturer": "Shenzhen Neo Electronics Co., Ltd."
   },
   "0x0258:0x0003:0x2085": {
@@ -10405,8 +10745,8 @@
     "manufacturer": "Shenzhen Neo Electronics Co., Ltd."
   },
   "0x0258:0x0003:0x208d": {
-    "description": "PIR Motion Sensor with Temperature Sensor",
-    "label": "PD03Z",
+    "description": "PIR Motion Sensor 3",
+    "label": "NAS-PD03Z",
     "manufacturer": "Shenzhen Neo Electronics Co., Ltd."
   },
   "0x0258:0x0003:0x3082": {
@@ -10434,6 +10774,11 @@
     "label": "NAS-AB01Z",
     "manufacturer": "Shenzhen Neo Electronics Co., Ltd."
   },
+  "0x0258:0x0003:0x608d": {
+    "description": "PIR Motion Sensor 3",
+    "label": "NAS-PD03Z",
+    "manufacturer": "Shenzhen Neo Electronics Co., Ltd."
+  },
   "0x0258:0x0100:0x1027": {
     "description": "Wall Plug Switch",
     "label": "NAS-WR01ZE",
@@ -10455,8 +10800,8 @@
     "manufacturer": "Shenzhen Neo Electronics Co., Ltd."
   },
   "0x0258:0x0200:0x1031": {
-    "description": "PIR Motion Sensor with Temperature Sensor",
-    "label": "PD03Z",
+    "description": "PIR Motion Sensor 3",
+    "label": "NAS-PD03Z",
     "manufacturer": "Shenzhen Neo Electronics Co., Ltd."
   },
   "0x0259:0x0003:0x0002": {
@@ -10844,6 +11189,11 @@
     "label": "ZAC03",
     "manufacturer": "Zooz"
   },
+  "0x027a:0x0004:0xf001": {
+    "description": "Z-Wave Plus 700 Series Remote Switch",
+    "label": "ZEN34",
+    "manufacturer": "Zooz"
+  },
   "0x027a:0x000c:0x0003": {
     "description": "S2 Multisiren",
     "label": "ZSE19",
@@ -10857,6 +11207,11 @@
   "0x027a:0x0101:0x000d": {
     "description": "Power Switch",
     "label": "ZEN15",
+    "manufacturer": "Zooz"
+  },
+  "0x027a:0x0201:0x0006": {
+    "description": "Q Sensor",
+    "label": "ZSE11",
     "manufacturer": "Zooz"
   },
   "0x027a:0x0301:0x0012": {
@@ -10902,6 +11257,16 @@
   "0x027a:0x7000:0xa002": {
     "description": "Z-Wave Plus 700 Series Dimmer Switch",
     "label": "ZEN72",
+    "manufacturer": "Zooz"
+  },
+  "0x027a:0x7000:0xa003": {
+    "description": "700 Toggle Switch",
+    "label": "ZEN73",
+    "manufacturer": "Zooz"
+  },
+  "0x027a:0x7000:0xa004": {
+    "description": "700 Toggle Dimmer",
+    "label": "ZEN74",
     "manufacturer": "Zooz"
   },
   "0x027a:0x7000:0xa006": {
@@ -11040,6 +11405,11 @@
     "manufacturer": "HAB Home Intelligence, LLC"
   },
   "0x0287:0x0004:0x0071": {
+    "description": "Window Blind Controller",
+    "label": "iblinds V3",
+    "manufacturer": "HAB Home Intelligence LLC"
+  },
+  "0x0287:0x0004:0x0072": {
     "description": "Window Blind Controller",
     "label": "iblinds V3",
     "manufacturer": "HAB Home Intelligence LLC"
@@ -11379,6 +11749,11 @@
     "label": "ZW39",
     "manufacturer": "NIE Technology Co., Ltd."
   },
+  "0x0312:0xc000:0xc007": {
+    "description": "Outdoor Z-Wave Plug-In Module (2-Channel)",
+    "label": "ZW97",
+    "manufacturer": "NIE Technology Co., Ltd."
+  },
   "0x0312:0xc001:0xc002": {
     "description": "Smart Plug with Energy Meter",
     "label": "ZW681",
@@ -11432,7 +11807,7 @@
   "0x0312:0xff00:0xff05": {
     "description": "Zwave Plug 2 channel plugin outlet",
     "label": "MP20Z",
-    "manufacturer": "NIE Technology Co., Ltd."
+    "manufacturer": "Minoston"
   },
   "0x0312:0xff00:0xff06": {
     "description": "Smart Plug - 1 channel",
@@ -11535,7 +11910,7 @@
     "manufacturer": "Inovelli"
   },
   "0x031e:0x0002:0x0001": {
-    "description": "Red Series On/Off switch",
+    "description": "Red Series On/Off Switch",
     "label": "LZW30-SN",
     "manufacturer": "Inovelli"
   },
@@ -11545,7 +11920,7 @@
     "manufacturer": "Inovelli"
   },
   "0x031e:0x0004:0x0001": {
-    "description": "Base model On-Off switch",
+    "description": "Black Series On/Off Switch",
     "label": "LZW30",
     "manufacturer": "Inovelli"
   },
@@ -11570,7 +11945,7 @@
     "manufacturer": "Inovelli"
   },
   "0x031e:0x000d:0x0001": {
-    "description": "4-in-1 Sensor",
+    "description": "4-in-1 Motion Sensor",
     "label": "LZW60",
     "manufacturer": "Inovelli"
   },
@@ -11649,16 +12024,6 @@
     "label": "ZV9001K8-DIM",
     "manufacturer": "Sunricher"
   },
-  "0x0330:0x0003:0xa306": {
-    "description": "2 group single color wall mounted remote",
-    "label": "ZV9001K4-DIM-G2",
-    "manufacturer": "Sunricher"
-  },
-  "0x0330:0x0003:0xa310": {
-    "description": "Z-Wave Dim Remote Control",
-    "label": "ZV9001K4-DIM",
-    "manufacturer": "Sunricher"
-  },
   "0x0330:0x0200:0xd002": {
     "description": "Z-wave CCT LED controller",
     "label": "ZV9102FA-CCT",
@@ -11672,6 +12037,11 @@
   "0x0330:0x0200:0xd010": {
     "description": "Knob Smart Dimmer",
     "label": "ZV2400TAC-SL-A",
+    "manufacturer": "Sunricher"
+  },
+  "0x0330:0x0200:0xd017": {
+    "description": "Knob Smart Dimmer",
+    "label": "ZV2835RAC-NF",
     "manufacturer": "Sunricher"
   },
   "0x0330:0x0201:0xd002": {
@@ -11699,10 +12069,25 @@
     "label": "Heatit Z-Push Button 8",
     "manufacturer": "Sunricher"
   },
+  "0x0330:0x0300:0xa306": {
+    "description": "2 group single color wall mounted remote",
+    "label": "ZV9001K4-DIM-G2",
+    "manufacturer": "Sunricher"
+  },
+  "0x0330:0x0300:0xa30c": {
+    "description": "Touch Panel RGBW Wall Controller",
+    "label": "ZV9001K4-RGBW",
+    "manufacturer": "Sunricher"
+  },
   "0x0330:0x0300:0xa30f": {
     "description": "Z-Wave Dim Remote Control",
     "label": "SR-ZV9001K2-DIM",
     "manufacturer": "ShenZhen Sunricher Technology, Ltd."
+  },
+  "0x0330:0x0300:0xa310": {
+    "description": "Z-Wave Dim Remote Control",
+    "label": "ZV9001K4-DIM",
+    "manufacturer": "Sunricher"
   },
   "0x0330:0x0300:0xb301": {
     "description": "5 Channel Dimmer Remote Control",
@@ -11809,6 +12194,21 @@
     "label": "HE-ZW-THERM-FL2",
     "manufacturer": "HELTUN"
   },
+  "0x0344:0x0004:0x0001": {
+    "description": "Advanced Programmable Thermostat for Heating Systems",
+    "label": "HE-HT01",
+    "manufacturer": "HELTUN"
+  },
+  "0x0344:0x0004:0x0009": {
+    "description": "Relay Switch Quinto",
+    "label": "HE-RS01",
+    "manufacturer": "HELTUN"
+  },
+  "0x0344:0x0004:0x000a": {
+    "description": "High Load Switch",
+    "label": "HE-HLS01",
+    "manufacturer": "HELTUN"
+  },
   "0x0345:0x0001:0x0001": {
     "description": "Swidget module with USB port",
     "label": "ZW000RW",
@@ -11829,6 +12229,16 @@
     "label": "4AK1S7-0EN0 / 4AK1E9-0EU0",
     "manufacturer": "Ring"
   },
+  "0x0346:0x0101:0x0301": {
+    "description": "Ring Keypad v2",
+    "label": "4AK1SZ-0EN0",
+    "manufacturer": "Ring"
+  },
+  "0x0346:0x0101:0x0401": {
+    "description": "Ring Keypad v2",
+    "label": "4AK1SZ-0EN0",
+    "manufacturer": "Ring"
+  },
   "0x0346:0x0201:0x0201": {
     "description": "Contact Sensor",
     "label": "4SD1S7-0EN0 / 4SDAE9-0EU0",
@@ -11837,6 +12247,11 @@
   "0x0346:0x0201:0x0202": {
     "description": "Contact Sensor",
     "label": "4SD1S7-0EN0 / 4SDAE9-0EU0",
+    "manufacturer": "Ring"
+  },
+  "0x0346:0x0201:0x0301": {
+    "description": "Contact Sensor Gen2",
+    "label": "4SD2SZ-0EN0",
     "manufacturer": "Ring"
   },
   "0x0346:0x0301:0x0201": {
@@ -11849,6 +12264,16 @@
     "label": "4SP1S7-0EN0 / 4SPAE9-0EU0",
     "manufacturer": "Ring"
   },
+  "0x0346:0x0301:0x0301": {
+    "description": "Motion Sensor Gen2",
+    "label": "- / 4SP1SZ-0EU0",
+    "manufacturer": "Ring"
+  },
+  "0x0346:0x0301:0x0401": {
+    "description": "Motion Sensor Gen2",
+    "label": "- / 4SP1SZ-0EU0",
+    "manufacturer": "Ring"
+  },
   "0x0346:0x0401:0x0101": {
     "description": "Range Extender (1st generation)",
     "label": "4AR1S7-0EN0 / 4AR1E9-0EU0",
@@ -11857,6 +12282,16 @@
   "0x0346:0x0401:0x0102": {
     "description": "Range Extender (1st generation)",
     "label": "4AR1S7-0EN0 / 4AR1E9-0EU0",
+    "manufacturer": "Ring"
+  },
+  "0x0346:0x0701:0x0301": {
+    "description": "Outdoor Siren",
+    "label": "5D22E2 / 5AT3T4",
+    "manufacturer": "Ring"
+  },
+  "0x0346:0x0701:0x0401": {
+    "description": "Outdoor Siren",
+    "label": "5D22E2 / 5AT3T4",
     "manufacturer": "Ring"
   },
   "0x0348:0x0001:0x0001": {
@@ -12009,6 +12444,11 @@
     "label": "ZD2105US-5",
     "manufacturer": "Raylios"
   },
+  "0x0371:0x0000:0x0007": {
+    "description": "Door/Window Sensor 7",
+    "label": "ZWA008",
+    "manufacturer": "Aeotec Ltd."
+  },
   "0x0371:0x0001:0x0014": {
     "description": "AutoPilot",
     "label": "ZWA020",
@@ -12016,11 +12456,16 @@
   },
   "0x0371:0x0002:0x0003": {
     "description": "NanoMote Quad",
-    "label": "Aeotec NanoMote Quad",
+    "label": "ZWA003",
+    "manufacturer": "Aeotec Ltd."
+  },
+  "0x0371:0x0002:0x0004": {
+    "description": "NanoMote One",
+    "label": "ZWA004",
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0002:0x0005": {
-    "description": "Motion, light, and temperature sensor",
+    "description": "TriSensor",
     "label": "ZWA005",
     "manufacturer": "Aeotec Ltd."
   },
@@ -12030,13 +12475,43 @@
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0002:0x0009": {
-    "description": "aerQ Temperature and Humidity Sensor",
+    "description": "a\u00ebrQ Temperature and Humidity Sensor",
     "label": "ZWA009",
     "manufacturer": "Aeotec Ltd."
   },
+  "0x0371:0x0002:0x000b": {
+    "description": "Door/Window Sensor 7",
+    "label": "ZWA011",
+    "manufacturer": "Aeotec Ltd."
+  },
+  "0x0371:0x0002:0x000c": {
+    "description": "Door / Window Sensor 7 Pro",
+    "label": "ZWA012",
+    "manufacturer": "Aeotec Ltd."
+  },
+  "0x0371:0x0002:0x0012": {
+    "description": "Water Sensor 7 Basic",
+    "label": "ZWA018",
+    "manufacturer": "Aeotec Ltd."
+  },
+  "0x0371:0x0002:0x0013": {
+    "description": "Water Sensor 7 Pro",
+    "label": "ZWA019",
+    "manufacturer": "Aeotec Ltd."
+  },
   "0x0371:0x0002:0x0015": {
-    "description": "Thermostat - HVAC",
-    "label": "Radiator Thermostat",
+    "description": "Radiator Thermostat",
+    "label": "ZWA021",
+    "manufacturer": "Aeotec Ltd."
+  },
+  "0x0371:0x0002:0x0016": {
+    "description": "Radiator Thermostat",
+    "label": "ZWA021",
+    "manufacturer": "Aeotec Ltd."
+  },
+  "0x0371:0x0002:0x0029": {
+    "description": "Door/Window Sensor 7",
+    "label": "ZWA011",
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0002:0x00bb": {
@@ -12054,19 +12529,29 @@
     "label": "ZWA002",
     "manufacturer": "Aeotec Ltd."
   },
+  "0x0371:0x0003:0x008d": {
+    "description": "Nano Shutter V.3",
+    "label": "ZW141",
+    "manufacturer": "Aeotec Ltd."
+  },
   "0x0371:0x0003:0x00a2": {
-    "description": "Indoor Siren 6 and Doorbell 6",
-    "label": "ZW164",
+    "description": "Doorbell 6",
+    "label": "ZW162",
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0003:0x00a4": {
-    "description": "Indoor Siren 6 and Doorbell 6",
+    "description": "Indoor Siren 6",
     "label": "ZW164",
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0003:0x00af": {
     "description": "Smart Switch 7",
     "label": "ZW175",
+    "manufacturer": "Aeotec Ltd."
+  },
+  "0x0371:0x0003:0x00b4": {
+    "description": "Smart Boost Timer Switch",
+    "label": "ZWA006",
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0004:0x00bd": {
@@ -12076,11 +12561,16 @@
   },
   "0x0371:0x0102:0x0003": {
     "description": "NanoMote Quad",
-    "label": "Aeotec NanoMote Quad",
+    "label": "ZWA003",
+    "manufacturer": "Aeotec Ltd."
+  },
+  "0x0371:0x0102:0x0004": {
+    "description": "NanoMote One",
+    "label": "ZWA004",
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0102:0x0005": {
-    "description": "Motion, light, and temperature sensor",
+    "description": "TriSensor",
     "label": "ZWA005",
     "manufacturer": "Aeotec Ltd."
   },
@@ -12090,8 +12580,28 @@
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0102:0x0009": {
-    "description": "aerQ Temperature and Humidity Sensor",
+    "description": "a\u00ebrQ Temperature and Humidity Sensor",
     "label": "ZWA009",
+    "manufacturer": "Aeotec Ltd."
+  },
+  "0x0371:0x0102:0x000b": {
+    "description": "Door/Window Sensor 7",
+    "label": "ZWA011",
+    "manufacturer": "Aeotec Ltd."
+  },
+  "0x0371:0x0102:0x000c": {
+    "description": "Door / Window Sensor 7 Pro",
+    "label": "ZWA012",
+    "manufacturer": "Aeotec Ltd."
+  },
+  "0x0371:0x0102:0x0013": {
+    "description": "Water Sensor 7 Pro",
+    "label": "ZWA019",
+    "manufacturer": "Aeotec Ltd."
+  },
+  "0x0371:0x0102:0x0029": {
+    "description": "Door/Window Sensor 7",
+    "label": "ZWA011",
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0102:0x00bb": {
@@ -12109,13 +12619,18 @@
     "label": "ZWA002",
     "manufacturer": "Aeotec Ltd."
   },
+  "0x0371:0x0103:0x0017": {
+    "description": "Smart Switch 7",
+    "label": "ZWA023",
+    "manufacturer": "Aeotec Ltd."
+  },
   "0x0371:0x0103:0x00a2": {
-    "description": "Indoor Siren 6 and Doorbell 6",
-    "label": "ZW164",
+    "description": "Doorbell 6",
+    "label": "ZW162",
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0103:0x00a4": {
-    "description": "Indoor Siren 6 and Doorbell 6",
+    "description": "Indoor Siren 6",
     "label": "ZW164",
     "manufacturer": "Aeotec Ltd."
   },
@@ -12125,7 +12640,7 @@
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0202:0x0005": {
-    "description": "Motion, light, and temperature sensor",
+    "description": "TriSensor",
     "label": "ZWA005",
     "manufacturer": "Aeotec Ltd."
   },
@@ -12134,9 +12649,49 @@
     "label": "ZWA008",
     "manufacturer": "Aeotec Ltd."
   },
+  "0x0371:0x0202:0x0009": {
+    "description": "a\u00ebrQ Temperature and Humidity Sensor",
+    "label": "ZWA009",
+    "manufacturer": "Aeotec Ltd."
+  },
+  "0x0371:0x0202:0x000b": {
+    "description": "Door/Window Sensor 7",
+    "label": "ZWA011",
+    "manufacturer": "Aeotec Ltd."
+  },
+  "0x0371:0x0202:0x0029": {
+    "description": "Door/Window Sensor 7",
+    "label": "ZWA011",
+    "manufacturer": "Aeotec Ltd."
+  },
+  "0x0371:0x0202:0x00bb": {
+    "description": "Recessed Door Sensor 7",
+    "label": "ZW187",
+    "manufacturer": "Aeotec Ltd."
+  },
+  "0x0371:0x0203:0x00a2": {
+    "description": "Doorbell 6",
+    "label": "ZW162",
+    "manufacturer": "Aeotec Ltd."
+  },
   "0x0371:0x0203:0x00a4": {
-    "description": "Indoor Siren 6 and Doorbell 6",
+    "description": "Indoor Siren 6",
     "label": "ZW164",
+    "manufacturer": "Aeotec Ltd."
+  },
+  "0x0371:0x0902:0x0003": {
+    "description": "NanoMote Quad",
+    "label": "ZWA003",
+    "manufacturer": "Aeotec Ltd."
+  },
+  "0x0371:0x1c02:0x0003": {
+    "description": "NanoMote Quad",
+    "label": "ZWA003",
+    "manufacturer": "Aeotec Ltd."
+  },
+  "0x0371:0x1c02:0x0005": {
+    "description": "TriSensor",
+    "label": "ZWA005",
     "manufacturer": "Aeotec Ltd."
   },
   "0x0373:0x0003:0x0001": {
@@ -12509,15 +13064,35 @@
     "label": "LM-S1ZW",
     "manufacturer": "Lumi"
   },
+  "0x0438:0x0200:0xd00c": {
+    "description": "In-Wall Dimmer Module",
+    "label": "Z-Wave Dimmer 2 400W",
+    "manufacturer": "Namron"
+  },
+  "0x0438:0x0202:0x0002": {
+    "description": "LED Dimmer",
+    "label": "1402756",
+    "manufacturer": "Namron"
+  },
+  "0x0438:0x0300:0xa305": {
+    "description": "4-Channel Wireless Switch",
+    "label": "K8",
+    "manufacturer": "Namron"
+  },
   "0x0438:0x0300:0xa306": {
-    "description": "",
-    "label": "2 KANALER BRYTER",
-    "manufacturer": "Namron AS"
+    "description": "2-Channel Wireless Switch",
+    "label": "K4",
+    "manufacturer": "Namron"
   },
   "0x0438:0x0300:0xa30f": {
-    "description": "",
-    "label": "1 KANAL BRYTER",
-    "manufacturer": "Namron AS"
+    "description": "1-Channel Wireless Switch",
+    "label": "K2",
+    "manufacturer": "Namron"
+  },
+  "0x0441:0x2400:0x1000": {
+    "description": "BusT4-Z-Wave interface",
+    "label": "IBT4ZWAVE",
+    "manufacturer": "NICE Spa"
   },
   "0x0447:0x0111:0x1101": {
     "description": "Z-Wave Plug-in",
@@ -12600,13 +13175,13 @@
     "manufacturer": "Remotec"
   },
   "0x5254:0x000b:0x8510": {
-    "description": "ZRC-90CN",
-    "label": "BW8510CN",
+    "description": "Scene master 8 button remote",
+    "label": "BW8510",
     "manufacturer": "Remotec"
   },
   "0x5254:0x0100:0x8371": {
-    "description": "Remotec ZXT-310US",
-    "label": "BW8371",
+    "description": "AV IR Extender",
+    "label": "ZXT-310",
     "manufacturer": "Remotec"
   },
   "0x5254:0x0100:0x8377": {
@@ -12620,8 +13195,8 @@
     "manufacturer": "Remotec"
   },
   "0x5254:0x0101:0x8370": {
-    "description": "Remotec ZXT-310US",
-    "label": "BW8371",
+    "description": "AV IR Extender",
+    "label": "ZXT-310",
     "manufacturer": "Remotec"
   },
   "0x5254:0x0101:0x8377": {
@@ -12729,5 +13304,5 @@
     "label": "BW8120",
     "manufacturer": "Remotec"
   },
-  "updated_at": "2021-03-18T20:06:56.767014"
+  "updated_at": "2021-08-09T16:26:20.182948"
 }

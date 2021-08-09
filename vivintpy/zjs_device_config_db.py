@@ -151,7 +151,7 @@ def _create_db_from_zjs_config_files(updated_at: str) -> dict:
         try:
             with open(file) as json_file:
                 json_string = "".join(
-                    re.sub("(([^:]|^)//[^a-zA-Z\d:].*)|(/\*.*\*/)", "", line)
+                    re.sub("((^|\s+)//.*)|(/\*.*\*/)", "", line)
                     for line in json_file.readlines()
                 )
                 data = json.loads(json_string)
