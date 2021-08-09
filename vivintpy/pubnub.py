@@ -5,8 +5,9 @@ from typing import Callable
 
 from pubnub.callbacks import SubscribeCallback
 from pubnub.models.consumer.pubsub import PNMessageResult
+from pubnub.pubnub_asyncio import PubNubAsyncio
 
-from .pubnub_patches import PNStatus, pubnub_asyncio
+from .pubnub_patches import PNStatus
 
 PN_SUBSCRIBE_KEY = "sub-c-6fb03d68-6a78-11e2-ae8f-12313f022c90"
 PN_CHANNEL = "PlatformChannel"
@@ -23,7 +24,7 @@ class VivintPubNubSubscribeListener(SubscribeCallback):
 
     def status(
         self,
-        pubnub: pubnub_asyncio.PubNubAsyncio,
+        pubnub: PubNubAsyncio,
         status: PNStatus,
     ) -> None:
         """Handler called on status updates."""
@@ -45,7 +46,7 @@ class VivintPubNubSubscribeListener(SubscribeCallback):
 
     def message(
         self,
-        pubnub: pubnub_asyncio.PubNubAsyncio,
+        pubnub: PubNubAsyncio,
         message: PNMessageResult,
     ) -> None:
         """Handler called on each message received."""
