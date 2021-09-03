@@ -13,6 +13,10 @@ class VivintSkyApiAuthenticationError(VivintSkyApiError):
     """VivintSky API authentication related error occurred."""
 
 
+class VivintSkyApiMfaRequired(VivintSkyApiAuthenticationError):
+    """VivintSky API MFA required related error occurred."""
+
+
 class VivintSkyApiExpiredCookieError(VivintSkyApiError):
     """VivintSky API cookie expired error occurred."""
 

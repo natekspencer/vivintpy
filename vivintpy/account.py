@@ -34,6 +34,7 @@ class Account:
         client_session: Optional[aiohttp.ClientSession] = None,
     ):
         self.__connected = False
+        self.__load_devices = False
         self.__pubnub: PubNubAsyncio = None
         self.__pubnub_listener: VivintPubNubSubscribeListener = None
         self.vivintskyapi = VivintSkyApi(username, password, client_session)
@@ -50,22 +51,23 @@ class Account:
         subscribe_for_realtime_updates: bool = False,
     ) -> None:
         """Connects to the VivintSky API."""
-
         _LOGGER.debug("Connecting to VivintSky")
+
+        self.__load_devices = load_devices
+
         # initialize the vivintsky cloud session
         authuser_data = await self.vivintskyapi.connect()
-
-        # load all systems, panels and devices
-        if load_devices:
-            _LOGGER.debug("Loading devices")
-            await self.refresh(authuser_data)
+        self.__connected = True
 
         # subscribe to pubnub for realtime updates
         if subscribe_for_realtime_updates:
             _LOGGER.debug("Subscribing to PubNub for realtime updates")
             await self.subscribe_for_realtime_updates(authuser_data)
 
-        self.__connected = True
+        # load all systems, panels and devices
+        if self.__load_devices:
+            _LOGGER.debug("Loading devices")
+            await self.refresh(authuser_data)
 
     async def disconnect(self) -> None:
         _LOGGER.debug("Disconnecting from VivintSky")
@@ -74,8 +76,17 @@ class Account:
                 self.__pubnub.remove_listener(self.__pubnub_listener)
                 self.__pubnub.unsubscribe_all()
                 self.__pubnub.stop()
-            await self.vivintskyapi.disconnect()
+        await self.vivintskyapi.disconnect()
         self.__connected = False
+
+    async def verify_mfa(self, code: str) -> None:
+        """Verify multi-factor authentication with the VivintSky API."""
+        await self.vivintskyapi.verify_mfa(code)
+
+        # load all systems, panels and devices
+        if self.__load_devices:
+            _LOGGER.debug("Loading devices")
+            await self.refresh()
 
     async def refresh(self, authuser_data: dict = None) -> None:
         # make a call to vivint's authuser endpoint to get a list of all the system_accounts (locations) & panels if not supplied
@@ -83,7 +94,7 @@ class Account:
             try:
                 authuser_data = await self.vivintskyapi.get_authuser_data()
             except ClientConnectionError:
-                _LOGGER.error("Unable to refresh system(s).")
+                _LOGGER.error("Unable to refresh system(s)")
 
         if authuser_data:
             # for each system_account, make another call to load all the devices
