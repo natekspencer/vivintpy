@@ -41,7 +41,6 @@ See demo.py for a demonstration on how to use this library.
 - write some documentation
 - add advanced support for:
   - thermostats
-- implement 2FA
 - add tests
 
 ---

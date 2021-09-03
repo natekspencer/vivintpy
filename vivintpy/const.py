@@ -1,6 +1,22 @@
 """Module that defines various constants for interacting with the Vivint Sky API."""
 
 
+class AuthenticationResponse:
+    """Authentication response constants."""
+
+    INVALID = "Invalid username and/or password"
+    MESSAGE = "msg"
+    MFA_REQUIRED = "Multi-factor authentication required"
+
+
+class MfaVerificationResponse:
+    """Multi-factor authentication verification response constants."""
+
+    CODE = "code"
+    ERROR = "error"
+    MESSAGE = "message"
+
+
 class AuthUserAttribute:
     """AuthUser attributes."""
 

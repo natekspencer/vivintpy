@@ -8,15 +8,28 @@ from typing import Any, Dict, Optional
 
 import aiohttp
 import certifi
-from aiohttp.client_reqrep import ClientResponse
+from aiohttp import ClientResponseError
 
-from .const import SwitchAttribute, VivintDeviceAttribute, WirelessSensorAttribute
+from .const import (
+    AuthenticationResponse,
+    MfaVerificationResponse,
+    SwitchAttribute,
+    VivintDeviceAttribute,
+    WirelessSensorAttribute,
+)
 from .enums import ArmedState, GarageDoorState, ZoneBypass
-from .exceptions import VivintSkyApiAuthenticationError, VivintSkyApiError
+from .exceptions import (
+    VivintSkyApiAuthenticationError,
+    VivintSkyApiError,
+    VivintSkyApiMfaRequired,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
 VIVINT_API_ENDPOINT = "https://www.vivintsky.com/api"
+VIVINT_MFA_ENDPOINT = (
+    "https://www.vivintsky.com/platform-user-api/v0/platformusers/2fa/validate"
+)
 
 
 class VivintSkyApi:
@@ -32,6 +45,7 @@ class VivintSkyApi:
         self.__password = password
         self.__client_session = client_session or self.__get_new_client_session()
         self.__has_custom_client_session = client_session is not None
+        self.__mfa_pending = False
 
     def is_session_valid(self) -> dict:
         """Return the state of the current session."""
@@ -49,13 +63,22 @@ class VivintSkyApi:
             self.__username, self.__password
         )
         if not authuser_data:
-            raise VivintSkyApiAuthenticationError("Unable to login to Vivint.")
+            raise VivintSkyApiAuthenticationError("Unable to login to Vivint")
         return authuser_data
 
     async def disconnect(self) -> None:
         """Disconnect from VivintSky Cloud Service."""
         if not self.__has_custom_client_session:
             await self.__client_session.close()
+
+    async def verify_mfa(self, code: str) -> None:
+        """Verify multi-factor authentication code."""
+        resp = await self.__post(
+            VIVINT_MFA_ENDPOINT,
+            data=json.dumps({"code": code}),
+        )
+        if resp is not None:
+            self.__mfa_pending = False
 
     async def get_authuser_data(self) -> dict:
         """
@@ -65,22 +88,20 @@ class VivintSkyApi:
         that user has access to.
         """
         resp = await self.__get("authuser")
-        async with resp:
-            if resp.status == 200:
-                return await resp.json(encoding="utf-8")
-            else:
-                raise VivintSkyApiAuthenticationError("Missing auth user data.")
+        if resp:
+            return resp
+        else:
+            raise VivintSkyApiAuthenticationError("Missing auth user data")
 
     async def get_panel_credentials(self, panel_id: int) -> dict:
         """Get the panel credentials."""
         resp = await self.__get(f"panel-login/{panel_id}")
-        async with resp:
-            if resp.status == 200:
-                return await resp.json(encoding="utf-8")
-            else:
-                raise VivintSkyApiAuthenticationError(
-                    "Unable to retrieve panel credentials."
-                )
+        if resp:
+            return resp
+        else:
+            raise VivintSkyApiAuthenticationError(
+                "Unable to retrieve panel credentials."
+            )
 
     async def get_system_data(self, panel_id: int) -> dict:
         """Gets the raw data for a system."""
@@ -89,11 +110,10 @@ class VivintSkyApi:
             headers={"Accept-Encoding": "application/json"},
             params={"includerules": "false"},
         )
-        async with resp:
-            if resp.status == 200:
-                return await resp.json(encoding="utf-8")
-            else:
-                raise VivintSkyApiError("Unable to retrieve system data.")
+        if resp:
+            return resp
+        else:
+            raise VivintSkyApiError("Unable to retrieve system data")
 
     async def get_device_data(self, panel_id: int, device_id: int) -> dict:
         """Gets the raw data for a device."""
@@ -101,11 +121,10 @@ class VivintSkyApi:
             f"system/{panel_id}/device/{device_id}",
             headers={"Accept-Encoding": "application/json"},
         )
-        async with resp:
-            if resp.status == 200:
-                return await resp.json(encoding="utf-8")
-            else:
-                raise VivintSkyApiError("Unable to retrieve device data.")
+        if resp:
+            return resp
+        else:
+            raise VivintSkyApiError("Unable to retrieve device data")
 
     async def set_alarm_state(
         self, panel_id: int, partition_id: int, state: bool
@@ -122,16 +141,13 @@ class VivintSkyApi:
                 }
             ).encode("utf-8"),
         )
-        async with resp:
-            if resp.status != 200:
-                resp_body = await resp.text()
-                _LOGGER.error(
-                    f"failed to set state {ArmedState.name(state)}. Code: {resp.status}, body: {resp_body},"
-                    f"request url: {resp.request_info}"
-                )
-                raise VivintSkyApiError(
-                    f"failed to set alarm status {ArmedState.name(state)} for panel {self.id}"
-                )
+        if resp is None:
+            _LOGGER.error(
+                "Failed to set state to %s for panel %s",
+                ArmedState(state).name,
+                self.id,
+            )
+            raise VivintSkyApiError("Failed to set alarm state")
 
     async def set_garage_door_state(
         self, panel_id: int, partition_id: int, device_id: int, state: int
@@ -149,16 +165,15 @@ class VivintSkyApi:
                 }
             ).encode("utf-8"),
         )
-        async with resp:
-            if resp.status != 200:
-                _LOGGER.debug(
-                    "Failed to set state to %s for garage door: %s @ %s:%s",
-                    GarageDoorState.name(state),
-                    device_id,
-                    panel_id,
-                    partition_id,
-                )
-                raise VivintSkyApiError(f"Failed to update garage door state")
+        if resp is None:
+            _LOGGER.debug(
+                "Failed to set state to %s for garage door %s @ %s:%s",
+                GarageDoorState(state).name,
+                device_id,
+                panel_id,
+                partition_id,
+            )
+            raise VivintSkyApiError(f"Failed to set garage door state")
 
     async def set_lock_state(
         self, panel_id: int, partition_id: int, device_id: int, locked: bool
@@ -176,16 +191,15 @@ class VivintSkyApi:
                 }
             ).encode("utf-8"),
         )
-        async with resp:
-            if resp.status != 200:
-                _LOGGER.debug(
-                    "Failed to set locked status to %s for lock: %s @ %s:%s",
-                    locked,
-                    device_id,
-                    panel_id,
-                    partition_id,
-                )
-                raise VivintSkyApiError(f"Failed to update lock status")
+        if resp is None:
+            _LOGGER.debug(
+                "Failed to set state to %s for lock %s @ %s:%s",
+                locked,
+                device_id,
+                panel_id,
+                partition_id,
+            )
+            raise VivintSkyApiError(f"Failed to set lock state")
 
     async def set_sensor_state(
         self, panel_id: int, partition_id: int, device_id: int, bypass: bool
@@ -205,16 +219,15 @@ class VivintSkyApi:
                 }
             ).encode("utf-8"),
         )
-        async with resp:
-            if resp.status != 200:
-                _LOGGER.debug(
-                    "Failed to set bypass status to %s for sensor: %s @ %s:%s",
-                    bypass,
-                    device_id,
-                    panel_id,
-                    partition_id,
-                )
-                raise VivintSkyApiError(f"Failed to update sensor status")
+        if resp is None:
+            _LOGGER.debug(
+                "Failed to set state to %s for sensor %s @ %s:%s",
+                "bypassed" if bypass else "unbypassed",
+                device_id,
+                panel_id,
+                partition_id,
+            )
+            raise VivintSkyApiError(f"Failed to set sensor state")
 
     async def set_switch_state(
         self,
@@ -247,18 +260,17 @@ class VivintSkyApi:
                 }
             ).encode("utf-8"),
         )
-        async with resp:
-            if resp.status != 200:
-                [attribute, value] = ["on", on] if level is None else ["level", level]
-                _LOGGER.debug(
-                    "Failed to set %s to %s for switch: %s @ %s:%s.",
-                    attribute,
-                    value,
-                    device_id,
-                    panel_id,
-                    partition_id,
-                )
-                raise VivintSkyApiError("Failed to update switch state.")
+        if resp is None:
+            [attribute, value] = ["on", on] if level is None else ["level", level]
+            _LOGGER.debug(
+                "Failed to set %s to %s for switch %s @ %s:%s",
+                attribute,
+                value,
+                device_id,
+                panel_id,
+                partition_id,
+            )
+            raise VivintSkyApiError("Failed to set switch state")
 
     async def set_thermostat_state(
         self, panel_id: int, partition_id: int, device_id: int, **kwargs
@@ -271,28 +283,30 @@ class VivintSkyApi:
             },
             data=json.dumps(kwargs).encode("utf-8"),
         )
-        async with resp:
-            if resp.status != 200:
-                _LOGGER.debug(
-                    "Failed to set state to %s for thermostat: %s @ %s:%s",
-                    kwargs,
-                    device_id,
-                    panel_id,
-                    partition_id,
-                )
-                raise VivintSkyApiError(f"Failed to update thermostat state")
+        if resp is None:
+            _LOGGER.debug(
+                "Failed to set state to %s for thermostat %s @ %s:%s",
+                kwargs,
+                device_id,
+                panel_id,
+                partition_id,
+            )
+            raise VivintSkyApiError(f"Failed to set thermostat state")
 
     async def request_camera_thumbnail(
         self, panel_id: int, partition_id: int, device_id: int
     ) -> None:
-        resp = await self.__get(
-            f"{panel_id}/{partition_id}/{device_id}/request-camera-thumbnail",
-        )
-        async with resp:
+        try:
+            return await self.__get(
+                f"{panel_id}/{partition_id}/{device_id}/request-camera-thumbnail",
+            )
+        except ClientResponseError as resp:
             if resp.status < 200 or resp.status > 299:
-                _LOGGER.debug(
-                    "Failed to request thumbnail for camera id %s with error code: %s",
-                    self.id,
+                _LOGGER.error(
+                    "Failed to request thumbnail for camera %s @ %s:%s with status code %s",
+                    device_id,
+                    panel_id,
+                    partition_id,
                     resp.status,
                 )
 
@@ -303,21 +317,22 @@ class VivintSkyApi:
         device_id: int,
         thumbnail_timestamp: datetime,
     ) -> str:
-        resp = await self.__get(
-            f"{panel_id}/{partition_id}/{device_id}/camera-thumbnail",
-            params={"time": thumbnail_timestamp},
-            allow_redirects=False,
-        )
-        async with resp:
+        try:
+            resp = await self.__get(
+                f"{panel_id}/{partition_id}/{device_id}/camera-thumbnail",
+                params={"time": thumbnail_timestamp},
+                allow_redirects=False,
+            )
+            return resp.get("location")
+        except ClientResponseError as resp:
             if resp.status != 302:
                 _LOGGER.debug(
-                    "Failed to get thumbnail for camera id %s with status code: %s",
-                    self.id,
+                    "Failed to get thumbnail for camera %s @ %s:%s with status code %s",
+                    device_id,
+                    panel_id,
+                    partition_id,
                     resp.status,
                 )
-                return
-
-            return resp.headers.get("Location")
 
     def __get_new_client_session(self) -> aiohttp.ClientSession:
         """Create a new aiohttp.ClientSession object."""
@@ -333,21 +348,12 @@ class VivintSkyApi:
 
         Returns auth user data if successful.
         """
-        resp = await self.__post(
+        return await self.__post(
             "login",
             data=json.dumps({"username": username, "password": password}).encode(
                 "utf-8"
             ),
         )
-        async with resp:
-            data = await resp.json(encoding="utf-8")
-            if resp.status == 200:
-                return data
-            elif resp.status == 401:
-                raise VivintSkyApiAuthenticationError(data["msg"])
-            else:
-                resp.raise_for_status()
-                return None
 
     async def __get(
         self,
@@ -355,7 +361,7 @@ class VivintSkyApi:
         headers: Dict[str, Any] = None,
         params: Dict[str, Any] = None,
         allow_redirects: bool = None,
-    ) -> ClientResponse:
+    ) -> Optional[dict]:
         """Perform a get request."""
         return await self.__call(
             self.__client_session.get,
@@ -369,7 +375,7 @@ class VivintSkyApi:
         self,
         path: str,
         data: bytes = None,
-    ) -> ClientResponse:
+    ) -> Optional[dict]:
         """Perform a post request."""
         return await self.__call(self.__client_session.post, path, data=data)
 
@@ -378,7 +384,7 @@ class VivintSkyApi:
         path: str,
         headers: Dict[str, Any] = None,
         data: bytes = None,
-    ) -> ClientResponse:
+    ) -> Optional[dict]:
         """Perform a put request."""
         return await self.__call(
             self.__client_session.put, path, headers=headers, data=data
@@ -392,7 +398,7 @@ class VivintSkyApi:
         params: Dict[str, Any] = None,
         data: bytes = None,
         allow_redirects: bool = None,
-    ) -> ClientResponse:
+    ) -> Optional[dict]:
         """Perform a request with supplied parameters and reauthenticate if necessary."""
         if path != "login" and not self.is_session_valid():
             await self.connect()
@@ -400,10 +406,34 @@ class VivintSkyApi:
         if self.__client_session.closed:
             raise VivintSkyApiError("The client session has been closed")
 
-        return await method(
-            f"{VIVINT_API_ENDPOINT}/{path}",
+        is_mfa_request = path == VIVINT_MFA_ENDPOINT
+
+        if self.__mfa_pending and not is_mfa_request:
+            raise VivintSkyApiMfaRequired(AuthenticationResponse.MFA_REQUIRED)
+
+        resp = await method(
+            path if is_mfa_request else f"{VIVINT_API_ENDPOINT}/{path}",
             headers=headers,
             params=params,
             data=data,
             allow_redirects=allow_redirects,
         )
+        async with resp:
+            data: dict = await resp.json(encoding="utf-8")
+            if resp.status == 200:
+                return data
+            elif resp.status == 302:
+                return {"location": resp.headers.get("Location")}
+            elif resp.status == 401:
+                message = (
+                    data.get(MfaVerificationResponse.MESSAGE)
+                    if is_mfa_request
+                    else data.get(AuthenticationResponse.MESSAGE)
+                )
+                if message == AuthenticationResponse.MFA_REQUIRED:
+                    self.__mfa_pending = True
+                    raise VivintSkyApiMfaRequired(message)
+                raise VivintSkyApiAuthenticationError(message)
+            else:
+                resp.raise_for_status()
+                return None

@@ -26,7 +26,7 @@ class System(Entity):
         ]
 
     @property
-    def id(self) -> str:
+    def id(self) -> int:
         """System's id"""
         return self.data[SystemAttribute.SYSTEM][SystemAttribute.PANEL_ID]
 
