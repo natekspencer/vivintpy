@@ -6009,6 +6009,11 @@
     "label": "FGFS101",
     "manufacturer": "Fibargroup"
   },
+  "0x010f:0x0b01:0x3003": {
+    "description": "Flood Sensor",
+    "label": "FGFS101",
+    "manufacturer": "Fibargroup"
+  },
   "0x010f:0x0c00:0x1000": {
     "description": "Smoke Sensor",
     "label": "FGSS001",
@@ -6050,52 +6055,52 @@
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0f01:0x1000": {
-    "description": "A real push button (switch) available in several colors.",
+    "description": "Push Button Central Scene Controller",
     "label": "FGPB-101",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0f01:0x2000": {
-    "description": "A real push button (switch) available in several colors.",
+    "description": "Push Button Central Scene Controller",
     "label": "FGPB-101",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0f01:0x3000": {
-    "description": "A real push button (switch) available in several colors.",
+    "description": "Push Button Central Scene Controller",
     "label": "FGPB-101",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0f01:0x4000": {
-    "description": "A real push button (switch) available in several colors.",
+    "description": "Push Button Central Scene Controller",
     "label": "FGPB-101",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0f01:0x6000": {
-    "description": "A real push button (switch) available in several colors.",
+    "description": "Push Button Central Scene Controller",
     "label": "FGPB-101",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0f01:0x7000": {
-    "description": "A real push button (switch) available in several colors.",
+    "description": "Push Button Central Scene Controller",
     "label": "FGPB-101",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0f01:0x8000": {
-    "description": "A real push button (switch) available in several colors.",
+    "description": "Push Button Central Scene Controller",
     "label": "FGPB-101",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0f01:0x9000": {
-    "description": "A real push button (switch) available in several colors.",
+    "description": "Push Button Central Scene Controller",
     "label": "FGPB-101",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0f01:0xa000": {
-    "description": "A real push button (switch) available in several colors.",
+    "description": "Push Button Central Scene Controller",
     "label": "FGPB-101",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0f01:0xb000": {
-    "description": "A real push button (switch) available in several colors.",
+    "description": "Push Button Central Scene Controller",
     "label": "FGPB-101",
     "manufacturer": "Fibargroup"
   },
@@ -6165,8 +6170,8 @@
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x1b01:0x1000": {
-    "description": "WALLI SWITCH FIBARO DOUBLE SWITCH",
-    "label": "FGWDSEU",
+    "description": "Walli Double Switch",
+    "label": "FGWDSEU-221",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x1c01:0x1000": {
@@ -6184,13 +6189,18 @@
     "label": "FGWOE-011",
     "manufacturer": "Fibargroup"
   },
+  "0x010f:0x2301:0x1000": {
+    "description": "Walli Controller",
+    "label": "FGWCEU-201",
+    "manufacturer": "Fibargroup"
+  },
   "0x010f:0x8800:0x3001": {
     "description": "Motion Sensor",
     "label": "FGMS001",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0xfb10:0x1014": {
-    "description": "A real push button (switch) available in several colors.",
+    "description": "Push Button Central Scene Controller",
     "label": "FGPB-101",
     "manufacturer": "Fibargroup"
   },
@@ -7224,6 +7234,11 @@
     "label": "NE-NAS-PD01Z",
     "manufacturer": "Zipato"
   },
+  "0x0131:0x0004:0x000a": {
+    "description": "Multisound Indoor Siren",
+    "label": "PH-PSE02",
+    "manufacturer": "Zipato"
+  },
   "0x0131:0x0006:0x001a": {
     "description": "Micro Module Energy Meter",
     "label": "ZIP-PAB01",
@@ -7950,7 +7965,7 @@
     "manufacturer": "Nortek Security & Control LLC"
   },
   "0x014f:0x5053:0x3531": {
-    "description": "Appliance Module",
+    "description": "Plug-in Appliance Module",
     "label": "PS15EMZ5-1",
     "manufacturer": "Nortek Security & Control LLC"
   },
@@ -7965,12 +7980,12 @@
     "manufacturer": "Nortek Security & Control LLC"
   },
   "0x014f:0x5252:0x3530": {
-    "description": "Single Wall Outlet",
+    "description": "In-Wall Single Outlet",
     "label": "WO15Z",
     "manufacturer": "Nortek Security & Control LLC"
   },
   "0x014f:0x5257:0x3533": {
-    "description": "Wall Mounted Switch",
+    "description": "In-wall Switch",
     "label": "WS15Z-1",
     "manufacturer": "Nortek Security & Control LLC"
   },
@@ -8015,7 +8030,7 @@
     "manufacturer": "Nortek Security & Control LLC"
   },
   "0x014f:0x5753:0x3535": {
-    "description": "Wall Mounted Switch",
+    "description": "In-wall Switch",
     "label": "WS15Z-1",
     "manufacturer": "Nortek Security & Control LLC"
   },
@@ -8769,6 +8784,11 @@
     "label": "MH9-CO2-WA",
     "manufacturer": "McoHome Technology Co., Ltd."
   },
+  "0x015f:0x0902:0x5102": {
+    "description": "CO2 Monitor Air quality detector",
+    "label": "MH9-CO2-WD",
+    "manufacturer": "McoHome Technology Co., Ltd."
+  },
   "0x015f:0x0905:0x0201": {
     "description": "CO2 Monitor Air quality detector",
     "label": "MH9-CO2-WD",
@@ -9300,7 +9320,7 @@
     "manufacturer": "Devolo"
   },
   "0x0175:0x0004:0x000a": {
-    "description": "Multisound indoor siren",
+    "description": "Multisound Indoor Siren",
     "label": "ph-pse02",
     "manufacturer": "Devolo"
   },
@@ -9774,6 +9794,11 @@
     "label": "Z Push Button 8",
     "manufacturer": "Heatit"
   },
+  "0x019b:0x0300:0xa307": {
+    "description": "Wall Mounted Switch",
+    "label": "Z Push Button 2",
+    "manufacturer": "Heatit"
+  },
   "0x019c:0x0001:0x0001": {
     "description": "PowerMaster-360",
     "label": "PM-360",
@@ -9930,13 +9955,13 @@
     "manufacturer": "HANK Electronics Ltd."
   },
   "0x0208:0x0100:0x0004": {
-    "description": "HKZW-RGB01-V1.0",
-    "label": "RGB bulb",
+    "description": "RGB Bulb",
+    "label": "HKZW-RGB01",
     "manufacturer": "HANK Electronics Ltd."
   },
   "0x0208:0x0100:0x0007": {
-    "description": "HKZW",
-    "label": "ACC01",
+    "description": "IR Transceiver",
+    "label": "HKZW-ACC01",
     "manufacturer": "HANK Electronics Ltd."
   },
   "0x0208:0x0100:0x000a": {
@@ -9945,8 +9970,8 @@
     "manufacturer": "HANK Electronics Ltd."
   },
   "0x0208:0x0101:0x0004": {
-    "description": "HKZW-RGB01-V1.0",
-    "label": "RGB bulb",
+    "description": "RGB Bulb",
+    "label": "HKZW-RGB01",
     "manufacturer": "HANK Electronics Ltd."
   },
   "0x0208:0x0101:0x0005": {
@@ -9961,12 +9986,12 @@
   },
   "0x0208:0x0200:0x0008": {
     "description": "Door and Window Sensor",
-    "label": "DWS01",
+    "label": "HKZW-DWS01",
     "manufacturer": "HANK Electronics Ltd."
   },
   "0x0208:0x0200:0x0009": {
     "description": "One-key Scene Controller",
-    "label": "SCN01",
+    "label": "HKZW-SCN01",
     "manufacturer": "HANK Electronics Ltd."
   },
   "0x0208:0x0200:0x000b": {
@@ -9975,28 +10000,28 @@
     "manufacturer": "HANK Electronics Ltd."
   },
   "0x0208:0x0200:0x000f": {
-    "description": "Flood Sensor FLD01",
-    "label": "HKZW_FLD01",
+    "description": "Flood Sensor",
+    "label": "HKZW-FLD01",
     "manufacturer": "HANK Electronics Ltd."
   },
   "0x0208:0x0200:0x0012": {
     "description": "Motion Sensor",
-    "label": "HKZW_MS02",
+    "label": "HKZW-MS02",
     "manufacturer": "HANK Electronics Ltd."
   },
   "0x0208:0x0201:0x0006": {
     "description": "Multisensor",
-    "label": "HKZW_MS01",
+    "label": "HKZW-MS01",
     "manufacturer": "HANK Electronics Ltd."
   },
   "0x0208:0x0201:0x0008": {
     "description": "Door and Window Sensor",
-    "label": "DWS01",
+    "label": "HKZW-DWS01",
     "manufacturer": "HANK Electronics Ltd."
   },
   "0x0208:0x0201:0x0009": {
     "description": "One-key Scene Controller",
-    "label": "SCN01",
+    "label": "HKZW-SCN01",
     "manufacturer": "HANK Electronics Ltd."
   },
   "0x0208:0x0201:0x000b": {
@@ -10005,13 +10030,13 @@
     "manufacturer": "HANK Electronics Ltd."
   },
   "0x0208:0x0201:0x000f": {
-    "description": "Flood Sensor FLD01",
-    "label": "HKZW_FLD01",
+    "description": "Flood Sensor",
+    "label": "HKZW-FLD01",
     "manufacturer": "HANK Electronics Ltd."
   },
   "0x0208:0x0201:0x0012": {
     "description": "Motion Sensor",
-    "label": "HKZW_MS02",
+    "label": "HKZW-MS02",
     "manufacturer": "HANK Electronics Ltd."
   },
   "0x0208:0x0208:0x0101": {
@@ -10021,7 +10046,7 @@
   },
   "0x0208:0x0300:0x0012": {
     "description": "Motion Sensor",
-    "label": "HKZW_MS02",
+    "label": "HKZW-MS02",
     "manufacturer": "HANK Electronics Ltd."
   },
   "0x020e:0x4754:0x3038": {
@@ -11094,6 +11119,16 @@
     "label": "ZHT-630",
     "manufacturer": "Sprue Safety Products Ltd."
   },
+  "0x0270:0x0101:0x000a": {
+    "description": "Water Ball Valve Servo",
+    "label": "BVS-ZWU",
+    "manufacturer": "Custos"
+  },
+  "0x0270:0x0101:0x0036": {
+    "description": "Titan Water Valve Actuator",
+    "label": "ZAC36",
+    "manufacturer": "Zooz"
+  },
   "0x0271:0x0001:0x1a73": {
     "description": "PIR sensor with relay and light",
     "label": "XLED Home 2",
@@ -11287,6 +11322,16 @@
   "0x027a:0x7000:0xa00a": {
     "description": "Universal Relay",
     "label": "ZEN17",
+    "manufacturer": "Zooz"
+  },
+  "0x027a:0x7000:0xe001": {
+    "description": "Open/Close XS Sensor",
+    "label": "ZSE41",
+    "manufacturer": "Zooz"
+  },
+  "0x027a:0x7000:0xe002": {
+    "description": "Water Leak XS Sensor",
+    "label": "ZSE42",
     "manufacturer": "Zooz"
   },
   "0x027a:0x7000:0xf001": {
@@ -12199,6 +12244,11 @@
     "label": "HE-HT01",
     "manufacturer": "HELTUN"
   },
+  "0x0344:0x0004:0x0003": {
+    "description": "Touch Panel Switch Quinto",
+    "label": "HE-TPS05",
+    "manufacturer": "HELTUN"
+  },
   "0x0344:0x0004:0x0009": {
     "description": "Relay Switch Quinto",
     "label": "HE-RS01",
@@ -12280,6 +12330,11 @@
     "manufacturer": "Ring"
   },
   "0x0346:0x0401:0x0102": {
+    "description": "Range Extender (1st generation)",
+    "label": "4AR1S7-0EN0 / 4AR1E9-0EU0",
+    "manufacturer": "Ring"
+  },
+  "0x0346:0x0401:0x0202": {
     "description": "Range Extender (1st generation)",
     "label": "4AR1S7-0EN0 / 4AR1E9-0EU0",
     "manufacturer": "Ring"
@@ -12514,6 +12569,11 @@
     "label": "ZWA011",
     "manufacturer": "Aeotec Ltd."
   },
+  "0x0371:0x0002:0x002a": {
+    "description": "Door / Window Sensor 7 Pro",
+    "label": "ZWA012",
+    "manufacturer": "Aeotec Ltd."
+  },
   "0x0371:0x0002:0x00bb": {
     "description": "Recessed Door Sensor 7",
     "label": "ZW187",
@@ -12604,6 +12664,11 @@
     "label": "ZWA011",
     "manufacturer": "Aeotec Ltd."
   },
+  "0x0371:0x0102:0x002a": {
+    "description": "Door / Window Sensor 7 Pro",
+    "label": "ZWA012",
+    "manufacturer": "Aeotec Ltd."
+  },
   "0x0371:0x0102:0x00bb": {
     "description": "Recessed Door Sensor 7",
     "label": "ZW187",
@@ -12659,9 +12724,19 @@
     "label": "ZWA011",
     "manufacturer": "Aeotec Ltd."
   },
+  "0x0371:0x0202:0x000c": {
+    "description": "Door / Window Sensor 7 Pro",
+    "label": "ZWA012",
+    "manufacturer": "Aeotec Ltd."
+  },
   "0x0371:0x0202:0x0029": {
     "description": "Door/Window Sensor 7",
     "label": "ZWA011",
+    "manufacturer": "Aeotec Ltd."
+  },
+  "0x0371:0x0202:0x002a": {
+    "description": "Door / Window Sensor 7 Pro",
+    "label": "ZWA012",
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0202:0x00bb": {
@@ -13064,6 +13139,11 @@
     "label": "LM-S1ZW",
     "manufacturer": "Lumi"
   },
+  "0x0438:0x0200:0xd005": {
+    "description": "In-Wall Dimmer Module",
+    "label": "Z-Wave Dimmer 400W",
+    "manufacturer": "Namron"
+  },
   "0x0438:0x0200:0xd00c": {
     "description": "In-Wall Dimmer Module",
     "label": "Z-Wave Dimmer 2 400W",
@@ -13304,5 +13384,5 @@
     "label": "BW8120",
     "manufacturer": "Remotec"
   },
-  "updated_at": "2021-08-09T16:26:20.182948"
+  "updated_at": "2021-09-03T20:28:13.444713"
 }
