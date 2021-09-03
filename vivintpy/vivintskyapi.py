@@ -59,7 +59,7 @@ class VivintSkyApi:
 
     async def connect(self) -> dict:
         """Connect to VivintSky Cloud Service."""
-        if self.__has_custom_client_session:
+        if self.__has_custom_client_session and self.is_session_valid():
             authuser_data = await self.get_authuser_data()
         else:
             authuser_data = await self.__get_vivintsky_session(
