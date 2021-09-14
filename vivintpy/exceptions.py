@@ -13,7 +13,7 @@ class VivintSkyApiAuthenticationError(VivintSkyApiError):
     """VivintSky API authentication related error occurred."""
 
 
-class VivintSkyApiMfaRequired(VivintSkyApiAuthenticationError):
+class VivintSkyApiMfaRequiredError(VivintSkyApiAuthenticationError):
     """VivintSky API MFA required related error occurred."""
 
 

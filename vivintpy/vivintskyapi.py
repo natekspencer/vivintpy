@@ -21,7 +21,7 @@ from .enums import ArmedState, GarageDoorState, ZoneBypass
 from .exceptions import (
     VivintSkyApiAuthenticationError,
     VivintSkyApiError,
-    VivintSkyApiMfaRequired,
+    VivintSkyApiMfaRequiredError,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -39,10 +39,12 @@ class VivintSkyApi:
         self,
         username: str,
         password: str,
+        persist_session: bool = False,
         client_session: Optional[aiohttp.ClientSession] = None,
     ):
         self.__username = username
         self.__password = password
+        self.__persist_session = persist_session
         self.__client_session = client_session or self.__get_new_client_session()
         self.__has_custom_client_session = client_session is not None
         self.__mfa_pending = False
@@ -63,7 +65,7 @@ class VivintSkyApi:
             authuser_data = await self.get_authuser_data()
         else:
             authuser_data = await self.__get_vivintsky_session(
-                self.__username, self.__password
+                self.__username, self.__password, self.__persist_session
             )
         if not authuser_data:
             raise VivintSkyApiAuthenticationError("Unable to login to Vivint")
@@ -346,16 +348,22 @@ class VivintSkyApi:
 
         return aiohttp.ClientSession(connector=connector)
 
-    async def __get_vivintsky_session(self, username: str, password: str) -> dict:
-        """Login into the Vivint Sky platform with the given username and password.
+    async def __get_vivintsky_session(
+        self, username: str, password: str, persist_session: bool = False
+    ) -> dict:
+        """Login into the Vivint Sky platform with the given username, password and, optionally, persist the session.
 
         Returns auth user data if successful.
         """
         return await self.__post(
             "login",
-            data=json.dumps({"username": username, "password": password}).encode(
-                "utf-8"
-            ),
+            data=json.dumps(
+                {
+                    "username": username,
+                    "password": password,
+                    "persist_session": persist_session,
+                }
+            ).encode("utf-8"),
         )
 
     async def __get(
@@ -412,7 +420,7 @@ class VivintSkyApi:
         is_mfa_request = path == VIVINT_MFA_ENDPOINT
 
         if self.__mfa_pending and not is_mfa_request:
-            raise VivintSkyApiMfaRequired(AuthenticationResponse.MFA_REQUIRED)
+            raise VivintSkyApiMfaRequiredError(AuthenticationResponse.MFA_REQUIRED)
 
         resp = await method(
             path if is_mfa_request else f"{VIVINT_API_ENDPOINT}/{path}",
@@ -435,7 +443,7 @@ class VivintSkyApi:
                 )
                 if message == AuthenticationResponse.MFA_REQUIRED:
                     self.__mfa_pending = True
-                    raise VivintSkyApiMfaRequired(message)
+                    raise VivintSkyApiMfaRequiredError(message)
                 raise VivintSkyApiAuthenticationError(message)
             else:
                 resp.raise_for_status()

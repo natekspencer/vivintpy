@@ -31,13 +31,19 @@ class Account:
         self,
         username: str,
         password: str,
+        persist_session: bool = False,
         client_session: Optional[aiohttp.ClientSession] = None,
     ):
         self.__connected = False
         self.__load_devices = False
         self.__pubnub: PubNubAsyncio = None
         self.__pubnub_listener: VivintPubNubSubscribeListener = None
-        self.vivintskyapi = VivintSkyApi(username, password, client_session)
+        self.vivintskyapi = VivintSkyApi(
+            username=username,
+            password=password,
+            persist_session=persist_session,
+            client_session=client_session,
+        )
         self.systems: List[System] = []
 
     @property
