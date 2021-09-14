@@ -3149,6 +3149,11 @@
     "label": "AMZ Solar",
     "manufacturer": "Fakro"
   },
+  "0x0085:0x0005:0x0112": {
+    "description": "Solar Awning",
+    "label": "AMZ Solar",
+    "manufacturer": "Fakro"
+  },
   "0x0085:0x0006:0x0002": {
     "description": "Awning Blind",
     "label": "VMZ Solar",
@@ -10424,6 +10429,11 @@
     "label": "ZSO7300",
     "manufacturer": "Logic Group"
   },
+  "0x0234:0x0004:0x002a": {
+    "description": "Wall Socket",
+    "label": "ZSO7300",
+    "manufacturer": "Logic Group"
+  },
   "0x0234:0x0004:0x0129": {
     "description": "Battery Wall Controller",
     "label": "ZBA7140",
@@ -11754,6 +11764,11 @@
     "label": "ZW30",
     "manufacturer": "EVA Logik"
   },
+  "0x0312:0xaa00:0xaa02": {
+    "description": "S2 In-wall Smart Dimmer switch",
+    "label": "ZW31",
+    "manufacturer": "NIE Technology Co., Ltd."
+  },
   "0x0312:0xb003:0xc11c": {
     "description": "Door/Window Sensor",
     "label": "ZW1201",
@@ -11877,6 +11892,16 @@
   "0x0312:0xff00:0xff0c": {
     "description": "Smart Plug - 1 channel",
     "label": "MP21Z",
+    "manufacturer": "Minoston"
+  },
+  "0x0312:0xff00:0xff0d": {
+    "description": "Smart Plug Dimmer",
+    "label": "MP21ZD",
+    "manufacturer": "Minoston"
+  },
+  "0x0312:0xff00:0xff0e": {
+    "description": "Mini Plug with Power Meter",
+    "label": "MP21ZP",
     "manufacturer": "Minoston"
   },
   "0x0312:0xff01:0xff01": {
@@ -12304,6 +12329,11 @@
     "label": "4SD2SZ-0EN0",
     "manufacturer": "Ring"
   },
+  "0x0346:0x0201:0x0401": {
+    "description": "Contact Sensor Gen2",
+    "label": "4SD2SZ-0EN0",
+    "manufacturer": "Ring"
+  },
   "0x0346:0x0301:0x0201": {
     "description": "Motion Sensor",
     "label": "4SP1S7-0EN0 / 4SPAE9-0EU0",
@@ -12687,6 +12717,11 @@
   "0x0371:0x0103:0x0017": {
     "description": "Smart Switch 7",
     "label": "ZWA023",
+    "manufacturer": "Aeotec Ltd."
+  },
+  "0x0371:0x0103:0x008d": {
+    "description": "Nano Shutter V.3",
+    "label": "ZW141",
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0103:0x00a2": {
@@ -13384,5 +13419,5 @@
     "label": "BW8120",
     "manufacturer": "Remotec"
   },
-  "updated_at": "2021-09-03T20:28:13.444713"
+  "updated_at": "2021-09-14T16:20:28.292436"
 }
