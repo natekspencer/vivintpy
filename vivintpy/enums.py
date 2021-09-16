@@ -63,13 +63,13 @@ class CapabilityType(IntEnum):
     DIMMABLE = 8
     DOORBELL_CHIME_SELECTABLE = 56
     DOOR_STATE = 71
-    FAN120_MINUTE = 23
     FAN15_MINUTE = 18
-    FAN240_MINUTE = 24
     FAN30_MINUTE = 19
     FAN45_MINUTE = 20
-    FAN480_MINUTE = 25
     FAN60_MINUTE = 21
+    FAN120_MINUTE = 23
+    FAN240_MINUTE = 24
+    FAN480_MINUTE = 25
     FAN960_MINUTE = 26
     HAS_MICROPHONE = 46
     HSB_LIGHTING = 9
@@ -239,12 +239,20 @@ class FanMode(IntEnum):
     ON_HIGH = 3
     TIMER_15 = 99
     TIMER_30 = 100
-    TIMER_60 = 101
     TIMER_45 = 102
+    TIMER_60 = 101
     TIMER_120 = 103
     TIMER_240 = 104
     TIMER_480 = 105
+    TIMER_720 = 107
     TIMER_960 = 106
+
+    # Handle unknown/future fan modes
+    UNKNOWN = -1
+
+    @classmethod
+    def _missing_(cls, value):
+        return cls.UNKNOWN
 
 
 @unique
