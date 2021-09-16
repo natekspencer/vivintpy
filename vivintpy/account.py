@@ -1,4 +1,5 @@
 """Module that implements the Vivint class."""
+import asyncio
 import logging
 from typing import List, Optional
 
@@ -80,10 +81,26 @@ class Account:
         if self.connected:
             if self.__pubnub:
                 self.__pubnub.remove_listener(self.__pubnub_listener)
-                self.__pubnub.unsubscribe_all()
+                await self.__pubnub_unsubscribe_all()
                 await self.__pubnub.stop()
         await self.vivintskyapi.disconnect()
         self.__connected = False
+
+    async def __pubnub_unsubscribe_all(self) -> None:
+        """
+        Unsubscribe from all channels and wait for the response.
+
+        The pubnub code doesn't properly wait for the unsubscribe event to finish or to
+        be canceled, so we have to manually do it by finding the coroutine in asyncio.
+        """
+        self.__pubnub.unsubscribe_all()
+        tasks = [
+            task
+            for task in asyncio.all_tasks()
+            if getattr(getattr(task.get_coro(), "cr_code", None), "co_name", None)
+            == "_send_leave_helper"
+        ]
+        await asyncio.gather(*tasks)
 
     async def verify_mfa(self, code: str) -> None:
         """Verify multi-factor authentication with the VivintSky API."""
