@@ -81,7 +81,7 @@ class Account:
             if self.__pubnub:
                 self.__pubnub.remove_listener(self.__pubnub_listener)
                 self.__pubnub.unsubscribe_all()
-                self.__pubnub.stop()
+                await self.__pubnub.stop()
         await self.vivintskyapi.disconnect()
         self.__connected = False
 

@@ -8809,6 +8809,11 @@
     "label": "MH10-PM2.5-WA/WD",
     "manufacturer": "McoHome Technology Co., Ltd."
   },
+  "0x015f:0x0a02:0x5102": {
+    "description": "PM2.5 Monitor (Zwave Plus)",
+    "label": "MH10-PM2.5-WA/WD",
+    "manufacturer": "McoHome Technology Co., Ltd."
+  },
   "0x015f:0x0a05:0x0100": {
     "description": "PM2.5 Monitor",
     "label": "MH10-PM2.5-WA",
@@ -13419,5 +13424,5 @@
     "label": "BW8120",
     "manufacturer": "Remotec"
   },
-  "updated_at": "2021-09-16T00:50:47.252247"
+  "updated_at": "2021-09-16T18:02:36.075009"
 }
