@@ -2,7 +2,7 @@
 import logging
 
 from ..const import ThermostatAttribute as Attribute
-from ..enums import FanMode, HoldMode, OperatingMode
+from ..enums import FanMode, HoldMode, OperatingMode, OperatingState
 from . import VivintDevice
 from .alarm_panel import AlarmPanel
 
@@ -47,7 +47,7 @@ class Thermostat(VivintDevice):
 
     @property
     def is_on(self) -> int:
-        return self.data.get(Attribute.OPERATING_STATE) == 1
+        return self.operating_state != OperatingState.IDLE
 
     @property
     def maximum_temperature(self) -> float:
@@ -60,6 +60,10 @@ class Thermostat(VivintDevice):
     @property
     def operating_mode(self) -> OperatingMode:
         return OperatingMode(self.data.get(Attribute.OPERATING_MODE))
+
+    @property
+    def operating_state(self) -> OperatingState:
+        return OperatingState(self.data.get(Attribute.OPERATING_STATE))
 
     @property
     def temperature(self) -> float:

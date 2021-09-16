@@ -299,6 +299,15 @@ class OperatingMode(IntEnum):
 
 
 @unique
+class OperatingState(IntEnum):
+    """Operating state."""
+
+    IDLE = 0
+    HEATING = 1
+    COOLING = 2
+
+
+@unique
 class SensorType(IntEnum):
     """Sensor type."""
 
