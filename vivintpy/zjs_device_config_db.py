@@ -1,3 +1,4 @@
+"""Script to generate Z-Wave device data."""
 import json
 import logging
 import os
@@ -29,13 +30,13 @@ __MUTEX = threading.Lock()
 def get_zwave_device_info(
     manufacturer_id: int, product_type: int, product_id: int
 ) -> dict:
-    """Lookup the Z-Wave device based on the manufacturer id, product type, and product id"""
+    """Lookup the Z-Wave device based on the manufacturer id, product type and product id."""
     key = f"0x{manufacturer_id:04x}:0x{product_type:04x}:0x{product_id:04x}"
     return _load_db_from_file().get(key, {})
 
 
 def _device_config_db_file_exists() -> bool:
-    """Returns True if the device config db file exists."""
+    """Return True if the device config db file exists."""
     return (
         os.path.isfile(ZJS_DEVICE_CONFIG_DB_FILE)
         and os.path.getsize(ZJS_DEVICE_CONFIG_DB_FILE) > 0
@@ -43,7 +44,7 @@ def _device_config_db_file_exists() -> bool:
 
 
 def _load_db_from_file() -> dict:
-    """Loads the Z-Wave JS device config from the saved JSON file."""
+    """Load the Z-Wave JS device config from the saved JSON file."""
     data = {}
     if _device_config_db_file_exists():
         with open(ZJS_DEVICE_CONFIG_DB_FILE) as f:
@@ -52,7 +53,7 @@ def _load_db_from_file() -> dict:
 
 
 async def download_zjs_device_config_db() -> dict:
-    """Downloads the Z-Wave JS device config database."""
+    """Download the Z-Wave JS device config database."""
     with __MUTEX:
         if await _is_new_version_available():
             start_date = datetime.now(timezone.utc).replace(tzinfo=None).isoformat()
@@ -69,7 +70,7 @@ async def download_zjs_device_config_db() -> dict:
 
 
 async def _is_new_version_available() -> bool:
-    """Returns `True` if a newer archive of the repo at http://github.com/zwave-js/node-zwave-js is available."""
+    """Return `True` if a newer archive of the repo at http://github.com/zwave-js/node-zwave-js is available."""
     file_updated_at = _load_db_from_file().get(UPDATED_AT)
     if file_updated_at is None:
         _LOGGER.debug("File has not yet been created")
@@ -95,7 +96,7 @@ async def _is_new_version_available() -> bool:
 
 
 def _clean_temp_directory(create: bool = False) -> None:
-    """Ensures the temp directory is empty and creates it if specified."""
+    """Ensure the temp directory is empty and create it if specified."""
     if os.path.exists(TMP_DIR):
         _LOGGER.debug("Removing temp directory")
         shutil.rmtree(TMP_DIR)
@@ -106,7 +107,7 @@ def _clean_temp_directory(create: bool = False) -> None:
 
 
 async def _download_zjs_tarfile() -> None:
-    """Downloads the Z-Wave JS tarfile from http://github.com/zwave-js/node-zwave-js."""
+    """Download the Z-Wave JS tarfile from http://github.com/zwave-js/node-zwave-js."""
     download_url = f"{REPO_URL}/tarball"
     _LOGGER.debug("Downloading tarfile from %s", download_url)
     async with aiohttp.ClientSession() as session:
@@ -118,20 +119,20 @@ async def _download_zjs_tarfile() -> None:
 
 
 def _extract_zjs_config_files() -> None:
-    """Extracts the Z-Wave JSON config files."""
+    """Extract the Z-Wave JSON config files."""
 
     def members(tf: tarfile.TarFile) -> Generator[tarfile.TarInfo, Any, Any]:
         base_path = f"{tf.firstmember.path}{ZJS_TAR_CONFIG_BASE}"
         manufacturers_path = f"{base_path}manufacturers.json"
         devices_path = f"{base_path}devices/"
-        l = len(base_path)
+        base_length = len(base_path)
         for member in tf.getmembers():
             if member.path.startswith(manufacturers_path) or (
                 member.path.startswith(devices_path)
                 and member.path.endswith(".json")
                 and "/templates/" not in member.path
             ):
-                member.path = member.path[l:]
+                member.path = member.path[base_length:]
                 yield member
 
     _LOGGER.debug("Extracting config files from download")
@@ -140,7 +141,7 @@ def _extract_zjs_config_files() -> None:
 
 
 def _create_db_from_zjs_config_files(updated_at: str) -> dict:
-    """Parses the Z-Wave JSON config files and creates a consolidated device db."""
+    """Parse the Z-Wave JSON config files and create a consolidated device db."""
     _LOGGER.debug("Parsing extracted config files")
     json_files = Path(os.path.join(TMP_DIR, "devices")).glob("**/*.json")
 
@@ -151,11 +152,11 @@ def _create_db_from_zjs_config_files(updated_at: str) -> dict:
         try:
             with open(file) as json_file:
                 json_string = "".join(
-                    re.sub("((^|\s+)//.*)|(/\*.*\*/)", "", line)
+                    re.sub("((^|\\s+)//.*)|(/\\*.*\\*/)", "", line)
                     for line in json_file.readlines()
                 )
                 data = json.loads(json_string)
-        except:
+        except:  # noqa: E722
             print("oops, couldn't parse file %s", file)
 
         manufacturer_id = data.get("manufacturerId")

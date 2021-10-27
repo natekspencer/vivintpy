@@ -1,11 +1,9 @@
 """Module that implements the Camera class."""
 import logging
 from datetime import datetime
-from typing import Callable
 
 from ..const import CameraAttribute as Attribute
 from ..const import PanelCredentialAttribute
-from ..utils import send_deprecation_warning
 from . import VivintDevice
 from .alarm_panel import AlarmPanel
 
@@ -31,6 +29,7 @@ class Camera(VivintDevice):
     """Represents a Vivint camera."""
 
     def __init__(self, data: dict, alarm_panel: AlarmPanel):
+        """Initialize a camera."""
         super().__init__(data, alarm_panel)
         manufacturer_and_model = self.data.get(Attribute.ACTUAL_TYPE).split("_")[0:2]
         self._manufacturer = manufacturer_and_model[0].title()
@@ -48,17 +47,17 @@ class Camera(VivintDevice):
 
     @property
     def capture_clip_on_motion(self) -> bool:
-        "Return True if capture clip on motion is active."
+        """Return True if capture clip on motion is active."""
         return self.data[Attribute.CAPTURE_CLIP_ON_MOTION]
 
     @property
     def ip_address(self) -> str:
-        "Camera's IP address."
+        """Camera's IP address."""
         return self.data[Attribute.CAMERA_IP_ADDRESS]
 
     @property
     def mac_address(self) -> str:
-        """Camera's MAC Address"""
+        """Camera's MAC Address."""
         return self.data[Attribute.CAMERA_MAC]
 
     @property
@@ -76,16 +75,6 @@ class Camera(VivintDevice):
         """Camera's wireless signal strength."""
         return self.data[Attribute.WIRELESS_SIGNAL_STRENGTH]
 
-    def add_thumbnail_ready_callback(self, callback: Callable) -> None:
-        """.. deprecated::
-
-        (deprecated) Use `on("thumbnail_ready", callback)` instead.
-        """
-        send_deprecation_warning(
-            "add_thumbnail_ready_callback(callback)", "on('thumbnail_ready', callback)"
-        )
-        self.on(THUMBNAIL_READY, callback)
-
     async def request_thumbnail(self) -> None:
         """Request a new thumbnail for the camera."""
         await self.vivintskyapi.request_camera_thumbnail(
@@ -93,7 +82,7 @@ class Camera(VivintDevice):
         )
 
     async def get_thumbnail_url(self) -> str:
-        """Returns the latest camera thumbnail URL."""
+        """Return the latest camera thumbnail URL."""
         # Sometimes this date field comes back with a "Z" at the end
         # and sometimes it doesn't, so let's just safely remove it.
         camera_thumbnail_date = datetime.strptime(
@@ -110,13 +99,13 @@ class Camera(VivintDevice):
         )
 
     async def get_rtsp_url(self, internal: bool = False, hd: bool = False) -> str:
-        """Returns the rtsp URL for the camera."""
+        """Return the rtsp URL for the camera."""
         credentials = await self.alarm_panel.get_panel_credentials()
         url = self.data[f"c{'i' if internal else 'e'}u{'' if hd else 's'}"][0]
         return f"{url[:7]}{credentials[PanelCredentialAttribute.NAME]}:{credentials[PanelCredentialAttribute.PASSWORD]}@{url[7:]}"
 
     async def get_direct_rtsp_url(self, hd: bool = False) -> str:
-        """Returns the direct rtsp url for this camera, in HD if requested, if any."""
+        """Return the direct rtsp url for this camera, in HD if requested, if any."""
         return (
             f"rtsp://{self.data[Attribute.USERNAME]}:{self.data[Attribute.PASSWORD]}@{self.ip_address}:{self.data[Attribute.CAMERA_IP_PORT]}/{self.data[Attribute.CAMERA_DIRECT_STREAM_PATH if hd else Attribute.CAMERA_DIRECT_STREAM_PATH_STANDARD]}"
             if self.data[Attribute.CAMERA_DIRECT_AVAILABLE]
@@ -125,7 +114,7 @@ class Camera(VivintDevice):
         )
 
     def handle_pubnub_message(self, message: dict) -> None:
-        """Handles a pubnub message addressed to this camera."""
+        """Handle a pubnub message addressed to this camera."""
         super().handle_pubnub_message(message)
 
         event = None

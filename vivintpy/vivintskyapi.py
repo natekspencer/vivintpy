@@ -1,10 +1,12 @@
 """Module that implements the VivintSkyApi class."""
+from __future__ import annotations
+
 import json
 import logging
 import ssl
 from datetime import datetime
 from types import MethodType
-from typing import Any, Dict, Optional
+from typing import Any
 
 import aiohttp
 import certifi
@@ -40,8 +42,9 @@ class VivintSkyApi:
         username: str,
         password: str,
         persist_session: bool = False,
-        client_session: Optional[aiohttp.ClientSession] = None,
+        client_session: aiohttp.ClientSession | None = None,
     ):
+        """Initialize the VivintSky API."""
         self.__username = username
         self.__password = password
         self.__persist_session = persist_session
@@ -87,7 +90,7 @@ class VivintSkyApi:
 
     async def get_authuser_data(self) -> dict:
         """
-        Get the authuser data
+        Get the authuser data.
 
         Poll the Vivint authuser API endpoint resource to gather user-related data including enumeration of the systems
         that user has access to.
@@ -109,7 +112,7 @@ class VivintSkyApi:
             )
 
     async def get_system_data(self, panel_id: int) -> dict:
-        """Gets the raw data for a system."""
+        """Get the raw data for a system."""
         resp = await self.__get(
             f"systems/{panel_id}",
             headers={"Accept-Encoding": "application/json"},
@@ -121,7 +124,7 @@ class VivintSkyApi:
             raise VivintSkyApiError("Unable to retrieve system data")
 
     async def get_device_data(self, panel_id: int, device_id: int) -> dict:
-        """Gets the raw data for a device."""
+        """Get the raw data for a device."""
         resp = await self.__get(
             f"system/{panel_id}/device/{device_id}",
             headers={"Accept-Encoding": "application/json"},
@@ -134,6 +137,7 @@ class VivintSkyApi:
     async def set_alarm_state(
         self, panel_id: int, partition_id: int, state: bool
     ) -> aiohttp.ClientResponse:
+        """Set the alarm state."""
         resp = await self.__put(
             f"{panel_id}/{partition_id}/armedstates",
             headers={"Content-Type": "application/json;charset=UTF-8"},
@@ -178,7 +182,7 @@ class VivintSkyApi:
                 panel_id,
                 partition_id,
             )
-            raise VivintSkyApiError(f"Failed to set garage door state")
+            raise VivintSkyApiError("Failed to set garage door state")
 
     async def set_lock_state(
         self, panel_id: int, partition_id: int, device_id: int, locked: bool
@@ -204,7 +208,7 @@ class VivintSkyApi:
                 panel_id,
                 partition_id,
             )
-            raise VivintSkyApiError(f"Failed to set lock state")
+            raise VivintSkyApiError("Failed to set lock state")
 
     async def set_sensor_state(
         self, panel_id: int, partition_id: int, device_id: int, bypass: bool
@@ -232,15 +236,15 @@ class VivintSkyApi:
                 panel_id,
                 partition_id,
             )
-            raise VivintSkyApiError(f"Failed to set sensor state")
+            raise VivintSkyApiError("Failed to set sensor state")
 
     async def set_switch_state(
         self,
         panel_id: int,
         partition_id: int,
         device_id: int,
-        on: Optional[bool] = None,
-        level: Optional[int] = None,
+        on: bool | None = None,
+        level: int | None = None,
     ) -> None:
         """Set switch state."""
         # validate input
@@ -296,11 +300,12 @@ class VivintSkyApi:
                 panel_id,
                 partition_id,
             )
-            raise VivintSkyApiError(f"Failed to set thermostat state")
+            raise VivintSkyApiError("Failed to set thermostat state")
 
     async def request_camera_thumbnail(
         self, panel_id: int, partition_id: int, device_id: int
     ) -> None:
+        """Request the camera thumbnail."""
         try:
             return await self.__get(
                 f"{panel_id}/{partition_id}/{device_id}/request-camera-thumbnail",
@@ -322,6 +327,7 @@ class VivintSkyApi:
         device_id: int,
         thumbnail_timestamp: datetime,
     ) -> str:
+        """Get the camera thumbnail url."""
         try:
             resp = await self.__get(
                 f"{panel_id}/{partition_id}/{device_id}/camera-thumbnail",
@@ -369,10 +375,10 @@ class VivintSkyApi:
     async def __get(
         self,
         path: str,
-        headers: Dict[str, Any] = None,
-        params: Dict[str, Any] = None,
+        headers: dict[str, Any] = None,
+        params: dict[str, Any] = None,
         allow_redirects: bool = None,
-    ) -> Optional[dict]:
+    ) -> dict | None:
         """Perform a get request."""
         return await self.__call(
             self.__client_session.get,
@@ -386,16 +392,16 @@ class VivintSkyApi:
         self,
         path: str,
         data: bytes = None,
-    ) -> Optional[dict]:
+    ) -> dict | None:
         """Perform a post request."""
         return await self.__call(self.__client_session.post, path, data=data)
 
     async def __put(
         self,
         path: str,
-        headers: Dict[str, Any] = None,
+        headers: dict[str, Any] = None,
         data: bytes = None,
-    ) -> Optional[dict]:
+    ) -> dict | None:
         """Perform a put request."""
         return await self.__call(
             self.__client_session.put, path, headers=headers, data=data
@@ -405,11 +411,11 @@ class VivintSkyApi:
         self,
         method: MethodType,
         path: str,
-        headers: Dict[str, Any] = None,
-        params: Dict[str, Any] = None,
+        headers: dict[str, Any] = None,
+        params: dict[str, Any] = None,
         data: bytes = None,
         allow_redirects: bool = None,
-    ) -> Optional[dict]:
+    ) -> dict | None:
         """Perform a request with supplied parameters and reauthenticate if necessary."""
         if path != "login" and not self.is_session_valid():
             await self.connect()

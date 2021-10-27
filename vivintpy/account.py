@@ -1,7 +1,8 @@
 """Module that implements the Vivint class."""
+from __future__ import annotations
+
 import asyncio
 import logging
-from typing import List, Optional
 
 import aiohttp
 from aiohttp.client_exceptions import ClientConnectionError
@@ -24,15 +25,16 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class Account:
-    """Class for interacting with VivintSky API using asyncio"""
+    """Class for interacting with VivintSky API using asyncio."""
 
     def __init__(
         self,
         username: str,
         password: str,
         persist_session: bool = False,
-        client_session: Optional[aiohttp.ClientSession] = None,
+        client_session: aiohttp.ClientSession | None = None,
     ):
+        """Initialize an account."""
         self.__connected = False
         self.__load_devices = False
         self.__pubnub: PubNubAsyncio = None
@@ -43,7 +45,7 @@ class Account:
             persist_session=persist_session,
             client_session=client_session,
         )
-        self.systems: List[System] = []
+        self.systems: list[System] = []
 
     @property
     def connected(self):
@@ -55,7 +57,7 @@ class Account:
         load_devices: bool = False,
         subscribe_for_realtime_updates: bool = False,
     ) -> None:
-        """Connects to the VivintSky API."""
+        """Connect to the VivintSky API."""
         _LOGGER.debug("Connecting to VivintSky")
 
         self.__load_devices = load_devices
@@ -75,6 +77,7 @@ class Account:
             await self.refresh(authuser_data)
 
     async def disconnect(self) -> None:
+        """Disconnect from the API."""
         _LOGGER.debug("Disconnecting from VivintSky")
         if self.connected:
             if self.__pubnub:
@@ -110,6 +113,7 @@ class Account:
             await self.refresh()
 
     async def refresh(self, authuser_data: dict = None) -> None:
+        """Refresh the account."""
         # make a call to vivint's authuser endpoint to get a list of all the system_accounts (locations) & panels if not supplied
         if not authuser_data:
             try:
@@ -147,7 +151,7 @@ class Account:
             )
 
     async def subscribe_for_realtime_updates(self, authuser_data: dict = None) -> None:
-        """Subscribes to PubNub for realtime updates."""
+        """Subscribe to PubNub for realtime updates."""
         # make a call to vivint's authuser endpoint to get message broadcast channel if not supplied
         if not authuser_data:
             authuser_data = await self.vivintskyapi.get_authuser_data()
@@ -170,7 +174,7 @@ class Account:
         self.__pubnub.subscribe().channels(pn_channel).with_presence().execute()
 
     def handle_pubnub_message(self, message: dict) -> None:
-        """Handles a pubnub message."""
+        """Handle a pubnub message."""
         panel_id = message.get(PubNubMessageAttribute.PANEL_ID)
         if not panel_id:
             _LOGGER.debug(

@@ -1,5 +1,5 @@
 """Module that implements the Switch class."""
-from typing import Optional
+from __future__ import annotations
 
 from ..const import SwitchAttribute, ZWaveDeviceAttribute
 from . import VivintDevice
@@ -10,22 +10,20 @@ class Switch(VivintDevice):
 
     @property
     def is_on(self) -> bool:
-        """Returns True if switch is on."""
+        """Return True if switch is on."""
         return self.data[SwitchAttribute.STATE]
 
     @property
     def level(self) -> int:
-        """Returns the level of the switch betwen 0..100."""
+        """Return the level of the switch betwen 0..100."""
         return self.data[SwitchAttribute.VALUE]
 
     @property
     def node_online(self) -> bool:
-        """Returns True if the node is online."""
+        """Return True if the node is online."""
         return self.data[ZWaveDeviceAttribute.ONLINE]
 
-    async def set_state(
-        self, on: Optional[bool] = None, level: Optional[int] = None
-    ) -> None:
+    async def set_state(self, on: bool | None = None, level: int | None = None) -> None:
         """Set switch's state."""
         await self.vivintskyapi.set_switch_state(
             self.alarm_panel.id, self.alarm_panel.partition_id, self.id, on, level

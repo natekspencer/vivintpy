@@ -1,7 +1,7 @@
 """This package contains the various devices attached to a Vivint system."""
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable, Dict, List, Optional
+from typing import TYPE_CHECKING, Callable
 
 from ..const import VivintDeviceAttribute as Attribute
 from ..entity import Entity
@@ -16,7 +16,7 @@ DEVICE = "device"
 
 
 def get_device_class(device_type: str) -> Callable:
-    """Maps a device_type string to the class that implements that device."""
+    """Map a device_type string to the class that implements that device."""
     from ..enums import DeviceType
     from . import UnknownDevice
     from .camera import Camera
@@ -43,6 +43,7 @@ class VivintDevice(Entity):
     """Class to implement a generic vivint device."""
 
     def __init__(self, data: dict, alarm_panel: AlarmPanel = None) -> None:
+        """Initialize a device."""
         super().__init__(data)
         self.alarm_panel = alarm_panel
         self._manufacturer = None
@@ -60,7 +61,7 @@ class VivintDevice(Entity):
         )
 
     def __repr__(self) -> str:
-        """Custom repr method"""
+        """Return custom __repr__ of device."""
         return f"<{self.__class__.__name__} {self.id}, {self.name}>"
 
     @property
@@ -69,26 +70,26 @@ class VivintDevice(Entity):
         return self.data[Attribute.ID]
 
     @property
-    def name(self) -> Optional[str]:
+    def name(self) -> str | None:
         """Device's name."""
         return self.data.get(Attribute.NAME)
 
     @property
     def capabilities(
         self,
-    ) -> Optional[Dict[CapabilityCategoryType, List[CapabilityType]]]:
+    ) -> dict[CapabilityCategoryType, list[CapabilityType]] | None:
         """Device capabilities."""
         return self._capabilities
 
     @property
-    def manufacturer(self) -> Optional[str]:
+    def manufacturer(self) -> str | None:
         """Return the manufacturer for this device."""
         if not self._manufacturer and self.data.get("zpd"):
             self.get_zwave_details()
         return self._manufacturer
 
     @property
-    def model(self) -> Optional[str]:
+    def model(self) -> str | None:
         """Return the model for this device."""
         if not self._model and self.data.get("zpd"):
             self.get_zwave_details()
@@ -100,7 +101,7 @@ class VivintDevice(Entity):
         return self.data.get(Attribute.PANEL_ID)
 
     @property
-    def serial_number(self) -> Optional[str]:
+    def serial_number(self) -> str | None:
         """Return the serial number for this device."""
         serial_number = self.data.get(Attribute.SERIAL_NUMBER_32_BIT)
         serial_number = (
@@ -133,6 +134,7 @@ class VivintDevice(Entity):
         return self.alarm_panel.system.vivintskyapi
 
     def get_zwave_details(self):
+        """Get Z-Wave details."""
         if self.data.get("zpd") is None:
             return None
 
@@ -170,4 +172,5 @@ class UnknownDevice(VivintDevice):
     """Describe an unknown/unsupported vivint device."""
 
     def __repr__(self) -> str:
+        """Return custom __repr__ of device."""
         return f"<{self.__class__.__name__}|{self.data[Attribute.TYPE]} {self.id}>"

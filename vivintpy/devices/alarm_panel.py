@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, List, Set, Type
+from typing import TYPE_CHECKING, Type
 
 from ..const import (
     AlarmPanelAttribute,
@@ -26,12 +26,13 @@ class AlarmPanel(VivintDevice):
     """Describe a Vivint alarm panel."""
 
     def __init__(self, data: dict, system: System):
+        """Initialize an alarm panel."""
         self.system = system
         super().__init__(data)
         self.__panel_credentials = None
 
         # initialize devices
-        self.devices: List[VivintDevice] = [
+        self.devices: list[VivintDevice] = [
             get_device_class(device_data[AlarmPanelAttribute.TYPE])(device_data, self)
             for device_data in self.data[AlarmPanelAttribute.DEVICES]
         ]
@@ -65,7 +66,7 @@ class AlarmPanel(VivintDevice):
 
     @property
     def model(self):
-        """Return the model (panel type) of the physical panel."""
+        """Return the model of the physical panel."""
         return (
             "Sky Control"
             if self.__panel and self.__panel.data["pant"] == 1
@@ -119,7 +120,7 @@ class AlarmPanel(VivintDevice):
         await self.set_armed_state(ArmedState.ARMED_AWAY)
 
     async def get_panel_credentials(self) -> dict:
-        """Gets the panel credentials."""
+        """Get the panel credentials."""
         if not self.__panel_credentials:
             self.__panel_credentials = await self.vivintskyapi.get_panel_credentials(
                 self.id
@@ -128,10 +129,10 @@ class AlarmPanel(VivintDevice):
 
     def get_devices(
         self,
-        device_types: Set[Type[VivintDevice]] = None,
-    ) -> List[VivintDevice]:
+        device_types: set[Type[VivintDevice]] = None,
+    ) -> list[VivintDevice]:
         """Get a list of associated devices."""
-        devices: List[VivintDevice] = None
+        devices: list[VivintDevice] = None
 
         if device_types:
             devices = [
@@ -143,7 +144,7 @@ class AlarmPanel(VivintDevice):
         return devices
 
     def refresh(self, data: dict, new_device: bool = False) -> None:
-        """Refreshes the alarm panel."""
+        """Refresh the alarm panel."""
         if not new_device:
             self.update_data(data, override=True)
         else:
@@ -166,7 +167,7 @@ class AlarmPanel(VivintDevice):
                 self.devices.append(device)
 
     def handle_pubnub_message(self, message: dict) -> None:
-        """Handles a pubnub message."""
+        """Handle a pubnub message."""
         operation = message.get(PubNubMessageAttribute.OPERATION)
         data = message.get(PubNubMessageAttribute.DATA)
         if not data:

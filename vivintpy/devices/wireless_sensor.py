@@ -12,6 +12,7 @@ class WirelessSensor(VivintDevice):
     """Represents a Vivint wireless sensor device."""
 
     def __repr__(self) -> str:
+        """Return custom __repr__ of wireless sensor."""
         return (
             f"<{self.__class__.__name__}|{self.equipment_type} {self.id}, {self.name}>"
         )

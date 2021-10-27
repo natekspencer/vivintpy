@@ -1,6 +1,7 @@
 """Module that implements the System class."""
+from __future__ import annotations
+
 import logging
-from typing import List
 
 from .const import PubNubMessageAttribute, SystemAttribute
 from .devices.alarm_panel import AlarmPanel
@@ -15,10 +16,11 @@ class System(Entity):
     """Describe a vivint system."""
 
     def __init__(self, name: str, data: dict, vivintskyapi: VivintSkyApi):
+        """Initialize a system."""
         super().__init__(data)
         self.__name = name
         self.vivintskyapi = vivintskyapi
-        self.alarm_panels: List[AlarmPanel] = [
+        self.alarm_panels: list[AlarmPanel] = [
             AlarmPanel(panel_data, self)
             for panel_data in self.data[SystemAttribute.SYSTEM][
                 SystemAttribute.PARTITION
@@ -27,16 +29,16 @@ class System(Entity):
 
     @property
     def id(self) -> int:
-        """System's id"""
+        """System's id."""
         return self.data[SystemAttribute.SYSTEM][SystemAttribute.PANEL_ID]
 
     @property
     def name(self) -> str:
-        """System's name"""
+        """System's name."""
         return self.__name
 
     async def refresh(self) -> None:
-        """Reloads system's data from VivintSky API."""
+        """Reload a system's data from the VivintSky API."""
         system_data = await self.vivintskyapi.get_system_data(self.id)
 
         for panel_data in system_data[SystemAttribute.SYSTEM][
@@ -53,8 +55,7 @@ class System(Entity):
                 self.alarm_panels.append(AlarmPanel(panel_data, self))
 
     def handle_pubnub_message(self, message: dict) -> None:
-        """Handles a pubnub message."""
-
+        """Handle a pubnub message."""
         if message[PubNubMessageAttribute.TYPE] == "account_system":
             # this is a system message
             operation = message.get(PubNubMessageAttribute.OPERATION)

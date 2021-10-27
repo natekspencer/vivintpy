@@ -1,7 +1,7 @@
 """Module that implements the Entity class."""
-from typing import Callable, Dict, List
+from __future__ import annotations
 
-from .utils import send_deprecation_warning
+from typing import Any, Callable
 
 UPDATE = "update"
 
@@ -9,9 +9,10 @@ UPDATE = "update"
 class Entity:
     """Describe a Vivint entity."""
 
-    def __init__(self, data: dict):
+    def __init__(self, data: dict[str, Any]):
+        """Initialize an entity."""
         self.__data = data
-        self._listeners: Dict[str, List[Callable]] = {}
+        self._listeners: dict[str, list[Callable]] = {}
 
     @property
     def data(self) -> dict:
@@ -28,18 +29,8 @@ class Entity:
         self.emit(UPDATE, {"data": new_val})
 
     def handle_pubnub_message(self, message: dict) -> None:
-        """Handles a pubnub message directed to this entity."""
+        """Handle a pubnub message directed to this entity."""
         self.update_data(message)
-
-    def add_update_callback(self, callback: Callable) -> None:
-        """.. deprecated::
-
-        (deprecated) Use `on("update", callback)` instead.
-        """
-        send_deprecation_warning(
-            "add_update_callback(callback)", "on('update', callback)"
-        )
-        self.on(UPDATE, callback)
 
     def on(self, event_name: str, callback: Callable) -> Callable:
         """Register an event callback."""

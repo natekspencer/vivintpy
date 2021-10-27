@@ -19,6 +19,7 @@ class VivintPubNubSubscribeListener(SubscribeCallback):
     """PubNub Subscribe Listener."""
 
     def __init__(self, message_received_callback: Callable):
+        """Initialize the PubNub subscription."""
         super().__init__()
         self.__message_received_callback = message_received_callback
 
@@ -27,7 +28,7 @@ class VivintPubNubSubscribeListener(SubscribeCallback):
         pubnub: PubNubAsyncio,
         status: PNStatus,
     ) -> None:
-        """Handler called on status updates."""
+        """Handle a status update."""
         operation = PubNubOperationType(status.operation).name
         category = PubNubStatusCategory(status.category).name
         if status.is_error():
@@ -49,12 +50,14 @@ class VivintPubNubSubscribeListener(SubscribeCallback):
         pubnub: PubNubAsyncio,
         message: PNMessageResult,
     ) -> None:
-        """Handler called on each message received."""
+        """Handle a message received."""
         self.__message_received_callback(message.message)
 
 
 @unique
 class PubNubStatusCategory(IntEnum):
+    """PubNub status categories."""
+
     UNKNOWN = 1
     ACKNOWLEDGMENT = 2
     ACCESS_DENIED = 3
@@ -85,6 +88,8 @@ class PubNubStatusCategory(IntEnum):
 
 @unique
 class PubNubOperationType(IntEnum):
+    """PubNub operation types."""
+
     SUBSCRIBE = 1
     UNSUBSCRIBE = 2
     PUBLISH = 3

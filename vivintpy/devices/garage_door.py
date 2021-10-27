@@ -9,24 +9,24 @@ class GarageDoor(VivintDevice):
 
     @property
     def is_closed(self) -> bool:
-        """Returns True if garage dooor is closed and None if unknown."""
+        """Return True if garage dooor is closed and None if unknown."""
         if self.get_state() == GarageDoorState.UNKNOWN:
             return None
         return self.get_state() == GarageDoorState.CLOSED
 
     @property
     def is_closing(self) -> bool:
-        """Returns True if garage dooor is closing."""
+        """Return True if garage dooor is closing."""
         return self.get_state() == GarageDoorState.CLOSING
 
     @property
     def is_opening(self) -> bool:
-        """Returns True if garage dooor is opening."""
+        """Return True if garage dooor is opening."""
         return self.get_state() == GarageDoorState.OPENING
 
     @property
     def node_online(self) -> bool:
-        """Returns True if the node is online."""
+        """Return True if the node is online."""
         return self.data[Attributes.ONLINE]
 
     def get_state(self):
