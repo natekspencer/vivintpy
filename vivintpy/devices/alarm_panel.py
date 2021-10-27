@@ -32,7 +32,7 @@ class AlarmPanel(VivintDevice):
         self.__panel_credentials = None
 
         # initialize devices
-        self.devices: list[VivintDevice] = [
+        self.devices = [
             get_device_class(device_data[AlarmPanelAttribute.TYPE])(device_data, self)
             for device_data in self.data[AlarmPanelAttribute.DEVICES]
         ]

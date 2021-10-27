@@ -1,7 +1,7 @@
 """This package contains the various devices attached to a Vivint system."""
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable
+from typing import TYPE_CHECKING, Callable, Type
 
 from ..const import VivintDeviceAttribute as Attribute
 from ..entity import Entity
@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 DEVICE = "device"
 
 
-def get_device_class(device_type: str) -> Callable:
+def get_device_class(device_type: str) -> Type[VivintDevice]:
     """Map a device_type string to the class that implements that device."""
     from ..enums import DeviceType
     from . import UnknownDevice
@@ -26,7 +26,7 @@ def get_device_class(device_type: str) -> Callable:
     from .thermostat import Thermostat
     from .wireless_sensor import WirelessSensor
 
-    mapping = {
+    mapping: dict[DeviceType, Type[VivintDevice]] = {
         DeviceType.BINARY_SWITCH: BinarySwitch,
         DeviceType.CAMERA: Camera,
         DeviceType.DOOR_LOCK: DoorLock,
