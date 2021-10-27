@@ -5,8 +5,6 @@ from typing import List, Optional
 
 import aiohttp
 from aiohttp.client_exceptions import ClientConnectionError
-
-import pubnub
 from pubnub.enums import PNHeartbeatNotificationOptions, PNReconnectionPolicy
 from pubnub.pnconfiguration import PNConfiguration
 from pubnub.pubnub_asyncio import PubNubAsyncio
