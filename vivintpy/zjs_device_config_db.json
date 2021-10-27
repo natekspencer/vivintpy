@@ -3014,6 +3014,11 @@
     "label": "SSA1/SSA2",
     "manufacturer": "FortrezZ LLC"
   },
+  "0x0084:0x0331:0x010b": {
+    "description": "Siren and Strobe Alarm",
+    "label": "SSA3",
+    "manufacturer": "FortrezZ LLC"
+  },
   "0x0084:0x0341:0x0205": {
     "description": "Siren and Strobe Alarm",
     "label": "SSA3",
@@ -3104,6 +3109,11 @@
     "label": "ZWS12n",
     "manufacturer": "Fakro"
   },
+  "0x0085:0x0002:0x0014": {
+    "description": "Solar Powered Skylight",
+    "label": "FVS",
+    "manufacturer": "Fakro"
+  },
   "0x0085:0x0002:0x0100": {
     "description": "Chain actuator - window opener (2019)",
     "label": "ZWS12",
@@ -3115,8 +3125,8 @@
     "manufacturer": "Fakro"
   },
   "0x0085:0x0003:0x0001": {
-    "description": "Roller Shutter",
-    "label": "ARZ Z-Wave",
+    "description": "Chain actuator 230VAC",
+    "label": "ZWS230",
     "manufacturer": "Fakro"
   },
   "0x0085:0x0003:0x0011": {
@@ -3995,6 +4005,11 @@
     "manufacturer": "BeNext"
   },
   "0x008a:0x0006:0x0100": {
+    "description": "Energy Switch +",
+    "label": "ENERGY SWITCH",
+    "manufacturer": "BeNext"
+  },
+  "0x008a:0x0006:0x0200": {
     "description": "Energy Switch +",
     "label": "ENERGY SWITCH",
     "manufacturer": "BeNext"
@@ -5235,8 +5250,8 @@
     "manufacturer": "Vision Security"
   },
   "0x0109:0x2021:0x2101": {
-    "description": "Zooz 4-in-one motion/temperature/humidity/luminance sensor",
-    "label": "ZSE40",
+    "description": "4-in-1 Sensor",
+    "label": "ZP3111-5",
     "manufacturer": "Vision Security"
   },
   "0x0109:0x2022:0x2201": {
@@ -5255,74 +5270,84 @@
     "manufacturer": "Vision Security"
   },
   "0x010a:0x1100:0x4900": {
-    "description": "Vitrum I dimmer wireless",
-    "label": "VITRUM I",
-    "manufacturer": "VDA"
+    "description": "I Dimmer Wireless",
+    "label": "01E010010 / 01B010010",
+    "manufacturer": "Vitrum"
   },
   "0x010a:0x1100:0x4a00": {
-    "description": "Vitrum II dimmer wireless",
-    "label": "VITRUM II",
-    "manufacturer": "VDA"
+    "description": "II Dimmer Wireless",
+    "label": "01E020010 / 01B020010",
+    "manufacturer": "Vitrum"
   },
   "0x010a:0x1100:0x4b00": {
-    "description": "",
-    "label": "Vitrum III EU Dimmer",
-    "manufacturer": "VDA"
+    "description": "III Dimmer Wireless",
+    "label": "01E030010",
+    "manufacturer": "Vitrum"
   },
   "0x010a:0x1200:0x5100": {
-    "description": "Vitrum touch switch Relay",
-    "label": "Vitrum I EU switch",
-    "manufacturer": "VDA"
+    "description": "I On-Off Wireless",
+    "label": "01E010020 / 01B010020",
+    "manufacturer": "Vitrum"
   },
   "0x010a:0x1200:0x5200": {
-    "description": "Vitrum II EU on-off wireless",
-    "label": "VITRUM II SWITCH",
-    "manufacturer": "VDA"
+    "description": "II On-Off Wireless",
+    "label": "01E020020 / 01B020020",
+    "manufacturer": "Vitrum"
   },
   "0x010a:0x1300:0x5a00": {
-    "description": "VITRUM II Control of Roller Blinds - EU BOX",
-    "label": "VITRIUM II Roller Blinds",
-    "manufacturer": "VDA"
+    "description": "II Rolldown Shutters and Curtains",
+    "label": "02E020011 / 02B020011",
+    "manufacturer": "Vitrum"
   },
   "0x010a:0x1400:0x6600": {
-    "description": "Vitrum touch switch satellite 6 buttons",
-    "label": "Vitrum Satellite VI",
-    "manufacturer": "VDA"
+    "description": "VI Satellite Wireless",
+    "label": "01E060041",
+    "manufacturer": "Vitrum"
   },
   "0x010a:0x1500:0x6900": {
-    "description": "Vitrum Scenario controller",
-    "label": "Vitrum Scenario",
-    "manufacturer": "VDA"
+    "description": "Scenario Controller",
+    "label": "Scenario",
+    "manufacturer": "Vitrum"
   },
   "0x010a:0x2100:0x8900": {
-    "description": "Vitrum I dimmer wireless",
-    "label": "VITRUM I",
-    "manufacturer": "VDA"
+    "description": "I Dimmer Wireless",
+    "label": "01E010010 / 01B010010",
+    "manufacturer": "Vitrum"
   },
   "0x010a:0x2100:0x8a00": {
-    "description": "Vitrum II dimmer wireless",
-    "label": "VITRUM II",
-    "manufacturer": "VDA"
+    "description": "II Dimmer Wireless",
+    "label": "01E020010 / 01B020010",
+    "manufacturer": "Vitrum"
+  },
+  "0x010a:0x2200:0x9200": {
+    "description": "II On-Off Wireless",
+    "label": "01E020020 / 01B020020",
+    "manufacturer": "Vitrum"
+  },
+  "0x010a:0x2400:0xa100": {
+    "description": "I Satellite Wireless",
+    "label": "01E010030 / 01B010030",
+    "manufacturer": "Vitrum"
   },
   "0x010a:0x3400:0x6400": {
-    "description": "Vitrum touch switch satellite 4 buttons",
-    "label": "Vitrum Satellite IV",
-    "manufacturer": "VDA"
+    "description": "IV Satellite Wireless",
+    "label": "01E040041",
+    "manufacturer": "Vitrum"
   },
   "0x010a:0x7001:0x0f02": {
-    "description": "Vitrum touch switch Relay",
-    "label": "Vitrum I EU switch",
-    "manufacturer": "VDA"
+    "description": "I On-Off Wireless",
+    "label": "01E010020 / 01B010020",
+    "manufacturer": "Vitrum"
   },
   "0x010a:0x7032:0x0f33": {
-    "description": "Vitrum touch timer switch Dual Relay",
-    "label": "Vitrum I EU Boiler",
-    "manufacturer": "VDA"
+    "description": "Touch Timer Switch Dual Relay",
+    "label": "Boiler",
+    "manufacturer": "Vitrum"
   },
   "0x010a:0x8161:0x2062": {
-    "description": "Vitrum VI EU on-off 6 triac 868.4MHz",
+    "description": "VI On-Off 6 Triac",
     "label": "01E06S263",
-    "manufacturer": "VDA"
+    "manufacturer": "Vitrum"
   },
   "0x010b:0x4561:0x0074": {
     "description": "IoT Gateway",
@@ -6149,6 +6174,11 @@
     "label": "FGT001",
     "manufacturer": "Fibargroup"
   },
+  "0x010f:0x1301:0x4001": {
+    "description": "Thermostatic Valve",
+    "label": "FGT001",
+    "manufacturer": "Fibargroup"
+  },
   "0x010f:0x1401:0x2000": {
     "description": "Fibaro Wall Plug",
     "label": "FGWPB-121",
@@ -6257,6 +6287,11 @@
   "0x0113:0x4457:0x3034": {
     "description": "Wall Mounted Dimmer",
     "label": "LRM-AS",
+    "manufacturer": "Evolve"
+  },
+  "0x0113:0x4457:0x3331": {
+    "description": "Wall Mounted Dimmer",
+    "label": "LRM-1000",
     "manufacturer": "Evolve"
   },
   "0x0113:0x4556:0x4c32": {
@@ -7480,7 +7515,7 @@
     "manufacturer": "Philio Technology Corp"
   },
   "0x013c:0x0002:0x0002": {
-    "description": "Slim Multi-Sensor",
+    "description": "Slim Multi-Sensor (Door/Motion/Temperature/Illumination)",
     "label": "PSM02",
     "manufacturer": "Philio Technology Corp"
   },
@@ -8034,6 +8069,11 @@
     "label": "GoControl Smart Irrigation Controller",
     "manufacturer": "Nortek Security & Control LLC"
   },
+  "0x014f:0x574f:0x3535": {
+    "description": "In-Wall Single Outlet",
+    "label": "WO15EMZ5",
+    "manufacturer": "Nortek Security & Control LLC"
+  },
   "0x014f:0x5753:0x3535": {
     "description": "In-wall Switch",
     "label": "WS15Z-1",
@@ -8220,6 +8260,11 @@
     "manufacturer": "Popp & Co"
   },
   "0x0154:0x0004:0x000d": {
+    "description": "10-Years Smoke Detector Without Siren",
+    "label": "POPE700342",
+    "manufacturer": "Popp & Co"
+  },
+  "0x0154:0x0004:0x0010": {
     "description": "10-Years Smoke Detector Without Siren",
     "label": "POPE700342",
     "manufacturer": "Popp & Co"
@@ -8780,23 +8825,23 @@
     "manufacturer": "McoHome Technology Co., Ltd."
   },
   "0x015f:0x0901:0x3102": {
-    "description": "CO2 Monitor Air quality detector",
-    "label": "MH9-CO2-WD",
+    "description": "CO2 Monitor Air Quality Detector",
+    "label": "MH9-CO2",
     "manufacturer": "McoHome Technology Co., Ltd."
   },
   "0x015f:0x0901:0x5102": {
-    "description": "CO2 Monitor Air quality detector",
-    "label": "MH9-CO2-WA",
+    "description": "CO2 Monitor Air Quality Detector",
+    "label": "MH9-CO2",
     "manufacturer": "McoHome Technology Co., Ltd."
   },
   "0x015f:0x0902:0x5102": {
-    "description": "CO2 Monitor Air quality detector",
-    "label": "MH9-CO2-WD",
+    "description": "CO2 Monitor Air Quality Detector",
+    "label": "MH9-CO2",
     "manufacturer": "McoHome Technology Co., Ltd."
   },
   "0x015f:0x0905:0x0201": {
-    "description": "CO2 Monitor Air quality detector",
-    "label": "MH9-CO2-WD",
+    "description": "CO2 Monitor Air Quality Detector",
+    "label": "MH9-CO2",
     "manufacturer": "McoHome Technology Co., Ltd."
   },
   "0x015f:0x0a01:0x3102": {
@@ -8957,6 +9002,11 @@
   "0x015f:0x5131:0x5103": {
     "description": "Touch Panel Switch 3-Way",
     "label": "MH-S513",
+    "manufacturer": "McoHome Technology Co., Ltd."
+  },
+  "0x015f:0xa803:0x1352": {
+    "description": "9 in 1 MULTI-SENSOR",
+    "label": "A8-9",
     "manufacturer": "McoHome Technology Co., Ltd."
   },
   "0x015f:0xa803:0x135a": {
@@ -9157,6 +9207,11 @@
   "0x016a:0x0103:0x0060": {
     "description": "Plug-in Switch",
     "label": "FT096",
+    "manufacturer": "Fantem"
+  },
+  "0x016a:0x0103:0x0079": {
+    "description": "LED RGBWW Strip",
+    "label": "FT121",
     "manufacturer": "Fantem"
   },
   "0x016a:0x0201:0x0065": {
@@ -9726,7 +9781,12 @@
   },
   "0x019a:0x0004:0x0004": {
     "description": "Strips Guard 700",
-    "label": "11-01-021",
+    "label": "11-01-022",
+    "manufacturer": "Sensative AB"
+  },
+  "0x019a:0x0004:0x000b": {
+    "description": "Strips Drip 700",
+    "label": "11-04-022",
     "manufacturer": "Sensative AB"
   },
   "0x019b:0x0001:0x0001": {
@@ -9802,6 +9862,11 @@
   "0x019b:0x0300:0xa305": {
     "description": "Wall Mounted Switch",
     "label": "Z Push Button 8",
+    "manufacturer": "Heatit"
+  },
+  "0x019b:0x0300:0xa306": {
+    "description": "Wall Mounted Switch",
+    "label": "Z Push Button 4",
     "manufacturer": "Heatit"
   },
   "0x019b:0x0300:0xa307": {
@@ -10819,9 +10884,19 @@
     "label": "NAS-PD03Z",
     "manufacturer": "Shenzhen Neo Electronics Co., Ltd."
   },
+  "0x0258:0x0010:0x0720": {
+    "description": "5 in 1 PIR Motion Sensor",
+    "label": "NAS-PD07Z",
+    "manufacturer": "Shenzhen Neo Electronics Co., Ltd."
+  },
   "0x0258:0x0100:0x1027": {
     "description": "Wall Plug Switch",
     "label": "NAS-WR01ZE",
+    "manufacturer": "Shenzhen Neo Electronics Co., Ltd."
+  },
+  "0x0258:0x0200:0x1022": {
+    "description": "Door/Window Sensor",
+    "label": "NAS-DS01Z",
     "manufacturer": "Shenzhen Neo Electronics Co., Ltd."
   },
   "0x0258:0x0200:0x1027": {
@@ -11139,11 +11214,6 @@
     "label": "BVS-ZWU",
     "manufacturer": "Custos"
   },
-  "0x0270:0x0101:0x0036": {
-    "description": "Titan Water Valve Actuator",
-    "label": "ZAC36",
-    "manufacturer": "Zooz"
-  },
   "0x0271:0x0001:0x1a73": {
     "description": "PIR sensor with relay and light",
     "label": "XLED Home 2",
@@ -11257,6 +11327,11 @@
   "0x027a:0x0101:0x000d": {
     "description": "Power Switch",
     "label": "ZEN15",
+    "manufacturer": "Zooz"
+  },
+  "0x027a:0x0101:0x0036": {
+    "description": "Titan Water Valve Actuator",
+    "label": "ZAC36",
     "manufacturer": "Zooz"
   },
   "0x027a:0x0201:0x0006": {
@@ -11814,6 +11889,11 @@
     "label": "ZW39",
     "manufacturer": "NIE Technology Co., Ltd."
   },
+  "0x0312:0xc000:0xc003": {
+    "description": "Outdoor Z-Wave Plug-In Module (1-Channel)",
+    "label": "ZW96",
+    "manufacturer": "NIE Technology Co., Ltd."
+  },
   "0x0312:0xc000:0xc007": {
     "description": "Outdoor Z-Wave Plug-In Module (2-Channel)",
     "label": "ZW97",
@@ -11847,7 +11927,7 @@
   "0x0312:0xee00:0xee04": {
     "description": "Smart Dimmer Toggle Switch",
     "label": "MS13Z",
-    "manufacturer": "Ministon"
+    "manufacturer": "Minoston"
   },
   "0x0312:0xff00:0xff01": {
     "description": "Smart On/Off Toggle Switch",
@@ -11857,7 +11937,7 @@
   "0x0312:0xff00:0xff02": {
     "description": "Smart Dimmer Toggle Switch",
     "label": "MS13Z",
-    "manufacturer": "Ministon"
+    "manufacturer": "Minoston"
   },
   "0x0312:0xff00:0xff03": {
     "description": "Smart On/Off Switch",
@@ -11892,7 +11972,7 @@
   "0x0312:0xff00:0xff09": {
     "description": "Outdoor Smart Plug - 2 channel",
     "label": "MP24Z",
-    "manufacturer": "Ministon"
+    "manufacturer": "Minoston"
   },
   "0x0312:0xff00:0xff0c": {
     "description": "Smart Plug - 1 channel",
@@ -11917,7 +11997,7 @@
   "0x0312:0xff01:0xff02": {
     "description": "Smart Dimmer Toggle Switch",
     "label": "MS13Z",
-    "manufacturer": "Ministon"
+    "manufacturer": "Minoston"
   },
   "0x0312:0xff01:0xff03": {
     "description": "Smart On/Off Switch",
@@ -12134,9 +12214,19 @@
     "label": "ZV9002T4-CCT",
     "manufacturer": "Sunricher"
   },
+  "0x0330:0x0300:0xa104": {
+    "description": "CCT Wall Controller",
+    "label": "ZV9001T-CCT",
+    "manufacturer": "Sunricher"
+  },
   "0x0330:0x0300:0xa107": {
     "description": "Touch Panel RGBW Z Wave Wall Controller",
     "label": "ZV9001T4-RGBW",
+    "manufacturer": "Sunricher"
+  },
+  "0x0330:0x0300:0xa108": {
+    "description": "RGBW Wall Controller",
+    "label": "ZV9003T-RGBW",
     "manufacturer": "Sunricher"
   },
   "0x0330:0x0300:0xa305": {
@@ -12277,6 +12367,26 @@
   "0x0344:0x0004:0x0003": {
     "description": "Touch Panel Switch Quinto",
     "label": "HE-TPS05",
+    "manufacturer": "HELTUN"
+  },
+  "0x0344:0x0004:0x0004": {
+    "description": "Touch Panel Switch Quatro",
+    "label": "HE-TPS04",
+    "manufacturer": "HELTUN"
+  },
+  "0x0344:0x0004:0x0005": {
+    "description": "Touch Panel Switch Trio",
+    "label": "HE-TPS03",
+    "manufacturer": "HELTUN"
+  },
+  "0x0344:0x0004:0x0006": {
+    "description": "Touch Panel Switch Duo",
+    "label": "HE-TPS02",
+    "manufacturer": "HELTUN"
+  },
+  "0x0344:0x0004:0x0007": {
+    "description": "Touch Panel Switch Uno",
+    "label": "HE-TPS01",
     "manufacturer": "HELTUN"
   },
   "0x0344:0x0004:0x0009": {
@@ -12724,6 +12834,16 @@
     "label": "ZWA023",
     "manufacturer": "Aeotec Ltd."
   },
+  "0x0371:0x0103:0x0025": {
+    "description": "illumino Dimmer Switch",
+    "label": "ZWA037",
+    "manufacturer": "Aeotec Ltd."
+  },
+  "0x0371:0x0103:0x0026": {
+    "description": "illumino Wall Switch",
+    "label": "ZWA038",
+    "manufacturer": "Aeotec Ltd."
+  },
   "0x0371:0x0103:0x008d": {
     "description": "Nano Shutter V.3",
     "label": "ZW141",
@@ -12898,6 +13018,16 @@
     "description": "In Wall Dimmer",
     "label": "PAD07-3E",
     "manufacturer": "Eco Life Engineering Co., Ltd."
+  },
+  "0x0384:0x0003:0x0003": {
+    "description": "A19 LED BULB RGBW",
+    "label": "HA-ZW-5AQG",
+    "manufacturer": "AiBase Smart Technology"
+  },
+  "0x0384:0x0200:0x000a": {
+    "description": "Water Leak Sensor",
+    "label": "HA-ZW-5SF",
+    "manufacturer": "AiBase Smart Technology"
   },
   "0x038e:0x0001:0x0001": {
     "description": "NortheastGas Association Wireless Methane Gas Detector",
@@ -13424,5 +13554,5 @@
     "label": "BW8120",
     "manufacturer": "Remotec"
   },
-  "updated_at": "2021-09-16T22:13:06.015662"
+  "updated_at": "2021-10-27T23:24:40.783504"
 }
