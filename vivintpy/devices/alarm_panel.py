@@ -21,6 +21,9 @@ if TYPE_CHECKING:
 
 _LOGGER = logging.getLogger(__name__)
 
+DEVICE_DELETED = "device_deleted"
+DEVICE_DISCOVERED = "device_discovered"
+
 
 class AlarmPanel(VivintDevice):
     """Describe a Vivint alarm panel."""
@@ -165,6 +168,7 @@ class AlarmPanel(VivintDevice):
                     device_data, self
                 )
                 self.devices.append(device)
+                self.emit(DEVICE_DISCOVERED, device_data)
 
     def handle_pubnub_message(self, message: dict) -> None:
         """Handle a pubnub message."""
@@ -215,6 +219,7 @@ class AlarmPanel(VivintDevice):
                     if operation == PubNubOperatorAttribute.DELETE:
                         self.devices.remove(device)
                         self.data[AlarmPanelAttribute.DEVICES].remove(raw_device_data)
+                        self.emit(DEVICE_DELETED, raw_device_data)
                     else:
                         device.handle_pubnub_message(device_data)
                         raw_device_data.update(device_data)
