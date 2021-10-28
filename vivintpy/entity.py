@@ -15,11 +15,11 @@ class Entity:
         self._listeners: dict[str, list[Callable]] = {}
 
     @property
-    def data(self) -> dict:
+    def data(self) -> dict[str, Any]:
         """Return entity's raw data as returned by VivintSky API."""
         return self.__data
 
-    def update_data(self, new_val: dict, override: bool = False) -> None:
+    def update_data(self, new_val: dict[str, Any], override: bool = False) -> None:
         """Update entity's raw data."""
         if override:
             self.__data = new_val

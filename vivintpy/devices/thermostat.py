@@ -52,7 +52,7 @@ class Thermostat(VivintDevice):
         return self.data.get(Attribute.FAN_STATE) == 1
 
     @property
-    def is_on(self) -> int:
+    def is_on(self) -> bool:
         """Return `True` if the thermostat is on."""
         return self.operating_state != OperatingState.IDLE
 
