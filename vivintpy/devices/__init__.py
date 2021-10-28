@@ -1,11 +1,11 @@
 """This package contains the various devices attached to a Vivint system."""
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable, Type
+from typing import TYPE_CHECKING, Type
 
 from ..const import VivintDeviceAttribute as Attribute
 from ..entity import Entity
-from ..enums import CapabilityCategoryType, CapabilityType
+from ..enums import CapabilityCategoryType, CapabilityType, ZoneBypass
 from ..vivintskyapi import VivintSkyApi
 from ..zjs_device_config_db import get_zwave_device_info
 
@@ -166,6 +166,23 @@ class VivintDevice(Entity):
             data.update({DEVICE: self})
 
         super().emit(event_name, data)
+
+
+class BypassTamperDevice(VivintDevice):
+    """Class for devices that can be bypassed and tampered."""
+
+    @property
+    def is_bypassed(self) -> bool:
+        """Return True if the device is bypassed."""
+        return (
+            self.data.get(Attribute.BYPASSED, ZoneBypass.UNBYPASSED)
+            != ZoneBypass.UNBYPASSED
+        )
+
+    @property
+    def is_tampered(self) -> bool:
+        """Return True if the device is reporting as tampered."""
+        return self.data.get(Attribute.TAMPER, False)
 
 
 class UnknownDevice(VivintDevice):

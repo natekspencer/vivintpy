@@ -86,6 +86,7 @@ class VivintDeviceAttribute:
     """Vivint device attributes."""
 
     BATTERY_LEVEL = "bl"
+    BYPASSED = "b"
     CAPABILITY = "ca"
     CAPABILITY_CATEGORY = "caca"
     CURRENT_SOFTWARE_VERSION = "csv"
@@ -98,6 +99,7 @@ class VivintDeviceAttribute:
     SERIAL_NUMBER = "ser"
     SERIAL_NUMBER_32_BIT = "ser32"
     STATE = "s"
+    TAMPER = "ta"
     TYPE = "t"
 
 
@@ -166,7 +168,6 @@ class ThermostatAttribute(VivintDeviceAttribute):
 class WirelessSensorAttribute(VivintDeviceAttribute):
     """Wireless sensor attributes."""
 
-    BYPASSED = "b"
     EQUIPMENT_CODE = "ec"
     EQUIPMENT_TYPE = "eqt"
     SENSOR_FIRMWARE_VERSION = "sensor_firmware_version"

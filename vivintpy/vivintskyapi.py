@@ -17,7 +17,6 @@ from .const import (
     MfaVerificationResponse,
     SwitchAttribute,
     VivintDeviceAttribute,
-    WirelessSensorAttribute,
 )
 from .enums import ArmedState, GarageDoorState, ZoneBypass
 from .exceptions import (
@@ -221,7 +220,7 @@ class VivintSkyApi:
             },
             data=json.dumps(
                 {
-                    WirelessSensorAttribute.BYPASSED: ZoneBypass.MANUALLY_BYPASSED
+                    VivintDeviceAttribute.BYPASSED: ZoneBypass.MANUALLY_BYPASSED
                     if bypass
                     else ZoneBypass.UNBYPASSED,
                     VivintDeviceAttribute.ID: device_id,

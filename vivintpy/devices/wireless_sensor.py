@@ -2,13 +2,13 @@
 import logging
 
 from ..const import WirelessSensorAttribute as Attributes
-from ..enums import EquipmentCode, EquipmentType, SensorType, ZoneBypass
-from . import VivintDevice
+from ..enums import EquipmentCode, EquipmentType, SensorType
+from . import BypassTamperDevice, VivintDevice
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class WirelessSensor(VivintDevice):
+class WirelessSensor(BypassTamperDevice, VivintDevice):
     """Represents a Vivint wireless sensor device."""
 
     def __repr__(self) -> str:
@@ -55,19 +55,14 @@ class WirelessSensor(VivintDevice):
         return SensorType(self.data.get(Attributes.SENSOR_TYPE))
 
     @property
-    def is_bypassed(self) -> bool:
-        """Return True if the sensor is bypassed."""
-        return self.data[Attributes.BYPASSED] != ZoneBypass.UNBYPASSED
-
-    @property
     def is_on(self) -> bool:
         """Return True if the sensor's state is on."""
-        return self.data[Attributes.STATE]
+        return self.data.get(Attributes.STATE)
 
     @property
     def low_battery(self) -> bool:
         """Return true if battery's level is low."""
-        return self.data[Attributes.LOW_BATTERY]
+        return self.data.get(Attributes.LOW_BATTERY, False)
 
     async def set_bypass(self, bypass: bool) -> None:
         """Bypass/unbypass the sensor."""

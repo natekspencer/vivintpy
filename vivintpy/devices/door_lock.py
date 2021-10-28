@@ -1,9 +1,9 @@
 """Module that implements the DoorLock class."""
 from ..const import ZWaveDeviceAttribute as Attributes
-from . import VivintDevice
+from . import BypassTamperDevice, VivintDevice
 
 
-class DoorLock(VivintDevice):
+class DoorLock(BypassTamperDevice, VivintDevice):
     """Represents a vivint door lock device."""
 
     @property
