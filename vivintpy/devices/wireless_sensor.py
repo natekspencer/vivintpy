@@ -6,6 +6,7 @@ from ..const import WirelessSensorAttribute as Attributes
 from ..enums import EquipmentCode, EquipmentType, SensorType
 from ..utils import first_or_none
 from . import BypassTamperDevice, VivintDevice
+from .alarm_panel import AlarmPanel
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -18,6 +19,11 @@ class WirelessSensor(BypassTamperDevice, VivintDevice):
         return (
             f"<{self.__class__.__name__}|{self.equipment_type} {self.id}, {self.name}>"
         )
+
+    def __init__(self, data: dict, alarm_panel: AlarmPanel = None) -> None:
+        """Initialize a wireless sesnor."""
+        super().__init__(data=data, alarm_panel=alarm_panel)
+        self.__update_parent()
 
     @property
     def model(self) -> str:
@@ -78,6 +84,9 @@ class WirelessSensor(BypassTamperDevice, VivintDevice):
     def update_data(self, new_val: dict[str, Any], override: bool = False) -> None:
         """Update entity's raw data."""
         super().update_data(new_val=new_val, override=override)
+        self.__update_parent()
+
+    def __update_parent(self) -> None:
         if self.data.get(Attributes.HIDDEN) and self._parent is None:
             self._parent = first_or_none(
                 self.alarm_panel.devices,
