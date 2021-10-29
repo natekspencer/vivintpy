@@ -14,16 +14,16 @@ _LOGGER = logging.getLogger(__name__)
 class WirelessSensor(BypassTamperDevice, VivintDevice):
     """Represents a Vivint wireless sensor device."""
 
+    def __init__(self, data: dict, alarm_panel: AlarmPanel = None) -> None:
+        """Initialize a wireless sesnor."""
+        super().__init__(data=data, alarm_panel=alarm_panel)
+        self.__update_parent()
+
     def __repr__(self) -> str:
         """Return custom __repr__ of wireless sensor."""
         return (
             f"<{self.__class__.__name__}|{self.equipment_type} {self.id}, {self.name}>"
         )
-
-    def __init__(self, data: dict, alarm_panel: AlarmPanel = None) -> None:
-        """Initialize a wireless sesnor."""
-        super().__init__(data=data, alarm_panel=alarm_panel)
-        self.__update_parent()
 
     @property
     def model(self) -> str:
