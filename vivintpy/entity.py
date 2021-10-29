@@ -47,4 +47,7 @@ class Entity:
     def emit(self, event_name: str, data: dict) -> None:
         """Run all callbacks for an event."""
         for listener in self._listeners.get(event_name, []):
-            listener(data)
+            try:
+                listener(data)
+            except:  # noqa E722
+                pass

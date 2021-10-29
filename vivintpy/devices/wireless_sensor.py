@@ -1,15 +1,23 @@
 """Module that implements the WirelessSensor class."""
 import logging
+from typing import Any
 
 from ..const import WirelessSensorAttribute as Attributes
 from ..enums import EquipmentCode, EquipmentType, SensorType
+from ..utils import first_or_none
 from . import BypassTamperDevice, VivintDevice
+from .alarm_panel import AlarmPanel
 
 _LOGGER = logging.getLogger(__name__)
 
 
 class WirelessSensor(BypassTamperDevice, VivintDevice):
     """Represents a Vivint wireless sensor device."""
+
+    def __init__(self, data: dict, alarm_panel: AlarmPanel = None) -> None:
+        """Initialize a wireless sesnor."""
+        super().__init__(data=data, alarm_panel=alarm_panel)
+        self.__update_parent()
 
     def __repr__(self) -> str:
         """Return custom __repr__ of wireless sensor."""
@@ -63,6 +71,27 @@ class WirelessSensor(BypassTamperDevice, VivintDevice):
     def low_battery(self) -> bool:
         """Return true if battery's level is low."""
         return self.data.get(Attributes.LOW_BATTERY, False)
+
+    @property
+    def is_valid(self) -> bool:
+        """Return `True` if the wireless sensor is valid."""
+        return (
+            self.serial_number is not None
+            and self.equipment_code != EquipmentCode.OTHER
+            and self.sensor_type != SensorType.UNUSED
+        )
+
+    def update_data(self, new_val: dict[str, Any], override: bool = False) -> None:
+        """Update entity's raw data."""
+        super().update_data(new_val=new_val, override=override)
+        self.__update_parent()
+
+    def __update_parent(self) -> None:
+        if self.data.get(Attributes.HIDDEN) and self._parent is None:
+            self._parent = first_or_none(
+                self.alarm_panel.devices,
+                lambda parent: parent.serial_number == self.serial_number,
+            )
 
     async def set_bypass(self, bypass: bool) -> None:
         """Bypass/unbypass the sensor."""

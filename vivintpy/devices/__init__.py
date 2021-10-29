@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Type
 
 from ..const import VivintDeviceAttribute as Attribute
 from ..entity import Entity
-from ..enums import CapabilityCategoryType, CapabilityType, ZoneBypass
+from ..enums import CapabilityCategoryType, CapabilityType, DeviceType, ZoneBypass
 from ..vivintskyapi import VivintSkyApi
 from ..zjs_device_config_db import get_zwave_device_info
 
@@ -17,7 +17,6 @@ DEVICE = "device"
 
 def get_device_class(device_type: str) -> Type[VivintDevice]:
     """Map a device_type string to the class that implements that device."""
-    from ..enums import DeviceType
     from . import UnknownDevice
     from .camera import Camera
     from .door_lock import DoorLock
@@ -33,6 +32,7 @@ def get_device_class(device_type: str) -> Type[VivintDevice]:
         DeviceType.GARAGE_DOOR: GarageDoor,
         DeviceType.MULTILEVEL_SWITCH: MultilevelSwitch,
         DeviceType.THERMOSTAT: Thermostat,
+        DeviceType.TOUCH_PANEL: VivintDevice,
         DeviceType.WIRELESS_SENSOR: WirelessSensor,
     }
 
@@ -59,6 +59,7 @@ class VivintDevice(Entity):
             if data.get(Attribute.CAPABILITY_CATEGORY)
             else None
         )
+        self._parent: VivintDevice | None = None
 
     def __repr__(self) -> str:
         """Return custom __repr__ of device."""
@@ -68,6 +69,11 @@ class VivintDevice(Entity):
     def id(self) -> int:
         """Device's id."""
         return self.data[Attribute.ID]
+
+    @property
+    def is_valid(self) -> bool:
+        """Return `True` if the device is valid."""
+        return True
 
     @property
     def name(self) -> str | None:
@@ -80,6 +86,16 @@ class VivintDevice(Entity):
     ) -> dict[CapabilityCategoryType, list[CapabilityType]] | None:
         """Device capabilities."""
         return self._capabilities
+
+    @property
+    def device_type(self) -> DeviceType:
+        """Return the device type."""
+        return DeviceType(self.data[Attribute.TYPE])
+
+    @property
+    def is_subdevice(self) -> bool:
+        """Return if this device is a subdevice."""
+        return self._parent is not None
 
     @property
     def manufacturer(self) -> str | None:
@@ -101,12 +117,16 @@ class VivintDevice(Entity):
         return self.data.get(Attribute.PANEL_ID)
 
     @property
+    def parent(self) -> VivintDevice | None:
+        """Return the parent device, if any."""
+        return self._parent
+
+    @property
     def serial_number(self) -> str | None:
         """Return the serial number for this device."""
         serial_number = self.data.get(Attribute.SERIAL_NUMBER_32_BIT)
-        serial_number = (
-            serial_number if serial_number else self.data.get(Attribute.SERIAL_NUMBER)
-        )
+        if not serial_number:
+            serial_number = self.data.get(Attribute.SERIAL_NUMBER)
         return serial_number
 
     @property
@@ -190,4 +210,4 @@ class UnknownDevice(VivintDevice):
 
     def __repr__(self) -> str:
         """Return custom __repr__ of device."""
-        return f"<{self.__class__.__name__}|{self.data[Attribute.TYPE]} {self.id}>"
+        return f"<{self.__class__.__name__}|{self.data[Attribute.TYPE]} {self.id}, {self.name}>"

@@ -91,6 +91,7 @@ class VivintDeviceAttribute:
     CAPABILITY_CATEGORY = "caca"
     CURRENT_SOFTWARE_VERSION = "csv"
     FIRMWARE_VERSION = "fwv"
+    HIDDEN = "hidden"
     ID = "_id"
     LOW_BATTERY = "lb"
     NAME = "n"
@@ -108,6 +109,7 @@ class AlarmPanelAttribute(VivintDeviceAttribute):
 
     DEVICES = "d"
     PARTITION_ID = "parid"
+    UNREGISTERED = "ureg"
 
 
 class CameraAttribute(VivintDeviceAttribute):

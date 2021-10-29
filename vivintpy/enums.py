@@ -207,9 +207,12 @@ class EquipmentCode(IntEnum):
     VS_CO3_DETECTOR = 1266
     VS_SMKT_SMOKE_DETECTOR = 1267
 
+    # Handle unknown/future equipment codes
+    UNKNOWN = -1
+
     @classmethod
     def _missing_(cls, value):
-        return cls.OTHER
+        return cls.UNKNOWN
 
 
 @unique
@@ -328,9 +331,12 @@ class SensorType(IntEnum):
     SILENT_BURGLARY = 24
     UNUSED = 0
 
+    # Handle unknown/future sensor types.
+    UNKNOWN = -1
+
     @classmethod
     def _missing_(cls, value):
-        return cls.UNUSED
+        return cls.UNKNOWN
 
 
 @unique
