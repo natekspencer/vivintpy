@@ -7,7 +7,7 @@ import pubnub
 from vivintpy.account import Account
 from vivintpy.devices import VivintDevice
 from vivintpy.devices.camera import MOTION_DETECTED, Camera
-from vivintpy.exceptions import VivintSkyApiMfaRequired
+from vivintpy.exceptions import VivintSkyApiMfaRequiredError
 
 pubnub.set_stream_logger(name="pubnub", level=logging.ERROR)
 
@@ -22,7 +22,7 @@ async def main():
     account = Account(username=os.environ["username"], password=os.environ["password"])
     try:
         await account.connect(load_devices=True, subscribe_for_realtime_updates=True)
-    except VivintSkyApiMfaRequired:
+    except VivintSkyApiMfaRequiredError:
         code = input("Enter MFA Code: ")
         await account.verify_mfa(code)
         logging.debug("MFA verified")
