@@ -7950,12 +7950,12 @@
     "manufacturer": "wiDom"
   },
   "0x0149:0x1214:0x0b00": {
-    "description": "Widom Smart Double Switch",
+    "description": "Universal Double Switch",
     "label": "WDS2",
     "manufacturer": "wiDom"
   },
   "0x0149:0x1214:0x0c00": {
-    "description": "Widom Smart Double Switch",
+    "description": "Universal Double Switch",
     "label": "WDS2",
     "manufacturer": "wiDom"
   },
@@ -8002,6 +8002,11 @@
   "0x014a:0x0005:0x0010": {
     "description": "Z-Wave Wireless Flood/Freeze Sensor",
     "label": "H214104",
+    "manufacturer": "Ecolink"
+  },
+  "0x014a:0x0005:0x04aa": {
+    "description": "Garage Door Tilt Sensor",
+    "label": "TILT-ZWAVE5",
     "manufacturer": "Ecolink"
   },
   "0x014a:0x0006:0x0001": {
@@ -9079,6 +9084,11 @@
     "label": "MH-S212",
     "manufacturer": "McoHome Technology Co., Ltd."
   },
+  "0x015f:0x2201:0x1252": {
+    "description": "Micro Switch",
+    "label": "MH-S220",
+    "manufacturer": "McoHome Technology Co., Ltd."
+  },
   "0x015f:0x220a:0x1352": {
     "description": "Micro Dimmer",
     "label": "MH-P220",
@@ -10074,6 +10084,11 @@
     "label": "Z-Temp2",
     "manufacturer": "ThermoFloor AS"
   },
+  "0x019b:0x0004:0x2403": {
+    "description": "Z-Push Wall Controller",
+    "label": "Z-PH WALL CONTROLLER",
+    "manufacturer": "Heatit"
+  },
   "0x019b:0x0004:0x3500": {
     "description": "Heatit ZM Single Relay 16A",
     "label": "4512671",
@@ -10281,7 +10296,7 @@
   },
   "0x0208:0x0101:0x000a": {
     "description": "Smart Plug",
-    "label": "HKZW_SO03",
+    "label": "HKZW-SO03",
     "manufacturer": "HANK Electronics Ltd."
   },
   "0x0208:0x0200:0x0008": {
@@ -11117,6 +11132,11 @@
   "0x0258:0x0003:0x608d": {
     "description": "PIR Motion Sensor 3",
     "label": "NAS-PD03Z",
+    "manufacturer": "Shenzhen Neo Electronics Co., Ltd."
+  },
+  "0x0258:0x0010:0x0702": {
+    "description": "Door/Window Sensor Plus",
+    "label": "NEO-DS07Z",
     "manufacturer": "Shenzhen Neo Electronics Co., Ltd."
   },
   "0x0258:0x0010:0x0720": {
@@ -12864,6 +12884,11 @@
     "label": "5D22E2 / 5AT3T4",
     "manufacturer": "Ring"
   },
+  "0x0346:0x0c01:0x0301": {
+    "description": "Outdoor Contact Sensor",
+    "label": "B0923BK77S",
+    "manufacturer": "Ring"
+  },
   "0x0348:0x0001:0x0001": {
     "description": "Central Home Unit",
     "label": "CHU00001-W",
@@ -13077,6 +13102,11 @@
   "0x0371:0x0002:0x0016": {
     "description": "Radiator Thermostat",
     "label": "ZWA021",
+    "manufacturer": "Aeotec Ltd."
+  },
+  "0x0371:0x0002:0x0018": {
+    "description": "MultiSensor 7",
+    "label": "ZWA024",
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0002:0x0029": {
@@ -13442,6 +13472,11 @@
   "0x039a:0x0003:0x0087": {
     "description": "Wall Plug Switch 12A",
     "label": "NAS-WR01Z",
+    "manufacturer": "Inteset"
+  },
+  "0x039a:0x0003:0x0101": {
+    "description": "Inteset Door/Window Sensor",
+    "label": "INT-SMDWD-01",
     "manufacturer": "Inteset"
   },
   "0x039b:0x0001:0x0013": {
@@ -14019,5 +14054,5 @@
     "label": "BW8120",
     "manufacturer": "Remotec"
   },
-  "updated_at": "2021-12-31T17:21:12.655185"
+  "updated_at": "2022-01-18T18:35:24.007883"
 }
