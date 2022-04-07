@@ -1,4 +1,4 @@
-![Release](https://img.shields.io/github/v/release/natekspencer/vivintpy?style=for-the-badge)
+[![pypi](https://img.shields.io/pypi/v/vivintpy?style=for-the-badge)](https://pypi.org/project/vivintpy)
 [![Buy Me A Coffee/Beer](https://img.shields.io/badge/Buy_Me_A_☕/🍺-F16061?style=for-the-badge&logo=ko-fi&logoColor=white&labelColor=grey)](https://ko-fi.com/natekspencer)
 
 # vivintpy
