@@ -1,4 +1,6 @@
 """Script to generate Z-Wave device data."""
+from __future__ import annotations
+
 import json
 import logging
 import os
@@ -29,7 +31,7 @@ __MUTEX = threading.Lock()
 
 def get_zwave_device_info(
     manufacturer_id: int, product_type: int, product_id: int
-) -> dict:
+) -> dict[str, str]:
     """Lookup the Z-Wave device based on the manufacturer id, product type and product id."""
     key = f"0x{manufacturer_id:04x}:0x{product_type:04x}:0x{product_id:04x}"
     return _load_db_from_file().get(key, {})
@@ -43,9 +45,9 @@ def _device_config_db_file_exists() -> bool:
     )
 
 
-def _load_db_from_file() -> dict:
+def _load_db_from_file() -> dict[str, dict[str, str]]:
     """Load the Z-Wave JS device config from the saved JSON file."""
-    data = {}
+    data: dict[str, dict[str, str]] = {}
     if _device_config_db_file_exists():
         with open(ZJS_DEVICE_CONFIG_DB_FILE) as f:
             data = json.load(f)

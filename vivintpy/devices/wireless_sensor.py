@@ -41,7 +41,7 @@ class WirelessSensor(BypassTamperDevice, VivintDevice):
         battery_level = self.data.get(Attributes.BATTERY_LEVEL)
         return (
             battery_level
-            if battery_level is not None
+            if battery_level not in (None, "")
             else 0
             if self.low_battery
             else 100
