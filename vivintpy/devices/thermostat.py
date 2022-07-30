@@ -22,6 +22,23 @@ class Thermostat(VivintDevice):
             [self._manufacturer, self._model] = ["Google", "Nest"]
 
     @property
+    def battery_level(self) -> int:
+        """Sensor's battery level."""
+        battery_level = self.data.get(Attribute.BATTERY_LEVEL)
+        return (
+            battery_level
+            if battery_level not in (None, "")
+            else 0
+            if self.low_battery
+            else 100
+        )
+
+    @property
+    def low_battery(self) -> bool:
+        """Return true if battery's level is low."""
+        return self.data.get(Attribute.LOW_BATTERY, False)
+
+    @property
     def cool_set_point(self) -> float:
         """Return the cool set point of the thermostat."""
         return self.data.get(Attribute.COOL_SET_POINT)
