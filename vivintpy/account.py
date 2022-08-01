@@ -156,8 +156,11 @@ class Account:
         if not authuser_data:
             authuser_data = await self.vivintskyapi.get_authuser_data()
 
+        user_data = authuser_data[AuthUserAttribute.USERS]
+
         pnconfig = PNConfiguration()
         pnconfig.subscribe_key = PN_SUBSCRIBE_KEY
+        pnconfig.uuid = f"pn-{user_data[UserAttribute.ID].upper()}"
         pnconfig.ssl = True
         pnconfig.reconnect_policy = PNReconnectionPolicy.LINEAR
         pnconfig.heartbeat_notification_options = (
@@ -170,7 +173,9 @@ class Account:
         )
         self.__pubnub.add_listener(self.__pubnub_listener)
 
-        pn_channel = f"{PN_CHANNEL}#{authuser_data[AuthUserAttribute.USERS][UserAttribute.MESSAGE_BROADCAST_CHANNEL]}"
+        pn_channel = (
+            f"{PN_CHANNEL}#{user_data[UserAttribute.MESSAGE_BROADCAST_CHANNEL]}"
+        )
         self.__pubnub.subscribe().channels(pn_channel).with_presence().execute()
 
     def handle_pubnub_message(self, message: dict) -> None:
