@@ -1,4 +1,6 @@
 """Module that implements the Thermostat class."""
+from __future__ import annotations
+
 import logging
 
 from ..const import ThermostatAttribute as Attribute
@@ -22,21 +24,19 @@ class Thermostat(VivintDevice):
             [self._manufacturer, self._model] = ["Google", "Nest"]
 
     @property
-    def battery_level(self) -> int:
+    def battery_level(self) -> int | None:
         """Sensor's battery level."""
         battery_level = self.data.get(Attribute.BATTERY_LEVEL)
         return (
-            battery_level
-            if battery_level not in (None, "")
-            else 0
-            if self.low_battery
-            else 100
+            int(battery_level)
+            if battery_level is not None
+            else None
         )
 
     @property
-    def low_battery(self) -> bool:
+    def low_battery(self) -> bool | None:
         """Return true if battery's level is low."""
-        return self.data.get(Attribute.LOW_BATTERY, False)
+        return self.data.get(Attribute.LOW_BATTERY)
 
     @property
     def cool_set_point(self) -> float:
