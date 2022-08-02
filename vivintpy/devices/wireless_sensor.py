@@ -36,18 +36,6 @@ class WirelessSensor(BypassTamperDevice, VivintDevice):
         return self.data.get(Attributes.SENSOR_FIRMWARE_VERSION) or None
 
     @property
-    def battery_level(self) -> int:
-        """Sensor's battery level."""
-        battery_level = self.data.get(Attributes.BATTERY_LEVEL)
-        return (
-            battery_level
-            if battery_level not in (None, "")
-            else 0
-            if self.low_battery
-            else 100
-        )
-
-    @property
     def equipment_code(self):
         """Return the equipment code of this sensor."""
         return EquipmentCode(self.data.get(Attributes.EQUIPMENT_CODE))
@@ -66,11 +54,6 @@ class WirelessSensor(BypassTamperDevice, VivintDevice):
     def is_on(self) -> bool:
         """Return True if the sensor's state is on."""
         return self.data.get(Attributes.STATE)
-
-    @property
-    def low_battery(self) -> bool:
-        """Return true if battery's level is low."""
-        return self.data.get(Attributes.LOW_BATTERY, False)
 
     @property
     def is_valid(self) -> bool:
