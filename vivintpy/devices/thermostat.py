@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import logging
+from typing import Any
 
 from ..const import ThermostatAttribute as Attribute
 from ..enums import DeviceType, FanMode, HoldMode, OperatingMode, OperatingState
@@ -22,27 +23,27 @@ class Thermostat(VivintDevice):
             [self._manufacturer, self._model] = ["Google", "Nest"]
 
     @property
-    def cool_set_point(self) -> float:
+    def cool_set_point(self) -> float | None:
         """Return the cool set point of the thermostat."""
         return self.data.get(Attribute.COOL_SET_POINT)
 
     @property
     def fan_mode(self) -> FanMode:
         """Return the fan mode of the thermostat."""
-        return FanMode(self.data.get(Attribute.FAN_MODE))
+        return FanMode(self.data.get(Attribute.FAN_MODE))  # type: ignore
 
     @property
-    def heat_set_point(self) -> float:
+    def heat_set_point(self) -> float | None:
         """Return the heat set point of the thermostat."""
         return self.data.get(Attribute.HEAT_SET_POINT)
 
     @property
     def hold_mode(self) -> HoldMode:
         """Return the hold mode of the thermostat."""
-        return HoldMode(self.data.get(Attribute.HOLD_MODE))
+        return HoldMode(self.data.get(Attribute.HOLD_MODE))  # type: ignore
 
     @property
-    def humidity(self) -> int:
+    def humidity(self) -> int | None:
         """Return the humidity of the thermostat."""
         return self.data.get(Attribute.HUMIDITY)
 
@@ -57,27 +58,27 @@ class Thermostat(VivintDevice):
         return self.operating_state != OperatingState.IDLE
 
     @property
-    def maximum_temperature(self) -> float:
+    def maximum_temperature(self) -> float | None:
         """Return the maximum temperature of the thermostat."""
         return self.data.get(Attribute.MAXIMUM_TEMPERATURE)
 
     @property
-    def minimum_temperature(self) -> float:
+    def minimum_temperature(self) -> float | None:
         """Return the minimum temperature of the thermostat."""
         return self.data.get(Attribute.MINIMUM_TEMPERATURE)
 
     @property
     def operating_mode(self) -> OperatingMode:
         """Return the operating mode of the thermostat."""
-        return OperatingMode(self.data.get(Attribute.OPERATING_MODE))
+        return OperatingMode(self.data.get(Attribute.OPERATING_MODE))  # type: ignore
 
     @property
     def operating_state(self) -> OperatingState:
         """Return the operating state of the thermostat."""
-        return OperatingState(self.data.get(Attribute.OPERATING_STATE))
+        return OperatingState(self.data.get(Attribute.OPERATING_STATE))  # type: ignore
 
     @property
-    def temperature(self) -> float:
+    def temperature(self) -> float | None:
         """Return the temperature of the thermostat."""
         return self.data.get(Attribute.CURRENT_TEMPERATURE)
 
@@ -86,12 +87,9 @@ class Thermostat(VivintDevice):
         """Convert Celsius to Fahrenheit."""
         return round(celsius * 1.8 + 32)
 
-    def handle_pubnub_message(self, message: dict) -> None:
-        """Handle a pubnub message directed to this entity."""
-        super().handle_pubnub_message(message)
-
-    async def set_state(self, **kwargs) -> None:
+    async def set_state(self, **kwargs: Any) -> None:
         """Set the state of the thermostat."""
+        assert self.alarm_panel
         await self.vivintskyapi.set_thermostat_state(
             self.alarm_panel.id, self.alarm_panel.partition_id, self.id, **kwargs
         )

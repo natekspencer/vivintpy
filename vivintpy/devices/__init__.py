@@ -17,7 +17,7 @@ DEVICE = "device"
 
 def get_device_class(device_type: str) -> Type[VivintDevice]:
     """Map a device_type string to the class that implements that device."""
-    from . import UnknownDevice
+    # pylint: disable=import-outside-toplevel
     from .camera import Camera
     from .door_lock import DoorLock
     from .garage_door import GarageDoor
@@ -30,9 +30,9 @@ def get_device_class(device_type: str) -> Type[VivintDevice]:
         DeviceType.CAMERA: Camera,
         DeviceType.DOOR_LOCK: DoorLock,
         DeviceType.GARAGE_DOOR: GarageDoor,
-        DeviceType.MULTILEVEL_SWITCH: MultilevelSwitch,
+        DeviceType.MULTI_LEVEL_SWITCH: MultilevelSwitch,
         DeviceType.THERMOSTAT: Thermostat,
-        DeviceType.TOUCH_PANEL: VivintDevice,
+        DeviceType.PANEL: VivintDevice,
         DeviceType.WIRELESS_SENSOR: WirelessSensor,
     }
 
@@ -46,15 +46,15 @@ class VivintDevice(Entity):
         """Initialize a device."""
         super().__init__(data)
         self.alarm_panel = alarm_panel
-        self._manufacturer = None
-        self._model = None
+        self._manufacturer: str | None = None
+        self._model: str | None = None
         self._capabilities = (
             {
                 CapabilityCategoryType(capability_category.get(Attribute.TYPE)): [
                     CapabilityType(capability)
                     for capability in capability_category.get(Attribute.CAPABILITY)
                 ]
-                for capability_category in data.get(Attribute.CAPABILITY_CATEGORY)
+                for capability_category in data.get(Attribute.CAPABILITY_CATEGORY, [])
             }
             if data.get(Attribute.CAPABILITY_CATEGORY)
             else None
@@ -66,9 +66,9 @@ class VivintDevice(Entity):
         return f"<{self.__class__.__name__} {self.id}, {self.name}>"
 
     @property
-    def id(self) -> int:
+    def id(self) -> int:  # pylint: disable=invalid-name
         """Device's id."""
-        return self.data[Attribute.ID]
+        return int(self.data[Attribute.ID])
 
     @property
     def is_valid(self) -> bool:
@@ -99,7 +99,7 @@ class VivintDevice(Entity):
     @property
     def device_type(self) -> DeviceType:
         """Return the device type."""
-        return DeviceType(self.data[Attribute.TYPE])
+        return DeviceType(self.data.get(Attribute.TYPE))
 
     @property
     def has_battery(self) -> bool:
@@ -136,7 +136,7 @@ class VivintDevice(Entity):
     @property
     def panel_id(self) -> int:
         """Return the id of the panel this device is associated to."""
-        return self.data.get(Attribute.PANEL_ID)
+        return int(self.data[Attribute.PANEL_ID])
 
     @property
     def parent(self) -> VivintDevice | None:
@@ -152,7 +152,7 @@ class VivintDevice(Entity):
         return serial_number
 
     @property
-    def software_version(self) -> str:
+    def software_version(self) -> str | None:
         """Return the software version of this device, if any."""
         # panels
         current_software_version = self.data.get(Attribute.CURRENT_SOFTWARE_VERSION)
@@ -175,10 +175,10 @@ class VivintDevice(Entity):
         assert self.alarm_panel, """no alarm panel set for this device"""
         return self.alarm_panel.system.vivintskyapi
 
-    def get_zwave_details(self):
+    def get_zwave_details(self) -> None:
         """Get Z-Wave details."""
         if self.data.get("zpd") is None:
-            return None
+            return
 
         result = get_zwave_device_info(
             self.data.get("manid"),
@@ -200,8 +200,6 @@ class VivintDevice(Entity):
         else:
             self._model = "Unknown"
 
-        return [self._manufacturer, self._model]
-
     def emit(self, event_name: str, data: dict) -> None:
         """Add device data and then send to parent."""
         if data.get(DEVICE) is None:
@@ -217,7 +215,7 @@ class BypassTamperDevice(VivintDevice):
     def is_bypassed(self) -> bool:
         """Return True if the device is bypassed."""
         return (
-            self.data.get(Attribute.BYPASSED, ZoneBypass.UNBYPASSED)
+            int(self.data.get(Attribute.BYPASSED, ZoneBypass.UNBYPASSED))
             != ZoneBypass.UNBYPASSED
         )
 

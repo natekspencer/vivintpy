@@ -1,5 +1,11 @@
 """Module that defines various enums."""
+from __future__ import annotations
+
+import logging
 from enum import Enum, IntEnum, unique
+from typing import Any
+
+_LOGGER = logging.getLogger(__name__)
 
 
 @unique
@@ -18,6 +24,14 @@ class ArmedState(IntEnum):
     DISABLED = 11
     WALK_TEST = 12
 
+    # Handle unknown/future armed state
+    UNKNOWN = -1
+
+    @classmethod
+    def _missing_(cls, value: object) -> ArmedState:
+        _LOGGER.error("Unknown armed state value: %s", value)
+        return cls.UNKNOWN
+
 
 @unique
 class CapabilityCategoryType(IntEnum):
@@ -33,11 +47,12 @@ class CapabilityCategoryType(IntEnum):
     MOBILE_BLACKLIST = 8
     GARAGE_DOOR = 9
 
-    # Handle unknown/future capability categories
-    UNKNOWN = 0
+    # Handle unknown/future capability category type
+    UNKNOWN = -1
 
     @classmethod
-    def _missing_(cls, value):
+    def _missing_(cls, value: object) -> CapabilityCategoryType:
+        _LOGGER.error("Unknown capability category type value: %s", value)
         return cls.UNKNOWN
 
 
@@ -47,12 +62,12 @@ class CapabilityType(IntEnum):
     ANIMAL_DETECTION = 42
     BINARY_ON_OFF = 7
     CAMERA_DVR_CAPABLE = 72
-    CANNOT_REPORT_STATUS = 33
     CAN_CHIME = 4
     CAN_ENABLE_DISABLE_AUDIO = 73
     CAN_ENABLE_DISABLE_LED = 74
     CAN_INITIATE_CALL = 66
     CAN_LOCK_UNLOCK = 30
+    CANNOT_REPORT_STATUS = 33
     CHIME_EXTENDER = 36
     CLIP_CAPTURE = 3
     DELETE_ALL_EVENTS = 63
@@ -63,15 +78,15 @@ class CapabilityType(IntEnum):
     DETER_TONE = 51
     DETER_ZONE = 49
     DIMMABLE = 8
-    DOORBELL_CHIME_SELECTABLE = 56
     DOOR_STATE = 71
+    DOORBELL_CHIME_SELECTABLE = 56
+    FAN120_MINUTE = 23
     FAN15_MINUTE = 18
+    FAN240_MINUTE = 24
     FAN30_MINUTE = 19
     FAN45_MINUTE = 20
-    FAN60_MINUTE = 21
-    FAN120_MINUTE = 23
-    FAN240_MINUTE = 24
     FAN480_MINUTE = 25
+    FAN60_MINUTE = 21
     FAN960_MINUTE = 26
     HAS_MICROPHONE = 46
     HAS_USER_CODE = 75
@@ -79,17 +94,18 @@ class CapabilityType(IntEnum):
     HUMIDITY = 64
     HUMIDITY_CONTROL = 65
     IN_HOME_CHIME_VOLUME = 54
+    LED_BEEPER_SETTINGS = 73
     LIVE_VIDEO = 6
     LURKER_DETECTION = 38
     MAINTAIN_ZOOM = 48
-    MAXIMUM_TEMPERATURE = 12
     MAX_COOL_LOCK_SET_POINT = 69
     MAX_HEAT_LOCK_SET_POINT = 67
-    MINIMUM_TEMPERATURE = 11
+    MAXIMUM_TEMPERATURE = 12
     MIN_COOL_LOCK_SET_POINT = 70
     MIN_HEAT_LOCK_SET_POINT = 68
     MIN_SETPOINT_DIFFERENCE_C = 13
     MIN_SETPOINT_DIFFERENCE_F = 14
+    MINIMUM_TEMPERATURE = 11
     MOBILE_BLACKLISTABLE = 31
     MOTION_DETECTION = 1
     MUTE_CHIME = 55
@@ -121,17 +137,18 @@ class CapabilityType(IntEnum):
     WI_FI = 28
     ZWAVE_DIAGNOSTICS = 22
 
-    # Handle unknown/future capabilities
-    UNKNOWN = 0
+    # Handle unknown/future capability type
+    UNKNOWN = -1
 
     @classmethod
-    def _missing_(cls, value):
+    def _missing_(cls, value: Any) -> CapabilityType:
+        _LOGGER.error("Unknown capability type value: %s", value)
         return cls.UNKNOWN
 
 
-@unique
+# @unique
 class DeviceType(Enum):
-    """Vivint supported device types."""
+    """Device type."""
 
     AIR_TOWER = "airtower_device"
     BINARY_SWITCH = "binary_switch_device"
@@ -148,9 +165,10 @@ class DeviceType(Enum):
     KEY_FOB = "keyfob_device"
     KEY_PAD = "keypad_device"
     KWIKSET988_DOOR_LOCK = "kwikset_988_door_lock_device"
-    MULTILEVEL_SWITCH = "multilevel_switch_device"
+    MULTI_LEVEL_SWITCH = "multilevel_switch_device"
     NEST_THERMOSTAT = "nest_thermostat_device"
     NETWORK_HOSTS_SERVICE = "network_hosts_service"
+    PANEL = "primary_touch_link_device"
     PANEL_DIAGNOSTICS_SERVICE = "panel_diagnostics_service"
     PERSONAL_GUARD_DEVICE = "personal_guard_device"
     POD_MY_Q_GARAGE_DOOR_DEVICE = "pod_myq_garage_door_device"
@@ -163,7 +181,6 @@ class DeviceType(Enum):
     SMART_THERMOSTAT_V2 = "ev2_thermostat_device"
     SPACE_MONKEY = "space_monkey_service"
     THERMOSTAT = "thermostat_device"
-    TOUCH_PANEL = "primary_touch_link_device"
     VIVOTEK620_PT_CAMERA = "vivotek_620pt_camera_device"
     VIVOTEK720_CAMERA = "vivotek_720_camera_device"
     VIVOTEK720_W_CAMERA = "vivotek_720w_camera_device"
@@ -178,10 +195,15 @@ class DeviceType(Enum):
     YOFI_DEVICE = "yofi_device"
     ZWAVE_KEY_PAD = "keypad_entry_device"
 
+    # Deprecated
+    MULTILEVEL_SWITCH = MULTI_LEVEL_SWITCH
+    TOUCH_PANEL = PANEL
+
     UNKNOWN = None
 
     @classmethod
-    def _missing_(cls, value):
+    def _missing_(cls, value: Any) -> DeviceType:
+        _LOGGER.error("Unknown device type value: %s", value)
         return cls.UNKNOWN
 
 
@@ -251,11 +273,12 @@ class EquipmentCode(IntEnum):
     VS_CO3_DETECTOR = 1266
     VS_SMKT_SMOKE_DETECTOR = 1267
 
-    # Handle unknown/future equipment codes
+    # Handle unknown/future equipment code
     UNKNOWN = -1
 
     @classmethod
-    def _missing_(cls, value):
+    def _missing_(cls, value: Any) -> EquipmentCode:
+        _LOGGER.error("Unknown equipment code value: %s", value)
         return cls.UNKNOWN
 
 
@@ -269,10 +292,13 @@ class EquipmentType(IntEnum):
     MOTION = 2
     TEMPERATURE = 10
     WATER = 8
-    UNKNOWN = 0
+
+    # Handle unknown/future equipment type
+    UNKNOWN = -1
 
     @classmethod
-    def _missing_(cls, value):
+    def _missing_(cls, value: Any) -> EquipmentType:
+        _LOGGER.error("Unknown equipment type value: %s", value)
         return cls.UNKNOWN
 
 
@@ -294,11 +320,12 @@ class FanMode(IntEnum):
     TIMER_720 = 107
     TIMER_960 = 106
 
-    # Handle unknown/future fan modes
+    # Handle unknown/future fan mode
     UNKNOWN = -1
 
     @classmethod
-    def _missing_(cls, value):
+    def _missing_(cls, value: Any) -> FanMode:
+        _LOGGER.error("Unknown fan mode value: %s", value)
         return cls.UNKNOWN
 
 
@@ -313,6 +340,11 @@ class GarageDoorState(IntEnum):
     OPENING = 4
     OPENED = 5
 
+    @classmethod
+    def _missing_(cls, value: Any) -> GarageDoorState:
+        _LOGGER.error("Unknown garage door state value: %s", value)
+        return cls.UNKNOWN
+
 
 @unique
 class HoldMode(IntEnum):
@@ -322,6 +354,14 @@ class HoldMode(IntEnum):
     UNTIL_NEXT = 1
     TWO_HOURS = 2
     PERMANENT = 3
+
+    # Handle unknown/future hold mode
+    UNKNOWN = -1
+
+    @classmethod
+    def _missing_(cls, value: Any) -> HoldMode:
+        _LOGGER.error("Unknown hold mode value: %s", value)
+        return cls.UNKNOWN
 
 
 @unique
@@ -344,6 +384,14 @@ class OperatingMode(IntEnum):
     AWAY = 13
     ECO = 100
 
+    # Handle unknown/future operating mode
+    UNKNOWN = -1
+
+    @classmethod
+    def _missing_(cls, value: Any) -> OperatingMode:
+        _LOGGER.error("Unknown operating mode value: %s", value)
+        return cls.UNKNOWN
+
 
 @unique
 class OperatingState(IntEnum):
@@ -352,6 +400,14 @@ class OperatingState(IntEnum):
     IDLE = 0
     HEATING = 1
     COOLING = 2
+
+    # Handle unknown/future operating state
+    UNKNOWN = -1
+
+    @classmethod
+    def _missing_(cls, value: Any) -> OperatingState:
+        _LOGGER.error("Unknown operating state value: %s", value)
+        return cls.UNKNOWN
 
 
 @unique
@@ -375,11 +431,12 @@ class SensorType(IntEnum):
     SILENT_BURGLARY = 24
     UNUSED = 0
 
-    # Handle unknown/future sensor types.
+    # Handle unknown/future sensor type.
     UNKNOWN = -1
 
     @classmethod
-    def _missing_(cls, value):
+    def _missing_(cls, value: Any) -> SensorType:
+        _LOGGER.error("Unknown sensor type value: %s", value)
         return cls.UNKNOWN
 
 
@@ -390,3 +447,11 @@ class ZoneBypass(IntEnum):
     UNBYPASSED = 0
     FORCE_BYPASSED = 1
     MANUALLY_BYPASSED = 2
+
+    # Handle unknown/future zone bypass.
+    UNKNOWN = -1
+
+    @classmethod
+    def _missing_(cls, value: Any) -> ZoneBypass:
+        _LOGGER.error("Unknown zone bypass value: %s", value)
+        return cls.UNKNOWN

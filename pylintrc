@@ -13,4 +13,5 @@ persistent=no
 disable=
   line-too-long,
   too-few-public-methods,
-  too-many-arguments
+  too-many-arguments,
+  too-many-public-methods

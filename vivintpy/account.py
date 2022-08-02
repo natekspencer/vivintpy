@@ -37,8 +37,8 @@ class Account:
         """Initialize an account."""
         self.__connected = False
         self.__load_devices = False
-        self.__pubnub: PubNubAsyncio = None
-        self.__pubnub_listener: VivintPubNubSubscribeListener = None
+        self.__pubnub: PubNubAsyncio | None = None
+        self.__pubnub_listener: VivintPubNubSubscribeListener | None = None
         self.vivintskyapi = VivintSkyApi(
             username=username,
             password=password,
@@ -48,7 +48,7 @@ class Account:
         self.systems: list[System] = []
 
     @property
-    def connected(self):
+    def connected(self) -> bool:
         """Return True if connected."""
         return self.__connected
 
@@ -94,6 +94,7 @@ class Account:
         The pubnub code doesn't properly wait for the unsubscribe event to finish or to
         be canceled, so we have to manually do it by finding the coroutine in asyncio.
         """
+        assert self.__pubnub
         self.__pubnub.unsubscribe_all()
         tasks = [
             task
@@ -129,7 +130,8 @@ class Account:
                 # is this an existing account_system?
                 system = first_or_none(
                     self.systems,
-                    lambda system: system.id == system_data[SystemAttribute.PANEL_ID],
+                    lambda system, system_data=system_data: system.id  # type: ignore
+                    == system_data[SystemAttribute.PANEL_ID],
                 )
                 if system:
                     await system.refresh()

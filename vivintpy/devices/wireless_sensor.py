@@ -1,6 +1,5 @@
 """Module that implements the WirelessSensor class."""
 import logging
-from typing import Any
 
 from ..const import WirelessSensorAttribute as Attributes
 from ..enums import EquipmentCode, EquipmentType, SensorType
@@ -13,6 +12,8 @@ _LOGGER = logging.getLogger(__name__)
 
 class WirelessSensor(BypassTamperDevice, VivintDevice):
     """Represents a Vivint wireless sensor device."""
+
+    alarm_panel: AlarmPanel
 
     def __init__(self, data: dict, alarm_panel: AlarmPanel = None) -> None:
         """Initialize a wireless sesnor."""
@@ -31,29 +32,29 @@ class WirelessSensor(BypassTamperDevice, VivintDevice):
         return self.equipment_code.name
 
     @property
-    def software_version(self) -> str:
+    def software_version(self) -> str | None:
         """Return the software version of this device, if any."""
-        return self.data.get(Attributes.SENSOR_FIRMWARE_VERSION) or None
+        return self.data.get(Attributes.SENSOR_FIRMWARE_VERSION)
 
     @property
-    def equipment_code(self):
+    def equipment_code(self) -> EquipmentCode:
         """Return the equipment code of this sensor."""
-        return EquipmentCode(self.data.get(Attributes.EQUIPMENT_CODE))
+        return EquipmentCode(self.data.get(Attributes.EQUIPMENT_CODE))  # type: ignore
 
     @property
-    def equipment_type(self):
+    def equipment_type(self) -> EquipmentType:
         """Return the equipment type of this sensor."""
-        return EquipmentType(self.data.get(Attributes.EQUIPMENT_TYPE))
+        return EquipmentType(self.data.get(Attributes.EQUIPMENT_TYPE))  # type: ignore
 
     @property
-    def sensor_type(self):
+    def sensor_type(self) -> SensorType:
         """Return the sensor type of this sensor."""
-        return SensorType(self.data.get(Attributes.SENSOR_TYPE))
+        return SensorType(self.data.get(Attributes.SENSOR_TYPE))  # type: ignore
 
     @property
     def is_on(self) -> bool:
-        """Return True if the sensor's state is on."""
-        return self.data.get(Attributes.STATE)
+        """Return `True` if the sensor's state is on."""
+        return bool(self.data.get(Attributes.STATE))
 
     @property
     def is_valid(self) -> bool:
@@ -64,7 +65,7 @@ class WirelessSensor(BypassTamperDevice, VivintDevice):
             and self.sensor_type != SensorType.UNUSED
         )
 
-    def update_data(self, new_val: dict[str, Any], override: bool = False) -> None:
+    def update_data(self, new_val: dict, override: bool = False) -> None:
         """Update entity's raw data."""
         super().update_data(new_val=new_val, override=override)
         self.__update_parent()

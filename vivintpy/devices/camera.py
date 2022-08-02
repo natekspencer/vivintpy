@@ -28,10 +28,12 @@ VIDEO_READY = "video_ready"
 class Camera(VivintDevice):
     """Represents a Vivint camera."""
 
+    alarm_panel: AlarmPanel
+
     def __init__(self, data: dict, alarm_panel: AlarmPanel):
         """Initialize a camera."""
         super().__init__(data, alarm_panel)
-        manufacturer_and_model = self.data.get(Attribute.ACTUAL_TYPE).split("_")[0:2]
+        manufacturer_and_model = self.data[Attribute.ACTUAL_TYPE].split("_")[0:2]
         self._manufacturer = manufacturer_and_model[0].title()
         self._model = manufacturer_and_model[1].upper()
 
@@ -41,39 +43,39 @@ class Camera(VivintDevice):
         return self.mac_address
 
     @property
-    def software_version(self) -> str:
+    def software_version(self) -> str | None:
         """Return the camera's software version."""
         return self.data.get(Attribute.SOFTWARE_VERSION)
 
     @property
     def capture_clip_on_motion(self) -> bool:
         """Return True if capture clip on motion is active."""
-        return self.data[Attribute.CAPTURE_CLIP_ON_MOTION]
+        return bool(self.data[Attribute.CAPTURE_CLIP_ON_MOTION])
 
     @property
     def ip_address(self) -> str:
         """Camera's IP address."""
-        return self.data[Attribute.CAMERA_IP_ADDRESS]
+        return str(self.data[Attribute.CAMERA_IP_ADDRESS])
 
     @property
     def mac_address(self) -> str:
         """Camera's MAC Address."""
-        return self.data[Attribute.CAMERA_MAC]
+        return str(self.data[Attribute.CAMERA_MAC])
 
     @property
     def is_in_privacy_mode(self) -> bool:
         """Return True if privacy mode is active."""
-        return self.data[Attribute.CAMERA_PRIVACY]
+        return bool(self.data[Attribute.CAMERA_PRIVACY])
 
     @property
     def is_online(self) -> bool:
         """Return True if camera is online."""
-        return self.data[Attribute.ONLINE]
+        return bool(self.data[Attribute.ONLINE])
 
     @property
     def wireless_signal_strength(self) -> int:
         """Camera's wireless signal strength."""
-        return self.data[Attribute.WIRELESS_SIGNAL_STRENGTH]
+        return int(self.data[Attribute.WIRELESS_SIGNAL_STRENGTH])
 
     async def request_thumbnail(self) -> None:
         """Request a new thumbnail for the camera."""
@@ -81,7 +83,7 @@ class Camera(VivintDevice):
             self.alarm_panel.id, self.alarm_panel.partition_id, self.id
         )
 
-    async def get_thumbnail_url(self) -> str:
+    async def get_thumbnail_url(self) -> str | None:
         """Return the latest camera thumbnail URL."""
         # Sometimes this date field comes back with a "Z" at the end
         # and sometimes it doesn't, so let's just safely remove it.
@@ -98,13 +100,17 @@ class Camera(VivintDevice):
             thumbnail_timestamp,
         )
 
-    async def get_rtsp_url(self, internal: bool = False, hd: bool = False) -> str:
+    async def get_rtsp_url(
+        self, internal: bool = False, hd: bool = False  # pylint: disable=invalid-name
+    ) -> str:
         """Return the rtsp URL for the camera."""
         credentials = await self.alarm_panel.get_panel_credentials()
         url = self.data[f"c{'i' if internal else 'e'}u{'' if hd else 's'}"][0]
         return f"{url[:7]}{credentials[PanelCredentialAttribute.NAME]}:{credentials[PanelCredentialAttribute.PASSWORD]}@{url[7:]}"
 
-    async def get_direct_rtsp_url(self, hd: bool = False) -> str:
+    async def get_direct_rtsp_url(
+        self, hd: bool = False  # pylint: disable=invalid-name
+    ) -> str | None:
         """Return the direct rtsp url for this camera, in HD if requested, if any."""
         return (
             f"rtsp://{self.data[Attribute.USERNAME]}:{self.data[Attribute.PASSWORD]}@{self.ip_address}:{self.data[Attribute.CAMERA_IP_PORT]}/{self.data[Attribute.CAMERA_DIRECT_STREAM_PATH if hd else Attribute.CAMERA_DIRECT_STREAM_PATH_STANDARD]}"

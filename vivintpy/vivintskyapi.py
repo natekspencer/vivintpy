@@ -4,13 +4,14 @@ from __future__ import annotations
 import json
 import logging
 import ssl
+from collections.abc import Callable
 from datetime import datetime
-from types import MethodType
 from typing import Any
 
 import aiohttp
 import certifi
 from aiohttp import ClientResponseError
+from aiohttp.client import _RequestContextManager
 
 from .const import (
     AuthenticationResponse,
@@ -42,7 +43,7 @@ class VivintSkyApi:
         password: str,
         persist_session: bool = False,
         client_session: aiohttp.ClientSession | None = None,
-    ):
+    ) -> None:
         """Initialize the VivintSky API."""
         self.__username = username
         self.__password = password
@@ -51,15 +52,16 @@ class VivintSkyApi:
         self.__has_custom_client_session = client_session is not None
         self.__mfa_pending = False
 
-    def is_session_valid(self) -> dict:
+    def is_session_valid(self) -> bool:
         """Return the state of the current session."""
+        # pylint: disable=protected-access
         cookie = self.__client_session.cookie_jar._cookies["www.vivintsky.com"].get("s")
         if not cookie:
             return False
         cookie_expiration = datetime.strptime(
             cookie.get("expires"), "%a, %d %b %Y %H:%M:%S %Z"
         )
-        return True if cookie_expiration > datetime.utcnow() else False
+        return cookie_expiration > datetime.utcnow()
 
     async def connect(self) -> dict:
         """Connect to VivintSky Cloud Service."""
@@ -95,20 +97,18 @@ class VivintSkyApi:
         that user has access to.
         """
         resp = await self.__get("authuser")
-        if resp:
-            return resp
-        else:
+        if not resp:
             raise VivintSkyApiAuthenticationError("Missing auth user data")
+        return resp
 
     async def get_panel_credentials(self, panel_id: int) -> dict:
         """Get the panel credentials."""
         resp = await self.__get(f"panel-login/{panel_id}")
-        if resp:
-            return resp
-        else:
+        if not resp:
             raise VivintSkyApiAuthenticationError(
                 "Unable to retrieve panel credentials."
             )
+        return resp
 
     async def get_system_data(self, panel_id: int) -> dict:
         """Get the raw data for a system."""
@@ -117,10 +117,9 @@ class VivintSkyApi:
             headers={"Accept-Encoding": "application/json"},
             params={"includerules": "false"},
         )
-        if resp:
-            return resp
-        else:
+        if not resp:
             raise VivintSkyApiError("Unable to retrieve system data")
+        return resp
 
     async def get_device_data(self, panel_id: int, device_id: int) -> dict:
         """Get the raw data for a device."""
@@ -128,14 +127,13 @@ class VivintSkyApi:
             f"system/{panel_id}/device/{device_id}",
             headers={"Accept-Encoding": "application/json"},
         )
-        if resp:
-            return resp
-        else:
+        if not resp:
             raise VivintSkyApiError("Unable to retrieve device data")
+        return resp
 
     async def set_alarm_state(
-        self, panel_id: int, partition_id: int, state: bool
-    ) -> aiohttp.ClientResponse:
+        self, panel_id: int, partition_id: int, state: int
+    ) -> None:
         """Set the alarm state."""
         resp = await self.__put(
             f"{panel_id}/{partition_id}/armedstates",
@@ -147,13 +145,13 @@ class VivintSkyApi:
                     "armState": state,
                     "forceArm": False,
                 }
-            ).encode("utf-8"),
+            ),
         )
         if resp is None:
             _LOGGER.error(
                 "Failed to set state to %s for panel %s",
                 ArmedState(state).name,
-                self.id,
+                panel_id,
             )
             raise VivintSkyApiError("Failed to set alarm state")
 
@@ -171,7 +169,7 @@ class VivintSkyApi:
                     VivintDeviceAttribute.STATE: state,
                     VivintDeviceAttribute.ID: device_id,
                 }
-            ).encode("utf-8"),
+            ),
         )
         if resp is None:
             _LOGGER.debug(
@@ -197,7 +195,7 @@ class VivintSkyApi:
                     VivintDeviceAttribute.STATE: locked,
                     VivintDeviceAttribute.ID: device_id,
                 }
-            ).encode("utf-8"),
+            ),
         )
         if resp is None:
             _LOGGER.debug(
@@ -225,7 +223,7 @@ class VivintSkyApi:
                     else ZoneBypass.UNBYPASSED,
                     VivintDeviceAttribute.ID: device_id,
                 }
-            ).encode("utf-8"),
+            ),
         )
         if resp is None:
             _LOGGER.debug(
@@ -242,38 +240,34 @@ class VivintSkyApi:
         panel_id: int,
         partition_id: int,
         device_id: int,
-        on: bool | None = None,
+        on: bool | None = None,  # pylint: disable=invalid-name
         level: int | None = None,
     ) -> None:
         """Set switch state."""
         # validate input
         if on is None and level is None:
             raise VivintSkyApiError('Either "on" or "level" must be provided.')
-        elif level and (0 > level or level > 100):
+        if level and (0 > level or level > 100):
             raise VivintSkyApiError('The value for "level" must be between 0 and 100.')
+
+        data: dict = {SwitchAttribute.ID: device_id}
+        if level is None:
+            data[SwitchAttribute.STATE] = on
+        else:
+            data[SwitchAttribute.VALUE] = level
 
         resp = await self.__put(
             f"{panel_id}/{partition_id}/switches/{device_id}",
             headers={
                 "Content-Type": "application/json;charset=utf-8",
             },
-            data=json.dumps(
-                {
-                    SwitchAttribute.ID: device_id,
-                    **(
-                        {SwitchAttribute.STATE: on}
-                        if level is None
-                        else {SwitchAttribute.VALUE: level}
-                    ),
-                }
-            ).encode("utf-8"),
+            data=json.dumps(data),
         )
         if resp is None:
-            [attribute, value] = ["on", on] if level is None else ["level", level]
             _LOGGER.debug(
                 "Failed to set %s to %s for switch %s @ %s:%s",
-                attribute,
-                value,
+                "on" if level is None else "level",
+                on if level is None else level,
                 device_id,
                 panel_id,
                 partition_id,
@@ -281,7 +275,7 @@ class VivintSkyApi:
             raise VivintSkyApiError("Failed to set switch state")
 
     async def set_thermostat_state(
-        self, panel_id: int, partition_id: int, device_id: int, **kwargs
+        self, panel_id: int, partition_id: int, device_id: int, **kwargs: Any
     ) -> None:
         """Set thermostat state."""
         resp = await self.__put(
@@ -289,7 +283,7 @@ class VivintSkyApi:
             headers={
                 "Content-Type": "application/json;charset=utf-8",
             },
-            data=json.dumps(kwargs).encode("utf-8"),
+            data=json.dumps(kwargs),
         )
         if resp is None:
             _LOGGER.debug(
@@ -306,7 +300,7 @@ class VivintSkyApi:
     ) -> None:
         """Request the camera thumbnail."""
         try:
-            return await self.__get(
+            await self.__get(
                 f"{panel_id}/{partition_id}/{device_id}/request-camera-thumbnail",
             )
         except ClientResponseError as resp:
@@ -320,12 +314,8 @@ class VivintSkyApi:
                 )
 
     async def get_camera_thumbnail_url(
-        self,
-        panel_id: int,
-        partition_id: int,
-        device_id: int,
-        thumbnail_timestamp: datetime,
-    ) -> str:
+        self, panel_id: int, partition_id: int, device_id: int, thumbnail_timestamp: int
+    ) -> str | None:
         """Get the camera thumbnail url."""
         try:
             resp = await self.__get(
@@ -333,6 +323,7 @@ class VivintSkyApi:
                 params={"time": thumbnail_timestamp},
                 allow_redirects=False,
             )
+            assert resp
             return resp.get("location")
         except ClientResponseError as resp:
             if resp.status != 302:
@@ -343,6 +334,7 @@ class VivintSkyApi:
                     partition_id,
                     resp.status,
                 )
+            return None
 
     def __get_new_client_session(self) -> aiohttp.ClientSession:
         """Create a new aiohttp.ClientSession object."""
@@ -360,7 +352,7 @@ class VivintSkyApi:
 
         Returns auth user data if successful.
         """
-        return await self.__post(
+        resp = await self.__post(
             "login",
             data=json.dumps(
                 {
@@ -368,14 +360,16 @@ class VivintSkyApi:
                     "password": password,
                     "persist_session": persist_session,
                 }
-            ).encode("utf-8"),
+            ),
         )
+        assert resp
+        return resp
 
     async def __get(
         self,
         path: str,
-        headers: dict[str, Any] = None,
-        params: dict[str, Any] = None,
+        headers: dict = None,
+        params: dict = None,
         allow_redirects: bool = None,
     ) -> dict | None:
         """Perform a get request."""
@@ -390,7 +384,7 @@ class VivintSkyApi:
     async def __post(
         self,
         path: str,
-        data: bytes = None,
+        data: str = None,
     ) -> dict | None:
         """Perform a post request."""
         return await self.__call(self.__client_session.post, path, data=data)
@@ -398,8 +392,8 @@ class VivintSkyApi:
     async def __put(
         self,
         path: str,
-        headers: dict[str, Any] = None,
-        data: bytes = None,
+        headers: dict = None,
+        data: str = None,
     ) -> dict | None:
         """Perform a put request."""
         return await self.__call(
@@ -408,11 +402,11 @@ class VivintSkyApi:
 
     async def __call(
         self,
-        method: MethodType,
+        method: Callable[..., _RequestContextManager],
         path: str,
-        headers: dict[str, Any] = None,
-        params: dict[str, Any] = None,
-        data: bytes = None,
+        headers: dict = None,
+        params: dict = None,
+        data: str = None,
         allow_redirects: bool = None,
     ) -> dict | None:
         """Perform a request with supplied parameters and reauthenticate if necessary."""
@@ -435,21 +429,20 @@ class VivintSkyApi:
             allow_redirects=allow_redirects,
         )
         async with resp:
-            data: dict = await resp.json(encoding="utf-8")
+            resp_data: dict = await resp.json(encoding="utf-8")
             if resp.status == 200:
-                return data
-            elif resp.status == 302:
+                return resp_data
+            if resp.status == 302:
                 return {"location": resp.headers.get("Location")}
-            elif resp.status == 401:
+            if resp.status == 401:
                 message = (
-                    data.get(MfaVerificationResponse.MESSAGE)
+                    resp_data.get(MfaVerificationResponse.MESSAGE)
                     if is_mfa_request
-                    else data.get(AuthenticationResponse.MESSAGE)
+                    else resp_data.get(AuthenticationResponse.MESSAGE)
                 )
                 if message == AuthenticationResponse.MFA_REQUIRED:
                     self.__mfa_pending = True
                     raise VivintSkyApiMfaRequiredError(message)
                 raise VivintSkyApiAuthenticationError(message)
-            else:
-                resp.raise_for_status()
-                return None
+            resp.raise_for_status()
+            return None
