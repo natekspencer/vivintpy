@@ -3,7 +3,8 @@ from __future__ import annotations
 
 import asyncio
 import logging
-from typing import Any, Callable, Iterable, TypeVar
+from collections.abc import Callable, Iterable
+from typing import Any, TypeVar
 from warnings import warn
 
 _LOGGER = logging.getLogger(__name__)
@@ -17,9 +18,10 @@ def first_or_none(lst: Iterable[_T], predicate: Callable[[_T], Any]) -> _T | Non
     return next(filter_iter, None)
 
 
-def add_async_job(target: Callable, *args):
+def add_async_job(target: Callable, *args: Any) -> asyncio.Task | asyncio.Future:
     """Add a callable to the event loop."""
     loop = asyncio.get_event_loop()
+    task: asyncio.Future | asyncio.Task
 
     if asyncio.iscoroutine(target):
         task = loop.create_task(target)

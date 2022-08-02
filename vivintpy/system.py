@@ -28,9 +28,9 @@ class System(Entity):
         ]
 
     @property
-    def id(self) -> int:
+    def id(self) -> int:  # pylint: disable=invalid-name
         """System's id."""
-        return self.data[SystemAttribute.SYSTEM][SystemAttribute.PANEL_ID]
+        return int(self.data[SystemAttribute.SYSTEM][SystemAttribute.PANEL_ID])
 
     @property
     def name(self) -> str:
@@ -46,7 +46,8 @@ class System(Entity):
         ]:
             alarm_panel = first_or_none(
                 self.alarm_panels,
-                lambda panel: panel.id == panel_data[SystemAttribute.PANEL_ID]
+                lambda panel, panel_data=panel_data: panel.id  # type: ignore
+                == panel_data[SystemAttribute.PANEL_ID]
                 and panel.partition_id == panel_data[SystemAttribute.PARTITION_ID],
             )
             if alarm_panel:

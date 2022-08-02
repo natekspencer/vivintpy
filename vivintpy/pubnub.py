@@ -1,7 +1,10 @@
 """Module that implements the VivintPubNubSubscribeListener class."""
+from __future__ import annotations
+
 import logging
+from collections.abc import Callable
 from enum import IntEnum, unique
-from typing import Callable
+from typing import Any
 
 from pubnub.callbacks import SubscribeCallback
 from pubnub.models.consumer.pubsub import PNMessageResult
@@ -22,6 +25,10 @@ class VivintPubNubSubscribeListener(SubscribeCallback):
         """Initialize the PubNub subscription."""
         super().__init__()
         self.__message_received_callback = message_received_callback
+
+    def presence(self, pubnub: PubNubAsyncio, presence: Any) -> None:
+        """Handle presence update."""
+        _LOGGER.debug("Recieved new presence: %s", presence)
 
     def status(
         self,
@@ -56,7 +63,7 @@ class VivintPubNubSubscribeListener(SubscribeCallback):
 
 @unique
 class PubNubStatusCategory(IntEnum):
-    """PubNub status categories."""
+    """PubNub status category."""
 
     UNKNOWN = 1
     ACKNOWLEDGMENT = 2
@@ -76,19 +83,19 @@ class PubNubStatusCategory(IntEnum):
     TLS_UNTRUSTED_CERTIFICATE = 16
     INTERNAL_EXCEPTION = 17
 
-    # Handle unknown/future operation types.
+    # Handle unknown/future status category
     UNEXPECTED_STATUS_CATEGORY = -1
 
     @classmethod
-    def _missing_(cls, _):
-        if _ is not None:
-            _LOGGER.error("Unexpected status category: %s", _)
+    def _missing_(cls, value: Any) -> PubNubStatusCategory:
+        if value is not None:
+            _LOGGER.error("Unexpected status category value: %s", value)
         return cls.UNEXPECTED_STATUS_CATEGORY
 
 
 @unique
 class PubNubOperationType(IntEnum):
-    """PubNub operation types."""
+    """PubNub operation type."""
 
     SUBSCRIBE = 1
     UNSUBSCRIBE = 2
@@ -155,11 +162,11 @@ class PubNubOperationType(IntEnum):
     REMOVE_MEMBERSHIPS = 67
     MANAGE_MEMBERSHIPS = 68
 
-    # Handle unknown/future operation types.
+    # Handle unknown/future operation type
     UNEXPECTED_OPERATION_TYPE = -1
 
     @classmethod
-    def _missing_(cls, _):
-        if _ is not None:
-            _LOGGER.error("Unexpected operation type: %s", _)
+    def _missing_(cls, value: Any) -> PubNubOperationType:
+        if value is not None:
+            _LOGGER.error("Unexpected operation type value: %s", value)
         return cls.UNEXPECTED_OPERATION_TYPE

@@ -9,6 +9,8 @@ from pubnub.pubnub_asyncio import (
     asyncio,
 )
 
+# pylint: disable=protected-access, fixme
+
 
 async def patched_perform_heartbeat_loop(self: AsyncioSubscriptionManager) -> None:
     """
@@ -73,7 +75,7 @@ def patched_is_error(self: PNStatus) -> bool:
 
     See https://github.com/pubnub/python/pull/101 for when this can be removed.
     """
-    return True if self.error else False
+    return bool(self.error)
 
 
 PNStatus.is_error = patched_is_error

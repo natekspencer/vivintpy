@@ -11,20 +11,25 @@ class Switch(VivintDevice):
     @property
     def is_on(self) -> bool:
         """Return True if switch is on."""
-        return self.data[SwitchAttribute.STATE]
+        return bool(self.data[SwitchAttribute.STATE])
 
     @property
     def level(self) -> int:
         """Return the level of the switch betwen 0..100."""
-        return self.data[SwitchAttribute.VALUE]
+        return int(self.data[SwitchAttribute.VALUE])
 
     @property
     def node_online(self) -> bool:
         """Return True if the node is online."""
-        return self.data[ZWaveDeviceAttribute.ONLINE]
+        return bool(self.data[ZWaveDeviceAttribute.ONLINE])
 
-    async def set_state(self, on: bool | None = None, level: int | None = None) -> None:
+    async def set_state(
+        self,
+        on: bool | None = None,  # pylint: disable=invalid-name
+        level: int | None = None,
+    ) -> None:
         """Set switch's state."""
+        assert self.alarm_panel
         await self.vivintskyapi.set_switch_state(
             self.alarm_panel.id, self.alarm_panel.partition_id, self.id, on, level
         )
