@@ -81,6 +81,15 @@ class VivintDevice(Entity):
         return self.data.get(Attribute.NAME)
 
     @property
+    def battery_level(self) -> int | None:
+        """Return the device's battery level."""
+        if not self.has_battery:
+            return None
+        if (battery_level := self.data.get(Attribute.BATTERY_LEVEL)) not in (None, ""):
+            return battery_level
+        return 0 if self.low_battery else 100
+
+    @property
     def capabilities(
         self,
     ) -> dict[CapabilityCategoryType, list[CapabilityType]] | None:
@@ -93,9 +102,22 @@ class VivintDevice(Entity):
         return DeviceType(self.data[Attribute.TYPE])
 
     @property
+    def has_battery(self) -> bool:
+        """Return `True` if the device has battery details."""
+        return (
+            self.data.get(Attribute.BATTERY_LEVEL) is not None
+            or self.data.get(Attribute.LOW_BATTERY) is not None
+        )
+
+    @property
     def is_subdevice(self) -> bool:
         """Return if this device is a subdevice."""
         return self._parent is not None
+
+    @property
+    def low_battery(self) -> bool | None:
+        """Return `True` if the device's battery level is low."""
+        return self.data.get(Attribute.LOW_BATTERY, False) if self.has_battery else None
 
     @property
     def manufacturer(self) -> str | None:

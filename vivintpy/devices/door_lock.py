@@ -7,16 +7,6 @@ class DoorLock(BypassTamperDevice, VivintDevice):
     """Represents a vivint door lock device."""
 
     @property
-    def battery_level(self) -> int:
-        """Door lock's battery level."""
-        return self.data[Attributes.BATTERY_LEVEL]
-
-    @property
-    def low_battery(self) -> bool:
-        """Return True if battery level is low."""
-        return self.data[Attributes.LOW_BATTERY]
-
-    @property
     def is_locked(self) -> bool:
         """Return True if door lock is locked."""
         return self.data[Attributes.STATE]
