@@ -4,13 +4,11 @@ from __future__ import annotations
 import logging
 
 from ..const import ThermostatAttribute as Attribute
-from ..enums import FanMode, HoldMode, OperatingMode, OperatingState
+from ..enums import DeviceType, FanMode, HoldMode, OperatingMode, OperatingState
 from . import VivintDevice
 from .alarm_panel import AlarmPanel
 
 _LOGGER = logging.getLogger(__name__)
-
-NEST_DEVICE = "pod_nest_thermostat_device"
 
 
 class Thermostat(VivintDevice):
@@ -20,7 +18,7 @@ class Thermostat(VivintDevice):
         """Initialize a thermostat."""
         super().__init__(data, alarm_panel)
 
-        if data.get(Attribute.ACTUAL_TYPE) == NEST_DEVICE:
+        if data.get(Attribute.ACTUAL_TYPE) == DeviceType.POD_NEST_THERMOSTAT.value:
             [self._manufacturer, self._model] = ["Google", "Nest"]
 
     @property
