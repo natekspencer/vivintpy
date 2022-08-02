@@ -135,7 +135,7 @@
     "manufacturer": "HomePro"
   },
   "0x0001:0x7fff:0x7fff": {
-    "description": "Applicance Module",
+    "description": "Appliance Module",
     "label": "ZRP200",
     "manufacturer": "HomePro"
   },
@@ -2086,7 +2086,7 @@
   },
   "0x0063:0x4944:0x3031": {
     "description": "In-Wall Dimmer",
-    "label": "12724 / ZW3003",
+    "label": "12724 / ZW3005",
     "manufacturer": "GE/Jasco"
   },
   "0x0063:0x4944:0x3032": {
@@ -3177,6 +3177,11 @@
   "0x0085:0x0004:0x0011": {
     "description": "Roller blind module",
     "label": "ARF",
+    "manufacturer": "Fakro"
+  },
+  "0x0085:0x0004:0x0012": {
+    "description": "Roller Blind",
+    "label": "ARF Z-Wave Solar",
     "manufacturer": "Fakro"
   },
   "0x0085:0x0005:0x0001": {
@@ -5979,6 +5984,11 @@
     "label": "FGWP102",
     "manufacturer": "Fibargroup"
   },
+  "0x010f:0x0602:0x4001": {
+    "description": "Metered Wall Plug Switch",
+    "label": "FGWP102",
+    "manufacturer": "Fibargroup"
+  },
   "0x010f:0x0602:0x4003": {
     "description": "Metered Wall Plug Switch",
     "label": "FGWP102",
@@ -6030,6 +6040,11 @@
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0702:0x3000": {
+    "description": "Fibaro Door Window Sensor 2",
+    "label": "FGDW002",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0702:0x4000": {
     "description": "Fibaro Door Window Sensor 2",
     "label": "FGDW002",
     "manufacturer": "Fibargroup"
@@ -6345,8 +6360,8 @@
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x1801:0x1000": {
-    "description": "Fibaro Wall Plug",
-    "label": "FGWPB-121",
+    "description": "FIBARO Wall Plug UK",
+    "label": "FGWPG-111",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x1a01:0x1000": {
@@ -6645,7 +6660,7 @@
     "manufacturer": "Chromagic Technologies Corporation"
   },
   "0x0116:0x0010:0x0001": {
-    "description": "Chromagic Z-Wave Remote Botton (EU)",
+    "description": "Chromagic Z-Wave Remote Button (EU)",
     "label": "HAC01",
     "manufacturer": "Chromagic Technologies Corporation"
   },
@@ -9144,6 +9159,11 @@
     "label": "MH-S220",
     "manufacturer": "McoHome Technology Co., Ltd."
   },
+  "0x015f:0x2201:0x7202": {
+    "description": "Micro Switch",
+    "label": "MH-S220",
+    "manufacturer": "McoHome Technology Co., Ltd."
+  },
   "0x015f:0x220a:0x1352": {
     "description": "Micro Dimmer",
     "label": "MH-P220",
@@ -9999,9 +10019,19 @@
     "label": "ZME_WALLC-S",
     "manufacturer": "Focal Point Ltd."
   },
+  "0x0190:0x0001:0x0001": {
+    "description": "Alarm.com Smart Thermostat",
+    "label": "ADC-T 2000",
+    "manufacturer": "Building 36 Technologies"
+  },
   "0x0190:0x0003:0x0001": {
     "description": "Temperature Sensor",
     "label": "ADC-S2000-T-RA",
+    "manufacturer": "Building 36 Technologies"
+  },
+  "0x0190:0x0006:0x0001": {
+    "description": "Alarm.com Smart Thermostat",
+    "label": "ADC-T 3000",
     "manufacturer": "Building 36 Technologies"
   },
   "0x0193:0x0001:0x0001": {
@@ -10092,7 +10122,12 @@
   "0x019b:0x0001:0x0001": {
     "description": "ZWave Thermostat",
     "label": "TF016 / TF021",
-    "manufacturer": "ThermoFloor"
+    "manufacturer": "Heatit"
+  },
+  "0x019b:0x0002:0x2201": {
+    "description": "Heatit Z-Dim2",
+    "label": "Z-DIM2",
+    "manufacturer": "Heatit"
   },
   "0x019b:0x0003:0x000d": {
     "description": "Wired Smoke Detector",
@@ -10107,17 +10142,17 @@
   "0x019b:0x0003:0x0201": {
     "description": "ZWave Thermostat",
     "label": "TF016 / TF021",
-    "manufacturer": "ThermoFloor"
+    "manufacturer": "Heatit"
   },
   "0x019b:0x0003:0x0202": {
     "description": "Floor Thermostat",
-    "label": "Heatit Z-TRM 2",
-    "manufacturer": "ThermoFloor"
+    "label": "Z-TRM 2",
+    "manufacturer": "Heatit"
   },
   "0x019b:0x0003:0x0203": {
     "description": "Floor thermostat",
-    "label": "Heatit Z-TRM3",
-    "manufacturer": "ThermoFloor"
+    "label": "Z-TRM3",
+    "manufacturer": "Heatit"
   },
   "0x019b:0x0003:0x0208": {
     "description": "Multipurpose relay",
@@ -10131,8 +10166,8 @@
   },
   "0x019b:0x0003:0x2200": {
     "description": "Knob Smart Dimmer",
-    "label": "HeatIt ZDim",
-    "manufacturer": "ThermoFloor"
+    "label": "Z-Dim",
+    "manufacturer": "Heatit"
   },
   "0x019b:0x0003:0x3600": {
     "description": "Z-Wave Range Extender",
@@ -10152,7 +10187,12 @@
   "0x019b:0x0004:0x0204": {
     "description": "Battery operated thermostat",
     "label": "Z-Temp2",
-    "manufacturer": "ThermoFloor AS"
+    "manufacturer": "Heatit"
+  },
+  "0x019b:0x0004:0x2201": {
+    "description": "Heatit Z-Dim2",
+    "label": "Z-DIM2",
+    "manufacturer": "Heatit"
   },
   "0x019b:0x0004:0x2403": {
     "description": "Z-Push Wall Controller",
@@ -10160,9 +10200,9 @@
     "manufacturer": "Heatit"
   },
   "0x019b:0x0004:0x3500": {
-    "description": "Heatit ZM Single Relay 16A",
-    "label": "4512671",
-    "manufacturer": "HeatIt"
+    "description": "High power relay",
+    "label": "ZM Single Relay 16A",
+    "manufacturer": "Heatit"
   },
   "0x019b:0x0004:0x3502": {
     "description": "Floor Thermostat",
@@ -10995,7 +11035,7 @@
     "manufacturer": "Z-works Inc."
   },
   "0x024d:0x4761:0x0001": {
-    "description": "Lock Dectector",
+    "description": "Lock Detector",
     "label": "DN3G6JA062",
     "manufacturer": "Z-works Inc."
   },
@@ -12434,6 +12474,11 @@
     "label": "MP21ZP",
     "manufacturer": "Minoston"
   },
+  "0x0312:0xff00:0xff0f": {
+    "description": "Z-Wave Outdoor Smart Plug with Power Meter",
+    "label": "MP22ZP",
+    "manufacturer": "Minoston"
+  },
   "0x0312:0xff01:0xff01": {
     "description": "Smart On/Off Toggle Switch",
     "label": "MS12ZS",
@@ -13040,7 +13085,7 @@
     "manufacturer": "TEM AG"
   },
   "0x034e:0x0001:0x0101": {
-    "description": "Radio Base Modul",
+    "description": "Radio Base Module",
     "label": "MTBAS-100-WL",
     "manufacturer": "TEM AG"
   },
@@ -13554,9 +13599,19 @@
     "label": "HA-ZW-5AQG",
     "manufacturer": "AiBase Smart Technology"
   },
+  "0x0384:0x0200:0x0009": {
+    "description": "4-in-1 Motion Sensor",
+    "label": "HA-ZW-5SAB",
+    "manufacturer": "AiBase Smart Technology"
+  },
   "0x0384:0x0200:0x000a": {
     "description": "Water Leak Sensor",
     "label": "HA-ZW-5SF",
+    "manufacturer": "AiBase Smart Technology"
+  },
+  "0x0384:0x0200:0x000b": {
+    "description": "Smart Plug",
+    "label": "HA-ZW-5PA",
     "manufacturer": "AiBase Smart Technology"
   },
   "0x038e:0x0001:0x0001": {
@@ -13894,6 +13949,16 @@
     "label": "Z-Wave Dimmer 2 400W",
     "manufacturer": "Namron"
   },
+  "0x0438:0x0200:0xd013": {
+    "description": "16A Touch thermostat - White",
+    "label": "4512744",
+    "manufacturer": "Namron"
+  },
+  "0x0438:0x0200:0xd025": {
+    "description": "16A Touch thermostat - Black",
+    "label": "4512745",
+    "manufacturer": "Namron"
+  },
   "0x0438:0x0202:0x0002": {
     "description": "LED Dimmer",
     "label": "1402756",
@@ -13977,6 +14042,11 @@
   "0x044c:0x0003:0x0001": {
     "description": "OpenTherm Actuator",
     "label": "MyOT",
+    "manufacturer": "SmartDHOME"
+  },
+  "0x044c:0x0003:0x0002": {
+    "description": "OpenTherm Actuator v2",
+    "label": "MyOT v2",
     "manufacturer": "SmartDHOME"
   },
   "0x044f:0x1100:0x0001": {
@@ -14199,5 +14269,5 @@
     "label": "BW8120",
     "manufacturer": "Remotec"
   },
-  "updated_at": "2022-06-03T19:25:12.619596"
+  "updated_at": "2022-08-02T16:50:18.237769"
 }
