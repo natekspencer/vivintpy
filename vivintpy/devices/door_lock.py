@@ -1,4 +1,6 @@
 """Module that implements the DoorLock class."""
+from __future__ import annotations
+
 from ..const import ZWaveDeviceAttribute as Attributes
 from . import BypassTamperDevice, VivintDevice
 

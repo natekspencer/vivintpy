@@ -208,7 +208,8 @@ class AlarmPanel(VivintDevice):
 
                     if operation == PubNubOperatorAttribute.DELETE:
                         self.devices.remove(device)
-                        self.data[Attribute.DEVICES].remove(raw_device_data)
+                        if raw_device_data is not None:
+                            self.data[Attribute.DEVICES].remove(raw_device_data)
                         self.unregistered_devices[device.id] = (
                             device.name,
                             device.device_type,
