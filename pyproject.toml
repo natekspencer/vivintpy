@@ -1,9 +1,32 @@
-[build-system]
-requires = [
-    "setuptools>=46.4.0",
-    "wheel"
-]
-build-backend = "setuptools.build_meta"
+[tool.poetry]
+name = "vivintpy"
+version = "2022.8.0b0"
+description = "Python library for interacting with a Vivint security and smart home system."
+authors = ["Nathan Spencer <natekspencer@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/natekspencer/vivintpy"
+repository = "https://github.com/natekspencer/vivintpy"
+keywords = ["Vivint", "alarm system", "security", "smart home", "home automation", "asynchronous"]
 
-[tool.isort]
-profile = "black"
+[tool.poetry.dependencies]
+python = "^3.7"
+aiohttp = "^3.8.1"
+certifi = "^2022.6.15"
+pubnub = "^5.5"
+
+[tool.poetry.dev-dependencies]
+tox = "^3.25.1"
+pytest = "^7.1.2"
+pytest-asyncio = "^0.19.0"
+pytest-cov = "^3.0.0"
+pytest-timeout = "^2.1.0"
+black = "^22.6.0"
+flake8 = "^5.0.3"
+isort = "^5.10.1"
+mypy = "^0.971"
+pydocstyle = "^6.1.1"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

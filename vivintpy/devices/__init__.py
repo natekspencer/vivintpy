@@ -42,7 +42,7 @@ def get_device_class(device_type: str) -> Type[VivintDevice]:
 class VivintDevice(Entity):
     """Class to implement a generic vivint device."""
 
-    def __init__(self, data: dict, alarm_panel: AlarmPanel = None) -> None:
+    def __init__(self, data: dict, alarm_panel: AlarmPanel | None = None) -> None:
         """Initialize a device."""
         super().__init__(data)
         self.alarm_panel = alarm_panel
@@ -54,9 +54,9 @@ class VivintDevice(Entity):
                     CapabilityType(capability)
                     for capability in capability_category.get(Attribute.CAPABILITY)
                 ]
-                for capability_category in data.get(Attribute.CAPABILITY_CATEGORY, [])
+                for capability_category in caca
             }
-            if data.get(Attribute.CAPABILITY_CATEGORY)
+            if (caca := data.get(Attribute.CAPABILITY_CATEGORY)) is not None
             else None
         )
         self._parent: VivintDevice | None = None
@@ -154,20 +154,15 @@ class VivintDevice(Entity):
     @property
     def software_version(self) -> str | None:
         """Return the software version of this device, if any."""
-        # panels
-        current_software_version = self.data.get(Attribute.CURRENT_SOFTWARE_VERSION)
-        # z-wave devices (some)
-        firmware_version = (
-            ".".join(
-                [
-                    str(i)
-                    for s in self.data.get(Attribute.FIRMWARE_VERSION) or []
-                    for i in s
-                ]
-            )
-            or None
+        # current software version
+        if (csv := self.data.get(Attribute.CURRENT_SOFTWARE_VERSION)) is not None:
+            return str(csv)
+        # firmware version
+        return (
+            ".".join([str(i) for s in fwv for i in s])
+            if (fwv := self.data.get(Attribute.FIRMWARE_VERSION)) is not None
+            else None
         )
-        return current_software_version or firmware_version
 
     @property
     def vivintskyapi(self) -> VivintSkyApi:

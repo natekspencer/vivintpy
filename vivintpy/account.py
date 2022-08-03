@@ -16,6 +16,7 @@ from .const import (
     SystemAttribute,
     UserAttribute,
 )
+from .exceptions import VivintSkyApiError
 from .pubnub import PN_CHANNEL, PN_SUBSCRIBE_KEY, VivintPubNubSubscribeListener
 from .system import System
 from .utils import first_or_none
@@ -119,7 +120,7 @@ class Account:
         if not authuser_data:
             try:
                 authuser_data = await self.vivintskyapi.get_authuser_data()
-            except ClientConnectionError:
+            except (ClientConnectionError, VivintSkyApiError):
                 _LOGGER.error("Unable to refresh system(s)")
 
         if authuser_data:
