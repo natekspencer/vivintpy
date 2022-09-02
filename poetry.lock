@@ -367,7 +367,7 @@ testing = ["pytest", "pytest-benchmark"]
 
 [[package]]
 name = "pubnub"
-version = "5.5.0"
+version = "7.0.0"
 description = "PubNub Real-time push service in the cloud"
 category = "main"
 optional = false
@@ -685,7 +685,7 @@ testing = ["func-timeout", "jaraco.itertools", "pytest (>=6)", "pytest-black (>=
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7.2"
-content-hash = "896348387886a6bdb6c3fb56b256f394c0919539da1937af2a4df7b594ac2289"
+content-hash = "61b75833ed938116433c4bdd43b92fbbbce5887fddca4e2e4be2c50a67bd34cc"
 
 [metadata.files]
 aiohttp = [
@@ -1148,7 +1148,7 @@ pluggy = [
     {file = "pluggy-1.0.0.tar.gz", hash = "sha256:4224373bacce55f955a878bf9cfa763c1e360858e330072059e10bad68531159"},
 ]
 pubnub = [
-    {file = "pubnub-5.5.0.tar.gz", hash = "sha256:a328d999f877bbae408254faacc2d104ef8d4bb077eb6843572755f47c516be1"},
+    {file = "pubnub-7.0.0.tar.gz", hash = "sha256:abd89cf35f623714bde1b3a0ea08f4f1a34d79db614e1041bea76e9f32c3a954"},
 ]
 py = [
     {file = "py-1.11.0-py2.py3-none-any.whl", hash = "sha256:607c53218732647dff4acdfcd50cb62615cedf612e72d1724fb1a0cc6405b378"},
