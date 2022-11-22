@@ -54,9 +54,7 @@ class Account:
         return self.__connected
 
     async def connect(
-        self,
-        load_devices: bool = False,
-        subscribe_for_realtime_updates: bool = False,
+        self, load_devices: bool = False, subscribe_for_realtime_updates: bool = False
     ) -> None:
         """Connect to the VivintSky API."""
         _LOGGER.debug("Connecting to VivintSky")
@@ -114,7 +112,7 @@ class Account:
             _LOGGER.debug("Loading devices")
             await self.refresh()
 
-    async def refresh(self, authuser_data: dict = None) -> None:
+    async def refresh(self, authuser_data: dict | None = None) -> None:
         """Refresh the account."""
         # make a call to vivint's authuser endpoint to get a list of all the system_accounts (locations) & panels if not supplied
         if not authuser_data:
@@ -153,7 +151,9 @@ class Account:
                 len(authuser_data[AuthUserAttribute.USERS][UserAttribute.SYSTEM]),
             )
 
-    async def subscribe_for_realtime_updates(self, authuser_data: dict = None) -> None:
+    async def subscribe_for_realtime_updates(
+        self, authuser_data: dict | None = None
+    ) -> None:
         """Subscribe to PubNub for realtime updates."""
         # make a call to vivint's authuser endpoint to get message broadcast channel if not supplied
         if not authuser_data:

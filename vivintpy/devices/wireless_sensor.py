@@ -17,7 +17,7 @@ class WirelessSensor(BypassTamperDevice, VivintDevice):
 
     alarm_panel: AlarmPanel
 
-    def __init__(self, data: dict, alarm_panel: AlarmPanel = None) -> None:
+    def __init__(self, data: dict, alarm_panel: AlarmPanel | None = None) -> None:
         """Initialize a wireless sesnor."""
         super().__init__(data=data, alarm_panel=alarm_panel)
         self.__update_parent()

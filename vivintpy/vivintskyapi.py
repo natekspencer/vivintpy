@@ -368,9 +368,9 @@ class VivintSkyApi:
     async def __get(
         self,
         path: str,
-        headers: dict = None,
-        params: dict = None,
-        allow_redirects: bool = None,
+        headers: dict | None = None,
+        params: dict | None = None,
+        allow_redirects: bool | None = None,
     ) -> dict | None:
         """Perform a get request."""
         return await self.__call(
@@ -381,19 +381,12 @@ class VivintSkyApi:
             allow_redirects=allow_redirects,
         )
 
-    async def __post(
-        self,
-        path: str,
-        data: str = None,
-    ) -> dict | None:
+    async def __post(self, path: str, data: str | None = None) -> dict | None:
         """Perform a post request."""
         return await self.__call(self.__client_session.post, path, data=data)
 
     async def __put(
-        self,
-        path: str,
-        headers: dict = None,
-        data: str = None,
+        self, path: str, headers: dict | None = None, data: str | None = None
     ) -> dict | None:
         """Perform a put request."""
         return await self.__call(
@@ -404,10 +397,10 @@ class VivintSkyApi:
         self,
         method: Callable[..., _RequestContextManager],
         path: str,
-        headers: dict = None,
-        params: dict = None,
-        data: str = None,
-        allow_redirects: bool = None,
+        headers: dict | None = None,
+        params: dict | None = None,
+        data: str | None = None,
+        allow_redirects: bool | None = None,
     ) -> dict | None:
         """Perform a request with supplied parameters and reauthenticate if necessary."""
         if path != "login" and not self.is_session_valid():
