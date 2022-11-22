@@ -46,6 +46,8 @@ class CapabilityCategoryType(IntEnum):
     DOOR_LOCK = 7
     MOBILE_BLACKLIST = 8
     GARAGE_DOOR = 9
+    KEYPAD = 10
+    PLATFORM = 11
 
     # Handle unknown/future capability category type
     UNKNOWN = -1
@@ -151,6 +153,7 @@ class DeviceType(Enum):
     """Device type."""
 
     AIR_TOWER = "airtower_device"
+    ALPHA_CS6022_CAMERA_DEVICE = "alpha_cs6022_camera_device"
     BINARY_SWITCH = "binary_switch_device"
     CAMERA = "camera_device"
     CARGUARD_DEVICE = "carguard_device"
