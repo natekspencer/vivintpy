@@ -132,8 +132,7 @@ class AlarmPanel(VivintDevice):
         return self.__panel_credentials
 
     def get_devices(
-        self,
-        device_types: set[Type[VivintDevice]] = None,
+        self, device_types: set[Type[VivintDevice]] | None = None
     ) -> list[VivintDevice]:
         """Get a list of associated devices."""
         devices: list[VivintDevice] = []
