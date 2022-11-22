@@ -33,7 +33,7 @@ frozenlist = ">=1.1.0"
 
 [[package]]
 name = "astroid"
-version = "2.12.5"
+version = "2.12.13"
 description = "An abstract syntax tree for Python with inference support."
 category = "dev"
 optional = false
@@ -427,14 +427,14 @@ python-versions = ">=3.6"
 
 [[package]]
 name = "pylint"
-version = "2.15.0"
+version = "2.15.6"
 description = "python code static checker"
 category = "dev"
 optional = false
 python-versions = ">=3.7.2"
 
 [package.dependencies]
-astroid = ">=2.12.4,<=2.14.0-dev0"
+astroid = ">=2.12.12,<=2.14.0-dev0"
 colorama = {version = ">=0.4.5", markers = "sys_platform == \"win32\""}
 dill = ">=0.2"
 isort = ">=4.2.5,<6"
@@ -677,7 +677,7 @@ testing = ["func-timeout", "jaraco.itertools", "pytest (>=6)", "pytest-black (>=
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7.2"
-content-hash = "4bd406c8b105110277fde21e0cb9d110b7f59beef46b25d6ce2545e2ef3c381e"
+content-hash = "203081b67eac25ee7dffb5d3c8b0dbca84b2b2de9e15b32f91e631c90917fb43"
 
 [metadata.files]
 aiohttp = [
@@ -759,8 +759,8 @@ aiosignal = [
     {file = "aiosignal-1.2.0.tar.gz", hash = "sha256:78ed67db6c7b7ced4f98e495e572106d5c432a93e1ddd1bf475e1dc05f5b7df2"},
 ]
 astroid = [
-    {file = "astroid-2.12.5-py3-none-any.whl", hash = "sha256:d612609242996c4365aeb0345e61edba34363eaaba55f1c0addf6a98f073bef6"},
-    {file = "astroid-2.12.5.tar.gz", hash = "sha256:396c88d0a58d7f8daadf730b2ce90838bf338c6752558db719ec6f99c18ec20e"},
+    {file = "astroid-2.12.13-py3-none-any.whl", hash = "sha256:10e0ad5f7b79c435179d0d0f0df69998c4eef4597534aae44910db060baeb907"},
+    {file = "astroid-2.12.13.tar.gz", hash = "sha256:1493fe8bd3dfd73dc35bd53c9d5b6e49ead98497c47b2307662556a5692d29d7"},
 ]
 async-timeout = [
     {file = "async-timeout-4.0.2.tar.gz", hash = "sha256:2163e1640ddb52b7a8c80d0a67a08587e5d245cc9c553a74a847056bc2976b15"},
@@ -1191,8 +1191,8 @@ pyflakes = [
     {file = "pyflakes-2.5.0.tar.gz", hash = "sha256:491feb020dca48ccc562a8c0cbe8df07ee13078df59813b83959cbdada312ea3"},
 ]
 pylint = [
-    {file = "pylint-2.15.0-py3-none-any.whl", hash = "sha256:4b124affc198b7f7c9b5f9ab690d85db48282a025ef9333f51d2d7281b92a6c3"},
-    {file = "pylint-2.15.0.tar.gz", hash = "sha256:4f3f7e869646b0bd63b3dfb79f3c0f28fc3d2d923ea220d52620fd625aed92b0"},
+    {file = "pylint-2.15.6-py3-none-any.whl", hash = "sha256:15060cc22ed6830a4049cf40bc24977744df2e554d38da1b2657591de5bcd052"},
+    {file = "pylint-2.15.6.tar.gz", hash = "sha256:25b13ddcf5af7d112cf96935e21806c1da60e676f952efb650130f2a4483421c"},
 ]
 pyparsing = [
     {file = "pyparsing-3.0.9-py3-none-any.whl", hash = "sha256:5026bae9a10eeaefb61dab2f09052b9f4307d44aee4eda64b309723d8d206bbc"},
