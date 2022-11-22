@@ -26,6 +26,34 @@ MOTION_DETECTED = "motion_detected"
 THUMBNAIL_READY = "thumbnail_ready"
 VIDEO_READY = "video_ready"
 
+CAMERA_INFO_MAP = {
+    "alpha_cs6022_camera_device": ("Vivint", "Indoor Camera (CS6022)"),
+    "camera_device": (None, "Generic Camera Device"),
+    "hd100_camera_device": ("LG", "HD 100 Camera"),
+    "lgit_hd110_camera_device": ("LG", "HD 110 Camera"),
+    "panel_camera_device": (None, "Panel Camera"),
+    "touch_link_camera_device": (None, "Panel Camera"),
+    "vivint_dbc300_camera_device": ("Vivint", "Doorbell Camera Pro (DBC300)"),
+    "vivint_dbc301_camera_device": ("Vivint", "Doorbell Camera Pro (DBC301)"),
+    "vivint_dbc350_camera_device": ("Vivint", "Doorbell Camera Pro v2 (DBC350)"),
+    "vivint_odc300_camera_device": ("Vivint", "Outdoor Camera Pro (ODC300)"),
+    "vivint_odc350_camera_device": ("Vivint", "Outdoor Camera Pro v2 (ODC350)"),
+    "vivotek_520ir_camera_device": ("Vivotek", "Fixed Camera (V520IR)"),
+    "vivotek_620pt_camera_device": ("Vivotek", "Pan and Tilt Camera (V620PT)"),
+    "vivotek_720_camera_device": ("Vivotek", "Outdoor Camera (V720)"),
+    "vivotek_720w_camera_device": ("Vivotek", "Wireless Outdoor Camera (V720W)"),
+    "vivotek_721w_camera_device": ("Vivotek", "Wireless Outdoor Camera (V721W)"),
+    "vivotek_cc8130_camera_device": ("Vivotek", "Dome Camera (CC8130)"),
+    "vivotek_db8331w_camera_device": ("Vivotek", "Doorbell Camera (DB8331W)"),
+    "vivotek_db8332_camera_device": ("Vivotek", "Doorbell Camera v2 (DB8332)"),
+    "vivotek_db8332s1_camera_device": ("Vivotek", "Doorbell Camera 2S1 (DB8332S1)"),
+    "vivotek_db8332sw_camera_device": ("Vivotek", "Doorbell Camera v2s (DB8332SW)"),
+    "vivotek_fd8134v_camera_device": ("Vivotek", "Dome Camera (FD8134V)"),
+    "vivotek_fd8151v_camera_device": ("Vivotek", "Dome Camera (FD8151V)"),
+    "vivotek_hd400w_camera_device": ("Vivotek", "Outdoor Camera v2 (HD400W)"),
+    "vivotek_hdp450_camera_device": ("Vivotek", "Outdoor Camera (HDP450)"),
+}
+
 
 class Camera(VivintDevice):
     """Represents a Vivint camera."""
@@ -35,9 +63,13 @@ class Camera(VivintDevice):
     def __init__(self, data: dict, alarm_panel: AlarmPanel):
         """Initialize a camera."""
         super().__init__(data, alarm_panel)
-        manufacturer_and_model = self.data[Attribute.ACTUAL_TYPE].split("_")[0:2]
-        self._manufacturer = manufacturer_and_model[0].title()
-        self._model = manufacturer_and_model[1].upper()
+        if camera_info := CAMERA_INFO_MAP.get(self.data[Attribute.ACTUAL_TYPE]):
+            self._manufacturer = camera_info[0]
+            self._model = camera_info[1]
+        else:
+            manufacturer_and_model = self.data[Attribute.ACTUAL_TYPE].split("_")[0:2]
+            self._manufacturer = manufacturer_and_model[0].title()
+            self._model = manufacturer_and_model[1].upper()
 
     @property
     def serial_number(self) -> str:
