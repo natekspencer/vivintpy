@@ -12,7 +12,7 @@ keywords = ["Vivint", "alarm system", "security", "smart home", "home automation
 [tool.poetry.dependencies]
 python = "^3.7.2"
 aiohttp = "^3.8.1"
-certifi = "^2022.6.15"
+certifi = "^2022.9.24"
 pubnub = "^5.5"
 
 [tool.poetry.dev-dependencies]
