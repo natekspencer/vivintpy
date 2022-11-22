@@ -1175,83 +1175,83 @@
     "manufacturer": "Honeywell"
   },
   "0x0039:0x4944:0x3038": {
-    "description": "In-Wall Smart Dimmer",
-    "label": "39351 / ZW3005",
+    "description": "In-Wall Paddle Dimmer, 500S",
+    "label": "39351 / 39458 / ZW3005",
     "manufacturer": "Honeywell"
   },
   "0x0039:0x4944:0x3130": {
-    "description": "Z-Wave in-wall Smart Dimmer",
-    "label": "39357 / ZW3004",
+    "description": "In-Wall Toggle Dimmer, 500S",
+    "label": "39357 / 39464 / ZW3004",
     "manufacturer": "Honeywell"
   },
   "0x0039:0x4944:0x3131": {
-    "description": "Z-Wave In-Wall Smart Fan Control",
-    "label": "39358 / ZW4002",
+    "description": "In-Wall Fan Speed Control, 500S",
+    "label": "39358 / 39465 / ZW4002",
     "manufacturer": "Honeywell"
   },
   "0x0039:0x4944:0x3235": {
-    "description": "In-Wall Smart Dimmer",
-    "label": "39351 / ZW3010",
+    "description": "In-Wall Paddle Dimmer, QFSW, 500S",
+    "label": "39351 / 39458 / ZW3010",
     "manufacturer": "Honeywell"
   },
   "0x0039:0x4944:0x3237": {
-    "description": "In-Wall Smart Toggle Dimmer",
-    "label": "39357 / ZW3011",
+    "description": "In-Wall Toggle Dimmer, QFSW, 500S",
+    "label": "39357 / 39464 / ZW3011",
     "manufacturer": "Honeywell"
   },
   "0x0039:0x4952:0x3036": {
-    "description": "In Wall Paddle",
-    "label": "39455 / ZW4005",
+    "description": "In-Wall Paddle Switch, 500S",
+    "label": "39348 / 39455 / ZW4005",
     "manufacturer": "Honeywell"
   },
   "0x0039:0x4952:0x3037": {
-    "description": "In-Wall Smart Toggle Switch",
-    "label": "39354",
+    "description": "In-Wall Toggle Switch, 500S",
+    "label": "39354 / 39461 / ZW4003",
     "manufacturer": "Honeywell"
   },
   "0x0039:0x4952:0x3133": {
-    "description": "Smart Outlet",
-    "label": "39349 / ZW1002",
+    "description": "In-Wall Outlet, TR, 500S",
+    "label": "39349 / 39456 / ZW1002",
     "manufacturer": "Honeywell"
   },
   "0x0039:0x4952:0x3135": {
-    "description": "In-Wall Smart Switch",
-    "label": "39348 / ZW4008",
+    "description": "In-Wall Paddle Switch, QFSW, 500S",
+    "label": "39348 / 39455 / ZW4008",
     "manufacturer": "Honeywell"
   },
   "0x0039:0x4952:0x3137": {
-    "description": "In-Wall Smart Toggle Switch",
-    "label": "39354",
+    "description": "In-Wall Toggle Switch, QFSW, 500S",
+    "label": "39354 / 39461 / ZW4009",
     "manufacturer": "Honeywell"
   },
   "0x0039:0x4f50:0x3032": {
-    "description": "Plug-in Outdoor Smart Switch ZW4201 / 39346",
-    "label": "Plug-in Outdoor Smart Switch",
+    "description": "Plug-in Outdoor Switch, 500S",
+    "label": "39346 / 39453 / ZW4201",
     "manufacturer": "Honeywell"
   },
   "0x0039:0x4f50:0x3034": {
-    "description": "Plug-in Outdoor Smart Switch",
-    "label": "39363 / ZW4203",
+    "description": "Plug-in Outdoor Switch V2, 500S",
+    "label": "39363 / 39470 / ZW4203",
     "manufacturer": "Honeywell"
   },
   "0x0039:0x5044:0x3033": {
-    "description": "Z-Wave Plug-in Smart Dimmer",
-    "label": "39339 / 39446 / ZW3107",
+    "description": "Plug-in 2-Outlet Dimmer, Simultaneous, 500S",
+    "label": "39339 / 39346 / ZW3107",
     "manufacturer": "Honeywell"
   },
   "0x0039:0x5044:0x3038": {
-    "description": "Plug-in Dimmer (Single Plug)",
-    "label": "39443 / ZW3104",
+    "description": "Plug-in 1-Outlet Dimmer, 500S",
+    "label": "39336 / 39443 / ZW3104",
     "manufacturer": "Honeywell"
   },
   "0x0039:0x5052:0x3033": {
-    "description": "Plug-In Smart Switch (Dual Linked Outlets, Grounded)",
-    "label": "39342 / ZW4106",
+    "description": "Plug-in 2-Outlet Switch, Simultaneous, 500S",
+    "label": "39342 / 39449 / ZW4106",
     "manufacturer": "Honeywell"
   },
   "0x0039:0x5052:0x3038": {
-    "description": "Plug-in Switch (Single Plug)",
-    "label": "39337 / ZW4103",
+    "description": "Plug-in 1-Outlet Switch, 500S",
+    "label": "39337 / 39444 / ZW4103",
     "manufacturer": "Honeywell"
   },
   "0x003b:0x0001:0x0468": {
@@ -1911,7 +1911,7 @@
   },
   "0x0060:0x0004:0x000e": {
     "description": "Dual Relay In-Wall Module",
-    "label": "AN196-0",
+    "label": "AN-196",
     "manufacturer": "Everspring"
   },
   "0x0060:0x0006:0x0001": {
@@ -2015,654 +2015,694 @@
     "manufacturer": "Everspring"
   },
   "0x0063:0x0004:0x3031": {
-    "description": "GE Z-Wave Plug-in Outdoor Smart Switch",
+    "description": "Plug-in Outdoor Switch, 300S",
     "label": "12720 / ZW4201",
-    "manufacturer": "GE/Jasco"
+    "manufacturer": "GE"
   },
   "0x0063:0x0507:0x0403": {
-    "description": "Fan Control",
+    "description": "In-Wall Fan Speed Control, 300S",
     "label": "10974 / ZW4002",
-    "manufacturer": "GE/Jasco"
+    "manufacturer": "GE"
   },
   "0x0063:0x4450:0x3030": {
-    "description": "Lamp Module",
-    "label": "ZW3101",
-    "manufacturer": "GE/Jasco"
+    "description": "Plug-in 2-Outlet Dimmer, 1 Controlled, 300S",
+    "label": "45602 / ZW3101",
+    "manufacturer": "GE"
   },
   "0x0063:0x4450:0x3031": {
-    "description": "Energy Monitoring Lamp Dimmer",
-    "label": "ZW3102",
-    "manufacturer": "GE/Jasco"
+    "description": "Plug-in 1-Outlet Dimmer With Energy, 300S",
+    "label": "45652WB / ZW3102",
+    "manufacturer": "Jasco"
   },
   "0x0063:0x4457:0x0003": {
-    "description": "In-Wall Decora Style Incandescent Light Dimmer, No Neutral, White, (Included Only in 45613 kit)",
+    "description": "In-Wall Paddle Dimmer, 300S",
     "label": "45607 / ZW3002",
-    "manufacturer": "GE/Jasco"
+    "manufacturer": "GE"
   },
   "0x0063:0x4457:0x3033": {
-    "description": "2-Way Dimmer Switch",
-    "label": "45607",
-    "manufacturer": "GE/Jasco"
+    "description": "In-Wall Paddle Dimmer, 300S",
+    "label": "45607 / ZW3002",
+    "manufacturer": "GE"
   },
   "0x0063:0x4457:0x3230": {
-    "description": "2-Way Dimmer Switch",
-    "label": "45606",
-    "manufacturer": "GE/Jasco"
+    "description": "In-Wall Paddle Dimmer, 300S",
+    "label": "45606 / ZW3001",
+    "manufacturer": "GE"
   },
   "0x0063:0x4843:0x0037": {
-    "description": "2 Button Hub Remote",
+    "description": "Portable 2-Button Remote, 500S",
     "label": "34184 / ZW5307",
-    "manufacturer": "GE/Jasco"
+    "manufacturer": "GE"
   },
   "0x0063:0x4843:0x3031": {
-    "description": "1 Scene Z-Wave controller",
+    "description": "Portable 1-Scene Controller, 500S",
     "label": "34172 / ZW5304",
-    "manufacturer": "GE/Jasco"
+    "manufacturer": "GE"
   },
   "0x0063:0x4843:0x3033": {
-    "description": "2 Scene Z-Wave controller",
+    "description": "Portable 2-Scene Controller, 500S",
     "label": "34174 / ZW5305",
-    "manufacturer": "GE/Jasco"
+    "manufacturer": "GE"
   },
   "0x0063:0x4843:0x3035": {
-    "description": "4 Scene Z-Wave controller",
+    "description": "Portable 4-Scene Controller, 500S",
     "label": "34176 / ZW5306",
-    "manufacturer": "GE/Jasco"
+    "manufacturer": "GE"
   },
   "0x0063:0x4843:0x3133": {
-    "description": "2 Button Hub/Panel Remote",
+    "description": "Portable 2-Button Remote, 500S",
     "label": "37792 / ZW5307",
-    "manufacturer": "GE/Jasco"
+    "manufacturer": "Jasco"
   },
   "0x0063:0x4843:0x3136": {
-    "description": "Portable Remote, 2 Button",
+    "description": "Portable 2-Button Remote, 500S",
     "label": "53829 / ZW5313",
-    "manufacturer": "GE/Jasco"
+    "manufacturer": "Jasco"
   },
   "0x0063:0x4843:0x3138": {
-    "description": "Portable Remote, 4 Button",
+    "description": "Portable 4-Button Remote, 500S",
     "label": "53831 / ZW5314",
-    "manufacturer": "GE/Jasco"
+    "manufacturer": "Jasco"
   },
   "0x0063:0x4944:0x3031": {
-    "description": "In-Wall Dimmer",
+    "description": "In-Wall Paddle Dimmer, 300S",
     "label": "12724 / ZW3005",
-    "manufacturer": "GE/Jasco"
+    "manufacturer": "GE"
   },
   "0x0063:0x4944:0x3032": {
-    "description": "In-Wall Dimmer",
-    "label": "12725",
-    "manufacturer": "GE/Jasco"
+    "description": "In-Wall 1000W Paddle Dimmer, 500S",
+    "label": "12725 / ZW3006",
+    "manufacturer": "GE"
   },
   "0x0063:0x4944:0x3033": {
-    "description": "In-Wall Smart Dimmer",
+    "description": "In-Wall Toggle Dimmer, 300S",
     "label": "12729 / ZW3004",
-    "manufacturer": "GE/Jasco"
+    "manufacturer": "GE"
   },
   "0x0063:0x4944:0x3034": {
-    "description": "In-Wall Smart Fan Control",
-    "label": "12730  / ZW4002",
-    "manufacturer": "GE/Jasco"
+    "description": "In-Wall Fan Speed Control, 300S",
+    "label": "12730 / ZW4002",
+    "manufacturer": "GE"
   },
   "0x0063:0x4944:0x3035": {
-    "description": "GE In-Wall Toggle Dimmer, Almond",
-    "label": "12733",
-    "manufacturer": "GE/Jasco"
+    "description": "In-Wall Toggle Dimmer, Lt Almd, 300S",
+    "label": "12733 / ZW3004",
+    "manufacturer": "GE"
   },
   "0x0063:0x4944:0x3036": {
-    "description": "GE In-Wall Dimmer, Toggle, White, No Neutral",
-    "label": "12734",
-    "manufacturer": "GE/Jasco"
+    "description": "In-Wall Toggle Dimmer, No Ntrl, 300S",
+    "label": "12734 / ZW3007",
+    "manufacturer": "GE"
   },
   "0x0063:0x4944:0x3037": {
-    "description": "GE In-Wall Dimmer, Toggle, Almond, No Neutral",
-    "label": "12735",
-    "manufacturer": "GE/Jasco"
+    "description": "In-Wall Toggle Dimmer, No Ntrl, Lt Almd, 300S",
+    "label": "12735 / ZW3007",
+    "manufacturer": "GE"
   },
   "0x0063:0x4944:0x3038": {
-    "description": "In-Wall Dimmer Switch",
+    "description": "In-Wall Paddle Dimmer, 500S",
     "label": "14294 / ZW3005",
-    "manufacturer": "GE/Jasco"
+    "manufacturer": "GE"
   },
   "0x0063:0x4944:0x3039": {
-    "description": "In-Wall 1000W Incandescent Smart Dimmer",
-    "label": "14299",
-    "manufacturer": "GE/Jasco"
+    "description": "In-Wall 1000W Paddle Dimmer, 500S",
+    "label": "14299 / ZW3006",
+    "manufacturer": "GE"
   },
   "0x0063:0x4944:0x3130": {
-    "description": "In-Wall Dimmer Switch",
-    "label": "14295",
-    "manufacturer": "GE/Jasco"
+    "description": "In-Wall Toggle Dimmer, 500S",
+    "label": "14295 / ZW3004",
+    "manufacturer": "GE"
   },
   "0x0063:0x4944:0x3131": {
-    "description": "In-Wall Smart Fan Control",
+    "description": "In-Wall Fan Speed Control, 500S",
     "label": "14287 / ZW4002",
-    "manufacturer": "GE/Jasco"
+    "manufacturer": "GE"
   },
   "0x0063:0x4944:0x3132": {
-    "description": "In-Wall Smart Toggle Dimmer",
+    "description": "In-Wall Toggle Dimmer, Lt Almd, QFSW, 500S",
     "label": "14296 / ZW3011",
-    "manufacturer": "GE/Jasco"
+    "manufacturer": "Enbrighten"
   },
   "0x0063:0x4944:0x3135": {
-    "description": "In-Wall Dimmer",
-    "label": "14321",
-    "manufacturer": "GE/Jasco"
+    "description": "In-Wall Paddle Dimmer, 500S",
+    "label": "14321 / ZW3005",
+    "manufacturer": "Jasco"
   },
   "0x0063:0x4944:0x3136": {
-    "description": "In-Wall Smart Dimmer (1000W)",
-    "label": "14326",
-    "manufacturer": "GE/Jasco"
+    "description": "In-Wall 1000W Toggle Dimmer, 500S",
+    "label": "14326 / ZW3006",
+    "manufacturer": "Jasco"
   },
   "0x0063:0x4944:0x3137": {
-    "description": "Jasco In-Wall Smart Dimmer (White Toggle)",
-    "label": "14322",
-    "manufacturer": "GE/Jasco"
+    "description": "In-Wall Toggle Dimmer, 500S",
+    "label": "14322 / ZW3004",
+    "manufacturer": "Jasco"
   },
   "0x0063:0x4944:0x3138": {
-    "description": "In-Wall Smart Fan Control",
-    "label": "14314",
-    "manufacturer": "GE/Jasco"
+    "description": "In-Wall Fan Speed Control, 500S",
+    "label": "14314 / ZW4002",
+    "manufacturer": "Jasco"
   },
   "0x0063:0x4944:0x3232": {
-    "description": "In-Wall Smart Fan Control",
-    "label": "14314 / ZW4002",
-    "manufacturer": "GE/Jasco"
+    "description": "In-Wall Fan Speed Control, 300S",
+    "label": "45743 / ZW4002",
+    "manufacturer": "Jasco"
   },
   "0x0063:0x4944:0x3233": {
-    "description": "In-Wall Touch Sensing Dimmer",
+    "description": "In-Wall Capacitive Touch Dimmer, 500S",
     "label": "14289 / ZW3009",
-    "manufacturer": "GE/Jasco"
+    "manufacturer": "GE"
   },
   "0x0063:0x4944:0x3235": {
-    "description": "GE Enbrighten Z-Wave Plus Smart Dimmer",
-    "label": "46203",
-    "manufacturer": "GE/Jasco"
+    "description": "In-Wall Paddle Dimmer, QFSW, 500S",
+    "label": "46203 / ZW3010",
+    "manufacturer": "GE/Enbrighten"
   },
   "0x0063:0x4944:0x3236": {
-    "description": "In-Wall Smart Dimmer",
-    "label": "14321 / 46564 / ZW3010",
-    "manufacturer": "GE/Jasco"
+    "description": "In-Wall Paddle Dimmer, QFSW, 500S",
+    "label": "46564 / ZW3010",
+    "manufacturer": "Jasco"
   },
   "0x0063:0x4944:0x3237": {
-    "description": "In-Wall Smart Toggle Dimmer",
-    "label": "14295 / 46204 / ZW3011",
-    "manufacturer": "GE/Jasco"
+    "description": "In-Wall Toggle Dimmer, QFSW, 500S",
+    "label": "46204 / ZW3011",
+    "manufacturer": "Enbrighten"
   },
   "0x0063:0x4944:0x3238": {
-    "description": "In-Wall Smart Toggle Dimmer",
-    "label": "14322 / 46565 / ZW3011",
-    "manufacturer": "GE/Jasco"
+    "description": "In-Wall Toggle Dimmer, QFSW, 500S",
+    "label": "46565 / ZW3011",
+    "manufacturer": "Jasco"
   },
   "0x0063:0x4944:0x3330": {
-    "description": "0-10V In-Wall Smart Dimmer (ICP) (120/277)",
-    "label": "43105 / ZW3014",
-    "manufacturer": "GE/Jasco"
+    "description": "In-Wall Paddle Dimmer, 120+277, 500S",
+    "label": "43105 / ZW3010DV",
+    "manufacturer": "Jasco"
   },
   "0x0063:0x4944:0x3332": {
-    "description": "0-10V In-Wall Smart Dimmer (ICP) (120/277)",
-    "label": "43107 / ZW3015",
-    "manufacturer": "GE/Jasco"
+    "description": "In-Wall Toggle Dimmer, 120+277, 500S",
+    "label": "43107 / ZW3011DV",
+    "manufacturer": "Jasco"
   },
   "0x0063:0x4944:0x3333": {
-    "description": "Enbrighten Z-Wave Plus In-Wall Smart Dimmer, No Neutral, LED-CFL, White and Light Almond Paddles, 700S",
-    "label": "52252 / 52253 / ZW3012",
-    "manufacturer": "GE/Jasco"
+    "description": "In-Wall Paddle Dimmer, No Ntrl, 700S",
+    "label": "52252 / ZW3012",
+    "manufacturer": "Enbrighten"
   },
   "0x0063:0x4944:0x3334": {
-    "description": "In-Wall Smart Dimmer",
-    "label": "56590/56592/ZW3012",
-    "manufacturer": "GE/Jasco"
+    "description": "In-Wall Paddle Dimmer, No Ntrl, 700S",
+    "label": "56590 / ZW3012",
+    "manufacturer": "Jasco"
   },
   "0x0063:0x4944:0x3337": {
-    "description": "In-Wall 3-Speed Fan Control",
+    "description": "In-Wall Fan Speed Control, 500S",
     "label": "55258 / ZW4002",
-    "manufacturer": "GE/Jasco"
+    "manufacturer": "Enbrighten"
   },
   "0x0063:0x4944:0x3338": {
-    "description": "In-Wall 3-Speed Fan Control",
+    "description": "In-Wall Fan Speed Control, 500S",
     "label": "55259 / ZW4002",
-    "manufacturer": "GE/Jasco"
+    "manufacturer": "Jasco"
   },
   "0x0063:0x4944:0x3339": {
-    "description": "In-Wall Smart Dimmer",
-    "label": "39351 / 54897 / 54898/ ZW301",
-    "manufacturer": "GE/Jasco"
+    "description": "In-Wall Paddle Dimmer, QFSW, 500S",
+    "label": "39351 / ZW3010",
+    "manufacturer": "UltraPro"
+  },
+  "0x0063:0x4944:0x3430": {
+    "description": "In-Wall Paddle Dimmer, QFSW, 700S",
+    "label": "58438 / 59346 / ZWA3016",
+    "manufacturer": "Enbrighten"
+  },
+  "0x0063:0x4944:0x3431": {
+    "description": "In-Wall Toggle Dimmer, QFSW, 700S",
+    "label": "59335 / 59341 / ZWA3017",
+    "manufacturer": "Enbrighten"
   },
   "0x0063:0x494d:0x3031": {
-    "description": "In-Wall Smart Motion Switch",
+    "description": "In-Wall Motion Switch, 500S",
     "label": "24770 / ZW4006",
-    "manufacturer": "GE/Jasco"
+    "manufacturer": "Jasco"
   },
   "0x0063:0x494d:0x3032": {
-    "description": "In-Wall Smart Motion Switch",
+    "description": "In-Wall Motion Switch, 500S",
     "label": "26931 / ZW4006",
-    "manufacturer": "GE/Jasco"
+    "manufacturer": "GE/Enbrighten"
   },
   "0x0063:0x494d:0x3033": {
-    "description": "In-Wall Smart Motion Dimmer",
-    "label": "26932 / 26933 / ZW3008",
-    "manufacturer": "GE/Jasco"
+    "description": "In-Wall Motion Dimmer, 500S",
+    "label": "26932 / ZW3008",
+    "manufacturer": "Jasco"
   },
   "0x0063:0x494d:0x3034": {
-    "description": "In-Wall Smart Motion Dimmer",
-    "label": "26932 / 26933 / ZW3008",
-    "manufacturer": "GE/Jasco"
+    "description": "In-Wall Motion Dimmer, 500S",
+    "label": "26933 / ZW3008",
+    "manufacturer": "GE/Enbrighten"
   },
   "0x0063:0x4952:0x3031": {
-    "description": "Smart Outlet",
-    "label": "ZW1001",
-    "manufacturer": "GE/Jasco"
+    "description": "In-Wall Outlet, 300S",
+    "label": "12721 / ZW1001",
+    "manufacturer": "GE"
   },
   "0x0063:0x4952:0x3032": {
-    "description": "On/Off Relay Switch",
+    "description": "In-Wall Paddle Switch, 500S",
     "label": "12722 / ZW4005",
-    "manufacturer": "GE/Jasco"
+    "manufacturer": "GE"
   },
   "0x0063:0x4952:0x3033": {
-    "description": "Wireless Lighting Control Smart Toggle Switch",
+    "description": "In-Wall Toggle Switch, 300S",
     "label": "12727 / ZW4003",
-    "manufacturer": "GE/Jasco"
+    "manufacturer": "GE"
   },
   "0x0063:0x4952:0x3034": {
-    "description": "GE In-Wall Toggle, Almond",
-    "label": "12731",
-    "manufacturer": "GE/Jasco"
+    "description": "In-Wall Toggle Switch, Lt Almd, 300S",
+    "label": "12731 / ZW4003",
+    "manufacturer": "GE"
   },
   "0x0063:0x4952:0x3035": {
-    "description": "In-Wall Smart Outlet",
+    "description": "In-Wall Outlet, 300S",
     "label": "14286 / ZW1001",
-    "manufacturer": "GE/Jasco"
+    "manufacturer": "GE"
   },
   "0x0063:0x4952:0x3036": {
-    "description": "In-Wall Paddle Switch",
+    "description": "In-Wall Paddle Switch, 500S",
     "label": "14291 / ZW4005",
-    "manufacturer": "GE/Jasco"
+    "manufacturer": "GE"
   },
   "0x0063:0x4952:0x3037": {
-    "description": "In-Wall Toggle Switch",
-    "label": "14292",
-    "manufacturer": "GE/Jasco"
+    "description": "In-Wall Toggle Switch, 500S",
+    "label": "14292 / ZW4003",
+    "manufacturer": "GE"
   },
   "0x0063:0x4952:0x3038": {
-    "description": "In-Wall Smart Toggle Switch (Lt. Almond)",
-    "label": "14293 / ZW4003",
-    "manufacturer": "GE/Jasco"
+    "description": "In-Wall Toggle Switch, Lt Almd, QFSW, 500S",
+    "label": "14293 / ZW4009",
+    "manufacturer": "Enbrighten"
   },
   "0x0063:0x4952:0x3039": {
-    "description": "In-Wall Smart Outlet",
+    "description": "In-Wall Outlet, 300S",
     "label": "14313 / ZW1001",
-    "manufacturer": "GE/Jasco"
+    "manufacturer": "Jasco"
   },
   "0x0063:0x4952:0x3130": {
-    "description": "Jasco 3-way Light Switch",
-    "label": "Jasco 14318",
-    "manufacturer": "GE/Jasco"
+    "description": "In-Wall Paddle Switch, 500S",
+    "label": "14318 / ZW4005",
+    "manufacturer": "Jasco"
   },
   "0x0063:0x4952:0x3131": {
-    "description": "In-Wall Smart Toggle Switch",
+    "description": "In-Wall Toggle Switch, 500S",
     "label": "14319 / ZW4003",
-    "manufacturer": "GE/Jasco"
+    "manufacturer": "Jasco"
   },
   "0x0063:0x4952:0x3132": {
-    "description": "In-Wall Smart Toggle Switch",
+    "description": "In-Wall Toggle Switch, Lt Almd, 500S",
     "label": "14320 / ZW4003",
-    "manufacturer": "GE/Jasco"
+    "manufacturer": "Jasco"
   },
   "0x0063:0x4952:0x3133": {
-    "description": "In-Wall Tamper Resistant Smart Outlet",
+    "description": "In-Wall Outlet, TR, 500S",
     "label": "14288 / ZW1002",
-    "manufacturer": "GE/Jasco"
+    "manufacturer": "GE"
   },
   "0x0063:0x4952:0x3134": {
-    "description": "In-Wall Tamper Resistant Smart Outlet",
-    "label": "14288 / ZW1002",
-    "manufacturer": "GE/Jasco"
+    "description": "In-Wall Outlet, TR, 500S",
+    "label": "14315 / ZW1002",
+    "manufacturer": "Jasco"
   },
   "0x0063:0x4952:0x3135": {
-    "description": "GE Quick-fit Smart In-Wall Paddle Switch",
+    "description": "In-Wall Paddle Switch, QFSW, 500S",
     "label": "46201 / ZW4008",
-    "manufacturer": "GE/Jasco"
+    "manufacturer": "GE/Enbrighten"
   },
   "0x0063:0x4952:0x3136": {
-    "description": "In-Wall Smart Switch",
+    "description": "In-Wall Paddle Switch, QFSW, 500S",
     "label": "46562 / ZW4008",
-    "manufacturer": "GE/Jasco"
+    "manufacturer": "Jasco"
   },
   "0x0063:0x4952:0x3137": {
-    "description": "GE Enbrighten Z-Wave Plus Smart Switch",
+    "description": "In-Wall Toggle Switch, QFSW, 500S",
     "label": "46202 / ZW4009",
-    "manufacturer": "GE/Jasco"
+    "manufacturer": "Enbrighten"
   },
   "0x0063:0x4952:0x3138": {
-    "description": "In-Wall Smart Toggle Switch",
-    "label": "14319 / 46563 / ZW4009",
-    "manufacturer": "GE/Jasco"
+    "description": "In-Wall Toggle Switch, QFSW, 500S",
+    "label": "46563 / ZW4009",
+    "manufacturer": "Jasco"
   },
   "0x0063:0x4952:0x3139": {
-    "description": "In-Wall Smart Switch (120/277VAC)",
+    "description": "In-Wall Paddle Switch, 120+277, QFSW, 500S",
     "label": "43072 / ZW4008DV",
-    "manufacturer": "GE/Jasco"
+    "manufacturer": "GE/Enbrighten"
   },
   "0x0063:0x4952:0x3185": {
-    "description": "In-Wall Paddle Switch",
+    "description": "In-Wall Paddle Switch, 500S",
     "label": "14291 / ZW4005",
-    "manufacturer": "GE/Jasco"
+    "manufacturer": "GE"
   },
   "0x0063:0x4952:0x3231": {
-    "description": "In-Wall Smart Toggle Switch (120/277VAC)",
+    "description": "In-Wall Toggle Switch, 120+277, QFSW, 500S",
     "label": "43074 / ZW4009DV",
-    "manufacturer": "GE/Jasco"
+    "manufacturer": "GE/Enbrighten"
+  },
+  "0x0063:0x4952:0x3233": {
+    "description": "In-Wall Outlet, TR, Lt Almd, 500S",
+    "label": "14297 / ZW1002",
+    "manufacturer": "Enbrighten"
   },
   "0x0063:0x4952:0x3234": {
-    "description": "In-Wall Tamper Resistant Smart Outlet",
+    "description": "In-Wall Outlet, TR, 500S",
     "label": "55256 / ZW1002",
-    "manufacturer": "GE/Jasco"
+    "manufacturer": "Enbrighten"
   },
   "0x0063:0x4952:0x3235": {
-    "description": "In-Wall Tamper Resistant Smart Outlet",
+    "description": "In-Wall Outlet, TR, 500S",
     "label": "55257 / ZW1002",
-    "manufacturer": "GE/Jasco"
+    "manufacturer": "Jasco"
   },
   "0x0063:0x4952:0x3237": {
-    "description": "In-Wall Smart Switch",
+    "description": "In-Wall Paddle Switch, QFSW, 500S",
     "label": "39348 / 54890 / 54891 / ZW4008",
-    "manufacturer": "GE/Jasco"
+    "manufacturer": "UltraPro"
   },
   "0x0063:0x4952:0x3238": {
-    "description": "In-Wall Smart Toggle Switch",
+    "description": "In-Wall Toggle Switch, QFSW, 500S",
     "label": "39354 / 54912 / ZW4009",
-    "manufacturer": "GE/Jasco"
+    "manufacturer": "UltraPro"
+  },
+  "0x0063:0x4952:0x3239": {
+    "description": "In-Wall Paddle Switch, QFSW, 700S",
+    "label": "58433 / 59344 / ZWA4011",
+    "manufacturer": "Enbrighten"
+  },
+  "0x0063:0x4952:0x3330": {
+    "description": "In-Wall Toggle Switch, QFSW, 700S",
+    "label": "58436 / 59334 / ZWA4012",
+    "manufacturer": "Enbrighten"
+  },
+  "0x0063:0x4952:0x3331": {
+    "description": "In-Wall Paddle Switch, 120+277, QFSW, 700S",
+    "label": "59337 / ZWA4011DV",
+    "manufacturer": "Enbrighten"
+  },
+  "0x0063:0x4952:0x3332": {
+    "description": "In-Wall Toggle Switch, 120+277, QFSW, 700S",
+    "label": "59338 / ZWA4012DV",
+    "manufacturer": "Enbrighten"
+  },
+  "0x0063:0x4952:0x3339": {
+    "description": "In-Wall Outlet, TR, 700S",
+    "label": "58449 / ZWA1003",
+    "manufacturer": "Enbrighten"
   },
   "0x0063:0x4953:0x3031": {
-    "description": "Hinge Pin Smart Door Sensor",
-    "label": "32562 / ZW4001",
-    "manufacturer": "GE/Jasco"
+    "description": "Hinge Pin Door Sensor, 500S",
+    "label": "32562 / ZW6301",
+    "manufacturer": "Jasco"
   },
   "0x0063:0x4953:0x3032": {
-    "description": "Smart Door Sensor",
-    "label": "32563",
-    "manufacturer": "GE/Jasco"
+    "description": "Hinge Pin Door Sensor, 500S",
+    "label": "32563 / ZW6301",
+    "manufacturer": "GE"
   },
   "0x0063:0x4953:0x3033": {
-    "description": "Portable Smart Multi Sensor",
-    "label": "35211/ZW6302",
-    "manufacturer": "GE/Jasco"
+    "description": "Portable Motion+Temp+Light Sensor, 500S",
+    "label": "35211 / ZW6302B",
+    "manufacturer": "GE"
   },
   "0x0063:0x4953:0x3034": {
-    "description": "Portable Smart Multi Sensor",
-    "label": "35530/ZW6302",
-    "manufacturer": "GE/Jasco"
+    "description": "Portable Motion+Temp+Light Sensor, 500S",
+    "label": "35530 / ZW6302B",
+    "manufacturer": "Jasco"
   },
   "0x0063:0x4953:0x3133": {
-    "description": "Portable Smart Motion Sensor",
-    "label": "34193/ZW6302",
-    "manufacturer": "GE/Jasco"
+    "description": "Portable Motion Sensor, 500S",
+    "label": "34193 / ZW6302",
+    "manufacturer": "GE"
   },
   "0x0063:0x4953:0x3134": {
-    "description": "Portable Smart Motion Sensor",
-    "label": "34194/ZW6302",
-    "manufacturer": "GE/Jasco"
+    "description": "Portable Motion Sensor, 500S",
+    "label": "34194 / ZW6302",
+    "manufacturer": "Jasco"
   },
   "0x0063:0x4953:0x3139": {
-    "description": "Slim Smart Door/Window Sensor",
-    "label": "38957/ZW6305",
-    "manufacturer": "GE/Jasco"
+    "description": "Slim Door+Window Sensor, 500S",
+    "label": "38957 / ZW6305",
+    "manufacturer": "Enbrighten"
   },
   "0x0063:0x4953:0x3231": {
-    "description": "Smart Flood/Freeze Sensor",
-    "label": "38959/ZW6306",
-    "manufacturer": "GE/Jasco"
+    "description": "Flood+Freeze Sensor, 500S",
+    "label": "38959 / ZW6306",
+    "manufacturer": "Enbrighten"
   },
   "0x0063:0x4953:0x3235": {
-    "description": "Slim Smart Door/Window Sensor",
-    "label": "43973/ZW6305",
-    "manufacturer": "GE/Jasco"
+    "description": "Slim Door+Window Sensor, 500S",
+    "label": "43973 / ZW6305",
+    "manufacturer": "Jasco"
   },
   "0x0063:0x4953:0x3236": {
-    "description": "Smart Flood/Freeze Sensor",
+    "description": "Flood+Freeze Sensor, 500S",
     "label": "43985 / ZW6306",
-    "manufacturer": "GE/Jasco"
+    "manufacturer": "Jasco"
   },
   "0x0063:0x4953:0x3238": {
-    "description": "Portable Smart Motion Sensor",
-    "label": "52251/ZW6307",
-    "manufacturer": "GE/Jasco"
+    "description": "Portable Motion Sensor, 700S",
+    "label": "52251 / ZW6307",
+    "manufacturer": "Jasco"
   },
   "0x0063:0x4953:0x3336": {
-    "description": "Slim Smart Door/Window Sensor",
-    "label": "52249/ZW6308",
-    "manufacturer": "GE/Jasco"
+    "description": "Slim Door+Window Sensor, 700S",
+    "label": "52249 / ZW6308",
+    "manufacturer": "Jasco"
   },
   "0x0063:0x4953:0x3430": {
-    "description": "Smart Flood/Freeze Sensor",
-    "label": "52247/ZW6309",
-    "manufacturer": "GE/Jasco"
+    "description": "Flood+Freeze Sensor, 700S",
+    "label": "52247 / ZW6309",
+    "manufacturer": "Jasco"
   },
   "0x0063:0x4c42:0x3031": {
-    "description": "Enbrighten 60W Dimmable Light Bulb",
-    "label": "35931 / 39723",
-    "manufacturer": "GE/Jasco"
+    "description": "LED A19 Bulb, 500S",
+    "label": "35931 / ZW7101",
+    "manufacturer": "Enbrighten"
   },
   "0x0063:0x4c42:0x3035": {
-    "description": "Z-Wave LED Light Bulb",
+    "description": "LED A19 Bulb, 500S",
     "label": "52190 / ZW7105",
-    "manufacturer": "GE/Jasco"
+    "manufacturer": "Enbrighten"
   },
   "0x0063:0x4c42:0x3036": {
-    "description": "LED Bulb",
-    "label": "64637/ZW7105",
-    "manufacturer": "GE/Jasco"
+    "description": "LED A19 Bulb, 500S",
+    "label": "64637 / ZW7105",
+    "manufacturer": "Jasco"
   },
   "0x0063:0x4f44:0x3031": {
-    "description": "GE Z-Wave Wireless Smart Lighting and Appliance Control - 40 Amp",
-    "label": "ZW4004",
-    "manufacturer": "GE/Jasco"
+    "description": "Direct Wire 40A Outdoor Switch, 300S",
+    "label": "12726 / ZW4004",
+    "manufacturer": "GE"
   },
   "0x0063:0x4f44:0x3032": {
-    "description": "Direct Wire Indoor/Outdoor Smart Switch",
-    "label": "14285",
-    "manufacturer": "GE/Jasco"
+    "description": "Direct Wire 40A Outdoor Switch, 500S",
+    "label": "14285 / ZW4007",
+    "manufacturer": "Enbrighten"
   },
   "0x0063:0x4f50:0x3031": {
-    "description": "Outdoor Lighting Control Module",
-    "label": "45604",
-    "manufacturer": "GE/Jasco"
+    "description": "Plug-in Outdoor Switch, 300S",
+    "label": "12720 / ZW4201",
+    "manufacturer": "GE"
   },
   "0x0063:0x4f50:0x3032": {
-    "description": "Weather Resistant Outdoor Switch",
-    "label": "Outdoor Switch",
-    "manufacturer": "GE/Jasco"
+    "description": "Plug-in Outdoor Switch, 500S",
+    "label": "14284 / ZW4201",
+    "manufacturer": "GE"
   },
   "0x0063:0x4f50:0x3033": {
-    "description": "Plug-in Outdoor Smart Switch",
-    "label": "14311/ZW4201",
-    "manufacturer": "GE/Jasco"
+    "description": "Plug-in Outdoor Switch, 500S",
+    "label": "14311 / ZW4201",
+    "manufacturer": "Jasco"
   },
   "0x0063:0x4f50:0x3034": {
-    "description": "Plug-in Outdoor Smart Switch",
-    "label": "14298 / ZW4202",
-    "manufacturer": "GE/Jasco"
+    "description": "Plug-in Outdoor Switch V2, 500S",
+    "label": "14298 / ZW4203",
+    "manufacturer": "GE/Enbrighten"
   },
   "0x0063:0x4f50:0x3035": {
-    "description": "Plug-in Outdoor Smart Switch",
+    "description": "Plug-in Outdoor Switch V2, 500S",
     "label": "14325 / ZW4203",
-    "manufacturer": "GE/Jasco"
+    "manufacturer": "Jasco"
   },
   "0x0063:0x5042:0x4004": {
-    "description": "Direct Wire Indoor/Outdoor Smart Switch",
-    "label": "14285",
-    "manufacturer": "GE/Jasco"
+    "description": "Direct Wire 40A Outdoor Switch, 500S",
+    "label": "14285 / ZW4007",
+    "manufacturer": "Enbrighten"
   },
   "0x0063:0x5044:0x3031": {
-    "description": "Smart Dimmer",
-    "label": "12718 / ZW3101",
-    "manufacturer": "GE/Jasco"
+    "description": "Plug-in 2-Outlet Dimmer, 1 Controlled, 300S",
+    "label": "12718 / ZW3103",
+    "manufacturer": "GE"
   },
   "0x0063:0x5044:0x3032": {
-    "description": "GE Energy Monitoring Lamp Module",
-    "label": "45652",
-    "manufacturer": "GE/Jasco"
+    "description": "Plug-in 1-Outlet Dimmer With Energy, 300S",
+    "label": "45652 / ZW3102",
+    "manufacturer": "GE"
   },
   "0x0063:0x5044:0x3033": {
-    "description": "Plug-In Smart Dimmer (Dual Linked Outlets)",
+    "description": "Plug-in 2-Outlet Dimmer, Simultaneous, 500S",
     "label": "14280 / ZW3107",
-    "manufacturer": "GE/Jasco"
+    "manufacturer": "GE"
   },
   "0x0063:0x5044:0x3035": {
-    "description": "Plug-in Smart Dimmer, Dual Outlet with Simultaneous Control",
-    "label": "14307",
-    "manufacturer": "GE/Jasco"
+    "description": "Plug-in 2-Outlet Dimmer, Simultaneous, 500S",
+    "label": "14307 / ZW3107",
+    "manufacturer": "Jasco"
   },
   "0x0063:0x5044:0x3037": {
-    "description": "Plug-in Smart Dimmer (Single Plug)",
+    "description": "Plug-in 1-Outlet Dimmer, 500S",
     "label": "28166 / ZW3104",
-    "manufacturer": "GE/Jasco"
+    "manufacturer": "Jasco"
   },
   "0x0063:0x5044:0x3038": {
-    "description": "Plug-In Smart Dimmer",
+    "description": "Plug-in 1-Outlet Dimmer, 500S",
     "label": "28167 / ZW3104",
-    "manufacturer": "GE/Jasco"
+    "manufacturer": "GE"
   },
   "0x0063:0x5044:0x3039": {
-    "description": "Plug-in Smart Dimmer (Dual Plug)",
+    "description": "Plug-in 2-Outlet Dimmer, 1 Controlled, 500S",
     "label": "28170 / ZW3105",
-    "manufacturer": "GE/Jasco"
+    "manufacturer": "Jasco"
   },
   "0x0063:0x5044:0x3130": {
-    "description": "Plug-in Smart Dimmer (Single Plug)",
+    "description": "Plug-in 2-Outlet Dimmer, 1 Controlled, 500S",
     "label": "28171 / ZW3105",
-    "manufacturer": "GE/Jasco"
+    "manufacturer": "GE"
   },
   "0x0063:0x5044:0x3131": {
-    "description": "Plug-in Dual Smart Dimmer With 3.4A USB Charging",
-    "label": "28174",
-    "manufacturer": "GE/Jasco"
+    "description": "Plug-in 2-Outlet Dimmer with USB, 500S",
+    "label": "28174 / ZW3106",
+    "manufacturer": "Jasco"
   },
   "0x0063:0x5044:0x3132": {
-    "description": "Plug-In Dual Smart Dimmer",
-    "label": "28175  / ZW3106",
-    "manufacturer": "GE/Jasco"
+    "description": "Plug-in 2-Outlet Dimmer with USB, 500S",
+    "label": "28175 / ZW3106",
+    "manufacturer": "GE"
   },
   "0x0063:0x5044:0x3133": {
-    "description": "Plug-in Smart Dimmer (Dual Plug with Simultaneous Control)",
+    "description": "Plug-in 2-Outlet Dimmer, Simultaneous, 500S",
     "label": "55251 / ZW3107",
-    "manufacturer": "GE/Jasco"
+    "manufacturer": "Enbrighten"
   },
   "0x0063:0x5044:0x3134": {
-    "description": "Plug-in Smart Dimmer (Dual Plug with Pass through Outlet)",
+    "description": "Plug-in 2-Outlet Dimmer, 1 Controlled, 500S",
     "label": "55252 / ZW3105",
-    "manufacturer": "GE/Jasco"
+    "manufacturer": "Jasco"
   },
   "0x0063:0x5052:0x3031": {
-    "description": "Fluorescent Light & Appliance Module",
-    "label": "45603",
-    "manufacturer": "GE/Jasco"
+    "description": "Plug-in 2-Outlet Switch, 1 Controlled, 300S",
+    "label": "12719 / ZW4101",
+    "manufacturer": "GE"
   },
   "0x0063:0x5052:0x3032": {
-    "description": "GE Appliance Module",
+    "description": "Plug-in 1-Outlet Switch With Energy, 300S",
     "label": "45653 / ZW4102",
-    "manufacturer": "GE/Jasco"
+    "manufacturer": "GE"
   },
   "0x0063:0x5052:0x3033": {
-    "description": "GE Plug in Smart Switch Zwave Plus",
-    "label": "Plug in Smart Switch",
-    "manufacturer": "GE/Jasco"
+    "description": "Plug-in 2-Outlet Switch, Simultaneous, 500S",
+    "label": "14282 / ZW4106",
+    "manufacturer": "GE"
   },
   "0x0063:0x5052:0x3035": {
-    "description": "Plug-in Smart Switch, Dual Outlet with Simultaneous Control",
-    "label": "14309",
-    "manufacturer": "GE/Jasco"
+    "description": "Plug-in 2-Outlet Switch, Simultaneous, 500S",
+    "label": "14309 / ZW4106",
+    "manufacturer": "Jasco"
   },
   "0x0063:0x5052:0x3037": {
-    "description": "Plug in Smart Switch",
-    "label": "GE 28169 / Jasco 28168",
-    "manufacturer": "GE/Jasco"
+    "description": "Plug-in 1-Outlet Switch, 500S",
+    "label": "28168 / ZW4103",
+    "manufacturer": "Jasco"
   },
   "0x0063:0x5052:0x3038": {
-    "description": "Plug in Smart Switch",
-    "label": "GE 28169 / Jasco 28168",
-    "manufacturer": "GE/Jasco"
+    "description": "Plug-in 1-Outlet Switch, 500S",
+    "label": "28169 / ZW4103",
+    "manufacturer": "GE"
   },
   "0x0063:0x5052:0x3039": {
-    "description": "Plug-in Smart Switch (Dual Plug)",
-    "label": "28172 / 28713 / ZW4104",
-    "manufacturer": "GE/Jasco"
+    "description": "Plug-in 2-Outlet Switch, 1 Controlled, 500S",
+    "label": "28172 / ZW4104",
+    "manufacturer": "Jasco"
   },
   "0x0063:0x5052:0x3130": {
-    "description": "Plug-in Smart Switch (Dual Plug)",
-    "label": "28172 / 28713 / ZW4104",
-    "manufacturer": "GE/Jasco"
+    "description": "Plug-in 2-Outlet Switch, 1 Controlled, 500S",
+    "label": "28713 / ZW4104",
+    "manufacturer": "GE"
   },
   "0x0063:0x5052:0x3131": {
-    "description": "Plug-in Dual Smart Switch",
+    "description": "Plug-in 2-Outlet Switch with USB, 500S",
     "label": "28176 / ZW4105",
-    "manufacturer": "GE/Jasco"
+    "manufacturer": "Jasco"
   },
   "0x0063:0x5052:0x3132": {
-    "description": "GE Z-Wave Plus Wireless Smart Lighting Control Appliance Module",
-    "label": "28177",
-    "manufacturer": "GE/Jasco"
+    "description": "Plug-in 2-Outlet Switch with USB, 500S",
+    "label": "28177 / ZW4105",
+    "manufacturer": "GE"
   },
   "0x0063:0x5052:0x3133": {
-    "description": "Plug-in Smart Switch (Dual Plug with Simultaneous Control)",
+    "description": "Plug-in 2-Outlet Switch, Simultaneous, 500S",
     "label": "55249 / ZW4106",
-    "manufacturer": "GE/Jasco"
+    "manufacturer": "Enbrighten"
   },
   "0x0063:0x5052:0x3134": {
-    "description": "Plug-in Smart Switch (Dual Plug with Pass through Outlet)",
+    "description": "Plug-in 2-Outlet Switch, 1 Controlled, 500S",
     "label": "55250 / ZW4104",
-    "manufacturer": "GE/Jasco"
+    "manufacturer": "Jasco"
   },
   "0x0063:0x5250:0x3030": {
-    "description": "Fluorescent Light & Appliance Module",
-    "label": "45603",
-    "manufacturer": "GE/Jasco"
+    "description": "Plug-in 2-Outlet Switch, 1 Controlled, 300S",
+    "label": "45603 / ZW4101",
+    "manufacturer": "GE"
   },
   "0x0063:0x5250:0x3031": {
-    "description": "Energy Monitoring Appliance Module",
-    "label": "ZW4102",
-    "manufacturer": "GE/Jasco"
+    "description": "Plug-in 1-Outlet Switch With Energy, 300S",
+    "label": "45653WB / ZW4102",
+    "manufacturer": "Jasco"
   },
   "0x0063:0x5250:0x3130": {
-    "description": "Outdoor Lighting Control Module",
-    "label": "45604",
-    "manufacturer": "GE/Jasco"
+    "description": "Plug-in Outdoor Switch, 300S",
+    "label": "45604 / ZW4201",
+    "manufacturer": "GE"
   },
   "0x0063:0x5252:0x3530": {
-    "description": "Duplex receptacle",
-    "label": "45605",
-    "manufacturer": "GE/Jasco"
+    "description": "In-Wall Outlet, 300S",
+    "label": "45605 / ZW1001",
+    "manufacturer": "GE"
   },
   "0x0063:0x5257:0x3533": {
-    "description": "On/Off Relay Switch",
-    "label": "45609",
-    "manufacturer": "GE/Jasco"
+    "description": "In-Wall Paddle Switch, 300S",
+    "label": "45609 / ZW4001",
+    "manufacturer": "GE"
   },
   "0x0063:0x6363:0x3030": {
-    "description": "Fluorescent Light & Appliance Module",
-    "label": "ZW4101",
-    "manufacturer": "GE/Jasco"
+    "description": "Plug-in 2-Outlet Switch, 1 Controlled, 300S",
+    "label": "45657 / ZW4101",
+    "manufacturer": "AT&T"
   },
   "0x0063:0x6363:0x3130": {
-    "description": "Outdoor Lighting Control Module",
-    "label": "45604",
-    "manufacturer": "GE/Jasco"
+    "description": "Plug-in Outdoor Switch, 300S",
+    "label": "45658 / ZW4201",
+    "manufacturer": "AT&T"
   },
   "0x0063:0x6363:0x3533": {
-    "description": "On/Off Relay Switch",
-    "label": "45609",
-    "manufacturer": "GE/Jasco"
+    "description": "In-Wall Paddle Switch, 300S",
+    "label": "45655 / ZW4001",
+    "manufacturer": "AT&T"
   },
   "0x0063:0x8008:0x5301": {
-    "description": "Battery Operated Keypad Secondary Controller, 4 Groups/Scenes",
+    "description": "On-Wall Keypad Secondary Controller, 300S",
     "label": "45631 / ZW5301",
-    "manufacturer": "GE/Jasco"
+    "manufacturer": "GE"
   },
   "0x0063:0x8009:0x5303": {
-    "description": "Wireless Lighting Control Advanced Remote",
+    "description": "Handheld LCD Remote Controller, 400S",
     "label": "45633 / ZW5303",
-    "manufacturer": "GE/Jasco"
+    "manufacturer": "GE"
   },
   "0x0064:0x0001:0x0000": {
     "description": "One Paddle Wall Dimmer Insert",
@@ -3124,6 +3164,11 @@
     "label": "ZWP10",
     "manufacturer": "Fakro"
   },
+  "0x0085:0x0001:0x0004": {
+    "description": "Remote",
+    "label": "ZRH12",
+    "manufacturer": "Fakro"
+  },
   "0x0085:0x0002:0x0001": {
     "description": "Chain Actuator",
     "label": "ZWS12",
@@ -3141,7 +3186,7 @@
   },
   "0x0085:0x0002:0x0011": {
     "description": "Chain actuator - window opener",
-    "label": "ZWS12n",
+    "label": "ZWS12",
     "manufacturer": "Fakro"
   },
   "0x0085:0x0002:0x0014": {
@@ -3151,7 +3196,7 @@
   },
   "0x0085:0x0002:0x0111": {
     "description": "Chain actuator - window opener",
-    "label": "ZWS12n",
+    "label": "ZWS12",
     "manufacturer": "Fakro"
   },
   "0x0085:0x0003:0x0001": {
@@ -3190,6 +3235,11 @@
     "manufacturer": "Fakro"
   },
   "0x0085:0x0005:0x0002": {
+    "description": "Solar Awning",
+    "label": "AMZ Solar",
+    "manufacturer": "Fakro"
+  },
+  "0x0085:0x0005:0x0012": {
     "description": "Solar Awning",
     "label": "AMZ Solar",
     "manufacturer": "Fakro"
@@ -4705,6 +4755,11 @@
     "manufacturer": "Radio Thermostat Company of America (RTC)"
   },
   "0x0098:0x1e12:0x015e": {
+    "description": "Z-Wave Thermostat",
+    "label": "CT30",
+    "manufacturer": "Radio Thermostat Company of America (RTC)"
+  },
+  "0x0098:0x1e12:0x0163": {
     "description": "Z-Wave Thermostat",
     "label": "CT30",
     "manufacturer": "Radio Thermostat Company of America (RTC)"
@@ -7314,6 +7369,11 @@
     "label": "YRL226 / YRL256",
     "manufacturer": "Yale"
   },
+  "0x0129:0x800c:0x4f00": {
+    "description": "Assure Lever Lock",
+    "label": "YRL256",
+    "manufacturer": "Yale"
+  },
   "0x0129:0x800e:0x1200": {
     "description": "Assure Lock Touchscreen Deadbolt",
     "label": "YRD620 / YRC620",
@@ -7337,6 +7397,131 @@
   "0x0129:0x803b:0x0508": {
     "description": "ProSL Key Free Keypad Deadbolt with Z-Wave Plus",
     "label": "YRD136",
+    "manufacturer": "Yale"
+  },
+  "0x0129:0x8100:0x0a0c": {
+    "description": "NexTouch Sectional Mortise Push Button Keypad Lock",
+    "label": "NTM612-ZW2",
+    "manufacturer": "Yale"
+  },
+  "0x0129:0x8100:0x0a11": {
+    "description": "NexTouch Sectional Mortise Push Button Keypad Lock",
+    "label": "NTM617-ZW2",
+    "manufacturer": "Yale"
+  },
+  "0x0129:0x8100:0x0a16": {
+    "description": "NexTouch Sectional Mortise Touch Screen Keypad Lock",
+    "label": "NTM622-ZW2",
+    "manufacturer": "Yale"
+  },
+  "0x0129:0x8100:0x0a1b": {
+    "description": "NexTouch Sectional Mortise Touch Screen Keypad Lock",
+    "label": "NTM627-ZW2",
+    "manufacturer": "Yale"
+  },
+  "0x0129:0x8100:0x0a20": {
+    "description": "NexTouch Sectional Mortise Push Button Keypad Lock",
+    "label": "NTM632-ZW2",
+    "manufacturer": "Yale"
+  },
+  "0x0129:0x8100:0x0a25": {
+    "description": "NexTouch Sectional Mortise Push Button Keypad Lock",
+    "label": "NTM637-ZW2",
+    "manufacturer": "Yale"
+  },
+  "0x0129:0x8100:0x0a2a": {
+    "description": "NexTouch Sectional Mortise Touch Screen Keypad Lock",
+    "label": "NTM642-ZW2",
+    "manufacturer": "Yale"
+  },
+  "0x0129:0x8100:0x0a2f": {
+    "description": "NexTouch Sectional Mortise Touch Screen Keypad Lock",
+    "label": "NTM647-ZW2",
+    "manufacturer": "Yale"
+  },
+  "0x0129:0x8101:0x0b0c": {
+    "description": "NexTouch Push Button Lever Lock",
+    "label": "NTB612-ZW2",
+    "manufacturer": "Yale"
+  },
+  "0x0129:0x8101:0x0b16": {
+    "description": "NexTouch Touch Screen Lever Lock",
+    "label": "NTB622-ZW2",
+    "manufacturer": "Yale"
+  },
+  "0x0129:0x8101:0x0b20": {
+    "description": "NexTouch Push Button Lever Lock",
+    "label": "NTB632-ZW2",
+    "manufacturer": "Yale"
+  },
+  "0x0129:0x8101:0x0b2a": {
+    "description": "NexTouch Touch Screen Lever Lock",
+    "label": "NTB642-ZW2",
+    "manufacturer": "Yale"
+  },
+  "0x0129:0x8101:0x8109": {
+    "description": "Yale Real Living\u00ae Assure Lock\u00ae SL Key Free Touchscreen Deadbolt",
+    "label": "YRD652-ZW3",
+    "manufacturer": "Yale"
+  },
+  "0x0129:0x8101:0x810a": {
+    "description": "Real Living\u00ae Assure Lock\u2122 Z-Wave Enabled Push Button Deadbolt",
+    "label": "NF-YRD612-ZW3",
+    "manufacturer": "Yale"
+  },
+  "0x0129:0x8102:0x0c0c": {
+    "description": "NexTouch Keypad Exit Rim Trim",
+    "label": "NTT612-ZW2",
+    "manufacturer": "Yale"
+  },
+  "0x0129:0x8102:0x0c16": {
+    "description": "NexTouch Touchscreen Exit Rim Trim",
+    "label": "NTT622-ZW2",
+    "manufacturer": "Yale"
+  },
+  "0x0129:0x8103:0x12d2": {
+    "description": "Assure Lock Touchscreen Deadbolt",
+    "label": "YRD622-ZW2",
+    "manufacturer": "Yale"
+  },
+  "0x0129:0x8103:0x12d4": {
+    "description": "Z-Wave Enabled Keyless Deadbolt",
+    "label": "YRD642-ZW2",
+    "manufacturer": "Yale"
+  },
+  "0x0129:0x8104:0x05d1": {
+    "description": "Yale Assure 2 Lock SL Keyed Keypad",
+    "label": "YRD410-ZW2",
+    "manufacturer": "Yale"
+  },
+  "0x0129:0x8104:0x05d2": {
+    "description": "Yale Assure 2 Lock SL Keyed Touchscreen",
+    "label": "YRD420-ZW2",
+    "manufacturer": "Yale"
+  },
+  "0x0129:0x8104:0x05d3": {
+    "description": "Yale Assure 2 Lock SL Key Free Keypad",
+    "label": "YRD430-ZW2",
+    "manufacturer": "Yale"
+  },
+  "0x0129:0x8104:0x05d5": {
+    "description": "Yale Assure 2 Lock\u00ae SL Key Free Touchscreen Deadbolt",
+    "label": "YRD450-ZW2",
+    "manufacturer": "Yale"
+  },
+  "0x0129:0x8109:0x0dd2": {
+    "description": "Assure Lock Touchscreen Deadbolt",
+    "label": "NF-YRD622-ZW2",
+    "manufacturer": "Yale"
+  },
+  "0x0129:0x8109:0x0dd5": {
+    "description": "Assure Lock\u00ae SL Key Free Touchscreen Deadbolt",
+    "label": "YRD652-ZW2",
+    "manufacturer": "Yale"
+  },
+  "0x0129:0x810a:0x0dd1": {
+    "description": "Assure Lock\u2122 Z-Wave Enabled Push Button Deadbolt",
+    "label": "NF-YRD612-ZW2",
     "manufacturer": "Yale"
   },
   "0x0129:0x842a:0x3cac": {
@@ -7397,6 +7582,11 @@
   "0x012a:0x4744:0x3034": {
     "description": "Smart Plug In Dimmer",
     "label": "IQ Dimmer",
+    "manufacturer": "Qolsys"
+  },
+  "0x012a:0xff00:0xff0d": {
+    "description": "IQ Smart Dimmer",
+    "label": "QZ2142-840",
     "manufacturer": "Qolsys"
   },
   "0x0130:0x0001:0x0001": {
@@ -9739,6 +9929,11 @@
     "label": "DB100Z",
     "manufacturer": "Nexia Home Intelligence"
   },
+  "0x0178:0x5253:0x5433": {
+    "description": "Remote Temperature and Humidity Sensor",
+    "label": "ZSENS930",
+    "manufacturer": "Nexia Home Intelligence"
+  },
   "0x0178:0x5343:0x4735": {
     "description": "Nexia One Touch",
     "label": "NX1000",
@@ -9883,6 +10078,11 @@
     "description": "Smart Gas Controller",
     "label": "GCR-01S",
     "manufacturer": "Grib"
+  },
+  "0x018c:0x0065:0x0001": {
+    "description": "2-Channel Power Switch",
+    "label": "PM-S240-ZW",
+    "manufacturer": "Dawon"
   },
   "0x018e:0x0001:0x0001": {
     "description": "Door Contact",
@@ -11824,6 +12024,21 @@
     "label": "ZEN17",
     "manufacturer": "Zooz"
   },
+  "0x027a:0x7000:0xb001": {
+    "description": "Outdoor Smart Plug",
+    "label": "ZEN05",
+    "manufacturer": "Zooz"
+  },
+  "0x027a:0x7000:0xb002": {
+    "description": "Indoor Smart Plug",
+    "label": "ZEN04",
+    "manufacturer": "Zooz"
+  },
+  "0x027a:0x7000:0xb003": {
+    "description": "700 Series Outdoor Double Plug",
+    "label": "ZEN14",
+    "manufacturer": "Zooz"
+  },
   "0x027a:0x7000:0xe001": {
     "description": "Open/Close XS Sensor",
     "label": "ZSE41",
@@ -12129,6 +12344,11 @@
     "label": "SCHUB02",
     "manufacturer": "Scout Alarm"
   },
+  "0x029c:0x0001:0x0002": {
+    "description": "O2 Smart Box 2",
+    "label": "O2",
+    "manufacturer": "SoftAtHome"
+  },
   "0x029f:0x0003:0x0001": {
     "description": "AMADAS Smart Lock",
     "label": "ADSL-1001",
@@ -12329,6 +12549,11 @@
     "label": "N4002",
     "manufacturer": "New One"
   },
+  "0x0312:0xac01:0x4003": {
+    "description": "SmartPlug with Energy Monitor",
+    "label": "N4003",
+    "manufacturer": "NewOne"
+  },
   "0x0312:0xb003:0xc11c": {
     "description": "Door/Window Sensor",
     "label": "ZW1201",
@@ -12471,7 +12696,7 @@
   },
   "0x0312:0xff00:0xff0e": {
     "description": "Mini Plug with Power Meter",
-    "label": "MP21ZP",
+    "label": "MP21ZP / MP31ZP",
     "manufacturer": "Minoston"
   },
   "0x0312:0xff00:0xff0f": {
@@ -13409,6 +13634,11 @@
     "label": "ZWA038",
     "manufacturer": "Aeotec Ltd."
   },
+  "0x0371:0x0103:0x002a": {
+    "description": "Outdoor Smart Plug",
+    "label": "ZWA042",
+    "manufacturer": "Aeotec Ltd."
+  },
   "0x0371:0x0103:0x008d": {
     "description": "Nano Shutter V.3",
     "label": "ZW141",
@@ -13820,32 +14050,32 @@
     "manufacturer": "Resideo"
   },
   "0x041b:0x4944:0x3038": {
-    "description": "In-Wall Smart Dimmer",
+    "description": "In-Wall Paddle Dimmer, QFSW, 500S",
     "label": "39458 / ZW3010",
     "manufacturer": "Resideo"
   },
   "0x041b:0x4952:0x3036": {
-    "description": "In-Wall Smart Switch",
+    "description": "In-Wall Paddle Switch, QFSW, 500S",
     "label": "39455 / ZW4008",
     "manufacturer": "Resideo"
   },
   "0x041b:0x4952:0x3133": {
-    "description": "In-Wall Tamper Resistant Outlet",
+    "description": "In-Wall Outlet, Tamper Resistant, 500S",
     "label": "39456 / ZW1002",
     "manufacturer": "Resideo"
   },
   "0x041b:0x4f50:0x3035": {
-    "description": "Plug-in Outdoor Smart Switch",
+    "description": "Plug-in Outdoor Switch V2, 500S",
     "label": "39453 / ZW4203",
     "manufacturer": "Resideo"
   },
   "0x041b:0x5044:0x3033": {
-    "description": "Plug-in Dimmer (Dual Plug Simultaneous Control)",
+    "description": "Plug-in 2-Outlet Dimmer, Simultaneous, 500S",
     "label": "39446 / ZW3107",
     "manufacturer": "Resideo"
   },
   "0x041b:0x5052:0x3033": {
-    "description": "Plug-in Switch (Dual Plug Simultaneous Control)",
+    "description": "Plug-in 2-Outlet Switch, Simultaneous, 500S",
     "label": "39449 / ZW4106",
     "manufacturer": "Resideo"
   },
@@ -14047,6 +14277,11 @@
   "0x044c:0x0003:0x0002": {
     "description": "OpenTherm Actuator v2",
     "label": "MyOT v2",
+    "manufacturer": "SmartDHOME"
+  },
+  "0x044c:0x0003:0x0004": {
+    "description": "OpenTherm Actuator v4",
+    "label": "MyOT v4",
     "manufacturer": "SmartDHOME"
   },
   "0x044f:0x1100:0x0001": {
@@ -14269,5 +14504,5 @@
     "label": "BW8120",
     "manufacturer": "Remotec"
   },
-  "updated_at": "2022-08-02T16:50:18.237769"
+  "updated_at": "2022-11-22T01:15:07.331294"
 }
