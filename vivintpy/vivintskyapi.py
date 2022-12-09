@@ -427,13 +427,13 @@ class VivintSkyApi:
                 return resp_data
             if resp.status == 302:
                 return {"location": resp.headers.get("Location")}
-            if resp.status == 401:
+            if resp.status in (400, 401, 403):
                 message = (
                     resp_data.get(MfaVerificationResponse.MESSAGE)
                     if is_mfa_request
                     else resp_data.get(AuthenticationResponse.MESSAGE)
                 )
-                if message == AuthenticationResponse.MFA_REQUIRED:
+                if message == AuthenticationResponse.MFA_REQUIRED or is_mfa_request:
                     self.__mfa_pending = True
                     raise VivintSkyApiMfaRequiredError(message)
                 raise VivintSkyApiAuthenticationError(message)
