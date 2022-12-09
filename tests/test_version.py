@@ -4,4 +4,4 @@ from vivintpy import __version__
 
 def test_version() -> None:
     """Test version."""
-    assert __version__ == "2022.8.0b0"
+    assert __version__ == "2022.12.0"
