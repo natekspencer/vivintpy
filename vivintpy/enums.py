@@ -29,7 +29,7 @@ class ArmedState(IntEnum):
 
     @classmethod
     def _missing_(cls, value: object) -> ArmedState:
-        _LOGGER.error("Unknown armed state value: %s", value)
+        _LOGGER.debug("Unknown armed state value: %s", value)
         return cls.UNKNOWN
 
 
@@ -54,7 +54,7 @@ class CapabilityCategoryType(IntEnum):
 
     @classmethod
     def _missing_(cls, value: object) -> CapabilityCategoryType:
-        _LOGGER.error("Unknown capability category type value: %s", value)
+        _LOGGER.debug("Unknown capability category type value: %s", value)
         return cls.UNKNOWN
 
 
@@ -144,7 +144,7 @@ class CapabilityType(IntEnum):
 
     @classmethod
     def _missing_(cls, value: Any) -> CapabilityType:
-        _LOGGER.error("Unknown capability type value: %s", value)
+        _LOGGER.debug("Unknown capability type value: %s", value)
         return cls.UNKNOWN
 
 
@@ -206,7 +206,7 @@ class DeviceType(Enum):
 
     @classmethod
     def _missing_(cls, value: Any) -> DeviceType:
-        _LOGGER.error("Unknown device type value: %s", value)
+        _LOGGER.debug("Unknown device type value: %s", value)
         return cls.UNKNOWN
 
 
@@ -281,7 +281,7 @@ class EquipmentCode(IntEnum):
 
     @classmethod
     def _missing_(cls, value: Any) -> EquipmentCode:
-        _LOGGER.error("Unknown equipment code value: %s", value)
+        _LOGGER.debug("Unknown equipment code value: %s", value)
         return cls.UNKNOWN
 
 
@@ -301,7 +301,7 @@ class EquipmentType(IntEnum):
 
     @classmethod
     def _missing_(cls, value: Any) -> EquipmentType:
-        _LOGGER.error("Unknown equipment type value: %s", value)
+        _LOGGER.debug("Unknown equipment type value: %s", value)
         return cls.UNKNOWN
 
 
@@ -328,7 +328,7 @@ class FanMode(IntEnum):
 
     @classmethod
     def _missing_(cls, value: Any) -> FanMode:
-        _LOGGER.error("Unknown fan mode value: %s", value)
+        _LOGGER.debug("Unknown fan mode value: %s", value)
         return cls.UNKNOWN
 
 
@@ -345,7 +345,7 @@ class GarageDoorState(IntEnum):
 
     @classmethod
     def _missing_(cls, value: Any) -> GarageDoorState:
-        _LOGGER.error("Unknown garage door state value: %s", value)
+        _LOGGER.debug("Unknown garage door state value: %s", value)
         return cls.UNKNOWN
 
 
@@ -363,7 +363,7 @@ class HoldMode(IntEnum):
 
     @classmethod
     def _missing_(cls, value: Any) -> HoldMode:
-        _LOGGER.error("Unknown hold mode value: %s", value)
+        _LOGGER.debug("Unknown hold mode value: %s", value)
         return cls.UNKNOWN
 
 
@@ -392,7 +392,7 @@ class OperatingMode(IntEnum):
 
     @classmethod
     def _missing_(cls, value: Any) -> OperatingMode:
-        _LOGGER.error("Unknown operating mode value: %s", value)
+        _LOGGER.debug("Unknown operating mode value: %s", value)
         return cls.UNKNOWN
 
 
@@ -409,7 +409,7 @@ class OperatingState(IntEnum):
 
     @classmethod
     def _missing_(cls, value: Any) -> OperatingState:
-        _LOGGER.error("Unknown operating state value: %s", value)
+        _LOGGER.debug("Unknown operating state value: %s", value)
         return cls.UNKNOWN
 
 
@@ -439,7 +439,7 @@ class SensorType(IntEnum):
 
     @classmethod
     def _missing_(cls, value: Any) -> SensorType:
-        _LOGGER.error("Unknown sensor type value: %s", value)
+        _LOGGER.debug("Unknown sensor type value: %s", value)
         return cls.UNKNOWN
 
 
@@ -456,5 +456,5 @@ class ZoneBypass(IntEnum):
 
     @classmethod
     def _missing_(cls, value: Any) -> ZoneBypass:
-        _LOGGER.error("Unknown zone bypass value: %s", value)
+        _LOGGER.debug("Unknown zone bypass value: %s", value)
         return cls.UNKNOWN
