@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "vivintpy"
-version = "2022.12.1"
+version = "2022.12.2"
 description = "Python library for interacting with a Vivint security and smart home system."
 authors = ["Nathan Spencer <natekspencer@gmail.com>"]
 license = "MIT"
