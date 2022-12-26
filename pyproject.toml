@@ -16,7 +16,7 @@ certifi = "^2022.9.24"
 pubnub = "^7.0"
 
 [tool.poetry.dev-dependencies]
-tox = "^3.27.1"
+tox = "^3.28.0"
 pytest = "^7.2.0"
 pytest-asyncio = "^0.20.3"
 pytest-cov = "^4.0.0"
