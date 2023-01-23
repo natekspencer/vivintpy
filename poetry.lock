@@ -840,13 +840,13 @@ testing = ["pytest", "pytest-benchmark"]
 
 [[package]]
 name = "pubnub"
-version = "7.0.2"
+version = "7.1.0"
 description = "PubNub Real-time push service in the cloud"
 category = "main"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "pubnub-7.0.2.tar.gz", hash = "sha256:1f061e0067814ada03f49917c60830c935021a74b9f01299caa59d48243de3b2"},
+    {file = "pubnub-7.1.0.tar.gz", hash = "sha256:7c9761d6d0167c3ddfaa6d976283884ed31015bda0dbc8207f85c6071af4a587"},
 ]
 
 [package.dependencies]
