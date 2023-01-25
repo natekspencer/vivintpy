@@ -108,6 +108,7 @@ class AlarmPanelAttribute(VivintDeviceAttribute):
     """Alarm panel attributes."""
 
     DEVICES = "d"
+    MAC_ADDRESS = "pmac"
     PARTITION_ID = "parid"
     UNREGISTERED = "ureg"
 

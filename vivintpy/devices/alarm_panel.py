@@ -58,6 +58,11 @@ class AlarmPanel(VivintDevice):
         return self.system.name
 
     @property
+    def mac_address(self) -> str:
+        """Panel's MAC Address."""
+        return str(self.data[Attribute.MAC_ADDRESS])
+
+    @property
     def manufacturer(self) -> str:
         """Return Vivint as the manufacturer of this panel."""
         return "Vivint"
