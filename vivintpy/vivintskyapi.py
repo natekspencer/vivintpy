@@ -5,7 +5,6 @@ import json
 import logging
 import ssl
 from collections.abc import Callable
-from datetime import datetime
 from typing import Any
 
 import aiohttp
@@ -54,14 +53,8 @@ class VivintSkyApi:
 
     def is_session_valid(self) -> bool:
         """Return the state of the current session."""
-        # pylint: disable=protected-access
-        cookie = self.__client_session.cookie_jar._cookies["www.vivintsky.com"].get("s")
-        if not cookie:
-            return False
-        cookie_expiration = datetime.strptime(
-            cookie.get("expires"), "%a, %d %b %Y %H:%M:%S %Z"
-        )
-        return cookie_expiration > datetime.utcnow()
+        cookies = self.__client_session.cookie_jar.filter_cookies(VIVINT_API_ENDPOINT)
+        return cookies.get("s") is not None
 
     async def connect(self) -> dict:
         """Connect to VivintSky Cloud Service."""
