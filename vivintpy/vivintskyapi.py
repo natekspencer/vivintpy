@@ -148,6 +148,16 @@ class VivintSkyApi:
             )
             raise VivintSkyApiError("Failed to set alarm state")
 
+    async def trigger_alarm(self, panel_id: int, partition_id: int) -> None:
+        """Trigger an alarm."""
+        resp = await self.__put(
+            f"{panel_id}/{partition_id}/alarm",
+            headers={"Content-Type": "application/json;charset=UTF-8"},
+        )
+        if resp is None:
+            _LOGGER.error("Failed to trigger alarm for panel %s", panel_id)
+            raise VivintSkyApiError("Failed to trigger alarm")
+
     async def set_garage_door_state(
         self, panel_id: int, partition_id: int, device_id: int, state: int
     ) -> None:

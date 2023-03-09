@@ -116,6 +116,11 @@ class AlarmPanel(VivintDevice):
         _LOGGER.debug("Setting %s to %s", self.name, ArmedState(state).name)
         await self.vivintskyapi.set_alarm_state(self.id, self.partition_id, state)
 
+    async def trigger_alarm(self) -> None:
+        """Trigger an alarm."""
+        _LOGGER.debug("Triggering an alarm on %s", self.name)
+        await self.vivintskyapi.trigger_alarm(self.id, self.partition_id)
+
     async def disarm(self) -> None:
         """Disarm the alarm."""
         await self.set_armed_state(ArmedState.DISARMED)
