@@ -7,10 +7,9 @@ from enum import IntEnum, unique
 from typing import Any
 
 from pubnub.callbacks import SubscribeCallback
+from pubnub.models.consumer.common import PNStatus
 from pubnub.models.consumer.pubsub import PNMessageResult
 from pubnub.pubnub_asyncio import PubNubAsyncio
-
-from .pubnub_patches import PNStatus
 
 PN_SUBSCRIBE_KEY = "sub-c-6fb03d68-6a78-11e2-ae8f-12313f022c90"
 PN_CHANNEL = "PlatformChannel"
