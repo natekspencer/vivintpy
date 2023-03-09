@@ -34,6 +34,11 @@
     "label": "PS9EP",
     "manufacturer": "Sigma Designs (Former Zensys)"
   },
+  "0x0000:0x0003:0xa10d": {
+    "description": "Z-Wave Wall Controller",
+    "label": "SR-ZV9001T4-DIM",
+    "manufacturer": "Sunricher"
+  },
   "0x0000:0x0003:0xa305": {
     "description": "Z-Wave Battery Wall Controller",
     "label": "K8",
@@ -140,7 +145,7 @@
     "manufacturer": "HomePro"
   },
   "0x0002:0x0002:0x4005": {
-    "description": "",
+    "description": "HC-Z Hydronic Floor Heating Controller",
     "label": "014G0205",
     "manufacturer": "Danfoss"
   },
@@ -2784,6 +2789,11 @@
     "label": "TD13320",
     "manufacturer": "Good Way Technology Co., Ltd."
   },
+  "0x0068:0x0003:0x0008": {
+    "description": "USB Z-Wave Controller",
+    "label": "WD6051",
+    "manufacturer": "Good Way Technology Co., Ltd."
+  },
   "0x0068:0x0003:0x0009": {
     "description": "Door/Window Sensor",
     "label": "TS2001",
@@ -2940,7 +2950,7 @@
     "manufacturer": "Merten"
   },
   "0x007a:0x8003:0x0001": {
-    "description": "CONNECT radio flush-mounted receiver, Roller shutter",
+    "description": "Connect Roller Shutter",
     "label": "507801",
     "manufacturer": "Merten"
   },
@@ -3207,6 +3217,11 @@
   "0x0085:0x0003:0x0011": {
     "description": "Roller Shutter",
     "label": "ARZ Z-Wave",
+    "manufacturer": "Fakro"
+  },
+  "0x0085:0x0003:0x0012": {
+    "description": "Roller Shutter",
+    "label": "ARZ Z-Wave Solar",
     "manufacturer": "Fakro"
   },
   "0x0085:0x0003:0x0111": {
@@ -5276,12 +5291,12 @@
   },
   "0x0109:0x2009:0x0907": {
     "description": "AC/DC Siren",
-    "label": "ZM1602",
+    "label": "ZM1602-5",
     "manufacturer": "Vision Security"
   },
   "0x0109:0x2009:0x0908": {
     "description": "AC/DC Siren",
-    "label": "ZM1602",
+    "label": "ZM1602-5",
     "manufacturer": "Vision Security"
   },
   "0x0109:0x200a:0x0a01": {
@@ -6039,6 +6054,11 @@
     "label": "FGWP102",
     "manufacturer": "Fibargroup"
   },
+  "0x010f:0x0602:0x1004": {
+    "description": "Metered Wall Plug Switch",
+    "label": "FGWP102",
+    "manufacturer": "Fibargroup"
+  },
   "0x010f:0x0602:0x4001": {
     "description": "Metered Wall Plug Switch",
     "label": "FGWP102",
@@ -6380,6 +6400,11 @@
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x1201:0x1001": {
+    "description": "Carbon Monoxide Sensor",
+    "label": "FGCD001",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x1201:0x1002": {
     "description": "Carbon Monoxide Sensor",
     "label": "FGCD001",
     "manufacturer": "Fibargroup"
@@ -7599,6 +7624,11 @@
     "label": "QB3.X",
     "manufacturer": "Quby"
   },
+  "0x0130:0x0002:0x0000": {
+    "description": "Energy Meter Reader",
+    "label": "6500-1400-6000",
+    "manufacturer": "Quby"
+  },
   "0x0130:0x0002:0x0001": {
     "description": "Engie Meter Adapter",
     "label": "EN00",
@@ -8149,6 +8179,11 @@
     "label": "Spirit",
     "manufacturer": "Eurotronics"
   },
+  "0x0148:0x0003:0x0004": {
+    "description": "Thermostatic Valve",
+    "label": "Spirit",
+    "manufacturer": "Eurotronics"
+  },
   "0x0148:0x0004:0x0001": {
     "description": "Temperature & Humidity Sensor",
     "label": "TFS 700087",
@@ -8163,6 +8198,11 @@
     "description": "Thermostatic Valve",
     "label": "COMET Z",
     "manufacturer": "Eurotronics"
+  },
+  "0x0149:0x0004:0x0009": {
+    "description": "Energy Driven Switch",
+    "label": "C7",
+    "manufacturer": "wiDom"
   },
   "0x0149:0x0012:0x0104": {
     "description": "WiDom Universal Relay Switch",
@@ -9514,6 +9554,11 @@
     "label": "MH-S521",
     "manufacturer": "McoHome Technology Co., Ltd."
   },
+  "0x015f:0xd221:0x7102": {
+    "description": "Micro Switch",
+    "label": "MH-DS221",
+    "manufacturer": "McoHome Technology Co., Ltd."
+  },
   "0x015f:0xd311:0x5102": {
     "description": "Dimmer Switch",
     "label": "MH-DT311 / MH-DT411 / MH-DT511",
@@ -10019,6 +10064,11 @@
     "label": "WS-100",
     "manufacturer": "Dragon Tech Industrial, Ltd."
   },
+  "0x0184:0x4447:0x3034": {
+    "description": "In-Wall Dimmer Switch",
+    "label": "WD-100",
+    "manufacturer": "Dragon Tech Industrial, Ltd."
+  },
   "0x0184:0x4744:0x3032": {
     "description": "Plug in Dimmer Switch",
     "label": "PD-100",
@@ -10330,6 +10380,11 @@
     "manufacturer": "Heatit"
   },
   "0x019b:0x0003:0x000d": {
+    "description": "Wired Smoke Detector",
+    "label": "Z-Smoke 230V",
+    "manufacturer": "Heatit"
+  },
+  "0x019b:0x0003:0x0017": {
     "description": "Wired Smoke Detector",
     "label": "Z-Smoke 230V",
     "manufacturer": "Heatit"
@@ -11769,6 +11824,11 @@
     "label": "NEXA BRIDGE V1",
     "manufacturer": "Nexa Trading AB"
   },
+  "0x0268:0x0002:0x1027": {
+    "description": "Metered Wall Plug Switch",
+    "label": "ZPR-111",
+    "manufacturer": "Nexa Trading AB"
+  },
   "0x026b:0x0004:0x0004": {
     "description": "Z-Wave Photoelectric Smoke Alarm",
     "label": "EIA650RFZ",
@@ -11909,6 +11969,16 @@
     "label": "ZAC03",
     "manufacturer": "Zooz"
   },
+  "0x027a:0x0004:0x0610": {
+    "description": "800 Series Long Range USB Controller",
+    "label": "ZST39 LR",
+    "manufacturer": "Zooz"
+  },
+  "0x027a:0x0004:0x0611": {
+    "description": "800 Series Long Range GPIO Module",
+    "label": "ZAC93",
+    "manufacturer": "Zooz"
+  },
   "0x027a:0x0004:0xf001": {
     "description": "Z-Wave Plus 700 Series Remote Switch",
     "label": "ZEN34",
@@ -11935,13 +12005,25 @@
     "manufacturer": "Zooz"
   },
   "0x027a:0x0104:0x0201": {
-    "description": "Z-Wave Plus 700 Series Dry Contact Relay",
-    "label": "ZEN51",
+    "description": "700 Series Dry Contact Relay",
+    "label": [
+      {
+        "$if": "productType === 0x0904",
+        "value": "ZEN51 LR"
+      },
+      "ZEN51"
+    ],
     "manufacturer": "Zooz"
   },
   "0x027a:0x0104:0x0202": {
-    "description": "Z-Wave Plus 700 Series Double Relay",
-    "label": "ZEN52",
+    "description": "700 Series Double Relay",
+    "label": [
+      {
+        "$if": "productType === 0x0904",
+        "value": "ZEN52 LR"
+      },
+      "ZEN52"
+    ],
     "manufacturer": "Zooz"
   },
   "0x027a:0x0201:0x0006": {
@@ -11969,6 +12051,28 @@
     "label": "ZEN31",
     "manufacturer": "Zooz"
   },
+  "0x027a:0x0904:0x0201": {
+    "description": "700 Series Dry Contact Relay",
+    "label": [
+      {
+        "$if": "productType === 0x0904",
+        "value": "ZEN51 LR"
+      },
+      "ZEN51"
+    ],
+    "manufacturer": "Zooz"
+  },
+  "0x027a:0x0904:0x0202": {
+    "description": "700 Series Double Relay",
+    "label": [
+      {
+        "$if": "productType === 0x0904",
+        "value": "ZEN52 LR"
+      },
+      "ZEN52"
+    ],
+    "manufacturer": "Zooz"
+  },
   "0x027a:0x1111:0x1e1c": {
     "description": "Z-Wave Plus On/Off Toggle Switch",
     "label": "ZEN23",
@@ -11976,7 +12080,13 @@
   },
   "0x027a:0x2021:0x2101": {
     "description": "4-in-1 Sensor",
-    "label": "ZSE40",
+    "label": [
+      {
+        "$if": "firmwareVersion === 32.32 || firmwareVersion >= 1.10 && firmwareVersion < 16.9",
+        "value": "ZSE40 700"
+      },
+      "ZSE40"
+    ],
     "manufacturer": "Zooz"
   },
   "0x027a:0x4953:0x3133": {
@@ -12924,6 +13034,11 @@
     "label": "VES-ZW-DIM-001",
     "manufacturer": "Vesternet"
   },
+  "0x0330:0x0200:0xd00d": {
+    "description": "Curtain Motor Controller",
+    "label": "ZV9080A-A",
+    "manufacturer": "Sunricher"
+  },
   "0x0330:0x0200:0xd00f": {
     "description": "2-Wire Capable Switch",
     "label": "VES-ZW-SWI-002",
@@ -13254,6 +13369,11 @@
     "label": "4AR1SZ-0EN0",
     "manufacturer": "Ring"
   },
+  "0x0346:0x0401:0x0401": {
+    "description": "Range Extender (2nd generation)",
+    "label": "4AR1SZ-0EN0",
+    "manufacturer": "Ring"
+  },
   "0x0346:0x0701:0x0301": {
     "description": "Outdoor Siren",
     "label": "5D22E2 / 5AT3T4",
@@ -13262,6 +13382,16 @@
   "0x0346:0x0701:0x0401": {
     "description": "Outdoor Siren",
     "label": "5D22E2 / 5AT3T4",
+    "manufacturer": "Ring"
+  },
+  "0x0346:0x0a01:0x0301": {
+    "description": "Glass Break Sensor",
+    "label": "Glass Break Sensor",
+    "manufacturer": "Ring"
+  },
+  "0x0346:0x0b01:0x0101": {
+    "description": "Retrofit Alarm Kit",
+    "label": "4AW1SZ-0EN0",
     "manufacturer": "Ring"
   },
   "0x0346:0x0c01:0x0301": {
@@ -13879,6 +14009,11 @@
     "label": "INT-SMDWD-01",
     "manufacturer": "Inteset"
   },
+  "0x039a:0x0003:0x0106": {
+    "description": "Inteset PIR Motion Sensor",
+    "label": "INT-SMMD-N1",
+    "manufacturer": "Inteset"
+  },
   "0x039b:0x0001:0x0013": {
     "description": "TIM_BOX",
     "label": "UZW4010TIM2",
@@ -14049,6 +14184,11 @@
     "label": "TUXEDOW",
     "manufacturer": "Resideo"
   },
+  "0x041b:0x0011:0x0009": {
+    "description": "T6 Pro Z-Wave Programmable Thermostat with SmartStart",
+    "label": "TH6320ZW2007",
+    "manufacturer": "Honeywell"
+  },
   "0x041b:0x4944:0x3038": {
     "description": "In-Wall Paddle Dimmer, QFSW, 500S",
     "label": "39458 / ZW3010",
@@ -14169,6 +14309,16 @@
     "label": "LM-S1ZW",
     "manufacturer": "Lumi"
   },
+  "0x0438:0x0004:0xd019": {
+    "description": "Switch 16A",
+    "label": "4512746",
+    "manufacturer": "Namron"
+  },
+  "0x0438:0x0200:0xd004": {
+    "description": "16A Thermostat Wall Plug",
+    "label": "4512725",
+    "manufacturer": "Namron"
+  },
   "0x0438:0x0200:0xd005": {
     "description": "In-Wall Dimmer Module",
     "label": "Z-Wave Dimmer 400W",
@@ -14207,6 +14357,16 @@
   "0x0438:0x0300:0xa30f": {
     "description": "1-Channel Wireless Switch",
     "label": "K2",
+    "manufacturer": "Namron"
+  },
+  "0x0438:0x0300:0xb302": {
+    "description": "4-channel Remote Control",
+    "label": "4512711",
+    "manufacturer": "Namron"
+  },
+  "0x0438:0x0400:0xd10a": {
+    "description": "Multisensor",
+    "label": "SR-ZV9032A-EU",
     "manufacturer": "Namron"
   },
   "0x0441:0x2400:0x1000": {
@@ -14284,6 +14444,11 @@
     "label": "MyOT v4",
     "manufacturer": "SmartDHOME"
   },
+  "0x044e:0x0004:0x0001": {
+    "description": "Aidoo Control HVAC unit",
+    "label": "AZAI6WSPFU2",
+    "manufacturer": "Airzone"
+  },
   "0x044f:0x1100:0x0001": {
     "description": "Kitchen Hub",
     "label": "UVH1301",
@@ -14313,6 +14478,16 @@
     "description": "700 Series Cube",
     "label": "HOMEE-005",
     "manufacturer": "Homee"
+  },
+  "0x045a:0x0004:0x0111": {
+    "description": "Door Window Sensor",
+    "label": "Z-DWS-V01",
+    "manufacturer": "ZVIDAR"
+  },
+  "0x045a:0x0004:0x0610": {
+    "description": "800 Series USB Controller",
+    "label": "Z-DG-V01",
+    "manufacturer": "ZVIDAR"
   },
   "0x4118:0x0002:0x0002": {
     "description": "Slim Multi-Sensor",
@@ -14504,5 +14679,5 @@
     "label": "BW8120",
     "manufacturer": "Remotec"
   },
-  "updated_at": "2022-11-22T01:15:07.331294"
+  "updated_at": "2023-03-09T18:47:28.189185"
 }
