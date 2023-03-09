@@ -31,7 +31,7 @@ jobs:
       - name: Run linting
         run: |
           poetry run isort .
-          poetry run black . --check
+          poetry run black . --check --extend-exclude proto
           poetry run flake8 .
           poetry run pylint vivintpy tests
           poetry run pydocstyle vivintpy tests

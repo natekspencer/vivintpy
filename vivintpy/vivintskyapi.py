@@ -9,6 +9,7 @@ from typing import Any
 
 import aiohttp
 import certifi
+import grpc
 from aiohttp import ClientResponseError
 from aiohttp.client import _RequestContextManager
 
@@ -24,10 +25,12 @@ from .exceptions import (
     VivintSkyApiError,
     VivintSkyApiMfaRequiredError,
 )
+from .proto import beam_pb2, beam_pb2_grpc
 
 _LOGGER = logging.getLogger(__name__)
 
 VIVINT_API_ENDPOINT = "https://www.vivintsky.com/api"
+VIVINT_BEAM_ENDPOINT = "beam.vivintsky.com:443"
 VIVINT_MFA_ENDPOINT = (
     "https://www.vivintsky.com/platform-user-api/v0/platformusers/2fa/validate"
 )
@@ -173,6 +176,35 @@ class VivintSkyApi:
         if not await self.__post(f"{panel_id}/{partition_id}/alarm"):
             _LOGGER.error("Failed to trigger alarm for panel %s", panel_id)
             raise VivintSkyApiError("Failed to trigger alarm")
+
+    async def set_camera_as_doorbell_chime_extender(
+        self, panel_id: int, device_id: int, state: bool
+    ) -> None:
+        """Set the camera to be used as a doorbell chime extender."""
+        creds = grpc.ssl_channel_credentials()
+        metad = [
+            (
+                "session",
+                self.__client_session.cookie_jar.filter_cookies(VIVINT_API_ENDPOINT)
+                .get("s")
+                .value,
+            )
+        ]
+
+        async with grpc.aio.secure_channel(
+            VIVINT_BEAM_ENDPOINT, credentials=creds
+        ) as channel:
+            stub: beam_pb2_grpc.BeamStub = beam_pb2_grpc.BeamStub(channel)  # type: ignore
+            response: beam_pb2.SetUseAsDoorbellChimeExtenderResponse = await stub.SetUseAsDoorbellChimeExtender(
+                beam_pb2.SetUseAsDoorbellChimeExtenderRequest(  # pylint: disable=no-member
+                    panel_id=panel_id,
+                    device_id=device_id,
+                    use_as_doorbell_chime_extender=state,
+                ),
+                metadata=metad,
+            )
+
+        _LOGGER.debug("Response received: %s", str(response))
 
     async def set_garage_door_state(
         self, panel_id: int, partition_id: int, device_id: int, state: int

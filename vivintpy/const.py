@@ -129,6 +129,7 @@ class CameraAttribute(VivintDeviceAttribute):
     CAMERA_DIRECT_AVAILABLE = "cda"
     CAMERA_DIRECT_STREAM_PATH = "cdp"
     CAMERA_DIRECT_STREAM_PATH_STANDARD = "cdps"
+    CAMERA_EXTEND_CHIME_ENABLED = "cex"
     CAMERA_IP_ADDRESS = "caip"
     CAMERA_IP_PORT = "cap"
     CAMERA_MAC = "cmac"
