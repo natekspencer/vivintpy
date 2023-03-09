@@ -1,7 +1,8 @@
 """Module that implements the DoorLock class."""
 from __future__ import annotations
 
-from ..const import ZWaveDeviceAttribute as Attributes
+from ..const import ZWaveDeviceAttribute as Attribute
+from ..utils import send_deprecation_warning
 from . import BypassTamperDevice, VivintDevice
 
 
@@ -11,12 +12,18 @@ class DoorLock(BypassTamperDevice, VivintDevice):
     @property
     def is_locked(self) -> bool:
         """Return True if door lock is locked."""
-        return bool(self.data[Attributes.STATE])
+        return bool(self.data[Attribute.STATE])
+
+    @property
+    def is_online(self) -> bool:
+        """Return True if door lock is online."""
+        return bool(self.data[Attribute.ONLINE])
 
     @property
     def node_online(self) -> bool:
         """Return True if the node is online."""
-        return bool(self.data[Attributes.ONLINE])
+        send_deprecation_warning("node_online", "is_online")
+        return self.is_online
 
     async def set_state(self, locked: bool) -> None:
         """Set door lock's state."""
