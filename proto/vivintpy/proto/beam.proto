@@ -1,0 +1,1769 @@
+// Defines messages passed between device and the server endpoint
+
+syntax = "proto3";
+
+option objc_class_prefix = "VIVBEAM";
+option java_package = "com.vivint.grpc";
+option go_package = "source.vivint.com/pl/beam-def/generated;beam";
+
+package beam;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+
+// usage:
+// Compiled by 'protoc -I=. --go_out=plugins=grpc:. --python_out=. --cpp_out=./cpp beam.proto'
+// for ios:
+// protoc -I=. --plugin=protoc-gen-grpc=/usr/local/bin/grpc_objective_c_plugin --objc_out=objc --grpc_out=objc beam.proto
+
+service Beam {
+  rpc Ping(google.protobuf.Empty) returns (Response) {
+  }
+
+  // Set the device name / set the camera name
+  // because all devices have a name, SetDeviceName is used for this API call instead of SetCameraName
+  rpc SetDeviceName(SetDeviceNameRequest) returns (SetDeviceNameResponse) {}
+
+  // Get Camera Technical Info
+  rpc GetCameraTechnicalInfo(GetCameraTechnicalInfoRequest) returns (GetCameraTechnicalInfoResponse) {}
+
+  // Get All Camera Settings
+  rpc GetCameraSettings(GetCameraSettingsRequest) returns (GetCameraSettingsResponse) {}
+
+  // Get All Panel Settings
+  rpc GetPanelSettings(GetPanelSettingsRequest) returns (GetPanelSettingsResponse) {}
+
+  // Set Privacy Mode
+  rpc SetCameraPrivacyMode(SetCameraPrivacyModeRequest) returns (SetCameraPrivacyModeResponse) {}
+
+  // Adjust Camera Zoom
+  rpc AdjustCameraToXyz(AdjustCameraToXyzRequest) returns (AdjustCameraToXyzResponse) {}
+
+  //
+  // Recording Settings
+  //
+  // Set Playback enabled
+  rpc SetCameraPlaybackEnabled(SetCameraPlaybackEnabledRequest) returns (SetCameraPlaybackEnabledResponse) {}
+
+  //
+  // Detection Settings
+  //
+  // Set Detection Windows
+  rpc SetDetectionWindows(SetDetectionWindowsRequest) returns (SetDetectionWindowsResponse) {}
+
+  //
+  // Chime Settings
+  //
+  // Set ChimeVolume
+  rpc SetChimeVolume(SetChimeVolumeRequest) returns (SetChimeVolumeResponse) {}
+
+  // Set ChimeMute
+  rpc SetChimeMute(SetChimeMuteRequest) returns (SetChimeMuteResponse) {}
+
+  //
+  // Video Settings
+  //
+  // Set Video Quality
+  rpc SetVideoQuality(SetVideoQualityRequest) returns (SetVideoQualityResponse) {}
+
+  // Set Night Vison
+  rpc SetNightVision(SetNightVisionRequest) returns (SetNightVisionResponse) {}
+
+  // Set IR LED
+  rpc SetIRLED(SetIRLEDRequest) returns (SetIRLEDResponse) {}
+
+  // Set Rotate Image
+  rpc SetRotateImage(SetRotateImageRequest) returns (SetRotateImageResponse) {}
+
+  // Set Maintain Zoom
+  rpc SetMaintainZoom(SetMaintainZoomRequest) returns (SetMaintainZoomResponse) {}
+
+  //
+  // Device Settings
+  //
+  // Set StatusLight
+  rpc SetStatusLight(SetStatusLightRequest) returns (SetStatusLightResponse) {}
+
+  // Set AudioRecording
+  rpc SetAudioRecording(SetAudioRecordingRequest) returns (SetAudioRecordingResponse) {}
+
+  // Set DoorbellChime
+  rpc SetDoorbellChime(SetDoorbellChimeRequest) returns (SetDoorbellChimeResponse) {}
+
+  // Set DoorbellMuted
+  rpc SetDoorbellMuted(SetDoorbellMutedRequest) returns (SetDoorbellMutedResponse) {}
+
+  // Set VisitorChime
+  rpc SetVisitorChime(SetVisitorChimeRequest) returns (SetVisitorChimeResponse) {}
+
+  // Set PackageChime
+  rpc SetPackageChime(SetPackageChimeRequest) returns (SetPackageChimeResponse) {}
+
+  // Set Use as doorbell chime extender
+  rpc SetUseAsDoorbellChimeExtender(SetUseAsDoorbellChimeExtenderRequest) returns (SetUseAsDoorbellChimeExtenderResponse) {}
+
+  // Set extend siren
+  rpc SetExtendSiren(SetExtendSirenRequest) returns (SetExtendSirenResponse) {}
+
+  // Set QuietMode
+  rpc SetQuietMode(SetQuietModeRequest) returns (SetQuietModeResponse) {}
+
+  // Get analytics opt-in setting, which indicates whether the user has allowed the video clips from this device to be used for analytics
+  rpc GetAnalyticsOptIn(GetAnalyticsOptInRequest) returns (GetAnalyticsOptInResponse) {}
+
+  // Set analytics opt-in setting, which indicates whether the user has allowed the video clips from this device to be used for analytics
+  rpc SetAnalyticsOptIn(SetAnalyticsOptInRequest) returns (SetAnalyticsOptInResponse) {}
+
+  //
+  // Notify Settings
+  //
+  rpc SetNotifyOnPersonDetected(SetNotifyOnRequest) returns (SetNotifyOnResponse) {}
+  rpc SetNotifyOnLurkerDetected(SetNotifyOnRequest) returns (SetNotifyOnResponse) {}
+  rpc SetNotifyOnPackageSeen(SetNotifyOnRequest) returns (SetNotifyOnResponse) {}
+  rpc SetNotifyOnPackageMoved(SetNotifyOnRequest) returns (SetNotifyOnResponse) {}
+  rpc SetNotifyOnVehicleSeen(SetNotifyOnRequest) returns (SetNotifyOnResponse) {}
+  rpc SetNotifyOnAnimalSeen(SetNotifyOnRequest) returns (SetNotifyOnResponse) {}
+  rpc SetNotifyOnDeter(SetNotifyOnRequest) returns (SetNotifyOnResponse) {}
+  rpc SetNotifyOnDoorbellPress(SetNotifyOnRequest) returns (SetNotifyOnResponse) {}
+  rpc SetNotifyOnVehicleLeaving(SetNotifyOnRequest) returns (SetNotifyOnResponse) {}
+
+  //
+  // Restore Defaults, Reboot Camera, Delete Recordings, Delete Camera, etc.
+  //
+  // Restore Defaults
+  rpc RestoreDefaults(RestoreDefaultsRequest) returns (RestoreDefaultsResponse) {}
+
+  // Reboot Camera
+  rpc RebootCamera(RebootCameraRequest) returns (RebootCameraResponse) {}
+
+  // Delete All Events
+  rpc DeleteAllEvents(DeleteAllEventsRequest) returns (DeleteAllEventsResponse) {}
+
+  // Delete Camera
+  rpc DeleteCamera(DeleteCameraRequest) returns (DeleteCameraResponse) {}
+
+  // Set Camera List Order
+  rpc SetCameraListOrder(SetCameraListOrderRequest) returns (SetCameraListOrderResponse) {}
+
+  rpc SetLurkerDeter(SetLurkerDeterRequest) returns (SetLurkerDeterResponse) {}
+
+  rpc SetSmartSentrySnooze(SetSmartSentrySnoozeRequest) returns (SetSmartSentrySnoozeResponse) {}
+
+  rpc SetPackageWatch(SetPackageWatchRequest) returns (SetPackageWatchResponse) {}
+
+  // Set the animal detection boundary
+  rpc SetAnimalBoundary(SetAnimalBoundaryRequest) returns (SetAnimalBoundaryResponse) {}
+
+  // Set the package detection boundary
+  rpc SetPackageBoundary(SetPackageBoundaryRequest) returns (SetPackageBoundaryResponse) {}
+
+  // Set the vehicle detection boundary
+  rpc SetVehicleBoundary(SetVehicleBoundaryRequest) returns (SetVehicleBoundaryResponse) {}
+
+  // Set the property boundary
+  rpc SetPropertyBoundary(SetPropertyBoundaryRequest) returns (SetPropertyBoundaryResponse) {}
+
+  rpc SetDeterBoundary(SetDeterBoundaryRequest) returns (SetDeterBoundaryResponse) {}
+
+  rpc SetDeterSchedule(SetDeterScheduleRequest) returns (SetDeterScheduleResponse) {}
+
+  rpc SetDeterScheduleV2(SetDeterScheduleV2Request) returns (SetDeterScheduleV2Response) {}
+
+  rpc SetDeterAggressionLevel(SetDeterAggressionLevelRequest) returns (SetDeterAggressionLevelResponse) {}
+
+  rpc SetDeterLightColor(SetDeterLightColorRequest) returns (SetDeterLightColorResponse) {}
+
+  rpc SetDeterLightPattern(SetDeterLightPatternRequest) returns (SetDeterLightPatternResponse) {}
+
+  rpc SetDeterOverride(SetDeterOverrideRequest) returns (SetDeterOverrideResponse) {}
+
+  rpc SetLingerDuration(SetLingerDurationRequest) returns (SetLingerDurationResponse) {}
+
+  rpc GetPanelLogin(GetPanelLoginRequest) returns (GetPanelLoginResponse) {}
+
+  // Get and set per device onboarding progress flags
+  rpc GetDeviceOnboarding(GetDeviceOnboardingRequest) returns (GetDeviceOnboardingResponse) {}
+  rpc SetDeviceOnboarding(SetDeviceOnboardingRequest) returns (SetDeviceOnboardingResponse) {}
+
+
+  // SetCaptureClipOn (legacy) and SetRecordOn methods - set whether a clip should be recorded when an event occurs
+  rpc SetCaptureClipOnMotion(SetCaptureClipOnRequest) returns (SetCaptureClipOnResponse) {
+  }
+  rpc SetCaptureClipOnDoorbellRing(SetCaptureClipOnRequest) returns (SetCaptureClipOnResponse) {
+  }
+  rpc SetCaptureClipOnVisitor(SetCaptureClipOnRequest) returns (SetCaptureClipOnResponse) {
+  }
+  rpc SetRecordOnDeter(SetRecordOnDeterRequest) returns (SetRecordOnDeterResponse) {}
+  rpc SetRecordOnPersonDetected(SetRecordOnPersonDetectedRequest) returns (SetRecordOnPersonDetectedResponse) {}
+  rpc SetRecordOnPackageDetected(SetRecordOnPackageDetectedRequest) returns (SetRecordOnPackageDetectedResponse) {}
+  rpc SetRecordOnLurkerDetected(SetRecordOnLurkerDetectedRequest) returns (SetRecordOnLurkerDetectedResponse) {}
+  rpc SetRecordOnAnimalDetected(SetRecordOnAnimalDetectedRequest) returns (SetRecordOnAnimalDetectedResponse) {}
+  rpc SetRecordOnVehicleDetected(SetRecordOnVehicleDetectedRequest) returns (SetRecordOnVehicleDetectedResponse) {}
+
+  rpc SetRecordForRegions(SetRecordForRegionsRequest) returns (SetRecordForRegionsResponse) {}
+
+  rpc SetAnalyticsSensitivity(SetAnalyticsSensitivityRequest) returns (SetAnalyticsSensitivityResponse) {}
+
+  // Tells the panel/camera to sound the chime based on chime type
+  rpc PreviewChime(PreviewChimeRequest) returns (PreviewChimeResponse) {}
+
+  rpc SetPackageDeliveryLocations(SetPackageDeliveryLocationsRequest) returns (SetPackageDeliveryLocationsResponse) {}
+
+  rpc SetDoorbellPosition(SetDoorbellPositionRequest) returns (SetDoorbellPositionResponse) {}
+
+  // Find out what doorbell chimes are available
+  rpc GetDynamicChimes(GetDynamicChimesRequest) returns (GetDynamicChimesResponse) {}
+
+  // Change which dynamic doorbell chime is currently set for a device
+  rpc SetDynamicChime(SetDynamicChimeRequest) returns (SetDynamicChimeResponse) {}
+
+  rpc SetPackageWatchState(SetPackageWatchStateRequest) returns (SetPackageWatchStateResponse) {
+      option deprecated = true;
+  }
+
+  rpc SetUserRole(SetUserRoleRequest) returns (SetUserRoleResponse) {}
+
+  rpc GetClipSharingLink(GetClipSharingLinkRequest) returns (GetClipSharingLinkResponse) {}
+
+  // DIY/Hub+ functionality
+  // stop using WiFi for Hub+ connectivity (required to be able to do site-survey?)
+  rpc PanelKillWiFiNetwork(PanelKillWiFiNetworkRequest) returns (Response) {}
+  // request that a new site-survey be done by Hub+ unit
+  rpc PanelRefreshSSIDList(PanelRefreshSSIDListRequest) returns (Response) {}
+
+  rpc StartCameraWifiConnect(StartCameraWifiConnectRequest) returns (StartCameraWifiConnectResponse) {}
+
+  // Add a camera to Hub/Panel after it has connected to the network.
+  rpc AddCameraToHub(AddCameraToHubRequest) returns (Response) {}
+
+  // Re-implementation of /api/videofailed/{panel_id} from mobile-api
+  rpc ReportVideoFailed(ReportVideoFailedRequest) returns (ReportVideoFailedResponse) {
+  }
+
+  rpc RequestCameraThumbnail(CameraThumbnailRequest) returns (CameraThumbnailResponse) {
+  }
+
+  rpc GetCameraThumbnailUrl(CameraThumbnailRequest) returns (google.protobuf.Empty) {
+  }
+
+  // GetHistoryClipURL is the "proper" way to get a signed URL; it has all the fields necessary
+  // to get a history record without needing to do a scan-and-gather on the data collections.
+  rpc GetHistoryClipURL(GetHistoryClipURLRequest) returns (GetHistoryClipURLResponse) {
+  }
+
+  // Re-implementation of GET /api/token/{historyId} from mobile-api
+  rpc GetLegacyHistoryClipURL(GetLegacyHistoryClipURLRequest) returns (GetHistoryClipURLResponse) {
+  }
+
+  // Re-implementation of POST /api/dvr-associate from mobile-api
+  rpc AssociateDvr(AssociateDvrRequest) returns (AssociateDvrResponse) {
+  }
+
+  // Set which zones of the ODC Spotlight attachment (Narwhal) are enabled.
+  rpc SetSpotlightZones(SetSpotlightZonesRequest) returns (SetSpotlightZonesResponse) {}
+
+  // Set the brightness of the ODC Spotlight attachment (Narwhal).
+  rpc SetSpotlightBrightness(SetSpotlightBrightnessRequest) returns (SetSpotlightBrightnessResponse) {}
+
+  // Turn the ODC Spotlight attachment (Narwhal) on (in floodlight mode) or off.
+  rpc ToggleFloodlight(ToggleFloodlightRequest) returns (ToggleFloodlightResponse) {}
+
+  // Toggle the behavior to turn on (or brighten) the ODS spotlight attachment when a person is detected at night when deter is off
+  rpc SetSpotlightLightOnPersonDetected(SetSpotlightLightOnPersonDetectedRequest) returns (SetSpotlightLightOnPersonDetectedResponse) {}
+
+  // Set the calibration points for the Spotlight attachment (Narwhal) zones
+  rpc SetSpotlightCalibration(SetSpotlightCalibrationRequest) returns (SetSpotlightCalibrationResponse) {
+  }
+
+  // Set narwhal/spotlight deter lighting behavior
+  rpc SetDeterLightingBehavior(SetDeterLightingBehaviorRequest) returns (SetDeterLightingBehaviorResponse) {}
+
+  // Set narwhal/spotlight person lighting behavior
+  rpc SetSpotlightFollow(SetSpotlightFollowRequest) returns (SetSpotlightFollowResponse) {}
+
+    // Sets the SpotlightNightLight property of a camera.
+    rpc SetSpotlightOnSunsetToSunrise(SetSpotlightOnSunsetToSunriseRequest) returns (SetSpotlightOnSunsetToSunriseResponse) {
+        option deprecated = true; // Use SetSpotlightNightLight instead
+    }
+
+    // Sets the SpotlightNightLight property of a camera, which tells the camera to turn on the light when in night mode.
+    rpc SetSpotlightNightLight(SetSpotlightNightLightRequest) returns (SetSpotlightNightLightResponse) {}
+
+}
+
+//
+// Messages
+//
+
+//
+message SetDeviceNameRequest {
+    int64 panel_id = 1 [deprecated = true];
+    uint32 device_id = 2 [deprecated = true];
+    string name = 3;
+    // panel_id+device_id or device_uuid, device_type, standalone
+    SettingsRequestHeader header = 4;
+}
+
+message SetDeviceNameResponse {
+    Response response = 1;
+}
+
+//
+message GetCameraTechnicalInfoRequest {
+    int64 panel_id = 1;
+    uint32 device_id = 2;
+}
+
+message GetCameraTechnicalInfoResponse {
+    Response response = 1;
+    TechnicalInfo info = 2;
+}
+
+//
+message GetCameraSettingsRequest {
+    int64 panel_id = 1 [deprecated = true];
+    uint32 device_id = 2 [deprecated = true];
+    SettingsRequestHeader header = 3;
+}
+
+message GetCameraSettingsResponse {
+    Response response = 1;
+    //                                             PANEL FIELDNAME                      PLATFORM FIELDNAME (in Constants)
+    bool privacy_mode = 2;                      // privacy_mode_enabled                 Fields.CameraPrivacy
+
+    bool playback_enabled = 4;
+
+    repeated DetectionWindow detection_windows = 6;
+
+    int32 chime_volume = 7;
+    bool mute_chime = 8;
+
+    VideoQuality video_quality = 9;             // video_quality                        Fields.VideoQuality
+    //Brightness/contrast here
+    bool night_vision = 10;                     // night_vision_enabled                 Fields.NightVisionEnabled
+    bool flip = 11;                             // video_flipped                        Fields.CameraFlip
+    bool zoom_lock = 12;                        // zoom_lock_flag                       Fields.CameraZoomLock
+
+    bool led_on = 13;                           // led_on                               Fields.CameraLEDEnabled
+    bool record_audio = 14;                     // record_audio_enabled                 Fields.CameraRecordAudio
+    DoorbellChime doorbell_chime = 15;          // doorbell_chime                       Fields.CameraDoorbellChime
+    VisitorChime visitor_chime = 16;            // visitor_chime                        Fields.CameraVistorChime
+    bool extend_chime = 17;                     // extend_chime_enabled                 Fields.CameraExtendChimeEnabled
+    bool quiet_mode = 18;                       // quiet_mode_enabled                   Fields.CameraQuietMode
+
+    string name = 19;                           // name                                 Fields.Name
+    TechnicalInfo info = 20;
+    bool ir_led_on = 21;                        // ir_led_on                            Fields.CameraIRLEDEnabled
+    Capabilities capabilities = 22;
+
+    // New fields for Hyrax and Bahgeera
+    DeterAggressionLevel aggression_level = 3;
+    DeterScheduleType deter_type = 23;
+    DeterSchedule deter_schedule = 24;
+    repeated PropertyBoundaryPointList property_boundary_points = 25;
+    repeated PropertyBoundaryPointList deter_boundary_points = 26;
+    DeterLightColor deter_light_color = 27;
+    DeterLightPattern deter_light_pattern = 28;
+    uint32 linger_duration = 29;
+    bool extend_siren = 30;                     // ????
+    bool lurker_deter = 31;
+    RecordForRegions record_for_regions = 32;
+    bool record_on_lurker_detected = 33;            //                                    Fields.RecordOnLurkerDetected
+    bool record_on_package_detected = 34;           //                                    Fields.RecordOnPackageDetected
+    bool record_on_person_detected = 35;            //                                    Fields.RecordOnPersonDetected
+    int32 analytics_sensitivity = 36;
+    PackageChime package_chime = 37;                // package_chime                      Fields.CameraPackageChime
+    string connected_to = 38;                       // connected_to_device                Fields.ConnectedTo
+    string camera_connection_type = 39;             // camera_connection_type             Fields.CameraConnectionType
+    bool video_clip_analytics_allowed = 40;         // video_clip_analytics_allowed       Fields.VideoClipAnalyticsAllowed
+    bool package_watch = 41;
+    bool notify_on_person_detected = 42;            // notify_on_person_seen              Fields.NotifyOnPersonSeen
+    bool notify_on_lurker_detected = 43;            // notify_on_lurker                   Fields.NotifyOnLurker
+    DoorbellPosition doorbell_position = 44;        // doorbell_position                  Fields.DoorbellPosition
+    bool notify_on_package_seen = 45;               // notify_on_package_seen             Fields.NotifyOnPackageSeen
+    bool notify_on_package_moved = 46;              // notify_on_package_moved            Fields.NotifyOnPackageMoved
+    bool notify_on_vehicle_seen = 47;               // notify_on_vehicle_seen             Fields.NotifyOnVehicleSeen
+    bool notify_on_animal_seen = 48;                // notify_on_animal_seen              Fields.NotifyOnAnimalSeen
+    repeated PropertyBoundaryPoint package_delivery_locations = 49;
+                                                    // package_delivery_locations         Fields.PackageDeliveryLocations
+    uint32 smart_sentry_snooze_until = 50;          // smart_sentry_snooze_until          Fields.SmartSentrySnoozeUntil
+    bool package_watch_state = 52 [deprecated = true];
+    uint32 deter_schedule_version = 53;             // deter_schedule_version             Fields.DeterScheduleVersion
+    bool deter_on_duty = 54;                        // deter_on_duty                      Fields.DeterOnDuty
+    DeterScheduleType deter_reason = 55;            // deter_reason                       Fields.DeterReason
+    uint64 deter_timestamp = 56;                    // deter_timestamp                    Fields.DeterTimestamp
+    string deter_user_info = 57;                    // deter_user_info                    Fields.DeterUserInfo
+    bool deter_override = 58;                       // deter_override                     Fields.DeterOverride
+    uint64 deter_override_end_timestamp = 59;       // deter_override_end_timestamp       Fields.DeterOverrideEndTimestamp
+    repeated DeterScheduleType deter_valid_schedule_types = 60;
+                                                    // deter_valid_schedule_types         Fields.DeterValidScheduleTypes
+    string smart_sentry_snooze_user_info = 61;      // smart_sentry_snooze_user_info      Fields.SmartSentrySnoozeUserInfo
+    bool record_on_deter = 62;                      // record_on_deter                    Fields.RecordOnDeter
+    bool notify_on_deter = 63;                      //                                    ObjectSettings.NotifyOnDeter
+    repeated string features = 64;                  //                                    Fields.Features
+    DeterScheduleSettingsV2 DeterScheduleV2 = 65;   // deter_schedule_v2                  Fields.DeterScheduleV2
+    bool analytics_opt_in = 66;                     // video_clip_analytics_allowed       Fields.VideoClipAnalyticsAllowed || ObjectSettings.AnalyticsOptIn
+
+    // Dynamic chime related panel properties
+    string dynamic_doorbell_chime_category_id = 67; //                                    Fields.DynamicDoorbellChimeCategoryId
+    string dynamic_doorbell_chime_id = 68;          // dynamic_doorbell_chime_id          Fields.DynamicDoorbellChimeId
+    string dynamic_doorbell_chime_url = 69;         // dynamic_doorbell_chime_url         Fields.DynamicDoorbellChimeUrl
+    string dynamic_doorbell_chime_sha256hash = 70;  // dynamic_doorbell_chime_sha256hash  Fields.DynamicDoorbellChimeSha256hash
+    bool record_on_vehicle_seen = 71;               // record_on_vehicle                  Fields.RecordOnVehicleDetected
+    bool notify_on_doorbell_press = 72;             //                                    ObjectSettings.NotifyOnDoorbellPress
+    bool record_on_doorbell_press = 73;             //                                    Fields.RecordOnDoorbellPress
+    AspectRatioTuple aspect_ratio_tuple = 74;       //                                    Fields.AspectRatioTuple
+    repeated PropertyBoundaryPointList animal_boundary_points = 75;     //                Fields.AnimalROIs
+    repeated PropertyBoundaryPointList vehicle_boundary_points = 76;    //                Fields.VehicleROIs
+    repeated PropertyBoundaryPointList package_boundary_points = 77;    //                Fields.PackageROIs
+    int64 command_control_availability_state = 78;  // command_control_availability_state Fields.CommandControlAvailabilityState
+    int64 notification_availability_state = 79;     // notification_availability_state    Fields.NotificationAvailabilityState
+    int64 network_availability_state = 80;          // network_availability_state         Fields.NetworkAvailabilityState
+    int64 stream_availability_state = 81;           // stream_availability_state          Fields.StreamAvailabilityState
+    bool notify_on_vehicle_leaving = 82;            //                                    Fields.Setting NotifyOnVehicleLeaving
+
+    // Tracking floodlight/spotlight (e.g. Narwhal) properties
+    bool spotlight_installed = 83;                  // narwhal_installed                  Fields.SpotlightInstalled
+    SpotlightMode spotlight_mode = 84;              // narwhal_mode                       Fields.SpotlightMode
+    float spotlight_brightness = 85;                // narwhal_intensity_percent          Fields.SpotlightIntensityPercent
+    int32 spotlight_num_zones = 86;                 // narwhal_num_zones                  Fields.SpotlightNumZones
+    uint32 enabled_spotlight_zones_bitfield = 87;   // narwhal_included_zones_bitfield    Fields.SpotlightIncludedZonesBitfield
+    // spotlight follow: true iff Fields.SpotlightPersonLightingBehavior == FOLLOW
+    bool spotlight_follow = 88;                     // narwhal_person_lighting_behavior   Fields.SpotlightPersonLightingBehavior
+    LightingBehavior spotlight_deter_lighting_behavior = 89;
+                                                    // narwhal_deter_lighting_behavior    Fields.SpotlightDeterLightingBehavior
+                                                    // narwhal_deter_lighting_modifier    Fields.SpotlightDeterLightingModifier
+    SpotlightStatus spotlight_status = 90;          // narwhal_status                     Fields.SpotlightStatus
+    float spotlight_temperature = 91;               // narwhal_board_temperature          Fields.SpotlightBoardTemperature
+    string spotlight_driver_version = 92;           // narwhal_driver_version_number      Fields.SpotlightDriverVersionNumber
+    string spotlight_hardware_version = 93;         // narwhal_hardware_version_number    Fields.SpotlightHardwareVersionNumber
+    bool spotlight_light_on_person_detected = 94;   // narwhal_light_on_person_detected   Fields.SpotlightLightOnPersonDetected
+    SpotlightCalibrationData spotlight_calibration = 95; // narwhal_calibration_tuple     Fields.SpotlightCalibrationTuple
+    bool spotlight_night_mode = 96;                 // narwhal_night_mode                 Fields.SpotlightNightMode
+    bool spotlight_night_light = 97;                // narwhal_night_light                Fields.SpotlightNightLight
+    bool spotlight_flood_state = 98;                // narwhal_flood_state                Fields.SpotlightFloodState
+}
+
+message PanelDeviceIds {
+    int64 panel_id = 1;
+    uint32 device_id = 2;
+}
+
+message StandaloneCameraIds {
+    int64 smarthomesystem_id = 1;
+    string device_uuid = 2; // device_uuid as ID, esp. for cameras in p2p
+    string device_id = 3; // device_id or primary key for standalone cameras in p2p
+}
+
+// device identifier plus extra stuff needed for all calls that will support stand-alone
+message SettingsRequestHeader {
+    oneof ids {
+        PanelDeviceIds panel_device_id = 1; // common ID for panel'd systems/devices
+        string device_uuid = 2 [deprecated = true];  // send the device uuid along with smarthomesystem_id
+        StandaloneCameraIds standalone_camera_id = 3; // common ID for standalone camera devices on smarthome system
+    }
+    string device_type = 4;
+    bool standalone_enabled = 5;
+}
+
+//
+message GetPanelSettingsRequest {
+    int64 panel_id = 1;
+    uint32 device_id = 2;
+}
+
+message GetPanelSettingsResponse {
+    Response response = 1;
+    bool doorbell_muted = 2;
+}
+
+//
+message SetCameraPrivacyModeRequest {
+    int64 panel_id = 1;
+    uint32 device_id = 2;
+    bool privacy_mode = 3;
+}
+
+message SetCameraPrivacyModeResponse {
+    Response response = 1;
+}
+
+//
+message SetCameraPlaybackEnabledRequest {
+    int64 panel_id = 1;
+    uint32 device_id = 2;
+    bool playback_enabled = 3;
+}
+
+message SetCameraPlaybackEnabledResponse {
+    Response response = 1;
+}
+
+
+// NOTE: DetectionWindow is an array, but the current implementation
+//       will only operate on the 1st element.  Because of panel
+//       limitations, the caller is responsible for managing detection
+//       windows independently - one per call.  We are leaving this
+//       as an array for future panel enhancements.
+message SetDetectionWindowsRequest {
+    int64 panel_id = 1;
+    uint32 device_id = 2;
+    repeated DetectionWindow detection_windows = 3;
+}
+
+message SetDetectionWindowsResponse {
+    Response response = 1;
+}
+
+
+//
+message SetChimeVolumeRequest {
+    int64 panel_id = 1;
+    uint32 device_id = 2;
+    int32 volume = 3;
+}
+
+message SetChimeVolumeResponse {
+    Response response = 1;
+}
+
+
+//
+message SetChimeMuteRequest {
+    int64 panel_id = 1;
+    uint32 device_id = 2;
+    bool mute = 3;
+}
+
+message SetChimeMuteResponse {
+    Response response = 1;
+}
+
+
+//
+message SetVideoQualityRequest {
+    int64 panel_id = 1;
+    uint32 device_id = 2;
+    VideoQuality quality = 3;
+}
+
+message SetVideoQualityResponse {
+    Response response = 1;
+}
+
+//
+message SetNightVisionRequest {
+    int64 panel_id = 1;
+    uint32 device_id = 2;
+    bool night_vision = 3;
+}
+
+message SetNightVisionResponse {
+    Response response = 1;
+}
+
+//
+message SetIRLEDRequest {
+    int64 panel_id = 1;
+    uint32 device_id = 2;
+    bool ir_led_on = 3;
+}
+
+message SetIRLEDResponse {
+    Response response = 1;
+}
+
+//
+message SetRotateImageRequest {
+    int64 panel_id = 1;
+    uint32 device_id = 2;
+    bool rotate_image = 3;
+}
+
+message SetRotateImageResponse {
+    Response response = 1;
+}
+
+//
+message SetMaintainZoomRequest {
+    int64 panel_id = 1;
+    uint32 device_id = 2;
+    bool maintain_zoom = 3;
+}
+
+message SetMaintainZoomResponse {
+    Response response = 1;
+}
+
+//
+message SetStatusLightRequest {
+    int64 panel_id = 1;
+    uint32 device_id = 2;
+    bool status_light = 3;
+}
+
+message SetStatusLightResponse {
+    Response response = 1;
+}
+
+//
+message SetAudioRecordingRequest {
+    int64 panel_id = 1 [deprecated = true];
+    uint32 device_id = 2 [deprecated = true];
+    bool audio_recording = 3;
+    // panel_id+device_id or device_uuid, device_type, standalone
+    SettingsRequestHeader header = 4;
+}
+
+message SetAudioRecordingResponse {
+    Response response = 1;
+}
+
+//
+message SetDoorbellChimeRequest {
+    int64 panel_id = 1 [deprecated = true];
+    uint32 device_id = 2 [deprecated = true];
+    DoorbellChime chime = 3;
+    bool standalone_enabled = 4;
+    string device_uuid = 5 [deprecated = true];
+    SettingsRequestHeader header = 6;
+}
+
+message SetDoorbellChimeResponse {
+    Response response = 1;
+}
+
+//
+message SetDoorbellMutedRequest {
+    int64 panel_id = 1;
+    uint32 device_id = 2;
+    bool muted = 3;
+}
+
+message SetDoorbellMutedResponse {
+    Response response = 1;
+}
+
+//
+message SetVisitorChimeRequest {
+    int64 panel_id = 1;
+    uint32 device_id = 2;
+    VisitorChime chime = 3;
+}
+
+message SetVisitorChimeResponse {
+    Response response = 1;
+}
+
+//
+message SetPackageChimeRequest {
+    int64 panel_id = 1 [deprecated = true];
+    uint32 device_id = 2 [deprecated = true];
+    PackageChime chime = 3;
+    SettingsRequestHeader header = 4;
+}
+
+message SetPackageChimeResponse {
+    Response response = 1;
+}
+
+//
+message SetUseAsDoorbellChimeExtenderRequest {
+    int64 panel_id = 1;
+    uint32 device_id = 2;
+    bool use_as_doorbell_chime_extender = 3;
+}
+
+message SetUseAsDoorbellChimeExtenderResponse {
+    Response response = 1;
+}
+
+//
+message SetExtendSirenRequest {
+    int64 panel_id = 1;
+    uint32 device_id = 2;
+    bool extend_siren = 3;
+}
+
+message SetExtendSirenResponse {
+    Response response = 1;
+}
+
+//
+message SetQuietModeRequest {
+    int64 panel_id = 1;
+    uint32 device_id = 2;
+    bool quiet_mode = 3;
+}
+
+message SetQuietModeResponse {
+    Response response = 1;
+}
+
+
+//
+message GetAnalyticsOptInRequest {
+    int64 panel_id = 1 [deprecated = true];
+    uint32 device_id = 2 [deprecated = true];
+    SettingsRequestHeader header = 3;
+}
+
+message GetAnalyticsOptInResponse {
+    Response response = 1;
+    bool opt_in = 2;
+}
+
+//
+message SetAnalyticsOptInRequest {
+    int64 panel_id = 1 [deprecated = true];
+    uint32 device_id = 2 [deprecated = true];
+    bool opt_in = 3;
+    uint32 version = 4;
+    SettingsRequestHeader header = 5;
+}
+
+message SetAnalyticsOptInResponse {
+    Response response = 1;
+}
+
+
+//
+message SetNotifyOnRequest {
+    int64 panel_id = 1 [deprecated = true];
+    uint32 device_id = 2 [deprecated = true];
+    bool enabled = 3;
+    SettingsRequestHeader header = 4;
+}
+
+message SetNotifyOnResponse {
+    Response response = 1;
+}
+
+//
+message RestoreDefaultsRequest {
+    int64 panel_id = 1;
+    uint32 device_id = 2;
+}
+
+message RestoreDefaultsResponse {
+    Response response = 1;
+}
+
+message AdjustCameraToXyzRequest {
+    int64 panel_id = 1;
+    uint32 device_id = 2;
+    string stream_id = 3;
+    uint32 x = 4;
+    uint32 y = 5;
+    uint32 z = 6;
+}
+
+message AdjustCameraToXyzResponse {
+    Response response = 1;
+}
+
+//
+message RebootCameraRequest {
+    int64 panel_id = 1;
+    uint32 device_id = 2;
+    // The type of camera.  ex: alpha_cs6022_camera_device, vivotek_db8332sw_camera_device, etc.
+    string device_type = 3;
+}
+
+message RebootCameraResponse {
+    Response response = 1;
+}
+
+//
+message DeleteAllEventsRequest {
+    int64 panel_id = 1 [deprecated = true];
+    uint32 device_id = 2 [deprecated = true];
+    SettingsRequestHeader header = 3;
+}
+
+message DeleteAllEventsResponse {
+    Response response = 1;
+}
+
+//
+message DeleteCameraRequest {
+    int64 panel_id = 1;
+    uint32 device_id = 2;
+}
+
+message DeleteCameraResponse {
+    Response response = 1;
+}
+
+//
+message SetCameraListOrderRequest {
+    int64 panel_id = 1;
+    string user_id = 2;
+    // The camera ids in order to be presented in the camera list view.
+    repeated uint32 device_id = 3;
+}
+
+message SetCameraListOrderResponse {
+    Response response = 1;
+}
+
+//
+message SetLurkerDeterRequest {
+    int64 panel_id = 1;
+    uint32 device_id = 2;
+    bool lurker_deter = 3;
+}
+
+message SetLurkerDeterResponse {
+    Response response = 1;
+}
+
+//
+message SetSmartSentrySnoozeRequest {
+    int64 panel_id = 1;
+    uint32 device_id = 2;
+    uint32 duration = 3; // minutes
+}
+
+message SetSmartSentrySnoozeResponse {
+    Response response = 1;
+}
+
+//
+message SetPackageWatchRequest {
+    int64 panel_id = 1;
+    uint32 device_id = 2;
+    bool package_watch = 3;
+}
+
+message SetPackageWatchResponse {
+    Response response = 1;
+}
+
+//
+message SetPropertyBoundaryRequest {
+    int64 panel_id = 1 [deprecated = true];
+    uint32 device_id = 2 [deprecated = true];
+    repeated PropertyBoundaryPointList point_list = 3;
+    SettingsRequestHeader header = 4;
+}
+
+message SetPropertyBoundaryResponse {
+    Response response = 1;
+}
+
+//
+message SetDeterScheduleRequest {
+    int64 panel_id = 1;
+    uint32 device_id = 2;
+    DeterScheduleType type = 3;
+    DeterSchedule schedule = 4;
+}
+
+message SetDeterScheduleResponse {
+    Response response = 1;
+}
+
+//
+message SetDeterScheduleV2Request {
+    int64 panel_id = 1;
+    uint32 device_id = 2;
+    DeterScheduleSettingsV2 schedule_settings = 3;
+}
+
+message SetDeterScheduleV2Response {
+    Response response = 1;
+}
+
+message DeterScheduleSettingsV2 {
+    repeated DeterScheduleType deter_schedule_types = 1;
+    DeterSchedule schedule = 2;
+}
+
+message AspectRatioTuple {
+    uint32 width = 1;
+    uint32 height = 2;
+}
+
+//
+message SetDeterAggressionLevelRequest {
+    int64 panel_id = 1;
+    uint32 device_id = 2;
+    DeterAggressionLevel level = 3;
+}
+
+message SetDeterAggressionLevelResponse {
+    Response response = 1;
+}
+
+//
+message SetDeterLightColorRequest {
+    int64 panel_id = 1;
+    uint32 device_id = 2;
+    DeterLightColor color = 3;
+}
+
+message SetDeterLightColorResponse {
+    Response response = 1;
+}
+
+//
+message SetDeterLightPatternRequest {
+    int64 panel_id = 1;
+    uint32 device_id = 2;
+    DeterLightPattern pattern = 3;
+}
+
+message SetDeterLightPatternResponse {
+    Response response = 1;
+}
+
+//
+message SetDeterOverrideRequest {
+    int64 panel_id = 1;
+    uint32 device_id = 2;
+    bool enabled = 3;
+    int64 end_timestamp = 4;
+}
+
+message SetDeterOverrideResponse {
+    Response response = 1;
+}
+
+//
+message SetLingerDurationRequest {
+    int64 panel_id = 1;
+    uint32 device_id = 2;
+    // Number of seconds before the deter light and tone play.
+    uint32 duration = 3;
+}
+
+message SetLingerDurationResponse {
+    Response response = 1;
+}
+
+//
+message SetAnimalBoundaryRequest {
+    int64 panel_id = 1 [deprecated = true];
+    uint32 device_id = 2 [deprecated = true];
+    repeated PropertyBoundaryPointList point_list = 3;
+    SettingsRequestHeader header = 4;
+}
+
+message SetAnimalBoundaryResponse {
+    Response response = 1;
+}
+
+//
+message SetPackageBoundaryRequest {
+    int64 panel_id = 1 [deprecated = true];
+    uint32 device_id = 2 [deprecated = true];
+    repeated PropertyBoundaryPointList point_list = 3;
+    SettingsRequestHeader header = 4;
+}
+
+message SetPackageBoundaryResponse {
+    Response response = 1;
+}
+
+//
+message SetVehicleBoundaryRequest {
+    int64 panel_id = 1 [deprecated = true];
+    uint32 device_id = 2 [deprecated = true];
+    repeated PropertyBoundaryPointList point_list = 3;
+    SettingsRequestHeader header = 4;
+}
+
+message SetVehicleBoundaryResponse {
+    Response response = 1;
+}
+
+//
+message SetDeterBoundaryRequest {
+    int64 panel_id = 1 [deprecated = true];
+    uint32 device_id = 2 [deprecated = true];
+    repeated PropertyBoundaryPointList point_list = 3;
+    SettingsRequestHeader header = 4;
+}
+
+message SetDeterBoundaryResponse {
+    Response response = 1;
+}
+
+//
+message GetPanelLoginRequest {
+    int64 panel_id = 1;
+}
+
+message GetPanelLoginResponse {
+    Response response = 1;
+    string user = 2;
+    string password = 3;
+}
+
+// Record on requests and responses
+message SetCaptureClipOnRequest {
+  SettingsRequestHeader header = 1;
+  bool enabled = 2;
+}
+
+message SetCaptureClipOnResponse {
+    Response response = 1;
+}
+
+message SetRecordOnDeterRequest {
+    int64 panel_id = 1;
+    uint32 device_id = 2;
+    bool record_on_deter = 3;
+}
+
+message SetRecordOnDeterResponse {
+    Response response = 1;
+}
+
+
+//
+message SetRecordOnPersonDetectedRequest {
+    int64 panel_id = 1;
+    uint32 device_id = 2;
+    bool record_on_person = 3;
+}
+
+message SetRecordOnPersonDetectedResponse {
+    Response response = 1;
+}
+
+//
+message SetRecordOnPackageDetectedRequest {
+    int64 panel_id = 1;
+    uint32 device_id = 2;
+    bool record_on_package = 3;
+}
+
+message SetRecordOnPackageDetectedResponse {
+    Response response = 1;
+}
+
+//
+message SetRecordOnLurkerDetectedRequest {
+    int64 panel_id = 1;
+    uint32 device_id = 2;
+    bool record_on_lurker = 3;
+}
+
+message SetRecordOnLurkerDetectedResponse {
+    Response response = 1;
+}
+
+//
+message SetRecordOnAnimalDetectedRequest {
+    int64 panel_id = 1;
+    uint32 device_id = 2;
+    bool record_on_animal = 3;
+}
+
+message SetRecordOnAnimalDetectedResponse {
+    Response response = 1;
+}
+
+//
+message SetRecordOnVehicleDetectedRequest {
+    int64 panel_id = 1;
+    uint32 device_id = 2;
+    bool record_on_vehicle = 3;
+}
+
+message SetRecordOnVehicleDetectedResponse {
+    Response response = 1;
+}
+
+//
+message SetRecordForRegionsRequest {
+    int64 panel_id = 1;
+    uint32 device_id = 2;
+    RecordForRegions record_for_region = 3;
+}
+
+message SetRecordForRegionsResponse {
+    Response response = 1;
+}
+
+//
+message SetAnalyticsSensitivityRequest {
+    int64 panel_id = 1;
+    uint32 device_id = 2;
+    int32 analytics_sensitivity = 3;
+}
+
+message SetAnalyticsSensitivityResponse {
+    Response response = 1;
+}
+
+//
+message PreviewChimeRequest {
+    int64 panel_id = 1;
+    uint32 device_id = 2;
+    ChimeType chime_type = 3;
+}
+
+message SetPackageDeliveryLocationsResponse {
+    Response response = 1;
+}
+
+message SetPackageDeliveryLocationsRequest {
+    int64 panel_id = 1 [deprecated = true];
+    uint32 device_id = 2 [deprecated = true];
+    repeated PropertyBoundaryPoint package_delivery_locations = 3;
+    SettingsRequestHeader header = 4;
+}
+
+message PreviewChimeResponse {
+    Response response = 1;
+}
+
+//
+message GetDeviceOnboardingRequest {
+    int64 panel_id = 1 [deprecated = true];
+    uint32 device_id = 2 [deprecated = true];
+    SettingsRequestHeader header = 3;
+}
+
+message GetDeviceOnboardingResponse {
+    Response response = 1;
+    bool property_boundary = 2;
+    bool notifications = 3;
+    bool deter_intro = 4;
+    bool deter_schedule = 5;
+    bool deter_aggression_level = 6;
+    bool camera_name = 7;
+    bool camera_rotate = 8;
+    bool analytics_opt_in = 9;
+    bool doorbell_position = 10;
+    bool package_delivery_locations = 11;
+    bool package_watch = 12;
+    bool property_boundary_v2 = 13;
+
+    // spotlight (narwhal) onboarding
+    bool spotlight_splash = 14;
+    bool spotlight_deter_intro = 15;
+    bool spotlight_default_settings = 16;
+    bool spotlight_deter_schedule = 17;
+    bool spotlight_camera_name = 18;
+    bool spotlight_analytics_opt_in = 19;
+    bool spotlight_onboarding_done = 20;
+
+}
+
+//
+message SetDeviceOnboardingRequest {
+    int64 panel_id = 1 [deprecated = true];
+    uint32 device_id = 2 [deprecated = true];
+    oneof property {
+        bool property_boundary = 3;
+        bool notifications = 4;
+        bool deter_intro = 5;
+        bool deter_schedule = 6;
+        bool deter_aggression_level = 7;
+        bool camera_name = 8;
+        bool camera_rotate = 9;
+        bool analytics_opt_in = 10;
+        bool doorbell_position = 11;
+        bool package_delivery_locations = 12;
+        bool package_watch = 13;
+        bool property_boundary_v2 = 14;
+
+        // spotlight (narwhal) onboarding
+        bool spotlight_splash = 16;
+        bool spotlight_deter_intro = 17;
+        bool spotlight_default_settings = 18;
+        bool spotlight_deter_schedule = 19;
+        bool spotlight_camera_name = 20;
+        bool spotlight_analytics_opt_in = 21;
+        bool spotlight_onboarding_done = 22;
+    }
+    SettingsRequestHeader header = 15;
+}
+
+message SetDeviceOnboardingResponse {
+    Response response = 1;
+}
+
+message SetDoorbellPositionRequest {
+    int64 panel_id = 1 [deprecated = true];
+    uint32 device_id = 2 [deprecated = true];
+    DoorbellPosition doorbell_position = 3;
+    SettingsRequestHeader header = 4;
+}
+
+message SetDoorbellPositionResponse {
+    Response response = 1;
+}
+
+message SetPackageWatchStateRequest {
+    option deprecated = true;
+
+    int64 panel_id = 1;
+    uint32 device_id = 2;
+    bool on_duty = 3;
+    int64 end_timestamp = 4;
+}
+
+message SetPackageWatchStateResponse {
+    option deprecated = true;
+
+    Response response = 1;
+}
+
+message DynamicChimeInfo {
+    string id = 1;
+    string name = 2;
+    string url = 3;
+    string sha256hash = 4;
+}
+
+message DynamicChimeBannerInfo {
+    string headline = 1;
+    string subhead = 2;
+    string MainAnimation = 3;  // lottie or png
+    string BackgroundAnimation = 4;
+}
+
+message DynamicChimeSplashPageInfo {
+    string Image_iOS = 1; // pdf
+    string Image_Android = 2; // webp
+    string headline = 3;
+    repeated DynamicChimeSplashPageBulletInfo Bullets = 4;
+    string PrimaryButtonCopy = 5;
+}
+
+message DynamicChimeSplashPageBulletInfo {
+    string headline = 1;
+    string body = 2;
+}
+
+message DynamicChimeCategory {
+    string id = 1;
+    string name = 2;
+    google.protobuf.Timestamp availability_start = 3;
+    google.protobuf.Timestamp availability_end = 4;
+    string ui_availability_copy = 5;
+    repeated DynamicChimeInfo dynamic_chime_info = 6;
+    DynamicChimeBannerInfo dynamic_chime_banner_info = 7;
+    DynamicChimeSplashPageInfo dynamic_chime_splash_page_info = 8;
+}
+
+message GetDynamicChimesRequest {
+    int64 panel_id = 1;
+    oneof ids {
+        string chime_id = 2;
+        string chime_category_id = 3;
+    }
+    bool ignore_active_check = 4;
+}
+
+message GetDynamicChimesResponse {
+    Response response = 1;
+    repeated DynamicChimeCategory dynamic_chimes = 2;
+}
+
+message SetDynamicChimeRequest {
+    int64 panel_id = 1;
+    uint32 device_id = 2;
+    string chime_category_id = 3;
+    string chime_id = 4;
+    ChimeType chime_type = 5;
+}
+
+message SetDynamicChimeResponse {
+    Response response = 1;
+}
+
+
+
+message SetUserRoleRequest {
+    SettingsRequestHeader header = 1;
+    string targetUserId = 2;
+    enum UserRole { // from pl/constants/definitions/user_roles.yaml
+        NO_ROLE = 0;
+        OWNER = 1;
+        ADMIN = 2;
+        NON_ADMIN = 3;
+    }
+    UserRole newRole = 3;
+}
+
+message SetUserRoleResponse {
+    Response response = 1;
+}
+
+message Date {
+    int32 year = 1;
+    int32 month = 2;
+    int32 day = 3;
+}
+
+message GetClipSharingLinkRequest {
+    SettingsRequestHeader header = 1;
+    Date history_date = 2;
+    string history_record_id = 3;
+}
+
+message GetClipSharingLinkResponse {
+    Response response = 1;
+    string clip_sharing_link = 2;
+}
+
+message ReportVideoFailedRequest {
+    string camera_name = 1;
+    int32 count = 2;
+    string date = 3;
+    uint32 device_id = 4;
+    string device_type = 5;
+    string interface = 6;
+    string mobile_device_id = 7;
+    int64 panel_id = 8;
+    string previous_stream_array = 9;
+    string reason = 10;
+    string session = 11;
+    string url = 12;
+    string app = 13;
+    string stream_name = 14;
+    string app_version = 15;
+}
+
+message ReportVideoFailedResponse {
+    Response response = 1;
+    string request_id = 2;
+}
+
+
+
+// DIY/Hub+ messages
+
+message PanelKillWiFiNetworkRequest {
+    int64 panel_id = 1;
+}
+
+message PanelRefreshSSIDListRequest {
+    int64 panel_id = 1;
+    bool forWiFiConnect = 2;
+}
+
+message StartCameraWifiConnectResponse {
+    Response response = 1;
+}
+
+message StartCameraWifiConnectRequest {
+  int64 panel_id = 1;
+  repeated string camera_ap_ssids = 2;
+}
+
+message AddCameraToHubRequest {
+  int64 panel_id = 1;
+  string camera_type = 2;
+  string uuid = 3;
+  string ip_address = 4;
+  string urn = 5;
+}
+
+message AccessPointInfo {
+    uint32 channel = 1;
+    string ssid = 2;
+    string mac_addr = 3;
+    string encryption_types = 4;
+    int32 signal_percent = 5;
+    int32 unknown = 6;
+}
+
+//
+// Supporting structures
+
+message Response {
+    google.protobuf.Timestamp timestamp = 1;
+}
+
+// Only ints are supported for the fields: major.minor[.maintenance[.build]]
+message SoftwareVersion {
+    int32 major = 1;
+    int32 minor = 2;
+    int32 maintenance = 3;
+    int32 build = 4;
+}
+
+// TypeCapabilities specifies the capablilties of a type
+message TypeCapabilities {
+  uint32 type = 1;  // camera, doorbell, etc
+  repeated uint32 capabilities = 2;
+}
+
+// Capabilities is all of the types/capabilities a camera supports
+message Capabilities {
+  repeated TypeCapabilities type_capability = 1;
+}
+
+message TechnicalInfo {
+    bool status = 1;                                                                  // Fields.Online
+    float signal_strength = 3;  // percentage represented as a value between 0.0 - 1.0     Fields.WirelessSignalStrength
+    string ip_address = 4;                                                              // Fields.CameraIPAddress
+    string AP_SSID = 6;                                                                 // Fields.ConnectedSSID
+    string software_version = 7;                                                        // Fields.SoftwareVersion
+    string analytics_version = 8;                                                       // Feilds.AnalyticsVersion
+    string actual_type = 9;    // camera type. Eg: "act": "vivint_odc300_camera_device" // Fields.ActualType
+    string mac_address = 10;                                                            // Fields.CameraMac
+    enum AudioCodec {
+        INVALID = 0;
+        MU_LAW_G_711 = 1;
+        OPUS = 2;
+    }
+    AudioCodec audio_codec = 11;
+    int32 audio_sample_rate = 12;
+}
+
+// Usage:
+//   To update a detection window, set all desired values
+//   and make sure to set the index.
+//
+//   To add a detection window, set all desired values and make
+//   sure to set index to -1.  The panel will create an index.
+//
+//   To delete a detection window, set both width and height to zero.
+//   And be sure to set the index for the window to be deleted.
+message DetectionWindow {
+    float origin_x = 1;     //Value between 0.0 - 1.0 relative to camera resolution
+    float origin_y = 2;     //Value between 0.0 - 1.0 relative to camera resolution
+    float width = 3;        //Value between 0.0 - 1.0 relative to camera resolution
+    float height = 4;       //Value between 0.0 - 1.0 relative to camera resolution
+    float sensitivity = 5;
+    float object_size = 6;
+    int32 index = 7;
+}
+
+message PropertyBoundaryPointList {
+    repeated PropertyBoundaryPoint points = 1;
+}
+
+message PropertyBoundaryPoint {
+    float x = 1;            // Value between 0.0 - 1.0 relative to camera resolution
+    float y = 2;            // Value between 0.0 - 1.0 relative to camera resolution
+}
+
+message DeterSchedule {
+    bool sun = 1;
+    bool mon = 2;
+    bool tue = 3;
+    bool wed = 4;
+    bool thu = 5;
+    bool fri = 6;
+    bool sat = 7;
+    uint32 local_start_minutes = 8;
+    uint32 local_end_minutes = 9;
+}
+
+enum DeterScheduleType {
+    ALWAYS = 0;
+    SCHEDULED = 1;
+    ARMED = 2;
+    SCHTYPENONE = 3;
+    NEVER = 4;
+    USER_OVERRIDE = 5;
+    CUSTOM_ACTION = 6;
+
+    // These are taken from DetectionEventType
+    UNKNOWN_OBJECT_DETER = 7;
+    PACKAGE_DETER = 8;
+    PACKAGE_MOVED_DETER = 9;
+    PERSON_DETER = 10;
+    LURKER_DETER = 11;
+    VEHICLE_DETER = 12;
+    ANIMAL_DETER = 13;
+    SNOOZE = 14;
+    PACKAGE_APPROACHED_DETER = 15;
+    VEHICLE_LEAVING_DETER = 16;
+}
+
+enum DeterAggressionLevel {
+    ONE = 0;
+    TWO = 1;
+    THREE = 2;
+    FOUR = 3;
+    AGGLEVELNONE = 4;
+    FIVE = 5;
+    SIX = 6;
+    SEVEN = 7;
+}
+
+enum DeterLightColor {
+    RED = 0;
+    YELLOW = 1;
+}
+
+enum DeterLightPattern {
+    SOLID = 0;
+    FLASH = 1;
+    BREATH = 2;
+}
+
+enum VideoQuality {
+    VQ_ZERO = 0;
+    LOW = 1; // The panel video quality setting is 1 based
+    FAIR = 2;
+    MEDIUM = 3;
+    GOOD = 4;
+    GREAT = 5;
+}
+
+enum DoorbellChime {
+    DC_NONE = 0;
+    TRADITIONAL = 1;
+    ELEVATOR = 2;
+    MELODY = 8;
+    BELLS = 17;
+    MODERN = 18;
+    ELEVATOR2 = 19;
+    MELODY2 = 20;
+    TRADITIONAL2 = 21;
+    DOORBELL_DYNAMIC = 26;
+}
+
+enum VisitorChime {
+    VC_NONE = 0;
+    INSIGHT = 3;
+    LOW_DOUBLE = 4;
+    PIANO = 5;
+    HIGH_DOUBLE = 7;
+    DINGALING = 12;
+    DROPS = 13;
+    HI = 14;
+    SUCCESS = 15;
+    WAVE = 16;
+    VISITOR_DYNAMIC = 26;
+}
+
+enum PackageChime {
+    PC_NONE = 0;
+    PACKAGE_DYNAMIC = 26;
+    ALERT = 51;
+    FRIENDLY = 52;
+    HELLO = 53;
+    SCALE = 54;
+    WHISTLE = 55;
+    LIGHT_ONLY = 56;
+    RECORDING = 57;
+    PC_8 = 58;
+    PC_9 = 59;
+    PC_10 = 60;
+    PC_11 = 61;
+    PC_12 = 62;
+    PC_13 = 63;
+    PC_14 = 64;
+    PC_15 = 65;
+}
+
+enum RecordForRegions {
+    RECORD_FOR_REGIONS_NOTSET = 0;
+    RECORD_FOR_PROPERTY = 1;
+    RECORD_FOR_EVERYWHERE = 2;
+}
+
+enum ChimeType {
+    INVALID_CHIME_TYPE = 0;
+    DOORBELL = 1;
+    VISITOR = 2;
+    PACKAGE = 3;
+}
+
+enum DoorbellPosition {
+    UNSET = 0;
+    LEFT_SIDE = 1;
+    RIGHT_SIDE = 2;
+    LEFT_WALL = 3;
+    RIGHT_WALL = 4;
+}
+
+message CameraThumbnailRequest {
+    int64 panel_id = 1;
+    uint32 device_id = 2;
+    uint32 partition_id = 3;
+}
+
+message CameraThumbnailResponse {
+  Response response = 1;
+}
+
+message SystemRequestHeader {
+  int64 system_id = 1;
+  bool is_smarthome_system = 2;
+}
+
+message GetHistoryClipURLRequest {
+  SystemRequestHeader header = 1;
+  string history_record_id = 2;
+  Date history_date = 3;
+  bool download = 4;
+}
+
+message GetLegacyHistoryClipURLRequest {
+  string history_record_id = 1;
+}
+
+message GetHistoryClipURLResponse {
+  Response response = 1;
+  string clip_url = 2;
+}
+
+message AssociateDvrRequest {
+    int64 panel_id = 1;
+    string space_monkey_hardware_id = 2;
+}
+
+message AssociateDvrResponse {
+    string dvr_service_id = 2;
+}
+
+message SpotlightCalibrationData {
+  enum CalibrationType {
+    CALIBRATION_TYPE_AUTO = 0;
+    CALIBRATION_TYPE_MANUAL = 1;
+  }
+  // Represents the calibration information for a manually calibrated zone for Narwhal/Spotlight.
+  message ZoneData {
+    // from the camera's PoV, zone 0 is the right-most, zone 8 is left-most
+    uint32 zone_id = 1;
+    // 0.0 to 1.0, left to right
+    float x = 2;
+    // 0.0 to 1.0, top to bottom
+    float y = 3;
+    // 'false' => outside camera's FOV, i.e. ignore X,Y
+    bool in_fov = 4;
+  }
+
+  CalibrationType calibration_type = 1;
+  repeated ZoneData zones = 2;
+}
+
+message SetSpotlightCalibrationRequest {
+  SettingsRequestHeader header = 1;
+  SpotlightCalibrationData calibration_data = 2;
+}
+
+message SetSpotlightCalibrationResponse {
+  Response response = 1;
+}
+
+message SetSpotlightZonesRequest {
+    SettingsRequestHeader header = 1;
+    uint32 enabled_zones_bitfield = 2;
+}
+
+message SetSpotlightZonesResponse {
+  Response response = 1;
+}
+
+message SetSpotlightLightOnPersonDetectedRequest {
+    SettingsRequestHeader header = 1;
+    bool LightOnPersonDetected = 2;
+}
+
+message SetSpotlightLightOnPersonDetectedResponse {
+    Response response = 1;
+}
+
+message SetSpotlightBrightnessRequest {
+    SettingsRequestHeader header = 1;
+    float brightness_percent = 2;
+}
+
+message SetSpotlightBrightnessResponse {
+  Response response = 1;
+}
+
+message ToggleFloodlightRequest {
+    SettingsRequestHeader header = 1;
+    bool floodlight_on = 2;
+}
+
+message ToggleFloodlightResponse {
+  Response response = 1;
+}
+
+message SetSpotlightOnSunsetToSunriseRequest {
+    option deprecated = true; // Use SetSpotlightNightLight instead
+    SettingsRequestHeader header = 1;
+    bool enabled = 2;
+}
+
+message SetSpotlightOnSunsetToSunriseResponse {
+    option deprecated = true; // Use SetSpotlightNightLight instead
+    Response response = 1;
+}
+
+message SetSpotlightNightLightRequest {
+    SettingsRequestHeader header = 1;
+    bool enabled = 2;
+}
+
+message SetSpotlightNightLightResponse {
+    Response response = 1;
+}
+
+message BeamPortalCommand {
+    string uuid = 1;
+    oneof command {
+        uint32 setEnabledSpotlightZonesBitfield = 2;
+    }
+}
+
+message LightingBehavior {
+     enum Behavior {
+         OFF     = 0;
+         FLOOD   = 1;
+         TRACK   = 2;
+         WAVE    = 3;
+         CIRCLE  = 4;
+
+         STROBE  = 101;
+     }
+     Behavior behavior   = 2;
+}
+
+enum SpotlightMode {
+    SPOTLIGHT_MODE_OFF        = 0;
+    SPOTLIGHT_MODE_FLOOD      = 1;
+    SPOTLIGHT_MODE_CALIBRATE  = 2;
+    SPOTLIGHT_MODE_TRACK      = 3;
+    SPOTLIGHT_MODE_DETER      = 4;
+    SPOTLIGHT_MODE_STARTUP    = 5;
+}
+
+enum SpotlightStatus {
+    SPOTLIGHT_STATUS_SUCCESS         = 0;    // Success!
+    SPOTLIGHT_STATUS_UNKNOWN_ERROR   = 1;    // Unknown error.
+
+    SPOTLIGHT_STATUS_NO_HARDWARE     = 2;    // Hardware unit not found or not attached (i2c bus failure)
+    SPOTLIGHT_STATUS_BAD_DEVICE      = 3;    // Device failure. I2C ok but one or more I2C devices not found.
+    SPOTLIGHT_STATUS_NO_LED_POWER    = 4;    // LED Power returned "Not Good".
+
+    SPOTLIGHT_STATUS_NO_HW_VERSION   = 5;    // Could not retrieve hardware version
+    SPOTLIGHT_STATUS_NO_TEMPERATURE  = 6;    // Could not retrieve temperature
+
+    SPOTLIGHT_STATUS_INVALID_COMMAND = 7;    // Request wasn't valid or not compiled in (i.e. set test zones)
+}
+
+message SetDeterLightingBehaviorRequest {
+    SettingsRequestHeader header = 1;
+    LightingBehavior lightingBehavior   = 2;
+}
+
+message SetDeterLightingBehaviorResponse {
+    Response response = 1;
+}
+
+message SetSpotlightFollowRequest {
+    SettingsRequestHeader header = 1;
+    bool follow = 2;
+}
+
+message SetSpotlightFollowResponse {
+    Response response = 1;
+}

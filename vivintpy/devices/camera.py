@@ -88,6 +88,11 @@ class Camera(VivintDevice):
         return bool(self.data[Attribute.CAPTURE_CLIP_ON_MOTION])
 
     @property
+    def extend_chime_enabled(self) -> bool:
+        """Return True if used as doorbell chime extender."""
+        return self.data.get(Attribute.CAMERA_EXTEND_CHIME_ENABLED, False)
+
+    @property
     def ip_address(self) -> str:
         """Camera's IP address."""
         return str(self.data[Attribute.CAMERA_IP_ADDRESS])
@@ -152,6 +157,12 @@ class Camera(VivintDevice):
             if self.data[Attribute.CAMERA_DIRECT_AVAILABLE]
             and self.data.get(Attribute.ACTUAL_TYPE) not in SKIP_DIRECT
             else None
+        )
+
+    async def set_as_doorbell_chime_extender(self, state: bool) -> None:
+        """Set camera's use as doorbell chime extender."""
+        await self.vivintskyapi.set_camera_as_doorbell_chime_extender(
+            self.alarm_panel.id, self.id, state
         )
 
     def handle_pubnub_message(self, message: dict) -> None:

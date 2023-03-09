@@ -14,6 +14,7 @@ python = "^3.7.2"
 aiohttp = "^3.8.4"
 certifi = "^2022.9.24"
 pubnub = "^7.0"
+grpcio = "^1.51.3"
 
 [tool.poetry.dev-dependencies]
 tox = "^3.28.0"
@@ -27,6 +28,7 @@ isort = "^5.11.5"
 mypy = "^1.0"
 pydocstyle = "^6.3.0"
 pylint = "^2.16.4"
+grpcio-tools = "^1.51.3"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
