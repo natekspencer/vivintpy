@@ -6,7 +6,12 @@ import logging
 from typing import TYPE_CHECKING, Any, Type
 
 from ..const import AlarmPanelAttribute as Attribute
-from ..const import PubNubMessageAttribute, PubNubOperatorAttribute, SystemAttribute
+from ..const import (
+    PanelUpdateAttribute,
+    PubNubMessageAttribute,
+    PubNubOperatorAttribute,
+    SystemAttribute,
+)
 from ..enums import ArmedState, DeviceType
 from ..exceptions import VivintSkyApiError
 from ..utils import add_async_job, first_or_none, send_deprecation_warning
@@ -41,6 +46,10 @@ class AlarmPanel(VivintDevice):
             lambda device: DeviceType(device.data.get(Attribute.TYPE))
             == DeviceType.PANEL,
         )
+
+    def __repr__(self) -> str:
+        """Return custom __repr__ of device."""
+        return f"<{self.__class__.__name__} {self.id}, {self.name}: {self.state.name}>"
 
     @property
     def vivintskyapi(self) -> VivintSkyApi:
@@ -140,6 +149,31 @@ class AlarmPanel(VivintDevice):
                 self.id
             )
         return self.__panel_credentials
+
+    async def get_software_update_details(self) -> dict[str, bool | str]:
+        """Get the software update details."""
+        details = await self.vivintskyapi.get_system_update(self.id)
+        return {
+            "available": details.get(PanelUpdateAttribute.AVAILABLE, False),
+            "available_version": details.get(
+                PanelUpdateAttribute.AVAILABLE_VERSION, ""
+            ),
+            "current_version": details.get(PanelUpdateAttribute.CURRENT_VERSION, ""),
+            "update_reason": details.get(PanelUpdateAttribute.UPDATE_REASON, ""),
+        }
+
+    async def update_software(self) -> bool:
+        """Update the panel software version."""
+        try:
+            await self.vivintskyapi.update_panel_software(self.id)
+        except VivintSkyApiError as err:
+            _LOGGER.error("%s for %s", err, self.name)
+            return False
+        return True
+
+    async def reboot(self) -> None:
+        """Reboot the panel."""
+        await self.vivintskyapi.reboot_panel(self.id)
 
     def get_devices(
         self, device_types: set[Type[VivintDevice]] | None = None
