@@ -52,6 +52,15 @@ class PanelCredentialAttribute:
     PASSWORD = "pswd"
 
 
+class PanelUpdateAttribute:
+    """Panel update attributes."""
+
+    AVAILABLE = "av"
+    AVAILABLE_VERSION = "asv"
+    CURRENT_VERSION = "csv"
+    UPDATE_REASON = "rsn"
+
+
 class SystemAttribute:
     """System attributes."""
 

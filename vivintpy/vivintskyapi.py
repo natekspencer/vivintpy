@@ -114,6 +114,26 @@ class VivintSkyApi:
             raise VivintSkyApiError("Unable to retrieve system data")
         return resp
 
+    async def get_system_update(self, panel_id: int) -> dict:
+        """Get panel software update details."""
+        resp = await self.__get(
+            f"systems/{panel_id}/system-update",
+            headers={"Accept-Encoding": "application/json"},
+        )
+        if not resp:
+            raise VivintSkyApiError("Unable to retrieve system update")
+        return resp
+
+    async def update_panel_software(self, panel_id: int) -> None:
+        """Request a panel software update."""
+        if not await self.__post(f"systems/{panel_id}/system-update"):
+            raise VivintSkyApiError("Unable to update panel software")
+
+    async def reboot_panel(self, panel_id: int) -> None:
+        """Reboot a panel."""
+        if not await self.__post(f"systems/{panel_id}/reboot-panel"):
+            raise VivintSkyApiError("Unable to reboot panel")
+
     async def get_device_data(self, panel_id: int, device_id: int) -> dict:
         """Get the raw data for a device."""
         resp = await self.__get(
@@ -150,11 +170,7 @@ class VivintSkyApi:
 
     async def trigger_alarm(self, panel_id: int, partition_id: int) -> None:
         """Trigger an alarm."""
-        resp = await self.__put(
-            f"{panel_id}/{partition_id}/alarm",
-            headers={"Content-Type": "application/json;charset=UTF-8"},
-        )
-        if resp is None:
+        if not await self.__post(f"{panel_id}/{partition_id}/alarm"):
             _LOGGER.error("Failed to trigger alarm for panel %s", panel_id)
             raise VivintSkyApiError("Failed to trigger alarm")
 
@@ -439,6 +455,8 @@ class VivintSkyApi:
                 if message == AuthenticationResponse.MFA_REQUIRED or is_mfa_request:
                     self.__mfa_pending = True
                     raise VivintSkyApiMfaRequiredError(message)
+                if resp.status == 400:
+                    raise VivintSkyApiError(message)
                 raise VivintSkyApiAuthenticationError(message)
             resp.raise_for_status()
             return None
