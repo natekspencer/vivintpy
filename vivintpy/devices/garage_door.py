@@ -3,8 +3,9 @@ from __future__ import annotations
 
 from typing import Any
 
-from ..const import ZWaveDeviceAttribute as Attributes
+from ..const import ZWaveDeviceAttribute as Attribute
 from ..enums import GarageDoorState
+from ..utils import send_deprecation_warning
 from . import VivintDevice
 
 
@@ -24,6 +25,11 @@ class GarageDoor(VivintDevice):
         return self.state == GarageDoorState.CLOSING
 
     @property
+    def is_online(self) -> bool:
+        """Return True if switch is online."""
+        return bool(self.data[Attribute.ONLINE])
+
+    @property
     def is_opening(self) -> bool:
         """Return True if garage dooor is opening."""
         return self.state == GarageDoorState.OPENING
@@ -31,16 +37,17 @@ class GarageDoor(VivintDevice):
     @property
     def node_online(self) -> bool:
         """Return True if the node is online."""
-        return bool(self.data[Attributes.ONLINE])
+        send_deprecation_warning("node_online", "is_online")
+        return self.is_online
 
     @property
     def state(self) -> GarageDoorState:
         """Return the garage door's state."""
-        return GarageDoorState(self.data.get(Attributes.STATE))  # type: ignore
+        return GarageDoorState(self.data.get(Attribute.STATE))  # type: ignore
 
     def get_state(self) -> Any:
         """Return the garage door's state."""
-        return self.data[Attributes.STATE]
+        return self.data[Attribute.STATE]
 
     async def set_state(self, state: int) -> None:
         """Set garage door's state."""
