@@ -160,8 +160,14 @@ class Camera(VivintDevice):
         )
 
     async def set_as_doorbell_chime_extender(self, state: bool) -> None:
-        """Set camera's use as doorbell chime extender."""
+        """Set use as doorbell chime extender."""
         await self.vivintskyapi.set_camera_as_doorbell_chime_extender(
+            self.alarm_panel.id, self.id, state
+        )
+
+    async def set_privacy_mode(self, state: bool) -> None:
+        """Set privacy mode."""
+        await self.vivintskyapi.set_camera_privacy_mode(
             self.alarm_panel.id, self.id, state
         )
 
