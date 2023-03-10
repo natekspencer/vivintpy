@@ -1106,7 +1106,7 @@ testing = ["pytest", "pytest-benchmark"]
 name = "protobuf"
 version = "4.22.1"
 description = ""
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.7"
 files = [
@@ -1742,4 +1742,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.7.2"
-content-hash = "c6d956271f7f391f96bc7232c1812ac38c9a1c6e3156080d68e467fe9b97d49b"
+content-hash = "0b72c1ea937a127f03cd78302e18053b82fc3ba70eb82e0d797ba20a2e97f845"
