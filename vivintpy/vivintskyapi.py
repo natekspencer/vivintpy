@@ -5,7 +5,8 @@ import json
 import logging
 import ssl
 from collections.abc import Callable
-from typing import Any
+from http.cookies import Morsel, SimpleCookie
+from typing import Any, cast
 
 import aiohttp
 import certifi
@@ -29,9 +30,9 @@ from .proto import beam_pb2, beam_pb2_grpc
 
 _LOGGER = logging.getLogger(__name__)
 
-VIVINT_API_ENDPOINT = "https://www.vivintsky.com/api"
-VIVINT_BEAM_ENDPOINT = "beam.vivintsky.com:443"
-VIVINT_MFA_ENDPOINT = (
+API_ENDPOINT = "https://www.vivintsky.com/api"
+BEAM_ENDPOINT = "beam.vivintsky.com:443"
+MFA_ENDPOINT = (
     "https://www.vivintsky.com/platform-user-api/v0/platformusers/2fa/validate"
 )
 
@@ -54,10 +55,14 @@ class VivintSkyApi:
         self.__has_custom_client_session = client_session is not None
         self.__mfa_pending = False
 
+    def _get_session_cookie(self) -> Morsel | None:
+        """Get the session cookie."""
+        cookie = self.__client_session.cookie_jar.filter_cookies(API_ENDPOINT)
+        return cast(SimpleCookie, cookie).get("s")
+
     def is_session_valid(self) -> bool:
         """Return the state of the current session."""
-        cookies = self.__client_session.cookie_jar.filter_cookies(VIVINT_API_ENDPOINT)
-        return cookies.get("s") is not None
+        return self._get_session_cookie() is not None
 
     async def connect(self) -> dict:
         """Connect to VivintSky Cloud Service."""
@@ -78,10 +83,7 @@ class VivintSkyApi:
 
     async def verify_mfa(self, code: str) -> None:
         """Verify multi-factor authentication code."""
-        resp = await self.__post(
-            VIVINT_MFA_ENDPOINT,
-            data=json.dumps({"code": code}),
-        )
+        resp = await self.__post(MFA_ENDPOINT, data=json.dumps({"code": code}))
         if resp is not None:
             self.__mfa_pending = False
 
@@ -182,18 +184,9 @@ class VivintSkyApi:
     ) -> None:
         """Set the camera to be used as a doorbell chime extender."""
         creds = grpc.ssl_channel_credentials()
-        metad = [
-            (
-                "session",
-                self.__client_session.cookie_jar.filter_cookies(VIVINT_API_ENDPOINT)
-                .get("s")
-                .value,
-            )
-        ]
+        assert (cookie := self._get_session_cookie())
 
-        async with grpc.aio.secure_channel(
-            VIVINT_BEAM_ENDPOINT, credentials=creds
-        ) as channel:
+        async with grpc.aio.secure_channel(BEAM_ENDPOINT, credentials=creds) as channel:
             stub: beam_pb2_grpc.BeamStub = beam_pb2_grpc.BeamStub(channel)  # type: ignore
             response: beam_pb2.SetUseAsDoorbellChimeExtenderResponse = await stub.SetUseAsDoorbellChimeExtender(
                 beam_pb2.SetUseAsDoorbellChimeExtenderRequest(  # pylint: disable=no-member
@@ -201,7 +194,29 @@ class VivintSkyApi:
                     device_id=device_id,
                     use_as_doorbell_chime_extender=state,
                 ),
-                metadata=metad,
+                metadata=[("session", cookie.value)],
+            )
+
+        _LOGGER.debug("Response received: %s", str(response))
+
+    async def set_camera_privacy_mode(
+        self, panel_id: int, device_id: int, state: bool
+    ) -> None:
+        """Set the camera privacy mode."""
+        creds = grpc.ssl_channel_credentials()
+        assert (cookie := self._get_session_cookie())
+
+        async with grpc.aio.secure_channel(BEAM_ENDPOINT, credentials=creds) as channel:
+            stub: beam_pb2_grpc.BeamStub = beam_pb2_grpc.BeamStub(channel)  # type: ignore
+            response: beam_pb2.SetCameraPrivacyModeResponse = (
+                await stub.SetCameraPrivacyMode(
+                    beam_pb2.SetCameraPrivacyModeRequest(  # pylint: disable=no-member
+                        panel_id=panel_id,
+                        device_id=device_id,
+                        privacy_mode=state,
+                    ),
+                    metadata=[("session", cookie.value)],
+                )
             )
 
         _LOGGER.debug("Response received: %s", str(response))
@@ -460,13 +475,13 @@ class VivintSkyApi:
         if self.__client_session.closed:
             raise VivintSkyApiError("The client session has been closed")
 
-        is_mfa_request = path == VIVINT_MFA_ENDPOINT
+        is_mfa_request = path == MFA_ENDPOINT
 
         if self.__mfa_pending and not is_mfa_request:
             raise VivintSkyApiMfaRequiredError(AuthenticationResponse.MFA_REQUIRED)
 
         resp = await method(
-            path if is_mfa_request else f"{VIVINT_API_ENDPOINT}/{path}",
+            path if is_mfa_request else f"{API_ENDPOINT}/{path}",
             headers=headers,
             params=params,
             data=data,

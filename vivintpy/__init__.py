@@ -1,2 +1,2 @@
 """Provide a package for vivintpy."""
-__version__ = "2023.3.2"
+__version__ = "2023.3.3"
