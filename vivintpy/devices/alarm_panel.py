@@ -52,9 +52,15 @@ class AlarmPanel(VivintDevice):
         return f"<{self.__class__.__name__} {self.id}, {self.name}: {self.state.name}>"
 
     @property
+    def api(self) -> VivintSkyApi:
+        """Return the API."""
+        return self.system.api
+
+    @property
     def vivintskyapi(self) -> VivintSkyApi:
         """Instance of VivitSkyApi."""
-        return self.system.vivintskyapi
+        send_deprecation_warning("vivintskyapi", "api")
+        return self.api
 
     @property
     def id(self) -> int:
@@ -123,12 +129,12 @@ class AlarmPanel(VivintDevice):
     async def set_armed_state(self, state: int) -> None:
         """Set the armed state for a panel."""
         _LOGGER.debug("Setting %s to %s", self.name, ArmedState(state).name)
-        await self.vivintskyapi.set_alarm_state(self.id, self.partition_id, state)
+        await self.api.set_alarm_state(self.id, self.partition_id, state)
 
     async def trigger_alarm(self) -> None:
         """Trigger an alarm."""
         _LOGGER.debug("Triggering an alarm on %s", self.name)
-        await self.vivintskyapi.trigger_alarm(self.id, self.partition_id)
+        await self.api.trigger_alarm(self.id, self.partition_id)
 
     async def disarm(self) -> None:
         """Disarm the alarm."""
@@ -145,14 +151,19 @@ class AlarmPanel(VivintDevice):
     async def get_panel_credentials(self) -> dict:
         """Get the panel credentials."""
         if not self.__panel_credentials:
-            self.__panel_credentials = await self.vivintskyapi.get_panel_credentials(
-                self.id
-            )
+            self.__panel_credentials = await self.api.get_panel_credentials(self.id)
         return self.__panel_credentials
 
     async def get_software_update_details(self) -> dict[str, bool | str]:
         """Get the software update details."""
-        details = await self.vivintskyapi.get_system_update(self.id)
+        if not self.system.is_admin:
+            _LOGGER.warning(
+                "%s - Cannot get software update details as user is not an admin",
+                self.name,
+            )
+            details = {}
+        else:
+            details = await self.api.get_system_update(self.id)
         return {
             "available": details.get(PanelUpdateAttribute.AVAILABLE, False),
             "available_version": details.get(
@@ -164,16 +175,26 @@ class AlarmPanel(VivintDevice):
 
     async def update_software(self) -> bool:
         """Update the panel software version."""
+        if not self.system.is_admin:
+            _LOGGER.warning(
+                "%s - Cannot update software as user is not an admin", self.name
+            )
+            return False
         try:
-            await self.vivintskyapi.update_panel_software(self.id)
+            await self.api.update_panel_software(self.id)
         except VivintSkyApiError as err:
-            _LOGGER.error("%s for %s", err, self.name)
+            _LOGGER.error("%s - %s", self.name, err)
             return False
         return True
 
     async def reboot(self) -> None:
         """Reboot the panel."""
-        await self.vivintskyapi.reboot_panel(self.id)
+        if not self.system.is_admin:
+            _LOGGER.warning(
+                "%s - Cannot reboot panel as user is not an admin", self.name
+            )
+            return
+        await self.api.reboot_panel(self.id)
 
     def get_devices(
         self, device_types: set[Type[VivintDevice]] | None = None
@@ -272,7 +293,7 @@ class AlarmPanel(VivintDevice):
                 await asyncio.sleep(1)
                 if device.id in self.unregistered_devices:
                     return
-            resp = await self.vivintskyapi.get_device_data(self.id, device_id)
+            resp = await self.api.get_device_data(self.id, device_id)
             data = resp[SystemAttribute.SYSTEM][SystemAttribute.PARTITION][0]
             self.refresh(data, new_device=True)
             self.emit(DEVICE_DISCOVERED, {"device": device})

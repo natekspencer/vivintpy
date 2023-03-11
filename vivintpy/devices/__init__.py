@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Type
 from ..const import VivintDeviceAttribute as Attribute
 from ..entity import Entity
 from ..enums import CapabilityCategoryType, CapabilityType, DeviceType, ZoneBypass
+from ..utils import send_deprecation_warning
 from ..vivintskyapi import VivintSkyApi
 from ..zjs_device_config_db import get_zwave_device_info
 
@@ -64,6 +65,12 @@ class VivintDevice(Entity):
     def __repr__(self) -> str:
         """Return custom __repr__ of device."""
         return f"<{self.__class__.__name__} {self.id}, {self.name}>"
+
+    @property
+    def api(self) -> VivintSkyApi:
+        """Return the API."""
+        assert self.alarm_panel, """no alarm panel set for this device"""
+        return self.alarm_panel.system.api
 
     @property
     def id(self) -> int:  # pylint: disable=invalid-name
@@ -167,8 +174,8 @@ class VivintDevice(Entity):
     @property
     def vivintskyapi(self) -> VivintSkyApi:
         """Instance of VivintSkyApi."""
-        assert self.alarm_panel, """no alarm panel set for this device"""
-        return self.alarm_panel.system.vivintskyapi
+        send_deprecation_warning("vivintskyapi", "api")
+        return self.api
 
     def get_zwave_details(self) -> None:
         """Get Z-Wave details."""
