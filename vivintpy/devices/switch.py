@@ -37,7 +37,7 @@ class Switch(VivintDevice):
     ) -> None:
         """Set switch's state."""
         assert self.alarm_panel
-        await self.vivintskyapi.set_switch_state(
+        await self.api.set_switch_state(
             self.alarm_panel.id, self.alarm_panel.partition_id, self.id, on, level
         )
 

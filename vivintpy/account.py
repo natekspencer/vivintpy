@@ -19,7 +19,7 @@ from .const import (
 from .exceptions import VivintSkyApiError
 from .pubnub import PN_CHANNEL, PN_SUBSCRIBE_KEY, VivintPubNubSubscribeListener
 from .system import System
-from .utils import first_or_none
+from .utils import first_or_none, send_deprecation_warning
 from .vivintskyapi import VivintSkyApi
 
 _LOGGER = logging.getLogger(__name__)
@@ -40,13 +40,24 @@ class Account:
         self.__load_devices = False
         self.__pubnub: PubNubAsyncio | None = None
         self.__pubnub_listener: VivintPubNubSubscribeListener | None = None
-        self.vivintskyapi = VivintSkyApi(
+        self._api = VivintSkyApi(
             username=username,
             password=password,
             persist_session=persist_session,
             client_session=client_session,
         )
         self.systems: list[System] = []
+
+    @property
+    def api(self) -> VivintSkyApi:
+        """Return the API."""
+        return self._api
+
+    @property
+    def vivintskyapi(self) -> VivintSkyApi:
+        """Return the API."""
+        send_deprecation_warning("vivintskyapi", "api")
+        return self.api
 
     @property
     def connected(self) -> bool:
@@ -62,7 +73,7 @@ class Account:
         self.__load_devices = load_devices
 
         # initialize the vivintsky cloud session
-        authuser_data = await self.vivintskyapi.connect()
+        authuser_data = await self.api.connect()
         self.__connected = True
 
         # subscribe to pubnub for realtime updates
@@ -83,7 +94,7 @@ class Account:
                 self.__pubnub.remove_listener(self.__pubnub_listener)
                 await self.__pubnub_unsubscribe_all()
                 await self.__pubnub.stop()
-        await self.vivintskyapi.disconnect()
+        await self.api.disconnect()
         self.__connected = False
 
     async def __pubnub_unsubscribe_all(self) -> None:
@@ -105,7 +116,7 @@ class Account:
 
     async def verify_mfa(self, code: str) -> None:
         """Verify multi-factor authentication with the VivintSky API."""
-        await self.vivintskyapi.verify_mfa(code)
+        await self.api.verify_mfa(code)
 
         # load all systems, panels and devices
         if self.__load_devices:
@@ -117,7 +128,7 @@ class Account:
         # make a call to vivint's authuser endpoint to get a list of all the system_accounts (locations) & panels if not supplied
         if not authuser_data:
             try:
-                authuser_data = await self.vivintskyapi.get_authuser_data()
+                authuser_data = await self.api.get_authuser_data()
             except (ClientConnectionError, VivintSkyApiError):
                 _LOGGER.error("Unable to refresh system(s)")
 
@@ -135,14 +146,15 @@ class Account:
                 if system:
                     await system.refresh()
                 else:
-                    full_system_data = await self.vivintskyapi.get_system_data(
+                    full_system_data = await self.api.get_system_data(
                         system_data[SystemAttribute.PANEL_ID]
                     )
                     self.systems.append(
                         System(
-                            system_data.get(SystemAttribute.SYSTEM_NICKNAME),
-                            full_system_data,
-                            self.vivintskyapi,
+                            data=full_system_data,
+                            api=self.api,
+                            name=system_data.get(SystemAttribute.SYSTEM_NICKNAME),
+                            is_admin=system_data.get(SystemAttribute.ADMIN, False),
                         )
                     )
 
@@ -157,7 +169,7 @@ class Account:
         """Subscribe to PubNub for realtime updates."""
         # make a call to vivint's authuser endpoint to get message broadcast channel if not supplied
         if not authuser_data:
-            authuser_data = await self.vivintskyapi.get_authuser_data()
+            authuser_data = await self.api.get_authuser_data()
 
         user_data = authuser_data[AuthUserAttribute.USERS]
 

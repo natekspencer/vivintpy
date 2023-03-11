@@ -119,7 +119,7 @@ class Camera(VivintDevice):
 
     async def request_thumbnail(self) -> None:
         """Request a new thumbnail for the camera."""
-        await self.vivintskyapi.request_camera_thumbnail(
+        await self.api.request_camera_thumbnail(
             self.alarm_panel.id, self.alarm_panel.partition_id, self.id
         )
 
@@ -133,7 +133,7 @@ class Camera(VivintDevice):
         )
         thumbnail_timestamp = int(camera_thumbnail_date.timestamp() * 1000)
 
-        return await self.vivintskyapi.get_camera_thumbnail_url(
+        return await self.api.get_camera_thumbnail_url(
             self.alarm_panel.id,
             self.alarm_panel.partition_id,
             self.id,
@@ -161,15 +161,18 @@ class Camera(VivintDevice):
 
     async def set_as_doorbell_chime_extender(self, state: bool) -> None:
         """Set use as doorbell chime extender."""
-        await self.vivintskyapi.set_camera_as_doorbell_chime_extender(
+        await self.api.set_camera_as_doorbell_chime_extender(
             self.alarm_panel.id, self.id, state
         )
 
     async def set_privacy_mode(self, state: bool) -> None:
         """Set privacy mode."""
-        await self.vivintskyapi.set_camera_privacy_mode(
-            self.alarm_panel.id, self.id, state
-        )
+        if not self.alarm_panel.system.is_admin:
+            _LOGGER.warning(
+                "%s - Cannot set privacy mode as user is not an admin", self.name
+            )
+            return
+        await self.api.set_camera_privacy_mode(self.alarm_panel.id, self.id, state)
 
     def handle_pubnub_message(self, message: dict) -> None:
         """Handle a pubnub message addressed to this camera."""

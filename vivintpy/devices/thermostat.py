@@ -90,6 +90,6 @@ class Thermostat(VivintDevice):
     async def set_state(self, **kwargs: Any) -> None:
         """Set the state of the thermostat."""
         assert self.alarm_panel
-        await self.vivintskyapi.set_thermostat_state(
+        await self.api.set_thermostat_state(
             self.alarm_panel.id, self.alarm_panel.partition_id, self.id, **kwargs
         )

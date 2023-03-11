@@ -81,7 +81,7 @@ class WirelessSensor(BypassTamperDevice, VivintDevice):
 
     async def set_bypass(self, bypass: bool) -> None:
         """Bypass/unbypass the sensor."""
-        await self.vivintskyapi.set_sensor_state(
+        await self.api.set_sensor_state(
             self.alarm_panel.id, self.alarm_panel.partition_id, self.id, bypass
         )
 

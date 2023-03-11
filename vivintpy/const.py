@@ -64,6 +64,7 @@ class PanelUpdateAttribute:
 class SystemAttribute:
     """System attributes."""
 
+    ADMIN = "ad"
     PANEL_ID = "panid"
     PARTITION = "par"
     PARTITION_ID = "parid"

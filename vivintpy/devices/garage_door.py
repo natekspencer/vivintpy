@@ -52,7 +52,7 @@ class GarageDoor(VivintDevice):
     async def set_state(self, state: int) -> None:
         """Set garage door's state."""
         assert self.alarm_panel
-        await self.vivintskyapi.set_garage_door_state(
+        await self.api.set_garage_door_state(
             self.alarm_panel.id, self.alarm_panel.partition_id, self.id, state
         )
 
