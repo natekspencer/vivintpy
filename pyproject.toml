@@ -14,7 +14,7 @@ python = "^3.7.2"
 aiohttp = "^3.8.4"
 certifi = "^2022.9.24"
 pubnub = "^7.0"
-grpcio = "1.51.1"
+grpcio = "1.54.2"
 protobuf = "^4.22.1"
 
 [tool.poetry.dev-dependencies]
