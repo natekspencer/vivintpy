@@ -105,12 +105,12 @@ class Camera(VivintDevice):
     @property
     def is_in_privacy_mode(self) -> bool:
         """Return True if privacy mode is active."""
-        return bool(self.data[Attribute.DETER_ON_DUTY])
+        return bool(self.data[Attribute.CAMERA_PRIVACY])
     
     @property
     def is_in_deter_mode(self) -> bool:
         """Return True if deter mode is active."""
-        return bool(self.data[Attribute.CAMERA_])
+        return bool(self.data[Attribute.DETER_ON_DUTY])
 
     @property
     def is_online(self) -> bool:
