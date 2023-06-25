@@ -221,6 +221,28 @@ class VivintSkyApi:
 
         _LOGGER.debug("Response received: %s", str(response))
 
+    async def set_camera_deter_mode(
+        self, panel_id: int, device_id: int, state: bool
+    ) -> None:
+        """Set the camera deter mode."""
+        creds = grpc.ssl_channel_credentials()
+        assert (cookie := self._get_session_cookie())
+
+        async with grpc.aio.secure_channel(BEAM_ENDPOINT, credentials=creds) as channel:
+            stub: beam_pb2_grpc.BeamStub = beam_pb2_grpc.BeamStub(channel)  # type: ignore
+            response: beam_pb2.SetDeterOverrideResponse = (
+                await stub.SetDeterOverride(
+                    beam_pb2.SetDeterOverrideRequest( # pylint: disable=no-member
+                        panel_id=panel_id,
+                        device_id=device_id,
+                        enabled=state
+                    ),
+                    metadata=[("session", cookie.value)],
+                )
+            )
+
+        _LOGGER.debug("Response received: %s", str(response))
+
     async def set_garage_door_state(
         self, panel_id: int, partition_id: int, device_id: int, state: int
     ) -> None:
