@@ -67,11 +67,11 @@ class VivintDevice(Entity):
             else None
         )
         self._features = (
-            {
-                FeatureType(feature): True
+            [
+                FeatureType(feature)
                 for feature in feats
                 if feats.get(feature) is True
-            }
+            ]
             if (feats := data.get(Attribute.FEATURES)) is not None
             else None
         )
@@ -126,7 +126,7 @@ class VivintDevice(Entity):
     @property
     def features(
         self,
-    ) -> dict[FeatureType, bool] | None:
+    ) -> list[FeatureType] | None:
         """Device Features."""
         return self._features
 
