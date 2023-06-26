@@ -67,11 +67,7 @@ class VivintDevice(Entity):
             else None
         )
         self._features = (
-            [
-                FeatureType(feature)
-                for feature in feats
-                if feats.get(feature) is True
-            ]
+            [FeatureType(feature) for feature in feats if feats.get(feature) is True]
             if (feats := data.get(Attribute.FEATURES)) is not None
             else None
         )
