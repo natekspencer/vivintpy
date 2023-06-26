@@ -99,6 +99,7 @@ class VivintDeviceAttribute:
     BYPASSED = "b"
     CAPABILITY = "ca"
     CAPABILITY_CATEGORY = "caca"
+    FEATURES = "fea"
     CURRENT_SOFTWARE_VERSION = "csv"
     FIRMWARE_VERSION = "fwv"
     HIDDEN = "hidden"

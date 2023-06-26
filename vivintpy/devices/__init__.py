@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Type
 
 from ..const import VivintDeviceAttribute as Attribute
 from ..entity import Entity
-from ..enums import CapabilityCategoryType, CapabilityType, DeviceType, ZoneBypass
+from ..enums import CapabilityCategoryType, CapabilityType, DeviceType, ZoneBypass, FeatureType
 from ..utils import send_deprecation_warning
 from ..vivintskyapi import VivintSkyApi
 from ..zjs_device_config_db import get_zwave_device_info
@@ -60,6 +60,14 @@ class VivintDevice(Entity):
             if (caca := data.get(Attribute.CAPABILITY_CATEGORY)) is not None
             else None
         )
+        self._features = (
+            {
+                FeatureType(feature): feats.get(feature)
+                for feature in feats
+            }
+            if (feats := data.get(Attribute.FEATURES)) is not None
+            else None
+        )
         self._parent: VivintDevice | None = None
 
     def __repr__(self) -> str:
@@ -102,6 +110,13 @@ class VivintDevice(Entity):
     ) -> dict[CapabilityCategoryType, list[CapabilityType]] | None:
         """Device capabilities."""
         return self._capabilities
+    
+    @property
+    def features(
+        self,
+    ) -> dict[str, bool] | None:
+        """Device Features."""
+        return self._features
 
     @property
     def device_type(self) -> DeviceType:
