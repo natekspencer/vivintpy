@@ -56,23 +56,7 @@ class CapabilityCategoryType(IntEnum):
     def _missing_(cls, value: object) -> CapabilityCategoryType:
         _LOGGER.debug("Unknown capability category type value: %s", value)
         return cls.UNKNOWN
-    
 
-class FeatureType(Enum):
-    DYNAMIC_CHIMES = "dynamic_chimes_available"
-    VIDEO_THUMBNAILS = "video_thumbnails"
-    RB = "rb"
-    RST_DEF = "rstdef"
-    NGHT = "nght"
-    PACKAGE_WATCH = "package_watch"
-    DETER = "deter"
-
-    UKNOWN = "unknown"
-
-    @classmethod
-    def _missing_(cls, value: object) -> FeatureType:
-        _LOGGER.debug("Unknown feature type value: %s", value)
-        return cls.UKNOWN
 
 class CapabilityType(IntEnum):
     """Capability type."""
@@ -346,6 +330,25 @@ class FanMode(IntEnum):
     def _missing_(cls, value: Any) -> FanMode:
         _LOGGER.debug("Unknown fan mode value: %s", value)
         return cls.UNKNOWN
+
+
+class FeatureType(Enum):
+    """Feature type."""
+
+    DETER = "deter"
+    DYNAMIC_CHIMES = "dynamic_chimes_available"
+    PACKAGE_WATCH = "package_watch"
+    REBOOT = "rb"
+    RESTORE_DEFAULTS = "rstdef"
+    SELECTABLE_NIGHTVISION = "nght"
+    VIDEO_THUMBNAILS = "video_thumbnails"
+
+    UKNOWN = "unknown"
+
+    @classmethod
+    def _missing_(cls, value: object) -> FeatureType:
+        _LOGGER.debug("Unknown feature type value: %s", value)
+        return cls.UKNOWN
 
 
 @unique

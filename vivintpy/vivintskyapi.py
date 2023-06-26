@@ -232,7 +232,7 @@ class VivintSkyApi:
             stub: beam_pb2_grpc.BeamStub = beam_pb2_grpc.BeamStub(channel)  # type: ignore
             response: beam_pb2.SetDeterOverrideResponse = (
                 await stub.SetDeterOverride(
-                    beam_pb2.SetDeterOverrideRequest( # pylint: disable=no-member
+                    beam_pb2.SetDeterOverrideRequest(    # pylint: disable=no-member
                         panel_id=panel_id,
                         device_id=device_id,
                         enabled=state
