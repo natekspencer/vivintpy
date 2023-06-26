@@ -100,6 +100,7 @@ class VivintDeviceAttribute:
     CAPABILITY = "ca"
     CAPABILITY_CATEGORY = "caca"
     CURRENT_SOFTWARE_VERSION = "csv"
+    FEATURES = "fea"
     FIRMWARE_VERSION = "fwv"
     HIDDEN = "hidden"
     ID = "_id"

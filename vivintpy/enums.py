@@ -332,6 +332,25 @@ class FanMode(IntEnum):
         return cls.UNKNOWN
 
 
+class FeatureType(Enum):
+    """Feature type."""
+
+    DETER = "deter"
+    DYNAMIC_CHIMES = "dynamic_chimes_available"
+    PACKAGE_WATCH = "package_watch"
+    REBOOT = "rb"
+    RESTORE_DEFAULTS = "rstdef"
+    SELECTABLE_NIGHTVISION = "nght"
+    VIDEO_THUMBNAILS = "video_thumbnails"
+
+    UKNOWN = "unknown"
+
+    @classmethod
+    def _missing_(cls, value: object) -> FeatureType:
+        _LOGGER.debug("Unknown feature type value: %s", value)
+        return cls.UKNOWN
+
+
 @unique
 class GarageDoorState(IntEnum):
     """Garage door state."""

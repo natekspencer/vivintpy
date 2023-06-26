@@ -98,6 +98,11 @@ class Camera(VivintDevice):
         return str(self.data[Attribute.CAMERA_IP_ADDRESS])
 
     @property
+    def is_in_deter_mode(self) -> bool:
+        """Return True if deter mode is active."""
+        return bool(self.data[Attribute.DETER_ON_DUTY])
+
+    @property
     def mac_address(self) -> str:
         """Camera's MAC Address."""
         return str(self.data[Attribute.CAMERA_MAC])
@@ -173,6 +178,15 @@ class Camera(VivintDevice):
             )
             return
         await self.api.set_camera_privacy_mode(self.alarm_panel.id, self.id, state)
+
+    async def set_deter_mode(self, state: bool) -> None:
+        """Set deter mode."""
+        if not self.alarm_panel.system.is_admin:
+            _LOGGER.warning(
+                "%s - Cannot set deter mode as user is not an admin", self.name
+            )
+            return
+        await self.api.set_camera_deter_mode(self.alarm_panel.id, self.id, state)
 
     def handle_pubnub_message(self, message: dict) -> None:
         """Handle a pubnub message addressed to this camera."""
