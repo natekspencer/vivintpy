@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "vivintpy"
-version = "2023.3.3"
+version = "0.0.0"
 description = "Python library for interacting with a Vivint security and smart home system."
 authors = ["Nathan Spencer <natekspencer@gmail.com>"]
 license = "MIT"
@@ -17,7 +17,7 @@ pubnub = "^7.0"
 grpcio = "1.56.0"
 protobuf = "^4.22.1"
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
 tox = "^3.28.0"
 pytest = "^7.2.2"
 pytest-asyncio = "^0.21.0"
@@ -31,6 +31,12 @@ pydocstyle = "^6.3.0"
 pylint = "^2.17.4"
 grpcio-tools = "1.51.1"
 
+[tool.poetry-dynamic-versioning]
+enable = true
+vcs = "git"
+style = "semver"
+pattern = "default-unprefixed"
+
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning"]
+build-backend = "poetry_dynamic_versioning.backend"

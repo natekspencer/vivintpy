@@ -120,9 +120,7 @@ class VivintDevice(Entity):
         return DeviceType(self.data.get(Attribute.TYPE))
 
     @property
-    def features(
-        self,
-    ) -> list[FeatureType] | None:
+    def features(self) -> list[FeatureType] | None:
         """Device Features."""
         return self._features
 
