@@ -11,7 +11,7 @@ keywords = ["Vivint", "alarm system", "security", "smart home", "home automation
 
 [tool.poetry.dependencies]
 python = "^3.8.1"
-aiohttp = "^3.8.4"
+aiohttp = "^3.8.5"
 certifi = ">=2022.9.24,<2024.0.0"
 pubnub = "^7.0"
 grpcio = "^1.51.1"
