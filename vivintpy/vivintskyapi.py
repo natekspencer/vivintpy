@@ -31,7 +31,7 @@ from .proto import beam_pb2, beam_pb2_grpc
 _LOGGER = logging.getLogger(__name__)
 
 API_ENDPOINT = "https://www.vivintsky.com/api"
-BEAM_ENDPOINT = "beam.vivintsky.com:443"
+GRPC_ENDPOINT = "grpc.vivintsky.com:50051"
 MFA_ENDPOINT = (
     "https://www.vivintsky.com/platform-user-api/v0/platformusers/2fa/validate"
 )
@@ -186,7 +186,7 @@ class VivintSkyApi:
         creds = grpc.ssl_channel_credentials()
         assert (cookie := self._get_session_cookie())
 
-        async with grpc.aio.secure_channel(BEAM_ENDPOINT, credentials=creds) as channel:
+        async with grpc.aio.secure_channel(GRPC_ENDPOINT, credentials=creds) as channel:
             stub: beam_pb2_grpc.BeamStub = beam_pb2_grpc.BeamStub(channel)  # type: ignore
             response: beam_pb2.SetUseAsDoorbellChimeExtenderResponse = await stub.SetUseAsDoorbellChimeExtender(
                 beam_pb2.SetUseAsDoorbellChimeExtenderRequest(  # pylint: disable=no-member
@@ -206,7 +206,7 @@ class VivintSkyApi:
         creds = grpc.ssl_channel_credentials()
         assert (cookie := self._get_session_cookie())
 
-        async with grpc.aio.secure_channel(BEAM_ENDPOINT, credentials=creds) as channel:
+        async with grpc.aio.secure_channel(GRPC_ENDPOINT, credentials=creds) as channel:
             stub: beam_pb2_grpc.BeamStub = beam_pb2_grpc.BeamStub(channel)  # type: ignore
             response: beam_pb2.SetCameraPrivacyModeResponse = (
                 await stub.SetCameraPrivacyMode(
@@ -228,7 +228,7 @@ class VivintSkyApi:
         creds = grpc.ssl_channel_credentials()
         assert (cookie := self._get_session_cookie())
 
-        async with grpc.aio.secure_channel(BEAM_ENDPOINT, credentials=creds) as channel:
+        async with grpc.aio.secure_channel(GRPC_ENDPOINT, credentials=creds) as channel:
             stub: beam_pb2_grpc.BeamStub = beam_pb2_grpc.BeamStub(channel)  # type: ignore
             response: beam_pb2.SetDeterOverrideResponse = await stub.SetDeterOverride(
                 beam_pb2.SetDeterOverrideRequest(  # pylint: disable=no-member
@@ -506,6 +506,8 @@ class VivintSkyApi:
             allow_redirects=allow_redirects,
         )
         async with resp:
+            if not resp.ok and resp.content_type != "application/json":
+                resp.raise_for_status()
             resp_data: dict = await resp.json(encoding="utf-8")
             if resp.status == 200:
                 return resp_data
