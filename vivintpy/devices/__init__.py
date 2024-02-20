@@ -18,13 +18,6 @@ from ..zjs_device_config_db import get_zwave_device_info
 
 if TYPE_CHECKING:
     from .alarm_panel import AlarmPanel
-
-DEVICE = "device"
-
-
-def get_device_class(device_type: str) -> Type[VivintDevice]:
-    """Map a device_type string to the class that implements that device."""
-    # pylint: disable=import-outside-toplevel
     from .camera import Camera
     from .door_lock import DoorLock
     from .garage_door import GarageDoor
@@ -32,6 +25,11 @@ def get_device_class(device_type: str) -> Type[VivintDevice]:
     from .thermostat import Thermostat
     from .wireless_sensor import WirelessSensor
 
+DEVICE = "device"
+
+
+def get_device_class(device_type: str) -> Type[VivintDevice]:
+    """Map a device_type string to the class that implements that device."""
     mapping: dict[DeviceType, Type[VivintDevice]] = {
         DeviceType.BINARY_SWITCH: BinarySwitch,
         DeviceType.CAMERA: Camera,
