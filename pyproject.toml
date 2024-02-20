@@ -10,7 +10,7 @@ repository = "https://github.com/natekspencer/vivintpy"
 keywords = ["Vivint", "alarm system", "security", "smart home", "home automation", "asynchronous"]
 
 [tool.poetry.dependencies]
-python = "^3.8.1"
+python = "^3.9.0"
 aiohttp = "^3.8.5"
 certifi = ">=2022.9.24,<2024.0.0"
 pubnub = "^7.0"
