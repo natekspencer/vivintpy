@@ -1,7 +1,7 @@
 """This package contains the various devices attached to a Vivint system."""
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Type
+from typing import TYPE_CHECKING, Type, cast
 
 from ..const import VivintDeviceAttribute as Attribute
 from ..entity import Entity
@@ -238,7 +238,7 @@ class BypassTamperDevice(VivintDevice):
     @property
     def is_tampered(self) -> bool:
         """Return True if the device is reporting as tampered."""
-        return self.data.get(Attribute.TAMPER, False)
+        return cast(bool, self.data.get(Attribute.TAMPER, False))
 
 
 class UnknownDevice(VivintDevice):
