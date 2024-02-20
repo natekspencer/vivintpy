@@ -1024,12 +1024,12 @@ files = [
 
 [[package]]
 name = "pubnub"
-version = "7.2.0"
+version = "7.3.0"
 description = "PubNub Real-time push service in the cloud"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "pubnub-7.2.0.tar.gz", hash = "sha256:ed99cc259a3ae8dd3a278e05e30581f9557bcd2b0b7bc13556a88608a8cfd7d3"},
+    {file = "pubnub-7.3.0.tar.gz", hash = "sha256:db42557efd6f0871d2f0ce690077705bf006109a4feeee8ff7395ddfe393ad31"},
 ]
 
 [package.dependencies]
