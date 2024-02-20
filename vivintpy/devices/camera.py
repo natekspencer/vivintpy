@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import logging
 from datetime import datetime
+from typing import cast
 
 from ..const import CameraAttribute as Attribute
 from ..const import PanelCredentialAttribute
@@ -90,7 +91,7 @@ class Camera(VivintDevice):
     @property
     def extend_chime_enabled(self) -> bool:
         """Return True if used as doorbell chime extender."""
-        return self.data.get(Attribute.CAMERA_EXTEND_CHIME_ENABLED, False)
+        return cast(bool, self.data.get(Attribute.CAMERA_EXTEND_CHIME_ENABLED, False))
 
     @property
     def ip_address(self) -> str:
