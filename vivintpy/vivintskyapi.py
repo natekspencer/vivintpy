@@ -188,13 +188,15 @@ class VivintSkyApi:
 
         async with grpc.aio.secure_channel(GRPC_ENDPOINT, credentials=creds) as channel:
             stub: beam_pb2_grpc.BeamStub = beam_pb2_grpc.BeamStub(channel)  # type: ignore
-            response: beam_pb2.SetUseAsDoorbellChimeExtenderResponse = await stub.SetUseAsDoorbellChimeExtender(
-                beam_pb2.SetUseAsDoorbellChimeExtenderRequest(  # pylint: disable=no-member
-                    panel_id=panel_id,
-                    device_id=device_id,
-                    use_as_doorbell_chime_extender=state,
-                ),
-                metadata=[("session", cookie.value)],
+            response: beam_pb2.SetUseAsDoorbellChimeExtenderResponse = (
+                await stub.SetUseAsDoorbellChimeExtender(
+                    beam_pb2.SetUseAsDoorbellChimeExtenderRequest(  # pylint: disable=no-member
+                        panel_id=panel_id,
+                        device_id=device_id,
+                        use_as_doorbell_chime_extender=state,
+                    ),
+                    metadata=[("session", cookie.value)],
+                )
             )
 
         _LOGGER.debug("Response received: %s", str(response))

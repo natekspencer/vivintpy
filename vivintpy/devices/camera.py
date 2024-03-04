@@ -147,7 +147,9 @@ class Camera(VivintDevice):
         )
 
     async def get_rtsp_url(
-        self, internal: bool = False, hd: bool = False  # pylint: disable=invalid-name
+        self,
+        internal: bool = False,
+        hd: bool = False,  # pylint: disable=invalid-name
     ) -> str:
         """Return the rtsp URL for the camera."""
         credentials = await self.alarm_panel.get_panel_credentials()
@@ -155,7 +157,8 @@ class Camera(VivintDevice):
         return f"{url[:7]}{credentials[PanelCredentialAttribute.NAME]}:{credentials[PanelCredentialAttribute.PASSWORD]}@{url[7:]}"
 
     async def get_direct_rtsp_url(
-        self, hd: bool = False  # pylint: disable=invalid-name
+        self,
+        hd: bool = False,  # pylint: disable=invalid-name
     ) -> str | None:
         """Return the direct rtsp url for this camera, in HD if requested, if any."""
         return (
