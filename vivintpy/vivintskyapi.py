@@ -506,7 +506,7 @@ class VivintSkyApi:
             allow_redirects=allow_redirects,
         )
         async with resp:
-            if not resp.ok and resp.content_type != "application/json":
+            if resp.content_type != "application/json":
                 resp_data = {AuthenticationResponse.MESSAGE: await resp.text()}
             else:
                 resp_data = await resp.json(encoding="utf-8")
