@@ -24,7 +24,7 @@ DEVICE = "device"
 
 def get_device_class(device_type: str) -> Type[VivintDevice]:
     """Map a device_type string to the class that implements that device."""
-    # pylint: disable=import-outside-toplevel
+    # pylint: disable=import-outside-toplevel,cyclic-import
     from .camera import Camera
     from .door_lock import DoorLock
     from .garage_door import GarageDoor
