@@ -30,11 +30,8 @@ jobs:
         run: poetry install
       - name: Run linting
         run: |
-          poetry run isort .
-          poetry run black . --check --extend-exclude proto
-          poetry run flake8 .
-          poetry run pylint vivintpy tests
-          poetry run pydocstyle vivintpy tests
+          poetry run ruff check
+          poetry run ruff format --check
       - name: Run mypy
         run: poetry run mypy vivintpy tests
       - name: Test with pytest

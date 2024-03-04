@@ -264,9 +264,8 @@ class AlarmPanel(VivintDevice):
                     # for the sake of consistency, we also need to update the panel's raw data
                     raw_device_data = first_or_none(
                         self.data[Attribute.DEVICES],
-                        lambda raw_device_data, device_data=device_data: raw_device_data[  # type: ignore
-                            "_id"
-                        ]
+                        lambda raw_device_data,  # type: ignore
+                        device_data=device_data: raw_device_data["_id"]
                         == device_data["_id"],
                     )
 
