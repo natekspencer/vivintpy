@@ -1,4 +1,5 @@
 """Module that implements the Switch class."""
+
 from __future__ import annotations
 
 from ..const import SwitchAttribute as Attribute

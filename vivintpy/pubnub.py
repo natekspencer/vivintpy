@@ -1,4 +1,5 @@
 """Module that implements the VivintPubNubSubscribeListener class."""
+
 from __future__ import annotations
 
 import logging
