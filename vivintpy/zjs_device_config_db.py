@@ -1,4 +1,5 @@
 """Script to generate Z-Wave device data."""
+
 from __future__ import annotations
 
 import json

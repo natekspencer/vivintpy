@@ -1,4 +1,5 @@
 """Module that implements the WirelessSensor class."""
+
 from __future__ import annotations
 
 import logging

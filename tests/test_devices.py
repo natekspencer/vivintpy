@@ -1,4 +1,5 @@
 """Test the devices."""
+
 from vivintpy.devices import get_device_class
 from vivintpy.devices.switch import BinarySwitch
 from vivintpy.enums import DeviceType

@@ -1,4 +1,5 @@
 """Test the module version."""
+
 from vivintpy import __version__
 
 

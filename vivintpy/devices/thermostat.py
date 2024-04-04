@@ -1,4 +1,5 @@
 """Module that implements the Thermostat class."""
+
 from __future__ import annotations
 
 import logging

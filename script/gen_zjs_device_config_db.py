@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Generate an updated zjs_device_config_db.json."""
+
 import asyncio
 import json
 import logging
