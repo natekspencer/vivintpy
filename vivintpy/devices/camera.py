@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 from datetime import datetime
+from enum import IntEnum
 from typing import cast
 
 from ..const import CameraAttribute as Attribute
@@ -56,6 +57,19 @@ CAMERA_INFO_MAP = {
     "vivotek_hd400w_camera_device": ("Vivotek", "Outdoor Camera v2 (HD400W)"),
     "vivotek_hdp450_camera_device": ("Vivotek", "Outdoor Camera (HDP450)"),
 }
+
+
+class RtspUrlType(IntEnum):
+    """Helper class for getting a specific RTSP URL.
+
+    DIRECT - Local access through your router
+    PANEL - Local access through your panel
+    EXTERNAL - External access through the Vivint cloud
+    """
+
+    LOCAL = 0
+    PANEL = 1
+    EXTERNAL = 2
 
 
 class Camera(VivintDevice):
@@ -147,27 +161,42 @@ class Camera(VivintDevice):
             thumbnail_timestamp,
         )
 
+    def get_rtsp_access_url(
+        self, access_type: RtspUrlType = RtspUrlType.LOCAL, hd: bool = True
+    ) -> str | None:
+        """Return the rtsp URL for the camera."""
+        if access_type == RtspUrlType.LOCAL:
+            return (
+                f"rtsp://{self.data[Attribute.USERNAME]}:{self.data[Attribute.PASSWORD]}@{self.ip_address}:{self.data[Attribute.CAMERA_IP_PORT]}/{self.data[Attribute.CAMERA_DIRECT_STREAM_PATH if hd else Attribute.CAMERA_DIRECT_STREAM_PATH_STANDARD]}"
+                if self.data[Attribute.CAMERA_DIRECT_AVAILABLE]
+                and self.data.get(Attribute.ACTUAL_TYPE) not in SKIP_DIRECT
+                else None
+            )
+        if not (credentials := self.alarm_panel.credentials):
+            _LOGGER.error(
+                "You must call `get_panel_credentials` before getting the RTSP url via the panel or Vivint cloud."
+            )
+            return None
+        _type = "i" if access_type == RtspUrlType.PANEL else "e"
+        url = self.data[f"c{_type}u{'' if hd else 's'}"][0]
+        return f"{url[:7]}{credentials[PanelCredentialAttribute.NAME]}:{credentials[PanelCredentialAttribute.PASSWORD]}@{url[7:]}"
+
     async def get_rtsp_url(
         self,
         internal: bool = False,
         hd: bool = False,  # pylint: disable=invalid-name
-    ) -> str:
+    ) -> str | None:
         """Return the rtsp URL for the camera."""
-        credentials = await self.alarm_panel.get_panel_credentials()
-        url = self.data[f"c{'i' if internal else 'e'}u{'' if hd else 's'}"][0]
-        return f"{url[:7]}{credentials[PanelCredentialAttribute.NAME]}:{credentials[PanelCredentialAttribute.PASSWORD]}@{url[7:]}"
+        await self.alarm_panel.get_panel_credentials()
+        access_type = RtspUrlType.PANEL if internal else RtspUrlType.EXTERNAL
+        return self.get_rtsp_access_url(access_type, hd)
 
     async def get_direct_rtsp_url(
         self,
         hd: bool = False,  # pylint: disable=invalid-name
     ) -> str | None:
         """Return the direct rtsp url for this camera, in HD if requested, if any."""
-        return (
-            f"rtsp://{self.data[Attribute.USERNAME]}:{self.data[Attribute.PASSWORD]}@{self.ip_address}:{self.data[Attribute.CAMERA_IP_PORT]}/{self.data[Attribute.CAMERA_DIRECT_STREAM_PATH if hd else Attribute.CAMERA_DIRECT_STREAM_PATH_STANDARD]}"
-            if self.data[Attribute.CAMERA_DIRECT_AVAILABLE]
-            and self.data.get(Attribute.ACTUAL_TYPE) not in SKIP_DIRECT
-            else None
-        )
+        return self.get_rtsp_access_url(RtspUrlType.LOCAL, hd)
 
     async def set_as_doorbell_chime_extender(self, state: bool) -> None:
         """Set use as doorbell chime extender."""

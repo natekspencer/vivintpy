@@ -122,6 +122,11 @@ class AlarmPanel(VivintDevice):
         """Return the panel's armed state."""
         return ArmedState(self.data.get(Attribute.STATE))  # type: ignore
 
+    @property
+    def credentials(self) -> dict:
+        """Return the panel credentials."""
+        return self.__panel_credentials
+
     def get_armed_state(self) -> Any:
         """Return the panel's arm state."""
         send_deprecation_warning("method get_armed_state", "property state")
@@ -149,9 +154,9 @@ class AlarmPanel(VivintDevice):
         """Set the alarm to armed away."""
         await self.set_armed_state(ArmedState.ARMED_AWAY)
 
-    async def get_panel_credentials(self) -> dict:
+    async def get_panel_credentials(self, refresh: bool = False) -> dict:
         """Get the panel credentials."""
-        if not self.__panel_credentials:
+        if refresh or not self.__panel_credentials:
             self.__panel_credentials = await self.api.get_panel_credentials(self.id)
         return self.__panel_credentials
 
