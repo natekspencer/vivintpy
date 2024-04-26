@@ -135,6 +135,26 @@ class VivintSkyApi:
         if not await self.__post(f"systems/{panel_id}/system-update"):
             raise VivintSkyApiError("Unable to update panel software")
 
+    async def reboot_camera(
+        self, panel_id: int, device_id: int, device_type: str
+    ) -> None:
+        """Reboot a camera."""
+        creds = grpc.ssl_channel_credentials()
+        assert (cookie := self._get_session_cookie())
+
+        async with grpc.aio.secure_channel(GRPC_ENDPOINT, credentials=creds) as channel:
+            stub: beam_pb2_grpc.BeamStub = beam_pb2_grpc.BeamStub(channel)  # type: ignore
+            response: beam_pb2.RebootCameraResponse = await stub.RebootCamera(
+                beam_pb2.RebootCameraRequest(  # pylint: disable=no-member
+                    panel_id=panel_id,
+                    device_id=device_id,
+                    device_type=device_type,
+                ),
+                metadata=[("session", cookie.value)],
+            )
+
+        _LOGGER.debug("Response received: %s", str(response))
+
     async def reboot_panel(self, panel_id: int) -> None:
         """Reboot a panel."""
         if not await self.__post(f"systems/{panel_id}/reboot-panel"):
