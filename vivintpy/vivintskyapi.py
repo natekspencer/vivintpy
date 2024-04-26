@@ -14,6 +14,7 @@ import certifi
 import grpc
 from aiohttp import ClientResponseError
 from aiohttp.client import _RequestContextManager
+from google.protobuf.message import Message  # type: ignore
 
 from .const import (
     AuthenticationResponse,
@@ -139,21 +140,18 @@ class VivintSkyApi:
         self, panel_id: int, device_id: int, device_type: str
     ) -> None:
         """Reboot a camera."""
-        creds = grpc.ssl_channel_credentials()
-        assert (cookie := self._get_session_cookie())
 
-        async with grpc.aio.secure_channel(GRPC_ENDPOINT, credentials=creds) as channel:
-            stub: beam_pb2_grpc.BeamStub = beam_pb2_grpc.BeamStub(channel)  # type: ignore
-            response: beam_pb2.RebootCameraResponse = await stub.RebootCamera(
+        async def _callback(
+            stub: beam_pb2_grpc.BeamStub, metadata: list[tuple[str, str]]
+        ) -> Message:
+            return await stub.RebootCamera(
                 beam_pb2.RebootCameraRequest(  # pylint: disable=no-member
-                    panel_id=panel_id,
-                    device_id=device_id,
-                    device_type=device_type,
+                    panel_id=panel_id, device_id=device_id, device_type=device_type
                 ),
-                metadata=[("session", cookie.value)],
+                metadata=metadata,
             )
 
-        _LOGGER.debug("Response received: %s", str(response))
+        await self._send_grpc(_callback)
 
     async def reboot_panel(self, panel_id: int) -> None:
         """Reboot a panel."""
@@ -204,63 +202,54 @@ class VivintSkyApi:
         self, panel_id: int, device_id: int, state: bool
     ) -> None:
         """Set the camera to be used as a doorbell chime extender."""
-        creds = grpc.ssl_channel_credentials()
-        assert (cookie := self._get_session_cookie())
 
-        async with grpc.aio.secure_channel(GRPC_ENDPOINT, credentials=creds) as channel:
-            stub: beam_pb2_grpc.BeamStub = beam_pb2_grpc.BeamStub(channel)  # type: ignore
-            response: beam_pb2.SetUseAsDoorbellChimeExtenderResponse = (
-                await stub.SetUseAsDoorbellChimeExtender(
-                    beam_pb2.SetUseAsDoorbellChimeExtenderRequest(  # pylint: disable=no-member
-                        panel_id=panel_id,
-                        device_id=device_id,
-                        use_as_doorbell_chime_extender=state,
-                    ),
-                    metadata=[("session", cookie.value)],
-                )
+        async def _callback(
+            stub: beam_pb2_grpc.BeamStub, metadata: list[tuple[str, str]]
+        ) -> Message:
+            return await stub.SetUseAsDoorbellChimeExtender(
+                beam_pb2.SetUseAsDoorbellChimeExtenderRequest(  # pylint: disable=no-member
+                    panel_id=panel_id,
+                    device_id=device_id,
+                    use_as_doorbell_chime_extender=state,
+                ),
+                metadata=metadata,
             )
 
-        _LOGGER.debug("Response received: %s", str(response))
+        await self._send_grpc(_callback)
 
     async def set_camera_privacy_mode(
         self, panel_id: int, device_id: int, state: bool
     ) -> None:
         """Set the camera privacy mode."""
-        creds = grpc.ssl_channel_credentials()
-        assert (cookie := self._get_session_cookie())
 
-        async with grpc.aio.secure_channel(GRPC_ENDPOINT, credentials=creds) as channel:
-            stub: beam_pb2_grpc.BeamStub = beam_pb2_grpc.BeamStub(channel)  # type: ignore
-            response: beam_pb2.SetCameraPrivacyModeResponse = (
-                await stub.SetCameraPrivacyMode(
-                    beam_pb2.SetCameraPrivacyModeRequest(  # pylint: disable=no-member
-                        panel_id=panel_id,
-                        device_id=device_id,
-                        privacy_mode=state,
-                    ),
-                    metadata=[("session", cookie.value)],
-                )
+        async def _callback(
+            stub: beam_pb2_grpc.BeamStub, metadata: list[tuple[str, str]]
+        ) -> Message:
+            return await stub.SetCameraPrivacyMode(
+                beam_pb2.SetCameraPrivacyModeRequest(  # pylint: disable=no-member
+                    panel_id=panel_id, device_id=device_id, privacy_mode=state
+                ),
+                metadata=metadata,
             )
 
-        _LOGGER.debug("Response received: %s", str(response))
+        await self._send_grpc(_callback)
 
     async def set_camera_deter_mode(
         self, panel_id: int, device_id: int, state: bool
     ) -> None:
         """Set the camera deter mode."""
-        creds = grpc.ssl_channel_credentials()
-        assert (cookie := self._get_session_cookie())
 
-        async with grpc.aio.secure_channel(GRPC_ENDPOINT, credentials=creds) as channel:
-            stub: beam_pb2_grpc.BeamStub = beam_pb2_grpc.BeamStub(channel)  # type: ignore
-            response: beam_pb2.SetDeterOverrideResponse = await stub.SetDeterOverride(
+        async def _callback(
+            stub: beam_pb2_grpc.BeamStub, metadata: list[tuple[str, str]]
+        ) -> Message:
+            return await stub.SetDeterOverride(
                 beam_pb2.SetDeterOverrideRequest(  # pylint: disable=no-member
                     panel_id=panel_id, device_id=device_id, enabled=state
                 ),
-                metadata=[("session", cookie.value)],
+                metadata=metadata,
             )
 
-        _LOGGER.debug("Response received: %s", str(response))
+        await self._send_grpc(_callback)
 
     async def set_garage_door_state(
         self, panel_id: int, partition_id: int, device_id: int, state: int
@@ -551,3 +540,16 @@ class VivintSkyApi:
                 raise VivintSkyApiAuthenticationError(message)
             resp.raise_for_status()
             return None
+
+    async def _send_grpc(
+        self,
+        callback: Callable[[beam_pb2_grpc.BeamStub, list[tuple[str, str]]], Message],
+    ) -> None:
+        """Send gRPC."""
+        creds = grpc.ssl_channel_credentials()
+        assert (cookie := self._get_session_cookie())
+
+        async with grpc.aio.secure_channel(GRPC_ENDPOINT, credentials=creds) as channel:
+            stub: beam_pb2_grpc.BeamStub = beam_pb2_grpc.BeamStub(channel)  # type: ignore
+            response = await callback(stub, [("session", cookie.value)])
+            _LOGGER.debug("Response received: %s", str(response))
