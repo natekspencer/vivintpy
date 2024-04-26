@@ -198,6 +198,12 @@ class Camera(VivintDevice):
         """Return the direct rtsp url for this camera, in HD if requested, if any."""
         return self.get_rtsp_access_url(RtspUrlType.LOCAL, hd)
 
+    async def reboot(self) -> None:
+        """Reboot the camera."""
+        await self.api.reboot_camera(
+            self.alarm_panel.id, self.id, self.device_type.value
+        )
+
     async def set_as_doorbell_chime_extender(self, state: bool) -> None:
         """Set use as doorbell chime extender."""
         await self.api.set_camera_as_doorbell_chime_extender(
