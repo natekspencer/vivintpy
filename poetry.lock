@@ -878,12 +878,12 @@ files = [
 
 [[package]]
 name = "pubnub"
-version = "7.4.4"
+version = "8.0.0"
 description = "PubNub Real-time push service in the cloud"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "pubnub-7.4.4.tar.gz", hash = "sha256:a4765968cca616e09a15bfa1e883d2322def970ef2825ad507cd9eeb2704d4f6"},
+    {file = "pubnub-8.0.0.tar.gz", hash = "sha256:8cd1206f7003c5d9971b12d22171c52bfe925b707e89451edd0c208bb61e4c43"},
 ]
 
 [package.dependencies]
@@ -1263,4 +1263,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9.0"
-content-hash = "47b5bf3ac45d50977981e00becf644a8b9fa4f7b855026f1821a299675223828"
+content-hash = "1f9d027b4f435da5166c920552ec904574220b6a05875361d7ea88bb42de4dcc"
