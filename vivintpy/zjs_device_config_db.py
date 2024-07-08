@@ -4,11 +4,13 @@ from __future__ import annotations
 
 import json
 import os
+from typing import Final
 
-ZJS_DEVICE_CONFIG_DB_FILE = os.path.join(
-    os.path.dirname(__file__), "zjs_device_config_db.json"
-)
-ZJS_DEVICE_DB: dict[str, str | dict[str, str]] = {}
+with open(
+    os.path.join(os.path.dirname(__file__), "zjs_device_config_db.json"),
+    encoding="utf8",
+) as file:
+    ZJS_DEVICE_DB: Final[dict[str, str | dict[str, str]]] = json.load(file)
 
 
 def get_zwave_device_info(
@@ -16,15 +18,6 @@ def get_zwave_device_info(
 ) -> dict[str, str]:
     """Lookup the Z-Wave device based on the manufacturer id, product type and product id."""
     key = f"0x{manufacturer_id:04x}:0x{product_type:04x}:0x{product_id:04x}"
-    if isinstance((device_info := _get_zjs_db().get(key)), dict):
+    if isinstance((device_info := ZJS_DEVICE_DB.get(key)), dict):
         return device_info
     return {}
-
-
-def _get_zjs_db() -> dict[str, str | dict[str, str]]:
-    """Load the Z-Wave JS device config from the saved JSON file."""
-    global ZJS_DEVICE_DB  # pylint: disable=global-statement
-    if not ZJS_DEVICE_DB:
-        with open(ZJS_DEVICE_CONFIG_DB_FILE, encoding="utf-8") as device_file:
-            ZJS_DEVICE_DB = json.load(device_file)
-    return ZJS_DEVICE_DB

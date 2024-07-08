@@ -46,7 +46,7 @@
   },
   "0x0000:0x0004:0x0004": {
     "description": "USB Controller",
-    "label": "700 Series",
+    "label": "700/800 Series",
     "manufacturer": "Silicon Labs"
   },
   "0x0001:0x4243:0x0000": {
@@ -390,7 +390,7 @@
     "manufacturer": "HomeSeer Technologies"
   },
   "0x000c:0x0004:0x0001": {
-    "description": "Z-Wave Multi Sensorr",
+    "description": "Z-Wave Multi Sensor",
     "label": "HS-HSM200",
     "manufacturer": "HomeSeer Technologies"
   },
@@ -427,6 +427,11 @@
   "0x000c:0x0203:0x0001": {
     "description": "Scene Capable Fan Control Switch",
     "label": "HS-FC200+",
+    "manufacturer": "HomeSeer Technologies"
+  },
+  "0x000c:0x0204:0x0002": {
+    "description": "Z-Wave Presence Sensor",
+    "label": "HS-PS100",
     "manufacturer": "HomeSeer Technologies"
   },
   "0x000c:0x4447:0x3031": {
@@ -812,6 +817,16 @@
   "0x001d:0x0038:0x0002": {
     "description": "4 Speed Fan Controller",
     "label": "ZW4SF",
+    "manufacturer": "Leviton"
+  },
+  "0x001d:0x0041:0x0002": {
+    "description": "Decora Smart 800 Series Dimmer",
+    "label": "ZW6HD",
+    "manufacturer": "Leviton"
+  },
+  "0x001d:0x0042:0x0002": {
+    "description": "Decora Smart 800 Series Switch",
+    "label": "ZW15S",
     "manufacturer": "Leviton"
   },
   "0x001d:0x0101:0x0328": {
@@ -2428,6 +2443,16 @@
     "description": "In-Wall Toggle Switch, 120+277, QFSW, 700S",
     "label": "59338 / ZWA4012DV",
     "manufacturer": "Enbrighten"
+  },
+  "0x0063:0x4952:0x3333": {
+    "description": "In-Wall Paddle Switch, QFSW, 700S",
+    "label": "58433 / 59344 / ZWA4011",
+    "manufacturer": "Enbrighten"
+  },
+  "0x0063:0x4952:0x3334": {
+    "description": "In-Wall Toggle Switch, QFSW, 700S",
+    "label": "59368 / ZWA4012",
+    "manufacturer": "UltraPro"
   },
   "0x0063:0x4952:0x3339": {
     "description": "In-Wall Outlet, TR, 700S",
@@ -5109,6 +5134,11 @@
     "label": "YRD210",
     "manufacturer": "Yale"
   },
+  "0x0109:0x0004:0xffff": {
+    "description": "Push Button Deadbolt",
+    "label": "YRD210",
+    "manufacturer": "Yale"
+  },
   "0x0109:0x1001:0x0101": {
     "description": "USB Dongle",
     "label": "ZU1401",
@@ -5897,6 +5927,11 @@
   "0x010f:0x0303:0x4000": {
     "description": "Roller Shutter 3",
     "label": "FGR223",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0304:0x1000": {
+    "description": "Roller Shutter 4",
+    "label": "FGR-224",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0400:0x0102": {
@@ -12525,6 +12560,11 @@
     "label": "ZEN34",
     "manufacturer": "Zooz"
   },
+  "0x027a:0x7000:0xf003": {
+    "description": "Wall Remote",
+    "label": "ZEN37 800LR",
+    "manufacturer": "Zooz"
+  },
   "0x027a:0xa000:0xa001": {
     "description": "Z-Wave Plus S2 ON/OFF Switch",
     "label": "ZEN26",
@@ -14396,6 +14436,11 @@
     "label": "ZWA012",
     "manufacturer": "Aeotec Ltd."
   },
+  "0x0371:0x0202:0x0018": {
+    "description": "MultiSensor 7",
+    "label": "ZWA024",
+    "manufacturer": "Aeotec Ltd."
+  },
   "0x0371:0x0202:0x0029": {
     "description": "Door/Window Sensor 7",
     "label": "ZWA011",
@@ -15351,5 +15396,5 @@
     "label": "BW8120",
     "manufacturer": "Remotec"
   },
-  "updated_at": "2024-04-06T22:22:20.961929"
+  "updated_at": "2024-07-08T02:36:24.368049"
 }
