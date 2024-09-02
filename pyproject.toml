@@ -20,12 +20,12 @@ protobuf = "^4.23.1"
 [tool.poetry.group.dev.dependencies]
 tox = ">=3.28,<5.0"
 pytest = ">=7.2.2,<9.0.0"
-pytest-asyncio = ">=0.21,<0.24"
+pytest-asyncio = ">=0.21,<0.25"
 pytest-cov = ">=4,<6"
 pytest-timeout = "^2.1.0"
 mypy = "^1.4"
-grpcio-tools = "1.62.2"
-ruff = ">=0.5.0,<0.6"
+grpcio-tools = "1.62.3"
+ruff = ">=0.5.0,<0.7"
 
 [tool.poetry-dynamic-versioning]
 enable = true
