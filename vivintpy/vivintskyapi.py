@@ -77,6 +77,7 @@ class VivintSkyApi:
     async def connect(self) -> dict:
         """Connect to VivintSky Cloud Service."""
         if not (self.__has_custom_client_session and self.is_session_valid()):
+            assert self.__password
             await self.__get_vivintsky_session(self.__username, self.__password)
         authuser_data = await self.get_authuser_data()
         if not authuser_data:
@@ -105,6 +106,7 @@ class VivintSkyApi:
         )
         if resp and "url" in resp:
             resp = await self.__get(path=f"{AUTH_ENDPOINT}{resp['url']}")
+            assert resp
 
             if "location" in resp:
                 query = urllib.parse.urlparse(resp["location"]).query
@@ -501,6 +503,7 @@ class VivintSkyApi:
             },
             allow_redirects=False,
         )
+        assert resp
 
         if "location" in resp and redirect_uri in resp["location"]:
             query = urllib.parse.urlparse(resp["location"]).query
@@ -517,6 +520,7 @@ class VivintSkyApi:
             },
             data=json.dumps({"username": username, "password": password}),
         )
+        assert resp
 
         # Check for TOTP/MFA requirement
         if "validate" in resp:
@@ -648,6 +652,7 @@ class VivintSkyApi:
     ) -> None:
         """Send gRPC."""
         assert self.is_session_valid()
+        assert self.__token
         creds = grpc.ssl_channel_credentials()
 
         async with grpc.aio.secure_channel(GRPC_ENDPOINT, credentials=creds) as channel:
