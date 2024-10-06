@@ -6,7 +6,7 @@
 
 Python library for interacting with a Vivint security and smart home system.
 
-This was built to support the `Vivint` integration in [Home-Assistant](https://www.home-assistant.io/) but _should_ work outside of it too. Currently, it can be utilized via [HACS](https://hacs.xyz/) by adding the [hacs-vivint](https://github.com/natekspencer/hacs-vivint) custom repository.
+This was built to support the [`Vivint`](https://github.com/natekspencer/hacs-vivint) integration in [Home-Assistant](https://www.home-assistant.io/) but _should_ work outside of it too. Currently, it can be utilized via [HACS](https://hacs.xyz/) by adding the [hacs-vivint](https://github.com/natekspencer/hacs-vivint) custom repository.
 
 ## Credit
 

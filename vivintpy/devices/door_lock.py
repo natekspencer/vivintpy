@@ -4,10 +4,10 @@ from __future__ import annotations
 
 from ..const import ZWaveDeviceAttribute as Attribute
 from ..utils import send_deprecation_warning
-from . import BypassTamperDevice, VivintDevice
+from . import BypassTamperDevice
 
 
-class DoorLock(BypassTamperDevice, VivintDevice):
+class DoorLock(BypassTamperDevice):
     """Represents a vivint door lock device."""
 
     @property

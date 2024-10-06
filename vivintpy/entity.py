@@ -2,7 +2,10 @@
 
 from __future__ import annotations
 
+import logging
 from collections.abc import Callable
+
+_LOGGER = logging.getLogger(__name__)
 
 UPDATE = "update"
 
@@ -31,6 +34,7 @@ class Entity:
 
     def handle_pubnub_message(self, message: dict) -> None:
         """Handle a pubnub message directed to this entity."""
+        _LOGGER.debug("Message received by %s: %s", self.name, message)
         self.update_data(message)
 
     def on(  # pylint: disable=invalid-name

@@ -3,7 +3,11 @@
 from __future__ import annotations
 
 import asyncio
+import base64
+import hashlib
 import logging
+import os
+import re
 from typing import Any, Callable, Coroutine, Iterable, TypeVar
 from warnings import warn
 
@@ -44,3 +48,20 @@ def send_deprecation_warning(old_name: str, new_name: str) -> None:
         stacklevel=2,
     )
     _LOGGER.warning(message)
+
+
+def generate_code_challenge() -> tuple[str, str]:
+    """Generate PKCE code verifier and challenge for authentication."""
+    code_verifier = base64.urlsafe_b64encode(os.urandom(40)).decode("utf-8")
+    code_verifier = re.sub("[^a-zA-Z0-9]+", "", code_verifier)
+
+    code_challenge = hashlib.sha256(code_verifier.encode("utf-8")).digest()
+    code_challenge = base64.urlsafe_b64encode(code_challenge).decode("utf-8")
+    code_challenge = code_challenge.replace("=", "")
+
+    return (code_verifier, code_challenge)
+
+
+def generate_state() -> str:
+    """Generate state."""
+    return base64.urlsafe_b64encode(os.urandom(40)).decode("utf-8")
