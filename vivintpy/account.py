@@ -32,8 +32,8 @@ class Account:
     def __init__(
         self,
         username: str,
-        password: str,
-        persist_session: bool = False,
+        password: str | None = None,
+        refresh_token: str | None = None,
         client_session: aiohttp.ClientSession | None = None,
     ):
         """Initialize an account."""
@@ -44,7 +44,7 @@ class Account:
         self._api = VivintSkyApi(
             username=username,
             password=password,
-            persist_session=persist_session,
+            refresh_token=refresh_token,
             client_session=client_session,
         )
         self.systems: list[System] = []

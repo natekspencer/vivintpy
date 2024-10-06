@@ -4,6 +4,7 @@
 class AuthenticationResponse:
     """Authentication response constants."""
 
+    ERROR = "error"
     INVALID = "Invalid username and/or password"
     MESSAGE = "msg"
     MFA_REQUIRED = "Multi-factor authentication required"

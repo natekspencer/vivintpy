@@ -5,13 +5,14 @@ from __future__ import annotations
 import json
 import logging
 import ssl
+import urllib.parse
 from collections.abc import Callable
-from http.cookies import Morsel, SimpleCookie
-from typing import Any, cast
+from typing import Any
 
 import aiohttp
 import certifi
 import grpc
+import jwt
 from aiohttp import ClientResponseError
 from aiohttp.client import _RequestContextManager
 from google.protobuf.message import Message  # type: ignore
@@ -29,14 +30,13 @@ from .exceptions import (
     VivintSkyApiMfaRequiredError,
 )
 from .proto import beam_pb2, beam_pb2_grpc
+from .utils import generate_code_challenge, generate_state
 
 _LOGGER = logging.getLogger(__name__)
 
 API_ENDPOINT = "https://www.vivintsky.com/api"
+AUTH_ENDPOINT = "https://id.vivint.com"
 GRPC_ENDPOINT = "grpc.vivintsky.com:50051"
-MFA_ENDPOINT = (
-    "https://www.vivintsky.com/platform-user-api/v0/platformusers/2fa/validate"
-)
 
 
 class VivintSkyApi:
@@ -45,35 +45,40 @@ class VivintSkyApi:
     def __init__(
         self,
         username: str,
-        password: str,
-        persist_session: bool = False,
+        password: str | None = None,
+        refresh_token: str | None = None,
         client_session: aiohttp.ClientSession | None = None,
     ) -> None:
         """Initialize the VivintSky API."""
         self.__username = username
         self.__password = password
-        self.__persist_session = persist_session
+        self.__refresh_token = refresh_token
         self.__client_session = client_session or self.__get_new_client_session()
         self.__has_custom_client_session = client_session is not None
+        self.__code_verifier: str | None = None
         self.__mfa_pending = False
-
-    def _get_session_cookie(self) -> Morsel | None:
-        """Get the session cookie."""
-        cookie = self.__client_session.cookie_jar.filter_cookies(API_ENDPOINT)
-        return cast(SimpleCookie, cookie).get("s")
+        self.__mfa_type = "code"
+        self.__token: dict | None = None
 
     def is_session_valid(self) -> bool:
-        """Return the state of the current session."""
-        return self._get_session_cookie() is not None
+        """Return `True` if the token is still valid."""
+        if self.__token is None:
+            return False
+        try:
+            jwt.decode(
+                self.__token["id_token"],
+                options={"verify_signature": False, "verify_exp": True},
+                leeway=-30,
+            )
+        except jwt.ExpiredSignatureError:
+            return False
+        return True
 
     async def connect(self) -> dict:
         """Connect to VivintSky Cloud Service."""
-        if self.__has_custom_client_session and self.is_session_valid():
-            authuser_data = await self.get_authuser_data()
-        else:
-            authuser_data = await self.__get_vivintsky_session(
-                self.__username, self.__password, self.__persist_session
-            )
+        if not (self.__has_custom_client_session and self.is_session_valid()):
+            await self.__get_vivintsky_session(self.__username, self.__password)
+        authuser_data = await self.get_authuser_data()
         if not authuser_data:
             raise VivintSkyApiAuthenticationError("Unable to login to Vivint")
         return authuser_data
@@ -85,9 +90,38 @@ class VivintSkyApi:
 
     async def verify_mfa(self, code: str) -> None:
         """Verify multi-factor authentication code."""
-        resp = await self.__post(MFA_ENDPOINT, data=json.dumps({"code": code}))
-        if resp is not None:
-            self.__mfa_pending = False
+        self.__mfa_pending = False
+        endpoint = f"{AUTH_ENDPOINT}/idp/api/{"validate" if self.__mfa_type == "code" else "submit"}"
+        resp = await self.__post(
+            endpoint,
+            params={"client_id": "ios"},
+            data=json.dumps(
+                {
+                    self.__mfa_type: code,
+                    "username": self.__username,
+                    "password": self.__password,
+                }
+            ),
+        )
+        if resp and "url" in resp:
+            resp = await self.__get(path=f"{AUTH_ENDPOINT}{resp['url']}")
+
+            if "location" in resp:
+                query = urllib.parse.urlparse(resp["location"]).query
+                redirect_params = urllib.parse.parse_qs(query)
+                auth_code = redirect_params["code"][0]
+
+                await self.__exchange_auth_code(auth_code)
+
+    async def refresh_token(self, refresh_token: str) -> None:
+        """Refresh the token."""
+        resp = await self.__post(
+            path=f"{AUTH_ENDPOINT}/oauth2/token",
+            params={"client_id": "ios"},
+            data={"grant_type": "refresh_token", "refresh_token": refresh_token},
+        )
+        assert resp
+        self.__token = resp
 
     async def get_authuser_data(self) -> dict:
         """
@@ -441,25 +475,78 @@ class VivintSkyApi:
 
         return aiohttp.ClientSession(connector=connector)
 
-    async def __get_vivintsky_session(
-        self, username: str, password: str, persist_session: bool = False
-    ) -> dict:
-        """Login into the Vivint Sky platform with the given username, password and, optionally, persist the session.
+    async def __get_vivintsky_session(self, username: str, password: str) -> None:
+        """Perform PKCE oauth login."""
+        if self.__refresh_token:
+            await self.refresh_token(self.__refresh_token)
+            if self.is_session_valid():
+                return
 
-        Returns auth user data if successful.
-        """
+        client_id = "ios"
+        redirect_uri = "vivint://app/oauth_redirect"
+        self.__code_verifier, code_challenge = generate_code_challenge()
+        state = generate_state()
+
+        # Signal PKCE to OAuth endpoint to get appropriate cookies
+        resp = await self.__get(
+            path=f"{AUTH_ENDPOINT}/oauth2/auth",
+            params={
+                "response_type": "code",
+                "client_id": client_id,
+                "scope": "openid email devices email_verified",
+                "redirect_uri": redirect_uri,
+                "state": state,
+                "code_challenge": code_challenge,
+                "code_challenge_method": "S256",
+            },
+            allow_redirects=False,
+        )
+
+        if "location" in resp and redirect_uri in resp["location"]:
+            query = urllib.parse.urlparse(resp["location"]).query
+            redirect_params = urllib.parse.parse_qs(query)
+            auth_code = redirect_params["code"][0]
+
+            return await self.__exchange_auth_code(auth_code)
+
+        # Authenticate with username/password
         resp = await self.__post(
-            "login",
-            data=json.dumps(
-                {
-                    "username": username,
-                    "password": password,
-                    "persist_session": persist_session,
-                }
-            ),
+            path=f"{AUTH_ENDPOINT}/idp/api/submit",
+            params={
+                "client_id": client_id,
+            },
+            data=json.dumps({"username": username, "password": password}),
+        )
+
+        # Check for TOTP/MFA requirement
+        if "validate" in resp:
+            # SMS/emailed code
+            self.__mfa_pending = True
+            self.__mfa_type = "code"
+            raise VivintSkyApiMfaRequiredError(AuthenticationResponse.MFA_REQUIRED)
+        if "mfa" in resp:
+            # Authenticator app code
+            self.__mfa_pending = True
+            self.__mfa_type = "mfa"
+            raise VivintSkyApiMfaRequiredError(AuthenticationResponse.MFA_REQUIRED)
+
+        assert resp
+        self.__token = resp
+
+    async def __exchange_auth_code(self, auth_code: str) -> None:
+        """Exchange an authorization code for an access token."""
+        resp = await self.__post(
+            path=f"{AUTH_ENDPOINT}/oauth2/token",
+            data={
+                "grant_type": "authorization_code",
+                "client_id": "ios",
+                "redirect_uri": "vivint://app/oauth_redirect",
+                "code": auth_code,
+                "code_verifier": self.__code_verifier,
+            },
         )
         assert resp
-        return resp
+        self.__token = resp
 
     async def __get(
         self,
@@ -477,12 +564,16 @@ class VivintSkyApi:
             allow_redirects=allow_redirects,
         )
 
-    async def __post(self, path: str, data: str | None = None) -> dict | None:
+    async def __post(
+        self, path: str, data: Any | None = None, params: dict | None = None
+    ) -> dict | None:
         """Perform a post request."""
-        return await self.__call(self.__client_session.post, path, data=data)
+        return await self.__call(
+            self.__client_session.post, path, data=data, params=params
+        )
 
     async def __put(
-        self, path: str, headers: dict | None = None, data: str | None = None
+        self, path: str, headers: dict | None = None, data: Any | None = None
     ) -> dict | None:
         """Perform a put request."""
         return await self.__call(
@@ -495,23 +586,30 @@ class VivintSkyApi:
         path: str,
         headers: dict | None = None,
         params: dict | None = None,
-        data: str | None = None,
+        data: Any | None = None,
         allow_redirects: bool | None = None,
     ) -> dict | None:
         """Perform a request with supplied parameters and reauthenticate if necessary."""
-        if path != "login" and not self.is_session_valid():
+        if AUTH_ENDPOINT not in path and not self.is_session_valid():
             await self.connect()
 
         if self.__client_session.closed:
             raise VivintSkyApiError("The client session has been closed")
 
-        is_mfa_request = path == MFA_ENDPOINT
+        is_mfa_request = data and "code" in data
 
         if self.__mfa_pending and not is_mfa_request:
             raise VivintSkyApiMfaRequiredError(AuthenticationResponse.MFA_REQUIRED)
 
+        if AUTH_ENDPOINT not in path and self.__token:
+            if not headers:
+                headers = {}
+            headers["Authorization"] = f"Bearer {self.__token['access_token']}"
+
         resp = await method(
-            path if is_mfa_request else f"{API_ENDPOINT}/{path}",
+            path
+            if is_mfa_request or AUTH_ENDPOINT in path
+            else f"{API_ENDPOINT}/{path}",
             headers=headers,
             params=params,
             data=data,
@@ -532,12 +630,15 @@ class VivintSkyApi:
                     if is_mfa_request
                     else resp_data.get(AuthenticationResponse.MESSAGE)
                 )
+                if not message:
+                    message = resp_data.get(AuthenticationResponse.ERROR)
                 if message == AuthenticationResponse.MFA_REQUIRED or is_mfa_request:
                     self.__mfa_pending = True
                     raise VivintSkyApiMfaRequiredError(message)
-                if resp.status == 400:
-                    raise VivintSkyApiError(message)
-                raise VivintSkyApiAuthenticationError(message)
+                cls = VivintSkyApiError
+                if AUTH_ENDPOINT in path:
+                    cls = VivintSkyApiAuthenticationError
+                raise cls(message)
             resp.raise_for_status()
             return None
 
@@ -546,10 +647,10 @@ class VivintSkyApi:
         callback: Callable[[beam_pb2_grpc.BeamStub, list[tuple[str, str]]], Message],
     ) -> None:
         """Send gRPC."""
+        assert self.is_session_valid()
         creds = grpc.ssl_channel_credentials()
-        assert (cookie := self._get_session_cookie())
 
         async with grpc.aio.secure_channel(GRPC_ENDPOINT, credentials=creds) as channel:
             stub: beam_pb2_grpc.BeamStub = beam_pb2_grpc.BeamStub(channel)  # type: ignore
-            response = await callback(stub, [("session", cookie.value)])
+            response = await callback(stub, [("token", self.__token["access_token"])])
             _LOGGER.debug("Response received: %s", str(response))
