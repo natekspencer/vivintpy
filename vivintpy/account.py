@@ -65,6 +65,11 @@ class Account:
         """Return True if connected."""
         return self.__connected
 
+    @property
+    def refresh_token(self) -> str | None:
+        """Return the refresh token."""
+        return self.api.tokens.get("refresh_token")
+
     async def connect(
         self, load_devices: bool = False, subscribe_for_realtime_updates: bool = False
     ) -> None:
