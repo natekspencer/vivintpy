@@ -60,6 +60,11 @@ class VivintSkyApi:
         self.__mfa_type = "code"
         self.__token: dict | None = None
 
+    @property
+    def tokens(self) -> dict:
+        """Return the tokens, if any."""
+        return self.__token or {}
+
     def is_session_valid(self) -> bool:
         """Return `True` if the token is still valid."""
         if self.__token is None:
