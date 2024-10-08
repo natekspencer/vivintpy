@@ -530,11 +530,13 @@ class VivintSkyApi:
         # Check for TOTP/MFA requirement
         if "validate" in resp:
             # SMS/emailed code
+            _LOGGER.debug("MFA response: %s", resp)
             self.__mfa_pending = True
             self.__mfa_type = "code"
             raise VivintSkyApiMfaRequiredError(AuthenticationResponse.MFA_REQUIRED)
         if "mfa" in resp:
             # Authenticator app code
+            _LOGGER.debug("MFA response: %s", resp)
             self.__mfa_pending = True
             self.__mfa_type = "mfa"
             raise VivintSkyApiMfaRequiredError(AuthenticationResponse.MFA_REQUIRED)
@@ -641,6 +643,8 @@ class VivintSkyApi:
                 )
                 if not message:
                     message = resp_data.get(AuthenticationResponse.ERROR)
+                    if AuthenticationResponse.ERROR_DESCRIPTION in resp_data:
+                        message = f"{message}: {resp_data[AuthenticationResponse.ERROR_DESCRIPTION]}"
                 if message == AuthenticationResponse.MFA_REQUIRED or is_mfa_request:
                     self.__mfa_pending = True
                     raise VivintSkyApiMfaRequiredError(message)
