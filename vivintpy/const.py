@@ -32,14 +32,21 @@ class AuthUserAttribute:
 class UserAttribute:
     """User attributes."""
 
+    ADMIN = "ad"
     DOCUMENT_SEQUENCE = "DocumentSequence"
     EMAIL = "e"
     GHOME = "ghome"
     GROUP_IDS = "grpid"
     ID = "_id"
+    HAS_LOCK_PIN = "hasLockPin"
+    HAS_PANEL_PIN = "hasPanelPin"
+    HAS_PINS = "hasPins"
+    LOCK_IDS = "lids"
     MESSAGE_BROADCAST_CHANNEL = "mbc"
     NAME = "n"
     PING_ID = "pngid"
+    REGISTERED = "reg"
+    REMOTE_ACCESS = "ra"
     RESTRICTED_SYSTEM = "rsystem"
     SMART_HOME_SYSTEM = "smarthomesystem"
     SETTINGS = "stg"
@@ -72,6 +79,7 @@ class SystemAttribute:
     PARTITION_ID = "parid"
     SYSTEM = "system"
     SYSTEM_NICKNAME = "sn"
+    USERS = "u"
 
 
 class PubNubMessageAttribute:
@@ -147,6 +155,12 @@ class CameraAttribute(VivintDeviceAttribute):
     USERNAME = "un"
     VISITOR_DETECTED = "vdt"
     WIRELESS_SIGNAL_STRENGTH = "wiss"
+
+
+class LockAttribute(VivintDeviceAttribute):
+    """Lock attributes."""
+
+    USER_CODE_LIST = "ucl"
 
 
 class SwitchAttribute(VivintDeviceAttribute):

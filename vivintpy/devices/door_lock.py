@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from typing import cast
+
+from ..const import LockAttribute
 from ..const import ZWaveDeviceAttribute as Attribute
 from ..utils import send_deprecation_warning
 from . import BypassTamperDevice
@@ -25,6 +28,11 @@ class DoorLock(BypassTamperDevice):
         """Return True if the node is online."""
         send_deprecation_warning("node_online", "is_online")
         return self.is_online
+
+    @property
+    def user_code_list(self) -> list[int]:
+        """Return the user code list."""
+        return cast(list[int], self.data.get(LockAttribute.USER_CODE_LIST, []))
 
     async def set_state(self, locked: bool) -> None:
         """Set door lock's state."""
