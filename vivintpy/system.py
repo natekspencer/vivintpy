@@ -8,6 +8,7 @@ from .const import PubNubMessageAttribute
 from .const import SystemAttribute as Attribute
 from .devices.alarm_panel import AlarmPanel
 from .entity import Entity
+from .user import User
 from .utils import first_or_none, send_deprecation_warning
 from .vivintskyapi import VivintSkyApi
 
@@ -26,6 +27,10 @@ class System(Entity):
         self.alarm_panels: list[AlarmPanel] = [
             AlarmPanel(panel_data, self)
             for panel_data in self.data[Attribute.SYSTEM][Attribute.PARTITION]
+        ]
+        self.users = [
+            User(user_data, self)
+            for user_data in self.data[Attribute.SYSTEM][Attribute.USERS]
         ]
 
     @property
@@ -70,17 +75,29 @@ class System(Entity):
             else:
                 self.alarm_panels.append(AlarmPanel(panel_data, self))
 
+    def update_user_data(self, data: list[dict]) -> None:
+        """Update user data."""
+        for d in data:
+            user = first_or_none(self.users, lambda user, d=d: user.id == d["_id"])
+            if not user:
+                _LOGGER.debug("User not found for system %s: %s", self.id, d)
+                return
+            user.handle_pubnub_message(d)
+
     def handle_pubnub_message(self, message: dict) -> None:
         """Handle a pubnub message."""
-        if message[PubNubMessageAttribute.TYPE] == "account_system":
+        if (message_type := message[PubNubMessageAttribute.TYPE]) == "account_system":
             # this is a system message
             operation = message.get(PubNubMessageAttribute.OPERATION)
             data = message.get(PubNubMessageAttribute.DATA)
 
             if data and operation == "u":
+                if Attribute.USERS in data:
+                    self.update_user_data(data[Attribute.USERS])
+                    del data[Attribute.USERS]
                 self.update_data(data)
 
-        elif message[PubNubMessageAttribute.TYPE] == "account_partition":
+        elif message_type == "account_partition":
             # this is a message for one of the devices attached to this system
             partition_id = message.get(PubNubMessageAttribute.PARTITION_ID)
             if not partition_id:
@@ -106,3 +123,7 @@ class System(Entity):
                 return
 
             alarm_panel.handle_pubnub_message(message)
+        else:
+            _LOGGER.warning(
+                "Unknown message received by system %s: %s", self.id, message
+            )
