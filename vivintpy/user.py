@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 from .const import UserAttribute as Attribute
 from .entity import Entity
@@ -28,22 +28,22 @@ class User(Entity):
     @property
     def has_lock_pin(self) -> bool:
         """Return True if the user has pins."""
-        return self.data[Attribute.HAS_LOCK_PIN]
+        return bool(self.data[Attribute.HAS_LOCK_PIN])
 
     @property
     def has_panel_pin(self) -> bool:
         """Return True if the user has pins."""
-        return self.data[Attribute.HAS_PANEL_PIN]
+        return bool(self.data[Attribute.HAS_PANEL_PIN])
 
     @property
     def has_pins(self) -> bool:
         """Return True if the user has pins."""
-        return self.data[Attribute.HAS_PINS]
+        return bool(self.data[Attribute.HAS_PINS])
 
     @property
     def has_remote_access(self) -> bool:
         """Return True if the user has remote access."""
-        return self.data[Attribute.REMOTE_ACCESS]
+        return bool(self.data[Attribute.REMOTE_ACCESS])
 
     @property
     def id(self) -> int:  # pylint: disable=invalid-name
@@ -53,22 +53,22 @@ class User(Entity):
     @property
     def is_admin(self) -> bool:
         """Return True if the user is an admin."""
-        return self.data[Attribute.ADMIN]
+        return bool(self.data[Attribute.ADMIN])
 
     @property
     def is_registered(self) -> bool:
         """Return True if the user is registered."""
-        return self.data[Attribute.REGISTERED]
+        return bool(self.data[Attribute.REGISTERED])
 
     @property
     def lock_ids(self) -> list[int]:
         """User's lock ids."""
-        return self.data.get(Attribute.LOCK_IDS, [])
+        return cast(list[int], self.data.get(Attribute.LOCK_IDS, []))
 
     @property
     def name(self) -> str:
         """User's name."""
-        return self.data[Attribute.NAME]
+        return str(self.data[Attribute.NAME])
 
     def handle_pubnub_message(self, message: dict) -> None:
         """Handle a pubnub message addressed to this user."""
