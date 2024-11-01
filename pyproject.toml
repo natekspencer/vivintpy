@@ -22,11 +22,11 @@ pyjwt = "^2.9.0"
 tox = ">=3.28,<5.0"
 pytest = ">=7.2.2,<9.0.0"
 pytest-asyncio = ">=0.21,<0.25"
-pytest-cov = ">=4,<6"
+pytest-cov = ">=4,<7"
 pytest-timeout = "^2.1.0"
 mypy = "^1.4"
 grpcio-tools = ">=1.62.3,<2"
-ruff = ">=0.5.0,<0.7"
+ruff = ">=0.5.0,<0.8"
 
 [tool.poetry-dynamic-versioning]
 enable = true
