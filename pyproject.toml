@@ -15,7 +15,7 @@ aiohttp = "^3.8.5"
 certifi = ">=2022.9.24,<2025.0.0"
 pubnub = ">=7,<9"
 grpcio = "^1.51.1"
-protobuf = "^4.23.1"
+protobuf = ">=4.23.1,<6.0.0"
 pyjwt = "^2.9.0"
 
 [tool.poetry.group.dev.dependencies]
@@ -25,7 +25,7 @@ pytest-asyncio = ">=0.21,<0.25"
 pytest-cov = ">=4,<6"
 pytest-timeout = "^2.1.0"
 mypy = "^1.4"
-grpcio-tools = "1.62.3"
+grpcio-tools = ">=1.62.3,<2"
 ruff = ">=0.5.0,<0.7"
 
 [tool.poetry-dynamic-versioning]
