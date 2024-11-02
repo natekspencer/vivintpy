@@ -15,7 +15,7 @@ import grpc
 import jwt
 from aiohttp import ClientResponseError
 from aiohttp.client import _RequestContextManager
-from google.protobuf.message import Message  # type: ignore
+from google.protobuf.message import Message
 
 from .const import (
     AuthenticationResponse,
