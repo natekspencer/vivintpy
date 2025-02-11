@@ -14,7 +14,6 @@ from pathlib import Path
 from typing import Any, Generator
 
 import aiohttp
-import async_timeout
 
 logging.getLogger("vivintpy.zjs_device_config_db").setLevel(logging.DEBUG)
 logging.getLogger().setLevel(logging.DEBUG)
@@ -158,7 +157,7 @@ async def _download_zjs_tarfile() -> None:
     download_url = f"{REPO_URL}/tarball"
     logging.debug("Downloading tarfile from %s", download_url)
     async with aiohttp.ClientSession() as session:
-        async with async_timeout.timeout(120):
+        async with asyncio.timeout(120):
             async with session.get(download_url) as response:
                 with open(ZJS_TAR_FILE, "wb") as file:
                     async for data in response.content.iter_chunked(1024):
@@ -175,7 +174,7 @@ async def _is_new_version_available() -> bool:
 
     logging.debug("Retrieving last updated date from %s", REPO_URL)
     async with aiohttp.ClientSession() as session:
-        async with async_timeout.timeout(10):
+        async with asyncio.timeout(10):
             async with session.get(REPO_URL) as response:
                 if response.status != 200:
                     logging.debug("Unable to check last updated date from %s", REPO_URL)
