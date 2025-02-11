@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Type, cast
 
+from ..api import VivintSkyApi
 from ..const import VivintDeviceAttribute as Attribute
 from ..entity import Entity
 from ..enums import (
@@ -13,7 +14,6 @@ from ..enums import (
     FeatureType,
     ZoneBypass,
 )
-from ..vivintskyapi import VivintSkyApi
 from ..zjs_device_config_db import get_zwave_device_info
 
 if TYPE_CHECKING:

@@ -6,6 +6,7 @@ import asyncio
 import logging
 from typing import TYPE_CHECKING, Type
 
+from ..api import VivintSkyApi
 from ..const import AlarmPanelAttribute as Attribute
 from ..const import (
     PanelUpdateAttribute,
@@ -16,7 +17,6 @@ from ..const import (
 from ..enums import ArmedState, DeviceType
 from ..exceptions import VivintSkyApiError
 from ..utils import add_async_job, first_or_none
-from ..vivintskyapi import VivintSkyApi
 from . import VivintDevice, get_device_class
 
 if TYPE_CHECKING:
