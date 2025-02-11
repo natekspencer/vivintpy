@@ -52,10 +52,6 @@ class VivintPubNubSubscribeListener(SubscribeCallback):
                 category,
             )
 
-    def message(
-        self,
-        pubnub: PubNubAsyncio,
-        message: PNMessageResult,
-    ) -> None:
+    def message(self, pubnub: PubNubAsyncio, message: PNMessageResult) -> None:
         """Handle a message received."""
         self.__message_received_callback(message.message)

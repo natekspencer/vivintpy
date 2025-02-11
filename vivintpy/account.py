@@ -7,7 +7,6 @@ import logging
 
 import aiohttp
 from aiohttp.client_exceptions import ClientConnectionError
-from pubnub.enums import PNHeartbeatNotificationOptions, PNReconnectionPolicy
 from pubnub.pnconfiguration import PNConfiguration
 from pubnub.pubnub_asyncio import PubNubAsyncio
 
@@ -181,12 +180,7 @@ class Account:
 
         pnconfig = PNConfiguration()
         pnconfig.subscribe_key = PN_SUBSCRIBE_KEY
-        pnconfig.uuid = f"pn-{user_data[UserAttribute.ID].upper()}"
-        pnconfig.ssl = True
-        pnconfig.reconnect_policy = PNReconnectionPolicy.LINEAR
-        pnconfig.heartbeat_notification_options = (
-            PNHeartbeatNotificationOptions.FAILURES
-        )
+        pnconfig.user_id = f"pn-{user_data[UserAttribute.ID].upper()}"
 
         self.__pubnub = PubNubAsyncio(pnconfig)
         self.__pubnub_listener = VivintPubNubSubscribeListener(
