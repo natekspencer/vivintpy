@@ -6,7 +6,6 @@ from typing import cast
 
 from ..const import LockAttribute
 from ..const import ZWaveDeviceAttribute as Attribute
-from ..utils import send_deprecation_warning
 from . import BypassTamperDevice
 
 
@@ -22,12 +21,6 @@ class DoorLock(BypassTamperDevice):
     def is_online(self) -> bool:
         """Return True if door lock is online."""
         return bool(self.data[Attribute.ONLINE])
-
-    @property
-    def node_online(self) -> bool:
-        """Return True if the node is online."""
-        send_deprecation_warning("node_online", "is_online")
-        return self.is_online
 
     @property
     def user_code_list(self) -> list[int]:

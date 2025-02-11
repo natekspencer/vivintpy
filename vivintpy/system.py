@@ -9,7 +9,7 @@ from .const import SystemAttribute as Attribute
 from .devices.alarm_panel import AlarmPanel
 from .entity import Entity
 from .user import User
-from .utils import first_or_none, send_deprecation_warning
+from .utils import first_or_none
 from .vivintskyapi import VivintSkyApi
 
 _LOGGER = logging.getLogger(__name__)
@@ -37,12 +37,6 @@ class System(Entity):
     def api(self) -> VivintSkyApi:
         """Return the API."""
         return self._api
-
-    @property
-    def vivintskyapi(self) -> VivintSkyApi:
-        """Return the API."""
-        send_deprecation_warning("vivintskyapi", "api")
-        return self.api
 
     @property
     def id(self) -> int:  # pylint: disable=invalid-name

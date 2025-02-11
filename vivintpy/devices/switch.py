@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from ..const import SwitchAttribute as Attribute
-from ..utils import send_deprecation_warning
 from . import VivintDevice
 
 
@@ -24,12 +23,6 @@ class Switch(VivintDevice):
     def level(self) -> int:
         """Return the level of the switch betwen 0..100."""
         return int(self.data[Attribute.VALUE])
-
-    @property
-    def node_online(self) -> bool:
-        """Return True if the node is online."""
-        send_deprecation_warning("node_online", "is_online")
-        return self.is_online
 
     async def set_state(
         self,

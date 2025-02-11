@@ -15,7 +15,7 @@ from ..const import (
 )
 from ..enums import ArmedState, DeviceType
 from ..exceptions import VivintSkyApiError
-from ..utils import add_async_job, first_or_none, send_deprecation_warning
+from ..utils import add_async_job, first_or_none
 from ..vivintskyapi import VivintSkyApi
 from . import VivintDevice, get_device_class
 
@@ -56,12 +56,6 @@ class AlarmPanel(VivintDevice):
     def api(self) -> VivintSkyApi:
         """Return the API."""
         return self.system.api
-
-    @property
-    def vivintskyapi(self) -> VivintSkyApi:
-        """Instance of VivitSkyApi."""
-        send_deprecation_warning("vivintskyapi", "api")
-        return self.api
 
     @property
     def id(self) -> int:
@@ -126,11 +120,6 @@ class AlarmPanel(VivintDevice):
     def credentials(self) -> dict:
         """Return the panel credentials."""
         return self.__panel_credentials
-
-    def get_armed_state(self) -> Any:
-        """Return the panel's arm state."""
-        send_deprecation_warning("method get_armed_state", "property state")
-        return self.data[Attribute.STATE]
 
     async def set_armed_state(self, state: int) -> None:
         """Set the armed state for a panel."""

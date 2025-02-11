@@ -13,7 +13,6 @@ from ..enums import (
     FeatureType,
     ZoneBypass,
 )
-from ..utils import send_deprecation_warning
 from ..vivintskyapi import VivintSkyApi
 from ..zjs_device_config_db import get_zwave_device_info
 
@@ -187,12 +186,6 @@ class VivintDevice(Entity):
             if (fwv := self.data.get(Attribute.FIRMWARE_VERSION)) is not None
             else None
         )
-
-    @property
-    def vivintskyapi(self) -> VivintSkyApi:
-        """Instance of VivintSkyApi."""
-        send_deprecation_warning("vivintskyapi", "api")
-        return self.api
 
     def get_zwave_details(self) -> None:
         """Get Z-Wave details."""
