@@ -97,7 +97,7 @@ class VivintSkyApi:
     async def verify_mfa(self, code: str) -> None:
         """Verify multi-factor authentication code."""
         self.__mfa_pending = False
-        endpoint = f'{AUTH_ENDPOINT}/idp/api/{"validate" if self.__mfa_type == "code" else "submit"}'
+        endpoint = f"{AUTH_ENDPOINT}/idp/api/{'validate' if self.__mfa_type == 'code' else 'submit'}"
         resp = await self.__post(
             endpoint,
             params={"client_id": "ios"},
