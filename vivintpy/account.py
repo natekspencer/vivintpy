@@ -10,6 +10,7 @@ from aiohttp.client_exceptions import ClientConnectionError
 from pubnub.pnconfiguration import PNConfiguration
 from pubnub.pubnub_asyncio import PubNubAsyncio
 
+from .api import VivintSkyApi
 from .const import (
     AuthUserAttribute,
     PubNubMessageAttribute,
@@ -20,7 +21,6 @@ from .exceptions import VivintSkyApiError
 from .pubnub import PN_CHANNEL, PN_SUBSCRIBE_KEY, VivintPubNubSubscribeListener
 from .system import System
 from .utils import first_or_none
-from .vivintskyapi import VivintSkyApi
 
 _LOGGER = logging.getLogger(__name__)
 

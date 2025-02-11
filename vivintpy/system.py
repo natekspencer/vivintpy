@@ -4,13 +4,13 @@ from __future__ import annotations
 
 import logging
 
+from .api import VivintSkyApi
 from .const import PubNubMessageAttribute
 from .const import SystemAttribute as Attribute
 from .devices.alarm_panel import AlarmPanel
 from .entity import Entity
 from .user import User
 from .utils import first_or_none
-from .vivintskyapi import VivintSkyApi
 
 _LOGGER = logging.getLogger(__name__)
 
