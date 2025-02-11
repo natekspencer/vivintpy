@@ -19,7 +19,7 @@ from .const import (
 from .exceptions import VivintSkyApiError
 from .pubnub import PN_CHANNEL, PN_SUBSCRIBE_KEY, VivintPubNubSubscribeListener
 from .system import System
-from .utils import first_or_none, send_deprecation_warning
+from .utils import first_or_none
 from .vivintskyapi import VivintSkyApi
 
 _LOGGER = logging.getLogger(__name__)
@@ -52,12 +52,6 @@ class Account:
     def api(self) -> VivintSkyApi:
         """Return the API."""
         return self._api
-
-    @property
-    def vivintskyapi(self) -> VivintSkyApi:
-        """Return the API."""
-        send_deprecation_warning("vivintskyapi", "api")
-        return self.api
 
     @property
     def connected(self) -> bool:

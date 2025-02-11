@@ -205,10 +205,6 @@ class DeviceType(Enum):
     YOFI_DEVICE = "yofi_device"
     ZWAVE_KEY_PAD = "keypad_entry_device"
 
-    # Deprecated
-    MULTILEVEL_SWITCH = MULTI_LEVEL_SWITCH
-    TOUCH_PANEL = PANEL
-
     UNKNOWN = None
 
     @classmethod

@@ -6,7 +6,6 @@ from typing import Any
 
 from ..const import ZWaveDeviceAttribute as Attribute
 from ..enums import GarageDoorState
-from ..utils import send_deprecation_warning
 from . import VivintDevice
 
 
@@ -34,12 +33,6 @@ class GarageDoor(VivintDevice):
     def is_opening(self) -> bool:
         """Return True if garage dooor is opening."""
         return self.state == GarageDoorState.OPENING
-
-    @property
-    def node_online(self) -> bool:
-        """Return True if the node is online."""
-        send_deprecation_warning("node_online", "is_online")
-        return self.is_online
 
     @property
     def state(self) -> GarageDoorState:
