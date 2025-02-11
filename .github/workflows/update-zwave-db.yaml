@@ -1,0 +1,35 @@
+name: Update Z-Wave database
+
+on:
+  schedule:
+    - cron: "0 19 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  zwave-devices:
+    name: Update Z-Wave database from Z-Wave JS
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@v4
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Install dependencies
+        run: pip install aiohttp
+      - name: Update database
+        run: python script/gen_zjs_device_config_db.py
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: Update Z-Wave device database
+          title: Update Z-Wave device database
+          body: Update Z-Wave device database
+          base: main
+          labels: automated-pr, zwave-db
+          branch: update-zwave-db
