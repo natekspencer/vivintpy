@@ -25,9 +25,9 @@
     "manufacturer": "Sigma Designs (Former Zensys)"
   },
   "0x0000:0x0003:0x0008": {
-    "description": "Z-Wave 500 Series Controller",
-    "label": "ACC-UZB3",
-    "manufacturer": "Silicon Labs"
+    "description": "Smart Temperature & Humidity Sensor",
+    "label": "M417_9E",
+    "manufacturer": "Sigma Designs (Former Zensys)"
   },
   "0x0000:0x0003:0x000b": {
     "description": "Z-Wave 9 Channel_module",
@@ -420,8 +420,8 @@
     "manufacturer": "HomeSeer Technologies"
   },
   "0x000c:0x0202:0x0001": {
-    "description": "Flex Sensor",
-    "label": "HS-FS100+",
+    "description": "Z-Wave Indicator Light Sensor",
+    "label": "HS-FS100-L",
     "manufacturer": "HomeSeer Technologies"
   },
   "0x000c:0x0203:0x0001": {
@@ -490,6 +490,11 @@
     "manufacturer": "Residential Control Systems, Inc. (RCS)"
   },
   "0x0010:0x0001:0x000b": {
+    "description": "Thermostat",
+    "label": "TZ45",
+    "manufacturer": "Residential Control Systems, Inc. (RCS)"
+  },
+  "0x0010:0x0001:0x000d": {
     "description": "Thermostat",
     "label": "TZ45",
     "manufacturer": "Residential Control Systems, Inc. (RCS)"
@@ -2268,6 +2273,11 @@
     "description": "In-Wall Toggle Dimmer, QFSW, 700S",
     "label": "59335 / 59341 / ZWA3017",
     "manufacturer": "Enbrighten"
+  },
+  "0x0063:0x4944:0x3433": {
+    "description": "In-Wall Smart Dimmer, QFSW, 700S",
+    "label": "59350 / 59372 / 59373 / ZWA3016",
+    "manufacturer": "Ultrapro"
   },
   "0x0063:0x494d:0x3031": {
     "description": "In-Wall Motion Switch, 500S",
@@ -7101,8 +7111,8 @@
   },
   "0x011a:0x0601:0x0901": {
     "description": "PIR Sensor",
-    "label": "ZWN-BPC-PLUS",
-    "manufacturer": "Wenzhou MTLC Electric Appliances Co., Ltd."
+    "label": "ZWN-BPC",
+    "manufacturer": "Enerwave / Wenzhou MTLC Electric Appliances Co., Ltd."
   },
   "0x011a:0x0601:0x0903": {
     "description": "Magnetic Door/Window Sensor",
@@ -7647,6 +7657,98 @@
   "0x0129:0x8104:0x45d5": {
     "description": "Assure 2 Keyless Touch Screen Deadbolt",
     "label": "YRD450-ZW3",
+    "manufacturer": "Yale"
+  },
+  "0x0129:0x8107:0x49d1": {
+    "description": "Assure 2 Biometric Deadbolt",
+    "label": [
+      {
+        "$if": "productId === 0x49d1",
+        "value": "YRD410-F-ZW3"
+      },
+      {
+        "$if": "productId === 0x49d2",
+        "value": "YRD420-F-ZW3"
+      },
+      {
+        "$if": "productId === 0x49d3",
+        "value": "YRD430-F-ZW3"
+      },
+      {
+        "$if": "productId === 0x49d5",
+        "value": "YRD450-F-ZW3"
+      },
+      "YRD4X0-F-ZW3"
+    ],
+    "manufacturer": "Yale"
+  },
+  "0x0129:0x8107:0x49d2": {
+    "description": "Assure 2 Biometric Deadbolt",
+    "label": [
+      {
+        "$if": "productId === 0x49d1",
+        "value": "YRD410-F-ZW3"
+      },
+      {
+        "$if": "productId === 0x49d2",
+        "value": "YRD420-F-ZW3"
+      },
+      {
+        "$if": "productId === 0x49d3",
+        "value": "YRD430-F-ZW3"
+      },
+      {
+        "$if": "productId === 0x49d5",
+        "value": "YRD450-F-ZW3"
+      },
+      "YRD4X0-F-ZW3"
+    ],
+    "manufacturer": "Yale"
+  },
+  "0x0129:0x8107:0x49d3": {
+    "description": "Assure 2 Biometric Deadbolt",
+    "label": [
+      {
+        "$if": "productId === 0x49d1",
+        "value": "YRD410-F-ZW3"
+      },
+      {
+        "$if": "productId === 0x49d2",
+        "value": "YRD420-F-ZW3"
+      },
+      {
+        "$if": "productId === 0x49d3",
+        "value": "YRD430-F-ZW3"
+      },
+      {
+        "$if": "productId === 0x49d5",
+        "value": "YRD450-F-ZW3"
+      },
+      "YRD4X0-F-ZW3"
+    ],
+    "manufacturer": "Yale"
+  },
+  "0x0129:0x8107:0x49d5": {
+    "description": "Assure 2 Biometric Deadbolt",
+    "label": [
+      {
+        "$if": "productId === 0x49d1",
+        "value": "YRD410-F-ZW3"
+      },
+      {
+        "$if": "productId === 0x49d2",
+        "value": "YRD420-F-ZW3"
+      },
+      {
+        "$if": "productId === 0x49d3",
+        "value": "YRD430-F-ZW3"
+      },
+      {
+        "$if": "productId === 0x49d5",
+        "value": "YRD450-F-ZW3"
+      },
+      "YRD4X0-F-ZW3"
+    ],
     "manufacturer": "Yale"
   },
   "0x0129:0x8109:0x0dd2": {
@@ -8254,6 +8356,11 @@
     "label": "PSA03-US",
     "manufacturer": "Philio Technology Corp"
   },
+  "0x013c:0x000a:0x006f": {
+    "description": "Smart Keypad",
+    "label": "PSK01",
+    "manufacturer": "Philio Technology Corp"
+  },
   "0x013c:0x000b:0x0058": {
     "description": "Z-Wave JEM-A Adapter",
     "label": "PAC01",
@@ -8322,6 +8429,11 @@
   "0x0147:0x0401:0x0101": {
     "description": "Z-Wave Shield with External Antenna",
     "label": "RaZberry 7 Pro",
+    "manufacturer": "Z-Wave.me"
+  },
+  "0x0147:0x0401:0x0301": {
+    "description": "USB Z-Wave & Zigbee Controller",
+    "label": "Z-Station",
     "manufacturer": "Z-Wave.me"
   },
   "0x0148:0x0001:0x0001": {
@@ -8514,6 +8626,11 @@
     "label": "ISZW7-ECO",
     "manufacturer": "Ecolink"
   },
+  "0x014a:0x0007:0x4731": {
+    "description": "Garage Door Controller",
+    "label": "GDZW7-ECO",
+    "manufacturer": "Ecolink"
+  },
   "0x014a:0x014a:0x0000": {
     "description": "",
     "label": "Z-Wave Garage Door Tilt Sensor",
@@ -8646,7 +8763,7 @@
   },
   "0x014f:0x4744:0x3531": {
     "description": "Z-Wave Garage Door Controller",
-    "label": "GD00Z-7",
+    "label": "GD00Z-6 / GD00Z-7 / GD00Z-8",
     "manufacturer": "Nortek Security & Control LLC"
   },
   "0x014f:0x4754:0x3038": {
@@ -8900,8 +9017,8 @@
     "manufacturer": "Popp & Co"
   },
   "0x0154:0x0004:0x0002": {
-    "description": "Solar Powered Outdoor Siren",
-    "label": "005107",
+    "description": "POPP Solar Outdoor Siren 2",
+    "label": "700854",
     "manufacturer": "Popp & Co"
   },
   "0x0154:0x0004:0x0003": {
@@ -10474,6 +10591,11 @@
     "label": "SD-29",
     "manufacturer": "Climax Technology, Ltd."
   },
+  "0x018e:0x0003:0x001a": {
+    "description": "Smoke and Carbon Monoxide Detector",
+    "label": "SDCO",
+    "manufacturer": "Climax Technology, Ltd."
+  },
   "0x018e:0x0004:0x0001": {
     "description": "Power Switch Series",
     "label": "PSS-29ZW",
@@ -10737,6 +10859,11 @@
   "0x019b:0x0030:0x3001": {
     "description": "Floor Thermostat",
     "label": "Z-TRM6",
+    "manufacturer": "Heatit"
+  },
+  "0x019b:0x0031:0x3101": {
+    "description": "Thermostat",
+    "label": "Z-TEMP3",
     "manufacturer": "Heatit"
   },
   "0x019b:0x0062:0x6201": {
@@ -11159,6 +11286,11 @@
     "label": "ML2",
     "manufacturer": "Shenzhen Kaadas Intelligent Technology Co., Ltd."
   },
+  "0x021d:0x0903:0x00d4": {
+    "description": "Home Access Keyed Touchscreen Deadbolt",
+    "label": "DDL240X-15HZW",
+    "manufacturer": "Philips"
+  },
   "0x021f:0x0001:0x0001": {
     "description": "Hub",
     "label": "DMGW1",
@@ -11360,8 +11492,8 @@
     "manufacturer": "Logic Group"
   },
   "0x0234:0x0003:0x010d": {
-    "description": "DIN Rail Interface",
-    "label": "ZIF5020",
+    "description": "DIN-Rail Module with 10 Digital Outputs and 4 Digital Inputs",
+    "label": "LHC5020",
     "manufacturer": "Logic Group"
   },
   "0x0234:0x0003:0x0111": {
@@ -12299,6 +12431,11 @@
     "label": "ZAC03",
     "manufacturer": "Zooz"
   },
+  "0x027a:0x0004:0x0006": {
+    "description": "Outdoor Motion Sensor",
+    "label": "ZSE70 800LR",
+    "manufacturer": "Zooz"
+  },
   "0x027a:0x0004:0x0110": {
     "description": "DC Signal Sensor",
     "label": "ZEN55 LR",
@@ -12320,7 +12457,7 @@
     "manufacturer": "Zooz"
   },
   "0x027a:0x0004:0xf001": {
-    "description": "Z-Wave Plus 700 Series Remote Switch",
+    "description": "Remote Switch",
     "label": "ZEN34",
     "manufacturer": "Zooz"
   },
@@ -12345,25 +12482,13 @@
     "manufacturer": "Zooz"
   },
   "0x027a:0x0104:0x0201": {
-    "description": "700 Series Dry Contact Relay",
-    "label": [
-      {
-        "$if": "productType === 0x0904",
-        "value": "ZEN51 LR"
-      },
-      "ZEN51"
-    ],
+    "description": "Dry Contact Relay",
+    "label": "ZEN51",
     "manufacturer": "Zooz"
   },
   "0x027a:0x0104:0x0202": {
-    "description": "700 Series Double Relay",
-    "label": [
-      {
-        "$if": "productType === 0x0904",
-        "value": "ZEN52 LR"
-      },
-      "ZEN52"
-    ],
+    "description": "Double Relay",
+    "label": "ZEN52",
     "manufacturer": "Zooz"
   },
   "0x027a:0x0201:0x0006": {
@@ -12372,7 +12497,7 @@
     "manufacturer": "Zooz"
   },
   "0x027a:0x0301:0x0012": {
-    "description": "Motion and Vibration Sensor",
+    "description": "Motion Sensor",
     "label": "ZSE18",
     "manufacturer": "Zooz"
   },
@@ -12392,25 +12517,13 @@
     "manufacturer": "Zooz"
   },
   "0x027a:0x0904:0x0201": {
-    "description": "700 Series Dry Contact Relay",
-    "label": [
-      {
-        "$if": "productType === 0x0904",
-        "value": "ZEN51 LR"
-      },
-      "ZEN51"
-    ],
+    "description": "Dry Contact Relay",
+    "label": "ZEN51",
     "manufacturer": "Zooz"
   },
   "0x027a:0x0904:0x0202": {
-    "description": "700 Series Double Relay",
-    "label": [
-      {
-        "$if": "productType === 0x0904",
-        "value": "ZEN52 LR"
-      },
-      "ZEN52"
-    ],
+    "description": "Double Relay",
+    "label": "ZEN52",
     "manufacturer": "Zooz"
   },
   "0x027a:0x0904:0x0218": {
@@ -12445,68 +12558,38 @@
     "manufacturer": "Zooz"
   },
   "0x027a:0x7000:0xa001": {
-    "description": "ON/OFF Switch",
-    "label": [
-      {
-        "$if": "firmwareVersion >= 3.10 && firmwareVersion < 10.0",
-        "value": "ZEN71 800LR"
-      },
-      "ZEN71"
-    ],
+    "description": "On/Off Switch",
+    "label": "ZEN71",
     "manufacturer": "Zooz"
   },
   "0x027a:0x7000:0xa002": {
-    "description": "Dimmer Switch",
-    "label": [
-      {
-        "$if": "firmwareVersion >= 3.10 && firmwareVersion < 10.0",
-        "value": "ZEN72 800LR"
-      },
-      "ZEN72"
-    ],
+    "description": "Dimmer",
+    "label": "ZEN72",
     "manufacturer": "Zooz"
   },
   "0x027a:0x7000:0xa003": {
-    "description": "700 Toggle Switch",
+    "description": "Toggle Switch",
     "label": "ZEN73",
     "manufacturer": "Zooz"
   },
   "0x027a:0x7000:0xa004": {
-    "description": "700 Toggle Dimmer",
+    "description": "Toggle Dimmer",
     "label": "ZEN74",
     "manufacturer": "Zooz"
   },
   "0x027a:0x7000:0xa006": {
-    "description": "S2 ON/OFF Switch",
-    "label": [
-      {
-        "$if": "firmwareVersion >= 3.10 && firmwareVersion < 10.0",
-        "value": "ZEN76 800LR"
-      },
-      "ZEN76"
-    ],
+    "description": "S2 On/Off Switch",
+    "label": "ZEN76",
     "manufacturer": "Zooz"
   },
   "0x027a:0x7000:0xa007": {
-    "description": "S2 Dimmer Switch",
-    "label": [
-      {
-        "$if": "firmwareVersion >= 4.10 && firmwareVersion < 10.0",
-        "value": "ZEN77 800LR"
-      },
-      "ZEN77"
-    ],
+    "description": "S2 Dimmer",
+    "label": "ZEN77",
     "manufacturer": "Zooz"
   },
   "0x027a:0x7000:0xa008": {
     "description": "Scene Controller",
-    "label": [
-      {
-        "$if": "firmwareVersion >= 2.10 && firmwareVersion < 10.0",
-        "value": "ZEN32 800LR"
-      },
-      "ZEN32"
-    ],
+    "label": "ZEN32",
     "manufacturer": "Zooz"
   },
   "0x027a:0x7000:0xa00a": {
@@ -12531,7 +12614,7 @@
     "manufacturer": "Zooz"
   },
   "0x027a:0x7000:0xb003": {
-    "description": "700 Series Outdoor Double Plug",
+    "description": "Outdoor Double Plug",
     "label": "ZEN14",
     "manufacturer": "Zooz"
   },
@@ -12556,7 +12639,7 @@
     "manufacturer": "Zooz"
   },
   "0x027a:0x7000:0xf001": {
-    "description": "Z-Wave Plus 700 Series Remote Switch",
+    "description": "Remote Switch",
     "label": "ZEN34",
     "manufacturer": "Zooz"
   },
@@ -12586,7 +12669,7 @@
     "manufacturer": "Zooz"
   },
   "0x027a:0xa000:0xa008": {
-    "description": "Dimmer & Dry Contact Relay",
+    "description": "Double Switch",
     "label": "ZEN30",
     "manufacturer": "Zooz"
   },
@@ -12622,13 +12705,7 @@
   },
   "0x027a:0xbb00:0xbb08": {
     "description": "Scene Controller",
-    "label": [
-      {
-        "$if": "firmwareVersion >= 2.10 && firmwareVersion < 10.0",
-        "value": "ZEN32 800LR"
-      },
-      "ZEN32"
-    ],
+    "label": "ZEN32",
     "manufacturer": "Zooz"
   },
   "0x027a:0xbb00:0xbb0a": {
@@ -13236,6 +13313,11 @@
     "label": "ZW31",
     "manufacturer": "EVA Logik"
   },
+  "0x0312:0xff01:0xff97": {
+    "description": "Outdoor Smart Plug - 2 Outlet (800S)",
+    "label": "MP24Z",
+    "manufacturer": "Minoston"
+  },
   "0x0312:0xff07:0xff03": {
     "description": "Z-Wave Outdoor Smart Plug",
     "label": "MP22ZD",
@@ -13496,6 +13578,23 @@
     "label": "VEGGPLUG",
     "manufacturer": "Sunricher"
   },
+  "0x0330:0x0202:0xd01c": {
+    "description": [
+      {
+        "$if": "firmwareVersion === 1.31",
+        "value": "Smart switch and dimmer (push button)"
+      },
+      "Smart switch and dimmer (rotary)"
+    ],
+    "label": [
+      {
+        "$if": "firmwareVersion === 1.31",
+        "value": "HomeMech-2002"
+      },
+      "HomeMech-2001"
+    ],
+    "manufacturer": "HomeSys"
+  },
   "0x0330:0x021a:0xd002": {
     "description": "RGBW LED Controller",
     "label": "ZV9101",
@@ -13537,9 +13636,9 @@
     "manufacturer": "Sunricher"
   },
   "0x0330:0x0300:0xa306": {
-    "description": "2 Group Single Color Wall Mounted Remote",
-    "label": "ZV9001K4-DIM-G2",
-    "manufacturer": "Sunricher"
+    "description": "Wall Controller - 4 Button",
+    "label": "VES-ZW-WAL-008",
+    "manufacturer": "Vesternet"
   },
   "0x0330:0x0300:0xa307": {
     "description": "Wall Controller - 2 Button",
@@ -13567,9 +13666,9 @@
     "manufacturer": "Sunricher"
   },
   "0x0330:0x0300:0xb302": {
-    "description": "Remote Control - 12 Button",
-    "label": "VES-ZW-REM-010",
-    "manufacturer": "Vesternet"
+    "description": "4 Channel Dimmer Remote Control",
+    "label": "ZV9001K12-DIM-Z4",
+    "manufacturer": "Sunricher"
   },
   "0x0330:0x0301:0xa101": {
     "description": "Wall Controller",
@@ -13961,6 +14060,11 @@
     "label": "4AR1SZ-0EN0",
     "manufacturer": "Ring"
   },
+  "0x0346:0x0501:0x0101": {
+    "description": "Flood Freeze Sensor",
+    "label": "4SF1S8-0EN0",
+    "manufacturer": "Ring"
+  },
   "0x0346:0x0601:0x0101": {
     "description": "Ring Smoke/CO Listener",
     "label": "4SS1S80EN0",
@@ -14241,6 +14345,11 @@
     "label": "ZWA012",
     "manufacturer": "Aeotec Ltd."
   },
+  "0x0371:0x0002:0x002d": {
+    "description": "TriSensor 8",
+    "label": "ZWA045",
+    "manufacturer": "Aeotec Ltd."
+  },
   "0x0371:0x0002:0x00bb": {
     "description": "Recessed Door Sensor 7",
     "label": "ZW187",
@@ -14351,6 +14460,11 @@
     "label": "ZWA012",
     "manufacturer": "Aeotec Ltd."
   },
+  "0x0371:0x0102:0x002d": {
+    "description": "TriSensor 8",
+    "label": "ZWA045",
+    "manufacturer": "Aeotec Ltd."
+  },
   "0x0371:0x0102:0x00bb": {
     "description": "Recessed Door Sensor 7",
     "label": "ZW187",
@@ -14451,6 +14565,11 @@
     "label": "ZWA012",
     "manufacturer": "Aeotec Ltd."
   },
+  "0x0371:0x0202:0x002d": {
+    "description": "TriSensor 8",
+    "label": "ZWA045",
+    "manufacturer": "Aeotec Ltd."
+  },
   "0x0371:0x0202:0x00bb": {
     "description": "Recessed Door Sensor 7",
     "label": "ZW187",
@@ -14471,6 +14590,11 @@
     "label": "ZW164",
     "manufacturer": "Aeotec Ltd."
   },
+  "0x0371:0x0302:0x002d": {
+    "description": "TriSensor 8",
+    "label": "ZWA045",
+    "manufacturer": "Aeotec Ltd."
+  },
   "0x0371:0x0902:0x0003": {
     "description": "NanoMote Quad",
     "label": "ZWA003",
@@ -14484,6 +14608,11 @@
   "0x0371:0x1c02:0x0005": {
     "description": "TriSensor",
     "label": "ZWA005",
+    "manufacturer": "Aeotec Ltd."
+  },
+  "0x0371:0x1c02:0x0018": {
+    "description": "MultiSensor 7",
+    "label": "ZWA024",
     "manufacturer": "Aeotec Ltd."
   },
   "0x0373:0x0003:0x0001": {
@@ -14951,6 +15080,11 @@
     "label": "Z-Wave Dimmer 400W",
     "manufacturer": "Namron"
   },
+  "0x0438:0x0200:0xd006": {
+    "description": "Switch 16A",
+    "label": "4512746",
+    "manufacturer": "Namron"
+  },
   "0x0438:0x0200:0xd00c": {
     "description": "In-Wall Dimmer Module",
     "label": "Z-Wave Dimmer 2 400W",
@@ -15106,6 +15240,11 @@
     "label": "HOMEE-005",
     "manufacturer": "Homee"
   },
+  "0x0458:0x4944:0x3236": {
+    "description": "In-Wall Smart Dimmer",
+    "label": "61303 / ZW3010",
+    "manufacturer": "iDevices"
+  },
   "0x045a:0x0000:0x0400": {
     "description": "Thermostatic Radiator Valve",
     "label": "Z-TRV-V01",
@@ -15116,9 +15255,39 @@
     "label": "Z-DWS-V01",
     "manufacturer": "ZVIDAR"
   },
+  "0x045a:0x0004:0x0367": {
+    "description": "800 Series USB Controller",
+    "label": "ZW871",
+    "manufacturer": "ZVIDAR"
+  },
+  "0x045a:0x0004:0x0368": {
+    "description": "800 Series Pi Module",
+    "label": "ZW872",
+    "manufacturer": "ZVIDAR"
+  },
+  "0x045a:0x0004:0x0371": {
+    "description": "Multi-Protocol Gateway",
+    "label": "ZW881",
+    "manufacturer": "ZVIDAR"
+  },
+  "0x045a:0x0004:0x0509": {
+    "description": "Smartwings Day Night Shades",
+    "label": "WB04V",
+    "manufacturer": "ZVIDAR"
+  },
+  "0x045a:0x0004:0x050b": {
+    "description": "Smartwings Smart Motor",
+    "label": "WM25L",
+    "manufacturer": "ZVIDAR"
+  },
   "0x045a:0x0004:0x0610": {
     "description": "800 Series USB Controller",
     "label": "Z-DG-V01",
+    "manufacturer": "ZVIDAR"
+  },
+  "0x045a:0x0004:0x0611": {
+    "description": "800 Series PI Module",
+    "label": "Z-PI",
     "manufacturer": "ZVIDAR"
   },
   "0x045a:0x0904:0x0507": {
@@ -15181,7 +15350,17 @@
     "label": "QMSW-0A1P8",
     "manufacturer": "Shelly Europe Ltd."
   },
+  "0x0460:0x0002:0x0091": {
+    "description": "Wave Pro 3",
+    "label": "QPSW-0A3X16",
+    "manufacturer": "Shelly Europe Ltd."
+  },
   "0x0460:0x0003:0x0082": {
+    "description": "Wave Shutter",
+    "label": "QNSH-001P10",
+    "manufacturer": "Shelly Europe Ltd."
+  },
+  "0x0460:0x0003:0x0085": {
     "description": "Wave Shutter",
     "label": "QNSH-001P10",
     "manufacturer": "Shelly Europe Ltd."
@@ -15284,6 +15463,11 @@
   "0x5254:0x0100:0x8490": {
     "description": "AC Master",
     "label": "ZXT-600",
+    "manufacturer": "Remotec"
+  },
+  "0x5254:0x0100:0x8493": {
+    "description": "IR AC & AV Extender",
+    "label": "ZXT-800",
     "manufacturer": "Remotec"
   },
   "0x5254:0x0101:0x8370": {
@@ -15396,5 +15580,5 @@
     "label": "BW8120",
     "manufacturer": "Remotec"
   },
-  "updated_at": "2024-07-08T02:36:24.368049"
+  "updated_at": "2025-02-11T17:32:12.668972"
 }
