@@ -420,8 +420,8 @@
     "manufacturer": "HomeSeer Technologies"
   },
   "0x000c:0x0202:0x0001": {
-    "description": "Z-Wave Indicator Light Sensor",
-    "label": "HS-FS100-L",
+    "description": "Flex Sensor",
+    "label": "HS-FS100+",
     "manufacturer": "HomeSeer Technologies"
   },
   "0x000c:0x0203:0x0001": {
@@ -5900,8 +5900,8 @@
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0301:0x1001": {
-    "description": "Roller Shutter 2",
-    "label": "FGR222",
+    "description": "Roller Shutter",
+    "label": "FGRM222",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0301:0x3001": {
@@ -5910,8 +5910,8 @@
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0302:0x1000": {
-    "description": "Roller Shutter 2",
-    "label": "FGR222",
+    "description": "Roller Shutter",
+    "label": "FGRM222",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0302:0x3000": {
@@ -11187,8 +11187,8 @@
     "manufacturer": "Kaipule Technology Co., Ltd."
   },
   "0x0214:0x0002:0x0002": {
-    "description": "Smoke Sensor",
-    "label": "ES-61",
+    "description": "PIR Sensor",
+    "label": "DP-32 / IX-30 / IX-32",
     "manufacturer": "Kaipule Technology Co., Ltd."
   },
   "0x0214:0x0003:0x0001": {
@@ -11492,8 +11492,8 @@
     "manufacturer": "Logic Group"
   },
   "0x0234:0x0003:0x010d": {
-    "description": "DIN-Rail Module with 10 Digital Outputs and 4 Digital Inputs",
-    "label": "LHC5020",
+    "description": "DIN Rail Interface",
+    "label": "ZIF5020",
     "manufacturer": "Logic Group"
   },
   "0x0234:0x0003:0x0111": {
@@ -13631,14 +13631,14 @@
     "manufacturer": "ShenZhen Sunricher Technology, Ltd."
   },
   "0x0330:0x0300:0xa305": {
-    "description": "Wall Mounted Switch",
-    "label": "Heatit Z-Push Button 8",
-    "manufacturer": "Sunricher"
+    "description": "Wall Controller - 8 Button",
+    "label": "VES-ZW-WAL-009",
+    "manufacturer": "Vesternet"
   },
   "0x0330:0x0300:0xa306": {
-    "description": "Wall Controller - 4 Button",
-    "label": "VES-ZW-WAL-008",
-    "manufacturer": "Vesternet"
+    "description": "2 Group Single Color Wall Mounted Remote",
+    "label": "ZV9001K4-DIM-G2",
+    "manufacturer": "Sunricher"
   },
   "0x0330:0x0300:0xa307": {
     "description": "Wall Controller - 2 Button",
@@ -13666,9 +13666,9 @@
     "manufacturer": "Sunricher"
   },
   "0x0330:0x0300:0xb302": {
-    "description": "4 Channel Dimmer Remote Control",
-    "label": "ZV9001K12-DIM-Z4",
-    "manufacturer": "Sunricher"
+    "description": "Remote Control - 12 Button",
+    "label": "VES-ZW-REM-010",
+    "manufacturer": "Vesternet"
   },
   "0x0330:0x0301:0xa101": {
     "description": "Wall Controller",
@@ -15580,5 +15580,5 @@
     "label": "BW8120",
     "manufacturer": "Remotec"
   },
-  "updated_at": "2025-02-11T17:32:12.668972"
+  "updated_at": "2025-02-12T19:04:46.751255"
 }
