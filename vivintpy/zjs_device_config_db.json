@@ -25,9 +25,9 @@
     "manufacturer": "Sigma Designs (Former Zensys)"
   },
   "0x0000:0x0003:0x0008": {
-    "description": "Smart Temperature & Humidity Sensor",
-    "label": "M417_9E",
-    "manufacturer": "Sigma Designs (Former Zensys)"
+    "description": "Z-Wave 500 Series Controller",
+    "label": "ACC-UZB3",
+    "manufacturer": "Silicon Labs"
   },
   "0x0000:0x0003:0x000b": {
     "description": "Z-Wave 9 Channel_module",
@@ -5351,12 +5351,12 @@
   },
   "0x0109:0x2009:0x0901": {
     "description": "AC/DC Siren",
-    "label": "ZM1602",
+    "label": "ZM1602-5",
     "manufacturer": "Vision Security"
   },
   "0x0109:0x2009:0x0903": {
     "description": "AC/DC Siren",
-    "label": "ZM1602",
+    "label": "ZM1602-5",
     "manufacturer": "Vision Security"
   },
   "0x0109:0x2009:0x0907": {
@@ -7111,8 +7111,8 @@
   },
   "0x011a:0x0601:0x0901": {
     "description": "PIR Sensor",
-    "label": "ZWN-BPC",
-    "manufacturer": "Enerwave / Wenzhou MTLC Electric Appliances Co., Ltd."
+    "label": "ZWN-BPC-PLUS",
+    "manufacturer": "Wenzhou MTLC Electric Appliances Co., Ltd."
   },
   "0x011a:0x0601:0x0903": {
     "description": "Magnetic Door/Window Sensor",
@@ -9017,8 +9017,8 @@
     "manufacturer": "Popp & Co"
   },
   "0x0154:0x0004:0x0002": {
-    "description": "POPP Solar Outdoor Siren 2",
-    "label": "700854",
+    "description": "Solar Powered Outdoor Siren",
+    "label": "005107",
     "manufacturer": "Popp & Co"
   },
   "0x0154:0x0004:0x0003": {
@@ -10783,7 +10783,7 @@
   },
   "0x019b:0x0003:0x0202": {
     "description": "Floor Thermostat",
-    "label": "Z-TRM 2",
+    "label": "Z-TRM2fx",
     "manufacturer": "Heatit"
   },
   "0x019b:0x0003:0x0203": {
@@ -15580,5 +15580,5 @@
     "label": "BW8120",
     "manufacturer": "Remotec"
   },
-  "updated_at": "2025-02-12T19:04:46.751255"
+  "updated_at": "2025-03-03T15:37:23.803426"
 }
