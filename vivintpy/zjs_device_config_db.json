@@ -25,8 +25,8 @@
     "manufacturer": "Sigma Designs (Former Zensys)"
   },
   "0x0000:0x0003:0x0008": {
-    "description": "Z-Wave 500 Series Controller",
-    "label": "ACC-UZB3",
+    "description": "USB Controller",
+    "label": "500 Series",
     "manufacturer": "Silicon Labs"
   },
   "0x0000:0x0003:0x000b": {
@@ -2468,6 +2468,11 @@
     "description": "In-Wall Outlet, TR, 700S",
     "label": "58449 / ZWA1003",
     "manufacturer": "Enbrighten"
+  },
+  "0x0063:0x4952:0x3437": {
+    "description": "In-Wall Smart Switch, 800S",
+    "label": "76596 / ZWN4015",
+    "manufacturer": "Jasco"
   },
   "0x0063:0x4953:0x3031": {
     "description": "Hinge PIN Door Sensor, 500S",
@@ -7140,8 +7145,8 @@
     "manufacturer": "Connected Object"
   },
   "0x011f:0x0001:0x0001": {
-    "description": "Schlage PIR Motion Sensor",
-    "label": "PIR Motion Sensor",
+    "description": "Home Motion Sensor",
+    "label": "PIR",
     "manufacturer": "Schlage"
   },
   "0x011f:0x0001:0x0002": {
@@ -7287,6 +7292,11 @@
   "0x0129:0x0002:0xffff": {
     "description": "Real Living Touchscreen Deadbolt",
     "label": "YRD220 / YRD240",
+    "manufacturer": "Yale"
+  },
+  "0x0129:0x0003:0x0000": {
+    "description": "Push Button Lever Lock",
+    "label": "YRL210",
     "manufacturer": "Yale"
   },
   "0x0129:0x0003:0x0409": {
@@ -9876,6 +9886,11 @@
     "label": "MH-C621",
     "manufacturer": "McoHome Co., Ltd."
   },
+  "0x015f:0xd221:0x5102": {
+    "description": "Micro Switch",
+    "label": "MH-DS221",
+    "manufacturer": "McoHome Technology Co., Ltd."
+  },
   "0x015f:0xd221:0x7102": {
     "description": "Micro Switch",
     "label": "MH-DS221",
@@ -12296,6 +12311,11 @@
     "label": "BRZ1",
     "manufacturer": "Springs Window Fashions"
   },
+  "0x026e:0x4254:0x5a42": {
+    "description": "Motorized Blinds",
+    "label": "CRZB",
+    "manufacturer": "Springs Window Fashions"
+  },
   "0x026e:0x4353:0x5a31": {
     "description": "Cellular Shade Radio Z-Wave",
     "label": "CSZ1",
@@ -12304,6 +12324,11 @@
   "0x026e:0x4d43:0x5a31": {
     "description": "Multi-Channel Remote Control",
     "label": "MCZ1",
+    "manufacturer": "Springs Window Fashions"
+  },
+  "0x026e:0x5252:0x5a42": {
+    "description": "Motorized Blinds",
+    "label": "CRZB",
     "manufacturer": "Springs Window Fashions"
   },
   "0x026e:0x5253:0x5a31": {
@@ -12604,13 +12629,7 @@
   },
   "0x027a:0x7000:0xb002": {
     "description": "Indoor Smart Plug",
-    "label": [
-      {
-        "$if": "firmwareVersion >= 2.10",
-        "value": "ZEN04 800LR"
-      },
-      "ZEN04"
-    ],
+    "label": "ZEN04",
     "manufacturer": "Zooz"
   },
   "0x027a:0x7000:0xb003": {
@@ -13135,7 +13154,7 @@
   },
   "0x0312:0xac01:0x4002": {
     "description": "Mini SmartPlug Dimmer",
-    "label": "N4002",
+    "label": "N4002 / N4012",
     "manufacturer": "New One"
   },
   "0x0312:0xac01:0x4003": {
@@ -15130,6 +15149,11 @@
     "label": "SR-ZV9032A-EU",
     "manufacturer": "Namron"
   },
+  "0x043d:0x0003:0x0001": {
+    "description": "Smart Lock - Secure Plus",
+    "label": "PGD728F ZPU",
+    "manufacturer": "Lockly"
+  },
   "0x0441:0x2400:0x1000": {
     "description": "BusT4-Z-Wave Interface",
     "label": "IBT4ZWAVE",
@@ -15290,10 +15314,25 @@
     "label": "Z-PI",
     "manufacturer": "ZVIDAR"
   },
+  "0x045a:0x0400:0x0501": {
+    "description": "Thermostatic Radiator Valve",
+    "label": "Z-TRV-V01",
+    "manufacturer": "ZVIDAR"
+  },
   "0x045a:0x0904:0x0507": {
     "description": "Smart Curtain Motor",
     "label": "Z-CM-V01",
     "manufacturer": "ZVIDAR"
+  },
+  "0x0460:0x0001:0x0081": {
+    "description": "Shelly Wave PRO Dimmer 1PM",
+    "label": "QPDM-0A1P01",
+    "manufacturer": "Shelly Europe Ltd."
+  },
+  "0x0460:0x0001:0x0082": {
+    "description": "Shelly Wave PRO Dimmer 2PM",
+    "label": "QPDM-0A2P01",
+    "manufacturer": "Shelly Europe Ltd."
   },
   "0x0460:0x0002:0x0081": {
     "description": "Wave 2PM",
@@ -15308,6 +15347,11 @@
   "0x0460:0x0002:0x0084": {
     "description": "Wave 1PM",
     "label": "QNSW-001P16",
+    "manufacturer": "Shelly Europe Ltd."
+  },
+  "0x0460:0x0002:0x0087": {
+    "description": "Shelly Wave Plug S",
+    "label": "QNPL-0A112",
     "manufacturer": "Shelly Europe Ltd."
   },
   "0x0460:0x0002:0x0088": {
@@ -15379,6 +15423,21 @@
     "description": "Wave I4 DC",
     "label": "QNSN-0D24X",
     "manufacturer": "Shelly Europe Ltd."
+  },
+  "0x0460:0x0100:0x0081": {
+    "description": "Shelly Wave Door/Window",
+    "label": "QNDW-002C",
+    "manufacturer": "Shelly Europe Ltd."
+  },
+  "0x046a:0x0004:0x0509": {
+    "description": "Smartwings Day Night Shades",
+    "label": "WB04V",
+    "manufacturer": "SmartWings"
+  },
+  "0x046a:0x0004:0x050b": {
+    "description": "Smart Motor",
+    "label": "WM25L",
+    "manufacturer": "SmartWings"
   },
   "0x4118:0x0002:0x0002": {
     "description": "Slim Multi-Sensor",
@@ -15580,5 +15639,5 @@
     "label": "BW8120",
     "manufacturer": "Remotec"
   },
-  "updated_at": "2025-03-03T15:37:23.803426"
+  "updated_at": "2025-04-14T15:37:31.678109"
 }
