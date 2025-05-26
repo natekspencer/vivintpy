@@ -2279,6 +2279,11 @@
     "label": "59350 / 59372 / 59373 / ZWA3016",
     "manufacturer": "Ultrapro"
   },
+  "0x0063:0x4944:0x3533": {
+    "description": "In-Wall Fan Speed Control, QFSW, 700S",
+    "label": "58446 / ZWA4013",
+    "manufacturer": "Enbrighten"
+  },
   "0x0063:0x494d:0x3031": {
     "description": "In-Wall Motion Switch, 500S",
     "label": "24770 / ZW4006",
@@ -3139,6 +3144,11 @@
     "label": "ZWACT",
     "manufacturer": "FortrezZ LLC"
   },
+  "0x0084:0x0311:0x0109": {
+    "description": "Siren and Strobe Alarm",
+    "label": "SSA1/SSA2",
+    "manufacturer": "FortrezZ LLC"
+  },
   "0x0084:0x0311:0x010b": {
     "description": "Siren and Strobe Alarm",
     "label": "SSA1/SSA2",
@@ -3150,6 +3160,11 @@
     "manufacturer": "FortrezZ LLC"
   },
   "0x0084:0x0313:0x0108": {
+    "description": "Siren and Strobe Alarm",
+    "label": "SSA1/SSA2",
+    "manufacturer": "FortrezZ LLC"
+  },
+  "0x0084:0x0313:0x0109": {
     "description": "Siren and Strobe Alarm",
     "label": "SSA1/SSA2",
     "manufacturer": "FortrezZ LLC"
@@ -5905,8 +5920,8 @@
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0301:0x1001": {
-    "description": "Roller Shutter",
-    "label": "FGRM222",
+    "description": "Roller Shutter 2",
+    "label": "FGR222",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0301:0x3001": {
@@ -5915,8 +5930,8 @@
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0302:0x1000": {
-    "description": "Roller Shutter",
-    "label": "FGRM222",
+    "description": "Roller Shutter 2",
+    "label": "FGR222",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0302:0x3000": {
@@ -7809,6 +7824,16 @@
   "0x0129:0x842a:0x3cac": {
     "description": "Real Living Touchscreen Lever Lock",
     "label": "YRL210 / YRL220",
+    "manufacturer": "Yale"
+  },
+  "0x0129:0xc006:0x1904": {
+    "description": "Smart Lock",
+    "label": "YDM3109A",
+    "manufacturer": "Yale"
+  },
+  "0x0129:0xc006:0x5904": {
+    "description": "Smart Lock",
+    "label": "YDM3109A",
     "manufacturer": "Yale"
   },
   "0x0129:0xc600:0x0002": {
@@ -9846,6 +9871,16 @@
     "label": "MH-S513",
     "manufacturer": "McoHome Technology Co., Ltd."
   },
+  "0x015f:0x7041:0x7102": {
+    "description": "Touch Panel Switch 4 Button",
+    "label": "MH-S314 Gen 7",
+    "manufacturer": "McoHome Technology Co., Ltd."
+  },
+  "0x015f:0x8101:0x4936": {
+    "description": "Thermostat",
+    "label": "MH4936",
+    "manufacturer": "McoHome Technology Co., Ltd."
+  },
   "0x015f:0xa803:0x1351": {
     "description": "9 in 1 MULTI-SENSOR",
     "label": "A8-9",
@@ -9914,6 +9949,16 @@
   "0x015f:0xf501:0x7102": {
     "description": "Fan Coil Thermostat",
     "label": "MH5-2A",
+    "manufacturer": "McoHome Technology Co., Ltd."
+  },
+  "0x015f:0xf523:0x7101": {
+    "description": "Fan Coil Thermostat",
+    "label": "MH5-4A",
+    "manufacturer": "McoHome Technology Co., Ltd."
+  },
+  "0x015f:0xf52d:0x7102": {
+    "description": "Fan Coil Thermostat",
+    "label": "MH5-2D",
     "manufacturer": "McoHome Technology Co., Ltd."
   },
   "0x0160:0x0001:0x0001": {
@@ -11079,7 +11124,7 @@
   "0x0208:0x0100:0x0019": {
     "description": "Smart Plug",
     "label": "HKZW-SO08",
-    "manufacturer": "Hank"
+    "manufacturer": "HANK Electronics, Ltd."
   },
   "0x0208:0x0101:0x0004": {
     "description": "RGB Bulb",
@@ -11096,10 +11141,15 @@
     "label": "HKZW-SO03",
     "manufacturer": "HANK Electronics Ltd."
   },
+  "0x0208:0x0102:0x0029": {
+    "description": "Smart Plug",
+    "label": "ZA-216001",
+    "manufacturer": "Ness"
+  },
   "0x0208:0x0200:0x0008": {
     "description": "Door and Window Sensor",
     "label": "HKZW-DWS01",
-    "manufacturer": "HANK Electronics Ltd."
+    "manufacturer": "HANK Electronics, Ltd."
   },
   "0x0208:0x0200:0x0009": {
     "description": "One-Key Scene Controller",
@@ -11114,12 +11164,12 @@
   "0x0208:0x0200:0x000f": {
     "description": "Flood Sensor",
     "label": "HKZW-FLD01",
-    "manufacturer": "HANK Electronics Ltd."
+    "manufacturer": "HANK Electronics, Ltd."
   },
   "0x0208:0x0200:0x0012": {
     "description": "Motion Sensor",
     "label": "HKZW-MS02",
-    "manufacturer": "HANK Electronics Ltd."
+    "manufacturer": "HANK Electronics, Ltd."
   },
   "0x0208:0x0201:0x0006": {
     "description": "Multisensor",
@@ -11129,7 +11179,7 @@
   "0x0208:0x0201:0x0008": {
     "description": "Door and Window Sensor",
     "label": "HKZW-DWS01",
-    "manufacturer": "HANK Electronics Ltd."
+    "manufacturer": "HANK Electronics, Ltd."
   },
   "0x0208:0x0201:0x0009": {
     "description": "One-Key Scene Controller",
@@ -11144,12 +11194,12 @@
   "0x0208:0x0201:0x000f": {
     "description": "Flood Sensor",
     "label": "HKZW-FLD01",
-    "manufacturer": "HANK Electronics Ltd."
+    "manufacturer": "HANK Electronics, Ltd."
   },
   "0x0208:0x0201:0x0012": {
     "description": "Motion Sensor",
     "label": "HKZW-MS02",
-    "manufacturer": "HANK Electronics Ltd."
+    "manufacturer": "HANK Electronics, Ltd."
   },
   "0x0208:0x0208:0x0101": {
     "description": "Smart Plug with Two USB Ports",
@@ -11159,7 +11209,7 @@
   "0x0208:0x0300:0x0012": {
     "description": "Motion Sensor",
     "label": "HKZW-MS02",
-    "manufacturer": "HANK Electronics Ltd."
+    "manufacturer": "HANK Electronics, Ltd."
   },
   "0x020e:0x4754:0x3038": {
     "description": "Smart LED Light",
@@ -11507,8 +11557,8 @@
     "manufacturer": "Logic Group"
   },
   "0x0234:0x0003:0x010d": {
-    "description": "DIN Rail Interface",
-    "label": "ZIF5020",
+    "description": "DIN-Rail Module with 10 Digital Outputs and 4 Digital Inputs",
+    "label": "LHC5020",
     "manufacturer": "Logic Group"
   },
   "0x0234:0x0003:0x0111": {
@@ -12212,48 +12262,48 @@
     "manufacturer": "SimonTech S.L.U"
   },
   "0x0267:0x0004:0x0000": {
-    "description": "Simon IO: Roller Blind",
-    "label": "10002080-13x",
+    "description": "Roller Blind",
+    "label": "10002080-13X",
     "manufacturer": "SimonTech S.L.U"
   },
   "0x0267:0x0004:0x0022": {
-    "description": "Simon IO: Roller Blind",
-    "label": "10002080-13x",
+    "description": "Roller Blind",
+    "label": "10002080-13X",
     "manufacturer": "SimonTech S.L.U"
   },
   "0x0267:0x0004:0x0063": {
-    "description": "Simon IO: Roller Blind",
-    "label": "10002080-13x",
+    "description": "Roller Blind",
+    "label": "10002080-13X",
     "manufacturer": "SimonTech S.L.U"
   },
   "0x0267:0x0004:0x0091": {
-    "description": "Simon IO: Roller Blind",
-    "label": "10002080-13x",
+    "description": "Roller Blind",
+    "label": "10002080-13X",
     "manufacturer": "SimonTech S.L.U"
   },
   "0x0267:0x0004:0x0092": {
-    "description": "Simon IO: Roller Blind",
-    "label": "10002080-13x",
+    "description": "Roller Blind",
+    "label": "10002080-13X",
     "manufacturer": "SimonTech S.L.U"
   },
   "0x0267:0x0004:0x0093": {
-    "description": "Simon IO: Roller Blind",
-    "label": "10002080-13x",
+    "description": "Roller Blind",
+    "label": "10002080-13X",
     "manufacturer": "SimonTech S.L.U"
   },
   "0x0267:0x0004:0x0094": {
-    "description": "Simon IO: Roller Blind",
-    "label": "10002080-13x",
+    "description": "Roller Blind",
+    "label": "10002080-13X",
     "manufacturer": "SimonTech S.L.U"
   },
   "0x0267:0x0004:0x0164": {
-    "description": "Simon IO: Roller Blind",
-    "label": "10002080-13x",
+    "description": "Roller Blind",
+    "label": "10002080-13X",
     "manufacturer": "SimonTech S.L.U"
   },
   "0x0267:0x0004:0x0177": {
-    "description": "Simon IO: Roller Blind",
-    "label": "10002080-13x",
+    "description": "Roller Blind",
+    "label": "10002080-13X",
     "manufacturer": "SimonTech S.L.U"
   },
   "0x0267:0x0005:0x0000": {
@@ -12271,14 +12321,29 @@
     "label": "10002081-13x",
     "manufacturer": "SimonTech S.L.U"
   },
+  "0x0267:0x0007:0x0000": {
+    "description": "S100 Rocker iO for Dimmer",
+    "label": "10002020-13X",
+    "manufacturer": "SimonTech S.L.U"
+  },
+  "0x0267:0x0008:0x0000": {
+    "description": "S100 Master Roller Dimmer iO",
+    "label": "10002021-13X",
+    "manufacturer": "SimonTech S.L.U"
+  },
   "0x0267:0x0009:0x0000": {
-    "description": "iO Cover for the Simon 100 Schuko Plug Socket",
-    "label": "10002041-130",
+    "description": "Cover for IO Socket",
+    "label": "10002041-13X",
     "manufacturer": "SimonTech S.L.U"
   },
   "0x0267:0x0009:0x0022": {
     "description": "iO Cover for the Simon 100 Schuko Plug Socket",
     "label": "10002041-13X",
+    "manufacturer": "SimonTech S.L.U"
+  },
+  "0x0267:0x000a:0x0000": {
+    "description": "HUB iO",
+    "label": "10003041-13X",
     "manufacturer": "SimonTech S.L.U"
   },
   "0x0267:0x0011:0x0000": {
@@ -13650,14 +13715,14 @@
     "manufacturer": "ShenZhen Sunricher Technology, Ltd."
   },
   "0x0330:0x0300:0xa305": {
-    "description": "Wall Controller - 8 Button",
-    "label": "VES-ZW-WAL-009",
-    "manufacturer": "Vesternet"
+    "description": "Wall Mounted Switch",
+    "label": "Heatit Z-Push Button 8",
+    "manufacturer": "Sunricher"
   },
   "0x0330:0x0300:0xa306": {
-    "description": "2 Group Single Color Wall Mounted Remote",
-    "label": "ZV9001K4-DIM-G2",
-    "manufacturer": "Sunricher"
+    "description": "Wall Controller - 4 Button",
+    "label": "VES-ZW-WAL-008",
+    "manufacturer": "Vesternet"
   },
   "0x0330:0x0300:0xa307": {
     "description": "Wall Controller - 2 Button",
@@ -14384,6 +14449,21 @@
     "label": "ZWA002",
     "manufacturer": "Aeotec Ltd."
   },
+  "0x0371:0x0003:0x002e": {
+    "description": "Home Energy Meter 8",
+    "label": "ZWA046",
+    "manufacturer": "Aeotec Ltd."
+  },
+  "0x0371:0x0003:0x0033": {
+    "description": "Home Energy Meter 8",
+    "label": "ZWA046",
+    "manufacturer": "Aeotec Ltd."
+  },
+  "0x0371:0x0003:0x0034": {
+    "description": "Home Energy Meter 8",
+    "label": "ZWA046",
+    "manufacturer": "Aeotec Ltd."
+  },
   "0x0371:0x0003:0x008d": {
     "description": "Nano Shutter V.3",
     "label": "ZW141",
@@ -14517,6 +14597,11 @@
   "0x0371:0x0103:0x002a": {
     "description": "Outdoor Smart Plug",
     "label": "ZWA042",
+    "manufacturer": "Aeotec Ltd."
+  },
+  "0x0371:0x0103:0x002e": {
+    "description": "Home Energy Meter 8",
+    "label": "ZWA046",
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0103:0x008d": {
@@ -15294,6 +15379,11 @@
     "label": "ZW881",
     "manufacturer": "ZVIDAR"
   },
+  "0x045a:0x0004:0x0507": {
+    "description": "Smart Roller Curtain Motor",
+    "label": "WM25C",
+    "manufacturer": "ZVIDAR"
+  },
   "0x045a:0x0004:0x0509": {
     "description": "Smartwings Day Night Shades",
     "label": "WB04V",
@@ -15428,6 +15518,11 @@
     "description": "Shelly Wave Door/Window",
     "label": "QNDW-002C",
     "manufacturer": "Shelly Europe Ltd."
+  },
+  "0x0466:0x0001:0x0001": {
+    "description": "Z-Wave Antenna",
+    "label": "Home Assistant Connect ZWA-2",
+    "manufacturer": "Nabu Casa"
   },
   "0x046a:0x0004:0x0509": {
     "description": "Smartwings Day Night Shades",
@@ -15639,5 +15734,5 @@
     "label": "BW8120",
     "manufacturer": "Remotec"
   },
-  "updated_at": "2025-04-14T15:37:31.678109"
+  "updated_at": "2025-05-26T15:38:38.871225"
 }
