@@ -1175,22 +1175,22 @@ files = [
 
 [[package]]
 name = "pubnub"
-version = "10.2.0"
+version = "10.3.0"
 description = "PubNub Real-time push service in the cloud"
 optional = false
 python-versions = ">=3.7"
 groups = ["main"]
 files = [
-    {file = "pubnub-10.2.0.tar.gz", hash = "sha256:e0072f423153bd76db74730f307f5f30eb8d9f231e63d2d80a252f2300cf0213"},
+    {file = "pubnub-10.3.0.tar.gz", hash = "sha256:dc78699a900912fd9caf743db09e695109d22e5789d1ceeb9b4b452388e63ce2"},
 ]
 
 [package.dependencies]
-aiohttp = "*"
+aiohttp = ">3.9.2"
 cbor2 = ">=5.6"
 h2 = ">=4.1"
 httpx = ">=0.28"
 pycryptodomex = ">=3.3"
-requests = ">=2.4"
+requests = ">=2.32"
 
 [[package]]
 name = "pycryptodomex"
