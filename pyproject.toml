@@ -15,7 +15,7 @@ aiohttp = "^3.8.5"
 certifi = ">=2022.9.24,<2026.0.0"
 pubnub = ">=7,<11"
 grpcio = "^1.51.1"
-protobuf = ">=4.23.1,<6.0.0"
+protobuf = ">=4.23.1,<7.0.0"
 pyjwt = "^2.9.0"
 
 [tool.poetry.group.dev.dependencies]
