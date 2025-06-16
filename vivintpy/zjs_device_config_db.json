@@ -655,7 +655,7 @@
     "manufacturer": "ControlThink LC"
   },
   "0x001a:0x0000:0x0001": {
-    "description": "Eaton\u2019s Home Automation Hub",
+    "description": "Eaton's Home Automation Hub",
     "label": "HOMECT",
     "manufacturer": "Eaton"
   },
@@ -7131,8 +7131,8 @@
   },
   "0x011a:0x0601:0x0901": {
     "description": "PIR Sensor",
-    "label": "ZWN-BPC-PLUS",
-    "manufacturer": "Wenzhou MTLC Electric Appliances Co., Ltd."
+    "label": "ZWN-BPC",
+    "manufacturer": "Enerwave / Wenzhou MTLC Electric Appliances Co., Ltd."
   },
   "0x011a:0x0601:0x0903": {
     "description": "Magnetic Door/Window Sensor",
@@ -9052,8 +9052,8 @@
     "manufacturer": "Popp & Co"
   },
   "0x0154:0x0004:0x0002": {
-    "description": "Solar Powered Outdoor Siren",
-    "label": "005107",
+    "description": "POPP Solar Outdoor Siren 2",
+    "label": "700854",
     "manufacturer": "Popp & Co"
   },
   "0x0154:0x0004:0x0003": {
@@ -10843,7 +10843,7 @@
   },
   "0x019b:0x0003:0x0202": {
     "description": "Floor Thermostat",
-    "label": "Z-TRM2fx",
+    "label": "Z-TRM 2",
     "manufacturer": "Heatit"
   },
   "0x019b:0x0003:0x0203": {
@@ -11252,8 +11252,8 @@
     "manufacturer": "Kaipule Technology Co., Ltd."
   },
   "0x0214:0x0002:0x0002": {
-    "description": "PIR Sensor",
-    "label": "DP-32 / IX-30 / IX-32",
+    "description": "Smoke Sensor",
+    "label": "ES-61",
     "manufacturer": "Kaipule Technology Co., Ltd."
   },
   "0x0214:0x0003:0x0001": {
@@ -11557,8 +11557,8 @@
     "manufacturer": "Logic Group"
   },
   "0x0234:0x0003:0x010d": {
-    "description": "DIN-Rail Module with 10 Digital Outputs and 4 Digital Inputs",
-    "label": "LHC5020",
+    "description": "DIN Rail Interface",
+    "label": "ZIF5020",
     "manufacturer": "Logic Group"
   },
   "0x0234:0x0003:0x0111": {
@@ -13750,9 +13750,9 @@
     "manufacturer": "Sunricher"
   },
   "0x0330:0x0300:0xb302": {
-    "description": "Remote Control - 12 Button",
-    "label": "VES-ZW-REM-010",
-    "manufacturer": "Vesternet"
+    "description": "4 Channel Dimmer Remote Control",
+    "label": "ZV9001K12-DIM-Z4",
+    "manufacturer": "Sunricher"
   },
   "0x0330:0x0301:0xa101": {
     "description": "Wall Controller",
@@ -14380,8 +14380,8 @@
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0002:0x0009": {
-    "description": "a\u00ebrQ Temperature and Humidity Sensor V1.0",
-    "label": "ZWA009",
+    "description": "a\u00ebrQ Temperature and Humidity Sensor V2.0",
+    "label": "ZWA039",
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0002:0x000b": {
@@ -14515,8 +14515,8 @@
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0102:0x0009": {
-    "description": "a\u00ebrQ Temperature and Humidity Sensor V1.0",
-    "label": "ZWA009",
+    "description": "a\u00ebrQ Temperature and Humidity Sensor V2.0",
+    "label": "ZWA039",
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0102:0x000b": {
@@ -14640,8 +14640,8 @@
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0202:0x0009": {
-    "description": "a\u00ebrQ Temperature and Humidity Sensor V1.0",
-    "label": "ZWA009",
+    "description": "a\u00ebrQ Temperature and Humidity Sensor V2.0",
+    "label": "ZWA039",
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0202:0x000b": {
@@ -15734,5 +15734,5 @@
     "label": "BW8120",
     "manufacturer": "Remotec"
   },
-  "updated_at": "2025-06-09T15:40:19.976279"
+  "updated_at": "2025-06-16T15:40:54.745532"
 }
