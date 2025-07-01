@@ -1183,22 +1183,22 @@ files = [
 
 [[package]]
 name = "pubnub"
-version = "10.4.0"
+version = "10.4.1"
 description = "PubNub Real-time push service in the cloud"
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "pubnub-10.4.0.tar.gz", hash = "sha256:3c7fd6ae88b52941ef831ffa7c9912022371d55997c978e04888334ea12d1ffa"},
+    {file = "pubnub-10.4.1.tar.gz", hash = "sha256:4ab547870bb24a3b321e17575ed23368ad2f0c31df14a8a090af44f2c8eba442"},
 ]
 
 [package.dependencies]
-aiohttp = ">3.9.2"
+aiohttp = ">3.10.11"
 cbor2 = ">=5.6"
 h2 = ">=4.1"
 httpx = ">=0.28"
 pycryptodomex = ">=3.3"
-requests = ">=2.32"
+requests = ">=2.32.2"
 
 [[package]]
 name = "pycryptodomex"
