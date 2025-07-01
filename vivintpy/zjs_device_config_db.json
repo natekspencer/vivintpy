@@ -420,8 +420,8 @@
     "manufacturer": "HomeSeer Technologies"
   },
   "0x000c:0x0202:0x0001": {
-    "description": "Flex Sensor",
-    "label": "HS-FS100+",
+    "description": "Z-Wave Indicator Light Sensor",
+    "label": "HS-FS100-L",
     "manufacturer": "HomeSeer Technologies"
   },
   "0x000c:0x0203:0x0001": {
@@ -1025,12 +1025,12 @@
     "manufacturer": "Leviton"
   },
   "0x001d:0x1902:0x0334": {
-    "description": "Plug-In Lamp Dimming Module",
+    "description": "Decora Smart Dimmer Plug",
     "label": "DZPD3",
     "manufacturer": "Leviton"
   },
   "0x001d:0x1a02:0x0334": {
-    "description": "Plug-In Appliance Module",
+    "description": "Decora Smart Plug",
     "label": "DZPA1",
     "manufacturer": "Leviton"
   },
@@ -1070,12 +1070,12 @@
     "manufacturer": "Leviton"
   },
   "0x001d:0x3501:0x0001": {
-    "description": "Plug-In Lamp Dimming Module",
+    "description": "Decora Smart Dimmer Plug",
     "label": "DZPD3",
     "manufacturer": "Leviton"
   },
   "0x001d:0x3601:0x0001": {
-    "description": "Plug-In Appliance Module",
+    "description": "Decora Smart Plug",
     "label": "DZPA1",
     "manufacturer": "Leviton"
   },
@@ -5371,12 +5371,12 @@
   },
   "0x0109:0x2009:0x0901": {
     "description": "AC/DC Siren",
-    "label": "ZM1602-5",
+    "label": "ZM1602",
     "manufacturer": "Vision Security"
   },
   "0x0109:0x2009:0x0903": {
     "description": "AC/DC Siren",
-    "label": "ZM1602-5",
+    "label": "ZM1602",
     "manufacturer": "Vision Security"
   },
   "0x0109:0x2009:0x0907": {
@@ -9881,6 +9881,11 @@
     "label": "MH4936",
     "manufacturer": "McoHome Technology Co., Ltd."
   },
+  "0x015f:0x8101:0x4a36": {
+    "description": "Thermostat",
+    "label": "MH4936",
+    "manufacturer": "McoHome Technology Co., Ltd."
+  },
   "0x015f:0xa803:0x1351": {
     "description": "9 in 1 MULTI-SENSOR",
     "label": "A8-9",
@@ -11557,8 +11562,8 @@
     "manufacturer": "Logic Group"
   },
   "0x0234:0x0003:0x010d": {
-    "description": "DIN Rail Interface",
-    "label": "ZIF5020",
+    "description": "DIN-Rail Module with 10 Digital Outputs and 4 Digital Inputs",
+    "label": "LHC5020",
     "manufacturer": "Logic Group"
   },
   "0x0234:0x0003:0x0111": {
@@ -13517,6 +13522,11 @@
     "label": "VZW31-SN",
     "manufacturer": "Inovelli"
   },
+  "0x031e:0x0017:0x0001": {
+    "description": "mmWave Dimmer",
+    "label": "VZW32-SN",
+    "manufacturer": "Inovelli"
+  },
   "0x0320:0x0001:0x0001": {
     "description": "Magnetic Contact",
     "label": "HO-09ZW",
@@ -13750,9 +13760,9 @@
     "manufacturer": "Sunricher"
   },
   "0x0330:0x0300:0xb302": {
-    "description": "4 Channel Dimmer Remote Control",
-    "label": "ZV9001K12-DIM-Z4",
-    "manufacturer": "Sunricher"
+    "description": "Remote Control - 12 Button",
+    "label": "VES-ZW-REM-010",
+    "manufacturer": "Vesternet"
   },
   "0x0330:0x0301:0xa101": {
     "description": "Wall Controller",
@@ -14380,8 +14390,8 @@
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0002:0x0009": {
-    "description": "a\u00ebrQ Temperature and Humidity Sensor V2.0",
-    "label": "ZWA039",
+    "description": "a\u00ebrQ Temperature and Humidity Sensor V1.0",
+    "label": "ZWA009",
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0002:0x000b": {
@@ -14489,6 +14499,11 @@
     "label": "ZWA006",
     "manufacturer": "Aeotec Ltd."
   },
+  "0x0371:0x0004:0x003c": {
+    "description": "Z-Stick 10 Pro",
+    "label": "ZWA060",
+    "manufacturer": "Aeotec Ltd."
+  },
   "0x0371:0x0004:0x00bd": {
     "description": "Range Extender 7",
     "label": "ZW189-C15",
@@ -14515,8 +14530,8 @@
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0102:0x0009": {
-    "description": "a\u00ebrQ Temperature and Humidity Sensor V2.0",
-    "label": "ZWA039",
+    "description": "a\u00ebrQ Temperature and Humidity Sensor V1.0",
+    "label": "ZWA009",
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0102:0x000b": {
@@ -14640,8 +14655,8 @@
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0202:0x0009": {
-    "description": "a\u00ebrQ Temperature and Humidity Sensor V2.0",
-    "label": "ZWA039",
+    "description": "a\u00ebrQ Temperature and Humidity Sensor V1.0",
+    "label": "ZWA009",
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0202:0x000b": {
@@ -15424,6 +15439,11 @@
     "label": "QPDM-0A2P01",
     "manufacturer": "Shelly Europe Ltd."
   },
+  "0x0460:0x0001:0x0083": {
+    "description": "Wave Dimmer",
+    "label": "QLDM-0A101",
+    "manufacturer": "Shelly Europe Ltd."
+  },
   "0x0460:0x0002:0x0081": {
     "description": "Wave 2PM",
     "label": "QNSW-002P16",
@@ -15517,6 +15537,16 @@
   "0x0460:0x0100:0x0081": {
     "description": "Shelly Wave Door/Window",
     "label": "QNDW-002C",
+    "manufacturer": "Shelly Europe Ltd."
+  },
+  "0x0460:0x0100:0x0082": {
+    "description": "Shelly Wave Motion Sensor",
+    "label": "QLMO-003F",
+    "manufacturer": "Shelly Europe Ltd."
+  },
+  "0x0460:0x0100:0x0083": {
+    "description": "Shelly Wave H&T Sensor",
+    "label": "QLHT-OU2Z",
     "manufacturer": "Shelly Europe Ltd."
   },
   "0x0466:0x0001:0x0001": {
@@ -15734,5 +15764,5 @@
     "label": "BW8120",
     "manufacturer": "Remotec"
   },
-  "updated_at": "2025-06-16T15:40:54.745532"
+  "updated_at": "2025-06-30T15:40:49.874862"
 }
