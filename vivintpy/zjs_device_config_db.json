@@ -5371,12 +5371,12 @@
   },
   "0x0109:0x2009:0x0901": {
     "description": "AC/DC Siren",
-    "label": "ZM1602",
+    "label": "ZM1602-5",
     "manufacturer": "Vision Security"
   },
   "0x0109:0x2009:0x0903": {
     "description": "AC/DC Siren",
-    "label": "ZM1602",
+    "label": "ZM1602-5",
     "manufacturer": "Vision Security"
   },
   "0x0109:0x2009:0x0907": {
@@ -10848,7 +10848,7 @@
   },
   "0x019b:0x0003:0x0202": {
     "description": "Floor Thermostat",
-    "label": "Z-TRM 2",
+    "label": "Z-TRM2fx",
     "manufacturer": "Heatit"
   },
   "0x019b:0x0003:0x0203": {
@@ -11562,8 +11562,8 @@
     "manufacturer": "Logic Group"
   },
   "0x0234:0x0003:0x010d": {
-    "description": "DIN-Rail Module with 10 Digital Outputs and 4 Digital Inputs",
-    "label": "LHC5020",
+    "description": "DIN Rail Interface",
+    "label": "ZIF5020",
     "manufacturer": "Logic Group"
   },
   "0x0234:0x0003:0x0111": {
@@ -13725,14 +13725,14 @@
     "manufacturer": "ShenZhen Sunricher Technology, Ltd."
   },
   "0x0330:0x0300:0xa305": {
-    "description": "Wall Mounted Switch",
-    "label": "Heatit Z-Push Button 8",
-    "manufacturer": "Sunricher"
+    "description": "Wall Controller - 8 Button",
+    "label": "VES-ZW-WAL-009",
+    "manufacturer": "Vesternet"
   },
   "0x0330:0x0300:0xa306": {
-    "description": "Wall Controller - 4 Button",
-    "label": "VES-ZW-WAL-008",
-    "manufacturer": "Vesternet"
+    "description": "2 Group Single Color Wall Mounted Remote",
+    "label": "ZV9001K4-DIM-G2",
+    "manufacturer": "Sunricher"
   },
   "0x0330:0x0300:0xa307": {
     "description": "Wall Controller - 2 Button",
@@ -15054,6 +15054,11 @@
     "label": "TUXEDOW",
     "manufacturer": "Resideo"
   },
+  "0x041b:0x0001:0x0410": {
+    "description": "Smoke & CO Alarm",
+    "label": "SMCO410",
+    "manufacturer": "First Alert"
+  },
   "0x041b:0x0011:0x0009": {
     "description": "T6 Pro Z-Wave Programmable Thermostat with SmartStart",
     "label": "TH6320ZW2007",
@@ -15550,8 +15555,8 @@
     "manufacturer": "Shelly Europe Ltd."
   },
   "0x0466:0x0001:0x0001": {
-    "description": "Z-Wave Antenna",
-    "label": "Home Assistant Connect ZWA-2",
+    "description": "Home Assistant Connect ZWA-2",
+    "label": "NC-ZWA-9734",
     "manufacturer": "Nabu Casa"
   },
   "0x046a:0x0004:0x0509": {
@@ -15764,5 +15769,5 @@
     "label": "BW8120",
     "manufacturer": "Remotec"
   },
-  "updated_at": "2025-06-30T15:40:49.874862"
+  "updated_at": "2025-07-14T15:41:44.261604"
 }
