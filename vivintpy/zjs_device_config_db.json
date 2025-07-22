@@ -10106,6 +10106,11 @@
     "label": "FT141",
     "manufacturer": "Fantem"
   },
+  "0x016a:0x0004:0x0076": {
+    "description": "Range Extender",
+    "label": "FT117",
+    "manufacturer": "Fantem"
+  },
   "0x016a:0x0101:0x0065": {
     "description": "Cube",
     "label": "FT101",
@@ -12414,12 +12419,17 @@
   "0x026f:0x0001:0x0001": {
     "description": "Thermoptek Smoke Alarm/Smoke Detector",
     "label": "ZST-630",
-    "manufacturer": "Sprue Safety Products Ltd."
+    "manufacturer": "FireAngel"
+  },
+  "0x026f:0x0001:0x0002": {
+    "description": "Thermistek Heat Alarm/Detector",
+    "label": "ZHT-630",
+    "manufacturer": "FireAngel"
   },
   "0x026f:0x0002:0x0002": {
     "description": "Thermistek Heat Alarm/Detector",
     "label": "ZHT-630",
-    "manufacturer": "Sprue Safety Products Ltd."
+    "manufacturer": "FireAngel"
   },
   "0x0270:0x0101:0x000a": {
     "description": "Water Ball Valve Servo",
@@ -12690,6 +12700,11 @@
   "0x027a:0x7000:0xa00a": {
     "description": "Universal Relay",
     "label": "ZEN17",
+    "manufacturer": "Zooz"
+  },
+  "0x027a:0x7000:0xa018": {
+    "description": "Dimmer & Scene Controller",
+    "label": "ZEN35",
     "manufacturer": "Zooz"
   },
   "0x027a:0x7000:0xb001": {
@@ -15769,5 +15784,5 @@
     "label": "BW8120",
     "manufacturer": "Remotec"
   },
-  "updated_at": "2025-07-14T15:41:44.261604"
+  "updated_at": "2025-07-21T15:42:30.202081"
 }
