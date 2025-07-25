@@ -8,7 +8,10 @@ import logging
 import aiohttp
 from aiohttp.client_exceptions import ClientConnectionError
 from pubnub.pnconfiguration import PNConfiguration
-from pubnub.pubnub_asyncio import PubNubAsyncio
+from pubnub.pubnub_asyncio import (
+    AsyncioSubscriptionManager,
+    PubNubAsyncio,
+)
 
 from .api import VivintSkyApi
 from .const import (
@@ -176,7 +179,9 @@ class Account:
         pnconfig.subscribe_key = PN_SUBSCRIBE_KEY
         pnconfig.user_id = f"pn-{user_data[UserAttribute.ID].upper()}"
 
-        self.__pubnub = PubNubAsyncio(pnconfig)
+        self.__pubnub = PubNubAsyncio(
+            pnconfig, subscription_manager=AsyncioSubscriptionManager
+        )
         self.__pubnub_listener = VivintPubNubSubscribeListener(
             self.handle_pubnub_message
         )
