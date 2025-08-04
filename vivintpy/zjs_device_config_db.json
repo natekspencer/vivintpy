@@ -3334,6 +3334,11 @@
     "label": "AMZ Solar",
     "manufacturer": "Fakro"
   },
+  "0x0085:0x0005:0x0111": {
+    "description": "Solar Awning",
+    "label": "AMZ Solar",
+    "manufacturer": "Fakro"
+  },
   "0x0085:0x0005:0x0112": {
     "description": "Solar Awning",
     "label": "AMZ Solar",
@@ -15164,6 +15169,11 @@
     "label": "CONNECT2",
     "manufacturer": "IOTAS"
   },
+  "0x0431:0x0021:0x0216": {
+    "description": "ECO-DIM Z-Wave LED Dimmer",
+    "label": "ECO-DIM",
+    "manufacturer": "EcoDim"
+  },
   "0x0431:0x0202:0x0001": {
     "description": "ECO-DIM Z-Wave LED Dimmer",
     "label": "ECO-DIM",
@@ -15784,5 +15794,5 @@
     "label": "BW8120",
     "manufacturer": "Remotec"
   },
-  "updated_at": "2025-07-28T15:43:11.658335"
+  "updated_at": "2025-08-04T15:44:30.442852"
 }
