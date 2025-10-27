@@ -469,6 +469,11 @@
     "label": "HS-WX300",
     "manufacturer": "HomeSeer Technologies"
   },
+  "0x000c:0x4447:0x4047": {
+    "description": "Scene Capable Wall Switch",
+    "label": "WS300",
+    "manufacturer": "HomeSeer Technologies"
+  },
   "0x000c:0x4744:0x3032": {
     "description": "Scene Capable Wall Dimmer Switch",
     "label": "HS-WD100+",
@@ -2279,6 +2284,11 @@
     "label": "59350 / 59372 / 59373 / ZWA3016",
     "manufacturer": "Ultrapro"
   },
+  "0x0063:0x4944:0x3434": {
+    "description": "In-Wall Smart Dimmer, QFSW, 700S",
+    "label": "59350 / 59372 / 59373 / ZWA3016",
+    "manufacturer": "Ultrapro"
+  },
   "0x0063:0x4944:0x3533": {
     "description": "In-Wall Fan Speed Control, QFSW, 700S",
     "label": "58446 / ZWA4013",
@@ -3330,6 +3340,11 @@
     "manufacturer": "Fakro"
   },
   "0x0085:0x0005:0x0012": {
+    "description": "Solar Awning",
+    "label": "AMZ Solar",
+    "manufacturer": "Fakro"
+  },
+  "0x0085:0x0005:0x0111": {
     "description": "Solar Awning",
     "label": "AMZ Solar",
     "manufacturer": "Fakro"
@@ -4569,7 +4584,27 @@
     "label": "8225",
     "manufacturer": "Baldwin"
   },
+  "0x0090:0x0811:0x00a9": {
+    "description": "Home Connect 620 Connected Smart Lock",
+    "label": "HC620",
+    "manufacturer": "Kwikset"
+  },
+  "0x0090:0x0811:0x00b9": {
+    "description": "Deadbolt Door Lock",
+    "label": "918",
+    "manufacturer": "Kwikset"
+  },
   "0x0090:0x0811:0x03a8": {
+    "description": "Home Connect 620 Connected Smart Lock",
+    "label": "HC620",
+    "manufacturer": "Kwikset"
+  },
+  "0x0090:0x0811:0x03b8": {
+    "description": "Deadbolt Door Lock",
+    "label": "918",
+    "manufacturer": "Kwikset"
+  },
+  "0x0090:0x0811:0x06a8": {
     "description": "Home Connect 620 Connected Smart Lock",
     "label": "HC620",
     "manufacturer": "Kwikset"
@@ -4580,6 +4615,11 @@
     "manufacturer": "Kwikset"
   },
   "0x0090:0x0811:0x23a8": {
+    "description": "Home Connect 620 Connected Smart Lock",
+    "label": "HC620",
+    "manufacturer": "Kwikset"
+  },
+  "0x0090:0x0811:0x23a9": {
     "description": "Home Connect 620 Connected Smart Lock",
     "label": "HC620",
     "manufacturer": "Kwikset"
@@ -5920,8 +5960,8 @@
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0301:0x1001": {
-    "description": "Roller Shutter 2",
-    "label": "FGR222",
+    "description": "Roller Shutter",
+    "label": "FGRM222",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0301:0x3001": {
@@ -5930,8 +5970,8 @@
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0302:0x1000": {
-    "description": "Roller Shutter 2",
-    "label": "FGR222",
+    "description": "Roller Shutter",
+    "label": "FGRM222",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0302:0x3000": {
@@ -12546,6 +12586,11 @@
     "label": "ZEN55 LR",
     "manufacturer": "Zooz"
   },
+  "0x027a:0x0004:0x0369": {
+    "description": "Siren & Chime",
+    "label": "ZSE50",
+    "manufacturer": "Zooz"
+  },
   "0x027a:0x0004:0x0510": {
     "description": "Range Extender",
     "label": "ZAC38",
@@ -12584,6 +12629,11 @@
   "0x027a:0x0101:0x0036": {
     "description": "Titan Water Valve Actuator",
     "label": "ZAC36",
+    "manufacturer": "Zooz"
+  },
+  "0x027a:0x0103:0x004e": {
+    "description": "High Power Relay",
+    "label": "ZEN78",
     "manufacturer": "Zooz"
   },
   "0x027a:0x0104:0x0201": {
@@ -12680,6 +12730,11 @@
   "0x027a:0x7000:0xa004": {
     "description": "Toggle Dimmer",
     "label": "ZEN74",
+    "manufacturer": "Zooz"
+  },
+  "0x027a:0x7000:0xa005": {
+    "description": "Heavy Duty Switch",
+    "label": "ZEN75",
     "manufacturer": "Zooz"
   },
   "0x027a:0x7000:0xa006": {
@@ -13740,14 +13795,14 @@
     "manufacturer": "ShenZhen Sunricher Technology, Ltd."
   },
   "0x0330:0x0300:0xa305": {
-    "description": "Wall Controller - 8 Button",
-    "label": "VES-ZW-WAL-009",
-    "manufacturer": "Vesternet"
+    "description": "Wall Mounted Switch",
+    "label": "Heatit Z-Push Button 8",
+    "manufacturer": "Sunricher"
   },
   "0x0330:0x0300:0xa306": {
-    "description": "2 Group Single Color Wall Mounted Remote",
-    "label": "ZV9001K4-DIM-G2",
-    "manufacturer": "Sunricher"
+    "description": "Wall Controller - 4 Button",
+    "label": "VES-ZW-WAL-008",
+    "manufacturer": "Vesternet"
   },
   "0x0330:0x0300:0xa307": {
     "description": "Wall Controller - 2 Button",
@@ -13775,9 +13830,9 @@
     "manufacturer": "Sunricher"
   },
   "0x0330:0x0300:0xb302": {
-    "description": "Remote Control - 12 Button",
-    "label": "VES-ZW-REM-010",
-    "manufacturer": "Vesternet"
+    "description": "4 Channel Dimmer Remote Control",
+    "label": "ZV9001K12-DIM-Z4",
+    "manufacturer": "Sunricher"
   },
   "0x0330:0x0301:0xa101": {
     "description": "Wall Controller",
@@ -14405,8 +14460,8 @@
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0002:0x0009": {
-    "description": "a\u00ebrQ Temperature and Humidity Sensor V1.0",
-    "label": "ZWA009",
+    "description": "a\u00ebrQ Temperature and Humidity Sensor V2.0",
+    "label": "ZWA039",
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0002:0x000b": {
@@ -14545,8 +14600,8 @@
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0102:0x0009": {
-    "description": "a\u00ebrQ Temperature and Humidity Sensor V1.0",
-    "label": "ZWA009",
+    "description": "a\u00ebrQ Temperature and Humidity Sensor V2.0",
+    "label": "ZWA039",
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0102:0x000b": {
@@ -14670,8 +14725,8 @@
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0202:0x0009": {
-    "description": "a\u00ebrQ Temperature and Humidity Sensor V1.0",
-    "label": "ZWA009",
+    "description": "a\u00ebrQ Temperature and Humidity Sensor V2.0",
+    "label": "ZWA039",
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0202:0x000b": {
@@ -15164,6 +15219,11 @@
     "label": "CONNECT2",
     "manufacturer": "IOTAS"
   },
+  "0x0431:0x0021:0x0216": {
+    "description": "ECO-DIM Z-Wave LED Dimmer",
+    "label": "ECO-DIM",
+    "manufacturer": "EcoDim"
+  },
   "0x0431:0x0202:0x0001": {
     "description": "ECO-DIM Z-Wave LED Dimmer",
     "label": "ECO-DIM",
@@ -15237,6 +15297,11 @@
   "0x0438:0x0200:0xd025": {
     "description": "16A Touch Thermostat - Black",
     "label": "4512745",
+    "manufacturer": "Namron"
+  },
+  "0x0438:0x0200:0xd309": {
+    "description": "Wall Mounted Remote Control",
+    "label": "Namron 4512774",
     "manufacturer": "Namron"
   },
   "0x0438:0x0202:0x0002": {
@@ -15784,5 +15849,5 @@
     "label": "BW8120",
     "manufacturer": "Remotec"
   },
-  "updated_at": "2025-07-28T15:43:11.658335"
+  "updated_at": "2025-10-27T15:36:27.066326"
 }
