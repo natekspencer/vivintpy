@@ -1425,7 +1425,6 @@ files = [
 [package.dependencies]
 backports-asyncio-runner = {version = ">=1.1,<2", markers = "python_version < \"3.11\""}
 pytest = ">=8.2,<9"
-typing-extensions = {version = ">=4.12", markers = "python_version < \"3.10\""}
 
 [package.extras]
 docs = ["sphinx (>=5.3)", "sphinx-rtd-theme (>=1)"]
@@ -1830,5 +1829,5 @@ propcache = ">=0.2.0"
 
 [metadata]
 lock-version = "2.1"
-python-versions = "^3.9.0"
-content-hash = "819d31f7ff141a9e1d8aa0a9759428540a252c0a89a194bbfdb2305ef013e670"
+python-versions = "^3.10.0"
+content-hash = "5448542d7c02d8ba12de1d6ada88b4ce03cc1a8a6d965eaf4f12cb6894b0f655"
