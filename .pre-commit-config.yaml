@@ -1,7 +1,14 @@
 repos:
+  - repo: https://github.com/python-poetry/poetry
+    rev: "2.2.1"
+    hooks:
+      # Validate poetry configuration.
+      - id: poetry-check
+      # Update the lock file.
+      - id: poetry-lock
   - repo: https://github.com/astral-sh/ruff-pre-commit
     # Ruff version.
-    rev: v0.9.6
+    rev: v0.14.3
     hooks:
       # Run the linter.
       - id: ruff
