@@ -4629,6 +4629,11 @@
     "label": "HC620",
     "manufacturer": "Kwikset"
   },
+  "0x0090:0x0811:0x23b9": {
+    "description": "Home Connect 620 Connected Smart Lock",
+    "label": "HC620",
+    "manufacturer": "Kwikset"
+  },
   "0x0091:0x0001:0x0091": {
     "description": "Electricity Meters",
     "label": "electricity_meter",
@@ -10981,6 +10986,11 @@
     "label": "Z-TEMP3",
     "manufacturer": "Heatit"
   },
+  "0x019b:0x0032:0x3201": {
+    "description": "Thermostat",
+    "label": "Z-TRM6 DC",
+    "manufacturer": "Heatit"
+  },
   "0x019b:0x0062:0x6201": {
     "description": "Heatit Z-HAN2",
     "label": "Z-HAN2",
@@ -14524,6 +14534,11 @@
     "label": "ZWA045",
     "manufacturer": "Aeotec Ltd."
   },
+  "0x0371:0x0002:0x0032": {
+    "description": "SmokeShield for Ei Smoke Detectors",
+    "label": "ZWA050",
+    "manufacturer": "Aeotec Ltd."
+  },
   "0x0371:0x0002:0x00bb": {
     "description": "Recessed Door Sensor 7",
     "label": "ZW187",
@@ -15869,5 +15884,5 @@
     "label": "BW8120",
     "manufacturer": "Remotec"
   },
-  "updated_at": "2025-12-08T15:40:44.394745"
+  "updated_at": "2026-01-05T15:43:55.031899"
 }
