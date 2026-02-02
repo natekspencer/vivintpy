@@ -9936,6 +9936,11 @@
     "label": "MH4936",
     "manufacturer": "McoHome Technology Co., Ltd."
   },
+  "0x015f:0x810a:0x5900": {
+    "description": "Thermostat",
+    "label": "MH-5900",
+    "manufacturer": "MCO Home"
+  },
   "0x015f:0xa803:0x1351": {
     "description": "9 in 1 MULTI-SENSOR",
     "label": "A8-9",
@@ -12604,6 +12609,16 @@
   "0x027a:0x0004:0x0110": {
     "description": "DC Signal Sensor",
     "label": "ZEN55 LR",
+    "manufacturer": "Zooz"
+  },
+  "0x027a:0x0004:0x0321": {
+    "description": "240V XS Relay",
+    "label": "ZEN57",
+    "manufacturer": "Zooz"
+  },
+  "0x027a:0x0004:0x0322": {
+    "description": "Low Voltage XS Relay",
+    "label": "ZEN58",
     "manufacturer": "Zooz"
   },
   "0x027a:0x0004:0x0369": {
@@ -15884,5 +15899,5 @@
     "label": "BW8120",
     "manufacturer": "Remotec"
   },
-  "updated_at": "2026-01-05T15:43:55.031899"
+  "updated_at": "2026-02-02T15:54:59.973558"
 }
