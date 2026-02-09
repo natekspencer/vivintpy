@@ -44,8 +44,9 @@ class AlarmPanel(VivintDevice):
         self.__panel_credentials: dict = {}
         self.__panel = first_or_none(
             self.devices,
-            lambda device: DeviceType(device.data.get(Attribute.TYPE))
-            == DeviceType.PANEL,
+            lambda device: (
+                DeviceType(device.data.get(Attribute.TYPE)) == DeviceType.PANEL
+            ),
         )
 
     def __repr__(self) -> str:
@@ -260,8 +261,9 @@ class AlarmPanel(VivintDevice):
                     raw_device_data = first_or_none(
                         self.data[Attribute.DEVICES],
                         lambda raw_device_data,  # type: ignore
-                        device_data=device_data: raw_device_data["_id"]
-                        == device_data["_id"],
+                        device_data=device_data: (
+                            raw_device_data["_id"] == device_data["_id"]
+                        ),
                     )
 
                     if operation == PubNubOperatorAttribute.DELETE:
@@ -301,8 +303,10 @@ class AlarmPanel(VivintDevice):
             if not init:
                 device = first_or_none(
                     self.devices,
-                    lambda device, device_data=device_data: device.id  # type: ignore
-                    == device_data[Attribute.ID],
+                    lambda device, device_data=device_data: (
+                        device.id  # type: ignore
+                        == device_data[Attribute.ID]
+                    ),
                 )
             if device:
                 device.update_data(device_data, override=True)

@@ -142,8 +142,10 @@ class Account:
                 # is this an existing account_system?
                 system = first_or_none(
                     self.systems,
-                    lambda system, system_data=system_data: system.id  # type: ignore
-                    == system_data[SystemAttribute.PANEL_ID],
+                    lambda system, system_data=system_data: (
+                        system.id  # type: ignore
+                        == system_data[SystemAttribute.PANEL_ID]
+                    ),
                 )
                 if system:
                     await system.refresh()
