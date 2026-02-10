@@ -1,6 +1,14 @@
-[![pypi](https://img.shields.io/pypi/v/vivintpy?style=for-the-badge)](https://pypi.org/project/vivintpy)
-[![downloads](https://img.shields.io/pypi/dm/vivintpy?style=for-the-badge)](https://pypi.org/project/vivintpy)
+<!-- BEGIN AUTO-GENERATED HEADER -->
+
+[![PyPI](https://img.shields.io/pypi/v/vivintpy?style=for-the-badge)](https://pypi.org/project/vivintpy/)
+[![Python](https://img.shields.io/pypi/pyversions/vivintpy?style=for-the-badge)](https://pypi.org/project/vivintpy/)
+[![License](https://img.shields.io/github/license/natekspencer/vivintpy?style=for-the-badge)](LICENSE)
 [![Buy Me A Coffee/Beer](https://img.shields.io/badge/Buy_Me_A_☕/🍺-F16061?style=for-the-badge&logo=ko-fi&logoColor=white&labelColor=grey)](https://ko-fi.com/natekspencer)
+[![Sponsor on GitHub](https://img.shields.io/badge/Sponsor_💜-6f42c1?style=for-the-badge&logo=github&logoColor=white&labelColor=grey)](https://github.com/sponsors/natekspencer)
+
+![Downloads](https://img.shields.io/pypi/dm/vivintpy?style=flat-square)
+
+<!-- END AUTO-GENERATED HEADER -->
 
 # vivintpy
 
@@ -49,12 +57,22 @@ See demo.py for a demonstration on how to use this library.
 
 ---
 
-## Support Me
+<!-- BEGIN AUTO-GENERATED FOOTER -->
 
-I'm not employed by Vivint, and provide this python package as-is.
+## ❤️ Support Me
 
-If you don't already own a Vivint system, please consider using [my referal code (kaf164)](https://www.vivint.com/get?refCode=kaf164&exid=165211vivint.com/get?refCode=kaf164&exid=165211) to get $50 off your bill (as well as a tip to me in appreciation)!
+I maintain this python project in my spare time and provide it as-is, without guarantees. If you find it useful, consider supporting development:
 
-If you already own a Vivint system and still want to donate, consider buying me a coffee ☕ (or beer 🍺) instead by using the link below:
+- 💜 [Sponsor me on GitHub](https://github.com/sponsors/natekspencer)
+- ☕ [Buy me a coffee / beer](https://ko-fi.com/natekspencer)
+- 💸 [PayPal (direct support)](https://www.paypal.com/paypalme/natekspencer)
+- ⭐ [Star this project](https://github.com/natekspencer/vivintpy)
+- 📦 If you’d like to support in other ways, such as donating hardware for testing, feel free to [reach out to me](https://github.com/natekspencer)
 
-<a href='https://ko-fi.com/natekspencer' target='_blank'><img height='35' style='border:0px;height:46px;' src='https://az743702.vo.msecnd.net/cdn/kofi3.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' />
+If you don't already own a Vivint system, please consider using [my referral code (35fr23sv)](https://www.vivint.com/get?refCode=35fr23sv&v=200) and get a free Doorbell Camera Pro from Vivint (as well as a tip to me in appreciation)! You can also call (855) 747-7199 and mention referral code `35fr23sv`.
+
+## 📈 Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=natekspencer/vivintpy)](https://www.star-history.com/#natekspencer/vivintpy)
+
+<!-- END AUTO-GENERATED FOOTER -->
