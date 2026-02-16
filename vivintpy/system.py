@@ -60,9 +60,8 @@ class System(Entity):
         for panel_data in system_data[Attribute.SYSTEM][Attribute.PARTITION]:
             alarm_panel = first_or_none(
                 self.alarm_panels,
-                lambda panel, panel_data=panel_data: (
-                    panel.id  # type: ignore
-                    == panel_data[Attribute.PANEL_ID]
+                lambda panel, panel_data=panel_data: (  # type: ignore
+                    panel.id == panel_data[Attribute.PANEL_ID]
                     and panel.partition_id == panel_data[Attribute.PARTITION_ID]
                 ),
             )
