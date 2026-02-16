@@ -303,9 +303,8 @@ class AlarmPanel(VivintDevice):
             if not init:
                 device = first_or_none(
                     self.devices,
-                    lambda device, device_data=device_data: (
-                        device.id  # type: ignore
-                        == device_data[Attribute.ID]
+                    lambda device, device_data=device_data: (  # type: ignore
+                        device.id == device_data[Attribute.ID]
                     ),
                 )
             if device:
