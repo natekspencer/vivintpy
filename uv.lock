@@ -1051,7 +1051,7 @@ wheels = [
 
 [[package]]
 name = "pubnub"
-version = "10.6.0"
+version = "10.6.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "aiohttp" },
@@ -1061,7 +1061,7 @@ dependencies = [
     { name = "pycryptodomex" },
     { name = "requests" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/c9/e5/3a7967a63f7fda216ffe3840bc0e3e31614088307864be12b08adb30098b/pubnub-10.6.0.tar.gz", hash = "sha256:62bd2785b6935c364fc2509cecd00a339c27d0d340e82cbe37b32a383e40e29b", size = 97514, upload-time = "2026-01-29T16:53:16.246Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/01/1d/0a236fc2fc508a757e37a8de8e53839606a6fc7ec8562bdbebe3499eb18c/pubnub-10.6.1.tar.gz", hash = "sha256:f861dd5b48c9da0e8b819992c7ed0fe5028b7827001711f8495a0c178553d4b1", size = 97663, upload-time = "2026-02-10T11:21:40.731Z" }
 
 [[package]]
 name = "pycryptodomex"
