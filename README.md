@@ -1,12 +1,17 @@
-[![pypi](https://img.shields.io/pypi/v/vivintpy?style=for-the-badge)](https://pypi.org/project/vivintpy)
-[![downloads](https://img.shields.io/pypi/dm/vivintpy?style=for-the-badge)](https://pypi.org/project/vivintpy)
-[![Buy Me A Coffee/Beer](https://img.shields.io/badge/Buy_Me_A_☕/🍺-F16061?style=for-the-badge&logo=ko-fi&logoColor=white&labelColor=grey)](https://ko-fi.com/natekspencer)
-
 # vivintpy
+
+[![PyPI - Version](https://img.shields.io/pypi/v/vivintpy?style=for-the-badge)](https://pypi.org/project/vivintpy/)
+[![Buy Me A Coffee/Beer](https://img.shields.io/badge/Buy_Me_A_☕/🍺-F16061?style=for-the-badge&logo=ko-fi&logoColor=white&labelColor=grey)](https://ko-fi.com/natekspencer)
+[![Sponsor on GitHub](https://img.shields.io/badge/Sponsor_💜-6f42c1?style=for-the-badge&logo=github&logoColor=white&labelColor=grey)](https://github.com/sponsors/natekspencer)
+
+[![GitHub License](https://img.shields.io/github/license/natekspencer/vivintpy?style=flat-square)](LICENSE)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/vivintpy?style=flat-square)](https://pypi.org/project/vivintpy/)
+![Pepy Total Downloads](https://img.shields.io/pepy/dt/vivintpy?style=flat-square)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/vivintpy?style=flat-square)
 
 Python library for interacting with a Vivint security and smart home system.
 
-This was built to support the [`Vivint`](https://github.com/natekspencer/hacs-vivint) integration in [Home-Assistant](https://www.home-assistant.io/) but _should_ work outside of it too. Currently, it can be utilized via [HACS](https://hacs.xyz/) by adding the [hacs-vivint](https://github.com/natekspencer/hacs-vivint) custom repository.
+This was built to support the [`Vivint for Home Assistant`](https://github.com/natekspencer/ha-vivint) integration but _should_ work outside of it too. Currently, it can be utilized via [HACS](https://hacs.xyz/) and is available as a default integration.
 
 ## Credit
 
@@ -49,12 +54,18 @@ See demo.py for a demonstration on how to use this library.
 
 ---
 
-## Support Me
+## ❤️ Support Me
 
-I'm not employed by Vivint, and provide this python package as-is.
+I maintain this python project in my spare time and provide it as-is, without guarantees. If you find it useful, consider supporting development:
 
-If you don't already own a Vivint system, please consider using [my referal code (kaf164)](https://www.vivint.com/get?refCode=kaf164&exid=165211vivint.com/get?refCode=kaf164&exid=165211) to get $50 off your bill (as well as a tip to me in appreciation)!
+- 💜 [Sponsor me on GitHub](https://github.com/sponsors/natekspencer)
+- ☕ [Buy me a coffee / beer](https://ko-fi.com/natekspencer)
+- 💸 [PayPal (direct support)](https://www.paypal.com/paypalme/natekspencer)
+- ⭐ [Star this project](https://github.com/natekspencer/vivintpy)
+- 📦 If you’d like to support in other ways, such as donating hardware for testing, feel free to [reach out to me](https://github.com/natekspencer)
 
-If you already own a Vivint system and still want to donate, consider buying me a coffee ☕ (or beer 🍺) instead by using the link below:
+If you don't already own a Vivint system, please consider using [my referral code (35fr23sv)](https://www.vivint.com/get?refCode=35fr23sv&v=200) and get a free Doorbell Camera Pro from Vivint (as well as a tip to me in appreciation)! You can also call (855) 747-7199 and mention referral code `35fr23sv`.
 
-<a href='https://ko-fi.com/natekspencer' target='_blank'><img height='35' style='border:0px;height:46px;' src='https://az743702.vo.msecnd.net/cdn/kofi3.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' />
+## 📈 Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=natekspencer/vivintpy)](https://www.star-history.com/#natekspencer/vivintpy)
