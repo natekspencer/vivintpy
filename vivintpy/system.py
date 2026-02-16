@@ -60,9 +60,11 @@ class System(Entity):
         for panel_data in system_data[Attribute.SYSTEM][Attribute.PARTITION]:
             alarm_panel = first_or_none(
                 self.alarm_panels,
-                lambda panel, panel_data=panel_data: panel.id  # type: ignore
-                == panel_data[Attribute.PANEL_ID]
-                and panel.partition_id == panel_data[Attribute.PARTITION_ID],
+                lambda panel, panel_data=panel_data: (
+                    panel.id  # type: ignore
+                    == panel_data[Attribute.PANEL_ID]
+                    and panel.partition_id == panel_data[Attribute.PARTITION_ID]
+                ),
             )
             if alarm_panel:
                 alarm_panel.refresh(panel_data)
@@ -104,8 +106,9 @@ class System(Entity):
 
             alarm_panel = first_or_none(
                 self.alarm_panels,
-                lambda panel: panel.id == self.id
-                and panel.partition_id == partition_id,
+                lambda panel: (
+                    panel.id == self.id and panel.partition_id == partition_id
+                ),
             )
 
             if not alarm_panel:
