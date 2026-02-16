@@ -1,20 +1,17 @@
-<!-- BEGIN AUTO-GENERATED HEADER -->
+# vivintpy
 
-[![PyPI](https://img.shields.io/pypi/v/vivintpy?style=for-the-badge)](https://pypi.org/project/vivintpy/)
-[![Python](https://img.shields.io/pypi/pyversions/vivintpy?style=for-the-badge)](https://pypi.org/project/vivintpy/)
-[![License](https://img.shields.io/github/license/natekspencer/vivintpy?style=for-the-badge)](LICENSE)
+[![PyPI - Version](https://img.shields.io/pypi/v/vivintpy?style=for-the-badge)](https://pypi.org/project/vivintpy/)
 [![Buy Me A Coffee/Beer](https://img.shields.io/badge/Buy_Me_A_☕/🍺-F16061?style=for-the-badge&logo=ko-fi&logoColor=white&labelColor=grey)](https://ko-fi.com/natekspencer)
 [![Sponsor on GitHub](https://img.shields.io/badge/Sponsor_💜-6f42c1?style=for-the-badge&logo=github&logoColor=white&labelColor=grey)](https://github.com/sponsors/natekspencer)
 
-![Downloads](https://img.shields.io/pypi/dm/vivintpy?style=flat-square)
-
-<!-- END AUTO-GENERATED HEADER -->
-
-# vivintpy
+[![GitHub License](https://img.shields.io/github/license/natekspencer/vivintpy?style=flat-square)](LICENSE)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/vivintpy?style=flat-square)](https://pypi.org/project/vivintpy/)
+![Pepy Total Downloads](https://img.shields.io/pepy/dt/vivintpy?style=flat-square)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/vivintpy?style=flat-square)
 
 Python library for interacting with a Vivint security and smart home system.
 
-This was built to support the [`Vivint`](https://github.com/natekspencer/hacs-vivint) integration in [Home-Assistant](https://www.home-assistant.io/) but _should_ work outside of it too. Currently, it can be utilized via [HACS](https://hacs.xyz/) by adding the [hacs-vivint](https://github.com/natekspencer/hacs-vivint) custom repository.
+This was built to support the [`Vivint for Home Assistant`](https://github.com/natekspencer/ha-vivint) integration but _should_ work outside of it too. Currently, it can be utilized via [HACS](https://hacs.xyz/) and is available as a default integration.
 
 ## Credit
 
@@ -57,8 +54,6 @@ See demo.py for a demonstration on how to use this library.
 
 ---
 
-<!-- BEGIN AUTO-GENERATED FOOTER -->
-
 ## ❤️ Support Me
 
 I maintain this python project in my spare time and provide it as-is, without guarantees. If you find it useful, consider supporting development:
@@ -74,5 +69,3 @@ If you don't already own a Vivint system, please consider using [my referral cod
 ## 📈 Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=natekspencer/vivintpy)](https://www.star-history.com/#natekspencer/vivintpy)
-
-<!-- END AUTO-GENERATED FOOTER -->
