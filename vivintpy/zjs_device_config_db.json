@@ -420,8 +420,8 @@
     "manufacturer": "HomeSeer Technologies"
   },
   "0x000c:0x0202:0x0001": {
-    "description": "Flex Sensor",
-    "label": "HS-FS100+",
+    "description": "Z-Wave Indicator Light Sensor",
+    "label": "HS-FS100-L",
     "manufacturer": "HomeSeer Technologies"
   },
   "0x000c:0x0203:0x0001": {
@@ -5421,12 +5421,12 @@
   },
   "0x0109:0x2009:0x0901": {
     "description": "AC/DC Siren",
-    "label": "ZM1602",
+    "label": "ZM1602-5",
     "manufacturer": "Vision Security"
   },
   "0x0109:0x2009:0x0903": {
     "description": "AC/DC Siren",
-    "label": "ZM1602",
+    "label": "ZM1602-5",
     "manufacturer": "Vision Security"
   },
   "0x0109:0x2009:0x0907": {
@@ -7181,8 +7181,8 @@
   },
   "0x011a:0x0601:0x0901": {
     "description": "PIR Sensor",
-    "label": "ZWN-BPC-PLUS",
-    "manufacturer": "Wenzhou MTLC Electric Appliances Co., Ltd."
+    "label": "ZWN-BPC",
+    "manufacturer": "Enerwave / Wenzhou MTLC Electric Appliances Co., Ltd."
   },
   "0x011a:0x0601:0x0903": {
     "description": "Magnetic Door/Window Sensor",
@@ -13835,14 +13835,14 @@
     "manufacturer": "ShenZhen Sunricher Technology, Ltd."
   },
   "0x0330:0x0300:0xa305": {
-    "description": "Wall Controller - 8 Button",
-    "label": "VES-ZW-WAL-009",
-    "manufacturer": "Vesternet"
+    "description": "Wall Mounted Switch",
+    "label": "Heatit Z-Push Button 8",
+    "manufacturer": "Sunricher"
   },
   "0x0330:0x0300:0xa306": {
-    "description": "2 Group Single Color Wall Mounted Remote",
-    "label": "ZV9001K4-DIM-G2",
-    "manufacturer": "Sunricher"
+    "description": "Wall Controller - 4 Button",
+    "label": "VES-ZW-WAL-008",
+    "manufacturer": "Vesternet"
   },
   "0x0330:0x0300:0xa307": {
     "description": "Wall Controller - 2 Button",
@@ -13870,9 +13870,9 @@
     "manufacturer": "Sunricher"
   },
   "0x0330:0x0300:0xb302": {
-    "description": "Remote Control - 12 Button",
-    "label": "VES-ZW-REM-010",
-    "manufacturer": "Vesternet"
+    "description": "4 Channel Dimmer Remote Control",
+    "label": "ZV9001K12-DIM-Z4",
+    "manufacturer": "Sunricher"
   },
   "0x0330:0x0301:0xa101": {
     "description": "Wall Controller",
@@ -14500,8 +14500,8 @@
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0002:0x0009": {
-    "description": "a\u00ebrQ Temperature and Humidity Sensor V1.0",
-    "label": "ZWA009",
+    "description": "a\u00ebrQ Temperature and Humidity Sensor V2.0",
+    "label": "ZWA039",
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0002:0x000b": {
@@ -14645,8 +14645,8 @@
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0102:0x0009": {
-    "description": "a\u00ebrQ Temperature and Humidity Sensor V1.0",
-    "label": "ZWA009",
+    "description": "a\u00ebrQ Temperature and Humidity Sensor V2.0",
+    "label": "ZWA039",
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0102:0x000b": {
@@ -14770,8 +14770,8 @@
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0202:0x0009": {
-    "description": "a\u00ebrQ Temperature and Humidity Sensor V1.0",
-    "label": "ZWA009",
+    "description": "a\u00ebrQ Temperature and Humidity Sensor V2.0",
+    "label": "ZWA039",
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0202:0x000b": {
@@ -15904,5 +15904,5 @@
     "label": "BW8120",
     "manufacturer": "Remotec"
   },
-  "updated_at": "2026-02-16T17:07:03.136957"
+  "updated_at": "2026-02-23T16:28:25.861435"
 }
