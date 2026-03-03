@@ -138,8 +138,6 @@ class AlarmPanel(VivintDevice):
         if self._exit_delay_task is not None:
             self._exit_delay_task.cancel()
             self._exit_delay_task = None
-            self.update_data({Attribute.STATE: ArmedState.DISARMED})
-            return
         await self.set_armed_state(ArmedState.DISARMED)
 
     async def _delayed_arm(self, state: ArmedState, delay: int) -> None:
@@ -151,7 +149,7 @@ class AlarmPanel(VivintDevice):
     async def arm_stay(self, exit_delay: int = 0) -> None:
         """Set the alarm to armed stay."""
         if exit_delay > 0:
-            self.update_data({Attribute.STATE: ArmedState.ARMING_STAY_IN_EXIT_DELAY})
+            await self.set_armed_state(ArmedState.ARMING_STAY_IN_EXIT_DELAY)
             self._exit_delay_task = asyncio.create_task(
                 self._delayed_arm(ArmedState.ARMED_STAY, exit_delay)
             )
@@ -161,7 +159,7 @@ class AlarmPanel(VivintDevice):
     async def arm_away(self, exit_delay: int = 0) -> None:
         """Set the alarm to armed away."""
         if exit_delay > 0:
-            self.update_data({Attribute.STATE: ArmedState.ARMING_AWAY_IN_EXIT_DELAY})
+            await self.set_armed_state(ArmedState.ARMING_AWAY_IN_EXIT_DELAY)
             self._exit_delay_task = asyncio.create_task(
                 self._delayed_arm(ArmedState.ARMED_AWAY, exit_delay)
             )
