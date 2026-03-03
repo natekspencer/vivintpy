@@ -138,6 +138,8 @@ class AlarmPanel(VivintDevice):
         if self._exit_delay_task is not None:
             self._exit_delay_task.cancel()
             self._exit_delay_task = None
+            self.update_data({Attribute.STATE: ArmedState.DISARMED})
+            return
         await self.set_armed_state(ArmedState.DISARMED)
 
     async def _delayed_arm(self, state: ArmedState, delay: int) -> None:
