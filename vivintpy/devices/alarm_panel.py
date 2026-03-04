@@ -41,6 +41,7 @@ class AlarmPanel(VivintDevice):
         self.__parse_data(data=data, init=True)
 
         # store a reference to the physical panel device
+        self._exit_delay_task: asyncio.Task | None = None
         self.__panel_credentials: dict = {}
         self.__panel = first_or_none(
             self.devices,
@@ -134,15 +135,44 @@ class AlarmPanel(VivintDevice):
 
     async def disarm(self) -> None:
         """Disarm the alarm."""
+        if self._exit_delay_task is not None:
+            self._exit_delay_task.cancel()
+            self._exit_delay_task = None
+            self.update_data({Attribute.STATE: ArmedState.DISARMED})
+            return
         await self.set_armed_state(ArmedState.DISARMED)
 
-    async def arm_stay(self) -> None:
-        """Set the alarm to armed stay."""
-        await self.set_armed_state(ArmedState.ARMED_STAY)
+    async def _delayed_arm(self, state: ArmedState, delay: int) -> None:
+        """Arm after a delay, allowing cancellation."""
+        await asyncio.sleep(delay)
+        self._exit_delay_task = None
+        await self.set_armed_state(state)
 
-    async def arm_away(self) -> None:
+    async def arm_stay(self, exit_delay: int = 0) -> None:
+        """Set the alarm to armed stay."""
+        if exit_delay > 0 and self.is_disarmed:
+            # Setting in API immediately sets state to armed, so we set the
+            # state locally instead
+            # await self.set_armed_state(ArmedState.ARMING_STAY_IN_EXIT_DELAY)
+            self.update_data({Attribute.STATE: ArmedState.ARMING_STAY_IN_EXIT_DELAY})
+            self._exit_delay_task = asyncio.create_task(
+                self._delayed_arm(ArmedState.ARMED_STAY, exit_delay)
+            )
+        else:
+            await self.set_armed_state(ArmedState.ARMED_STAY)
+
+    async def arm_away(self, exit_delay: int = 0) -> None:
         """Set the alarm to armed away."""
-        await self.set_armed_state(ArmedState.ARMED_AWAY)
+        if exit_delay > 0 and self.is_disarmed:
+            # Setting in API immediately sets state to armed, so we set the
+            # state locally instead
+            # await self.set_armed_state(ArmedState.ARMING_AWAY_IN_EXIT_DELAY)
+            self.update_data({Attribute.STATE: ArmedState.ARMING_AWAY_IN_EXIT_DELAY})
+            self._exit_delay_task = asyncio.create_task(
+                self._delayed_arm(ArmedState.ARMED_AWAY, exit_delay)
+            )
+        else:
+            await self.set_armed_state(ArmedState.ARMED_AWAY)
 
     async def get_panel_credentials(self, refresh: bool = False) -> dict:
         """Get the panel credentials."""
