@@ -152,7 +152,7 @@ class AlarmPanel(VivintDevice):
         """Set the alarm to armed stay."""
         if exit_delay > 0 and self.is_disarmed:
             # Setting in API immediately sets state to armed, so we set the
-            # state locally instead...
+            # state locally instead
             # await self.set_armed_state(ArmedState.ARMING_STAY_IN_EXIT_DELAY)
             self.update_data({Attribute.STATE: ArmedState.ARMING_STAY_IN_EXIT_DELAY})
             self._exit_delay_task = asyncio.create_task(
@@ -165,7 +165,7 @@ class AlarmPanel(VivintDevice):
         """Set the alarm to armed away."""
         if exit_delay > 0 and self.is_disarmed:
             # Setting in API immediately sets state to armed, so we set the
-            # state locally instead...
+            # state locally instead
             # await self.set_armed_state(ArmedState.ARMING_AWAY_IN_EXIT_DELAY)
             self.update_data({Attribute.STATE: ArmedState.ARMING_AWAY_IN_EXIT_DELAY})
             self._exit_delay_task = asyncio.create_task(
