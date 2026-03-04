@@ -159,9 +159,10 @@ class AlarmPanel(VivintDevice):
             # state locally instead
             # await self.set_armed_state(ArmedState.ARMING_STAY_IN_EXIT_DELAY)
             self.update_data({Attribute.STATE: ArmedState.ARMING_STAY_IN_EXIT_DELAY})
-            self._exit_delay_task = asyncio.create_task(
-                self._delayed_arm(ArmedState.ARMED_STAY, exit_delay)
-            )
+            if self._exit_delay_task is None:
+                self._exit_delay_task = asyncio.create_task(
+                    self._delayed_arm(ArmedState.ARMED_STAY, exit_delay)
+                )
         else:
             await self.set_armed_state(ArmedState.ARMED_STAY)
 
@@ -172,9 +173,10 @@ class AlarmPanel(VivintDevice):
             # state locally instead
             # await self.set_armed_state(ArmedState.ARMING_AWAY_IN_EXIT_DELAY)
             self.update_data({Attribute.STATE: ArmedState.ARMING_AWAY_IN_EXIT_DELAY})
-            self._exit_delay_task = asyncio.create_task(
-                self._delayed_arm(ArmedState.ARMED_AWAY, exit_delay)
-            )
+            if self._exit_delay_task is None:
+                self._exit_delay_task = asyncio.create_task(
+                    self._delayed_arm(ArmedState.ARMED_AWAY, exit_delay)
+                )
         else:
             await self.set_armed_state(ArmedState.ARMED_AWAY)
 
