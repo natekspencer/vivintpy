@@ -150,8 +150,8 @@ class AlarmPanel(VivintDevice):
 
     async def arm_stay(self, exit_delay: int = 0) -> None:
         """Set the alarm to armed stay."""
-        if exit_delay > 0:
-            # Setting in API immediately sets state to armed, so we set the 
+        if exit_delay > 0 and self.is_disarmed:
+            # Setting in API immediately sets state to armed, so we set the
             # state locally instead...
             # await self.set_armed_state(ArmedState.ARMING_STAY_IN_EXIT_DELAY)
             self.update_data({Attribute.STATE: ArmedState.ARMING_STAY_IN_EXIT_DELAY})
@@ -163,8 +163,8 @@ class AlarmPanel(VivintDevice):
 
     async def arm_away(self, exit_delay: int = 0) -> None:
         """Set the alarm to armed away."""
-        if exit_delay > 0:
-            # Setting in API immediately sets state to armed, so we set the 
+        if exit_delay > 0 and self.is_disarmed:
+            # Setting in API immediately sets state to armed, so we set the
             # state locally instead...
             # await self.set_armed_state(ArmedState.ARMING_AWAY_IN_EXIT_DELAY)
             self.update_data({Attribute.STATE: ArmedState.ARMING_AWAY_IN_EXIT_DELAY})
