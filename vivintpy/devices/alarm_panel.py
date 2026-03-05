@@ -148,9 +148,22 @@ class AlarmPanel(VivintDevice):
 
     async def _delayed_arm(self, state: ArmedState, delay: int) -> None:
         """Arm after a delay, allowing cancellation."""
-        await asyncio.sleep(delay)
-        self._exit_delay_task = None
-        await self.set_armed_state(state)
+        task = asyncio.current_task()
+        try:
+            await asyncio.sleep(delay)
+            if self._exit_delay_task is not task:
+                return
+            expected_state = (
+                ArmedState.ARMING_STAY_IN_EXIT_DELAY
+                if state == ArmedState.ARMED_STAY
+                else ArmedState.ARMING_AWAY_IN_EXIT_DELAY
+            )
+            if self.state != expected_state:
+                return
+            await self.set_armed_state(state)
+        finally:
+            if self._exit_delay_task is task:
+                self._exit_delay_task = None
 
     async def arm_stay(self, exit_delay: int = 0) -> None:
         """Set the alarm to armed stay."""
