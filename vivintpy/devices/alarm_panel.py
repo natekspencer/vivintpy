@@ -40,8 +40,9 @@ class AlarmPanel(VivintDevice):
 
         self.__parse_data(data=data, init=True)
 
-        # store a reference to the physical panel device
         self._exit_delay_task: asyncio.Task | None = None
+
+        # store a reference to the physical panel device
         self.__panel_credentials: dict = {}
         self.__panel = first_or_none(
             self.devices,
