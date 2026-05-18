@@ -420,8 +420,8 @@
     "manufacturer": "HomeSeer Technologies"
   },
   "0x000c:0x0202:0x0001": {
-    "description": "Flex Sensor",
-    "label": "HS-FS100+",
+    "description": "Z-Wave Indicator Light Sensor",
+    "label": "HS-FS100-L",
     "manufacturer": "HomeSeer Technologies"
   },
   "0x000c:0x0203:0x0001": {
@@ -432,6 +432,11 @@
   "0x000c:0x0204:0x0002": {
     "description": "Z-Wave Presence Sensor",
     "label": "HS-PS100",
+    "manufacturer": "HomeSeer Technologies"
+  },
+  "0x000c:0x0204:0x0003": {
+    "description": "Z-Wave Presence Sensor",
+    "label": "PS100",
     "manufacturer": "HomeSeer Technologies"
   },
   "0x000c:0x4447:0x3031": {
@@ -5970,8 +5975,8 @@
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0301:0x1001": {
-    "description": "Roller Shutter",
-    "label": "FGRM222",
+    "description": "Roller Shutter 2",
+    "label": "FGR222",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0301:0x3001": {
@@ -5980,8 +5985,8 @@
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0302:0x1000": {
-    "description": "Roller Shutter",
-    "label": "FGRM222",
+    "description": "Roller Shutter 2",
+    "label": "FGR222",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0302:0x3000": {
@@ -8286,6 +8291,11 @@
     "label": "PAN15-1-NES",
     "manufacturer": "Philio Technology Corp"
   },
+  "0x013c:0x0001:0x0059": {
+    "description": "Mitsubishi IT Communication Adapter",
+    "label": "PAC03",
+    "manufacturer": "Philio"
+  },
   "0x013c:0x0001:0x0061": {
     "description": "In Wall Dual Relay Switch Module 2x1.5kW with Power Meter",
     "label": "PAN04",
@@ -9102,8 +9112,8 @@
     "manufacturer": "Popp & Co"
   },
   "0x0154:0x0004:0x0002": {
-    "description": "POPP Solar Outdoor Siren 2",
-    "label": "700854",
+    "description": "Solar Powered Outdoor Siren",
+    "label": "005107",
     "manufacturer": "Popp & Co"
   },
   "0x0154:0x0004:0x0003": {
@@ -10908,7 +10918,7 @@
   },
   "0x019b:0x0003:0x0202": {
     "description": "Floor Thermostat",
-    "label": "Z-TRM2fx",
+    "label": "Z-TRM 2",
     "manufacturer": "Heatit"
   },
   "0x019b:0x0003:0x0203": {
@@ -11322,8 +11332,8 @@
     "manufacturer": "Kaipule Technology Co., Ltd."
   },
   "0x0214:0x0002:0x0002": {
-    "description": "Smoke Sensor",
-    "label": "ES-61",
+    "description": "PIR Sensor",
+    "label": "DP-32 / IX-30 / IX-32",
     "manufacturer": "Kaipule Technology Co., Ltd."
   },
   "0x0214:0x0003:0x0001": {
@@ -13637,6 +13647,11 @@
     "label": "VZW32-SN",
     "manufacturer": "Inovelli"
   },
+  "0x031e:0x0018:0x0001": {
+    "description": "On/Off Switch",
+    "label": "VZW30-SN",
+    "manufacturer": "Inovelli"
+  },
   "0x0320:0x0001:0x0001": {
     "description": "Magnetic Contact",
     "label": "HO-09ZW",
@@ -13840,9 +13855,9 @@
     "manufacturer": "Vesternet"
   },
   "0x0330:0x0300:0xa306": {
-    "description": "2 Group Single Color Wall Mounted Remote",
-    "label": "ZV9001K4-DIM-G2",
-    "manufacturer": "Sunricher"
+    "description": "Wall Controller - 4 Button",
+    "label": "VES-ZW-WAL-008",
+    "manufacturer": "Vesternet"
   },
   "0x0330:0x0300:0xa307": {
     "description": "Wall Controller - 2 Button",
@@ -13870,9 +13885,9 @@
     "manufacturer": "Sunricher"
   },
   "0x0330:0x0300:0xb302": {
-    "description": "Remote Control - 12 Button",
-    "label": "VES-ZW-REM-010",
-    "manufacturer": "Vesternet"
+    "description": "4 Channel Dimmer Remote Control",
+    "label": "ZV9001K12-DIM-Z4",
+    "manufacturer": "Sunricher"
   },
   "0x0330:0x0301:0xa101": {
     "description": "Wall Controller",
@@ -15659,6 +15674,11 @@
     "label": "QNSH-001P10",
     "manufacturer": "Shelly Europe Ltd."
   },
+  "0x0460:0x0004:0x0081": {
+    "description": "Wave PM Mini",
+    "label": "QMEM-0A1PC16",
+    "manufacturer": "Shelly Europe Ltd."
+  },
   "0x0460:0x0007:0x0081": {
     "description": "Wave PM Mini",
     "label": "QMEM-0A1PC16",
@@ -15904,5 +15924,5 @@
     "label": "BW8120",
     "manufacturer": "Remotec"
   },
-  "updated_at": "2026-03-02T16:02:11.733694"
+  "updated_at": "2026-05-18T17:39:14.081818"
 }
