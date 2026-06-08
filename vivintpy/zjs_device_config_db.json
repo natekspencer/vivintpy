@@ -420,8 +420,8 @@
     "manufacturer": "HomeSeer Technologies"
   },
   "0x000c:0x0202:0x0001": {
-    "description": "Flex Sensor",
-    "label": "HS-FS100+",
+    "description": "Z-Wave Indicator Light Sensor",
+    "label": "HS-FS100-L",
     "manufacturer": "HomeSeer Technologies"
   },
   "0x000c:0x0203:0x0001": {
@@ -432,6 +432,11 @@
   "0x000c:0x0204:0x0002": {
     "description": "Z-Wave Presence Sensor",
     "label": "HS-PS100",
+    "manufacturer": "HomeSeer Technologies"
+  },
+  "0x000c:0x0204:0x0003": {
+    "description": "Z-Wave Presence Sensor",
+    "label": "PS100",
     "manufacturer": "HomeSeer Technologies"
   },
   "0x000c:0x4447:0x3031": {
@@ -4619,6 +4624,11 @@
     "label": "HC620",
     "manufacturer": "Kwikset"
   },
+  "0x0090:0x0811:0x13b9": {
+    "description": "Home Connect 620 Connected Smart Lock",
+    "label": "HC620",
+    "manufacturer": "Kwikset"
+  },
   "0x0090:0x0811:0x23a8": {
     "description": "Home Connect 620 Connected Smart Lock",
     "label": "HC620",
@@ -8285,6 +8295,11 @@
     "description": "Smart Energy Plug in Switch",
     "label": "PAN15-1-NES",
     "manufacturer": "Philio Technology Corp"
+  },
+  "0x013c:0x0001:0x0059": {
+    "description": "Mitsubishi IT Communication Adapter",
+    "label": "PAC03",
+    "manufacturer": "Philio"
   },
   "0x013c:0x0001:0x0061": {
     "description": "In Wall Dual Relay Switch Module 2x1.5kW with Power Meter",
@@ -13637,6 +13652,11 @@
     "label": "VZW32-SN",
     "manufacturer": "Inovelli"
   },
+  "0x031e:0x0018:0x0001": {
+    "description": "On/Off Switch",
+    "label": "VZW30-SN",
+    "manufacturer": "Inovelli"
+  },
   "0x0320:0x0001:0x0001": {
     "description": "Magnetic Contact",
     "label": "HO-09ZW",
@@ -13840,9 +13860,9 @@
     "manufacturer": "Vesternet"
   },
   "0x0330:0x0300:0xa306": {
-    "description": "2 Group Single Color Wall Mounted Remote",
-    "label": "ZV9001K4-DIM-G2",
-    "manufacturer": "Sunricher"
+    "description": "Wall Controller - 4 Button",
+    "label": "VES-ZW-WAL-008",
+    "manufacturer": "Vesternet"
   },
   "0x0330:0x0300:0xa307": {
     "description": "Wall Controller - 2 Button",
@@ -14500,8 +14520,8 @@
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0002:0x0009": {
-    "description": "a\u00ebrQ Temperature and Humidity Sensor V1.0",
-    "label": "ZWA009",
+    "description": "a\u00ebrQ Temperature and Humidity Sensor V2.0",
+    "label": "ZWA039",
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0002:0x000b": {
@@ -14645,8 +14665,8 @@
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0102:0x0009": {
-    "description": "a\u00ebrQ Temperature and Humidity Sensor V1.0",
-    "label": "ZWA009",
+    "description": "a\u00ebrQ Temperature and Humidity Sensor V2.0",
+    "label": "ZWA039",
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0102:0x000b": {
@@ -14770,8 +14790,8 @@
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0202:0x0009": {
-    "description": "a\u00ebrQ Temperature and Humidity Sensor V1.0",
-    "label": "ZWA009",
+    "description": "a\u00ebrQ Temperature and Humidity Sensor V2.0",
+    "label": "ZWA039",
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0202:0x000b": {
@@ -15175,6 +15195,11 @@
     "manufacturer": "First Alert"
   },
   "0x041b:0x0011:0x0009": {
+    "description": "T6 Pro Z-Wave Programmable Thermostat with SmartStart",
+    "label": "TH6320ZW2007",
+    "manufacturer": "Honeywell"
+  },
+  "0x041b:0x0011:0x000a": {
     "description": "T6 Pro Z-Wave Programmable Thermostat with SmartStart",
     "label": "TH6320ZW2007",
     "manufacturer": "Honeywell"
@@ -15659,6 +15684,11 @@
     "label": "QNSH-001P10",
     "manufacturer": "Shelly Europe Ltd."
   },
+  "0x0460:0x0004:0x0081": {
+    "description": "Wave PM Mini",
+    "label": "QMEM-0A1PC16",
+    "manufacturer": "Shelly Europe Ltd."
+  },
   "0x0460:0x0007:0x0081": {
     "description": "Wave PM Mini",
     "label": "QMEM-0A1PC16",
@@ -15904,5 +15934,5 @@
     "label": "BW8120",
     "manufacturer": "Remotec"
   },
-  "updated_at": "2026-03-02T16:02:11.733694"
+  "updated_at": "2026-06-08T18:10:42.939974"
 }
