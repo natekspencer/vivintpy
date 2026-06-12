@@ -37,7 +37,9 @@ class WirelessSensor(BypassTamperDevice, VivintDevice):
     @property
     def software_version(self) -> str | None:
         """Return the software version of this device, if any."""
-        return self.data.get(Attributes.SENSOR_FIRMWARE_VERSION)
+        if (version := self.data.get(Attributes.SENSOR_FIRMWARE_VERSION)) is not None:
+            return str(version)
+        return None
 
     @property
     def equipment_code(self) -> EquipmentCode:
