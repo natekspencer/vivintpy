@@ -96,7 +96,9 @@ class Camera(VivintDevice):
     @property
     def software_version(self) -> str | None:
         """Return the camera's software version."""
-        return self.data.get(Attribute.SOFTWARE_VERSION)
+        if (version := self.data.get(Attribute.SOFTWARE_VERSION)) is not None:
+            return str(version)
+        return None
 
     @property
     def capture_clip_on_motion(self) -> bool:
