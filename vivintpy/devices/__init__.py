@@ -172,7 +172,7 @@ class VivintDevice(Entity):
         serial_number = self.data.get(Attribute.SERIAL_NUMBER_32_BIT)
         if not serial_number:
             serial_number = self.data.get(Attribute.SERIAL_NUMBER)
-        return serial_number
+        return str(serial_number) if serial_number is not None else None
 
     @property
     def software_version(self) -> str | None:
