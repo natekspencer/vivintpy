@@ -68,4 +68,4 @@ If you don't already own a Vivint system, please consider using [my referral cod
 
 ## 📈 Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=natekspencer/vivintpy)](https://www.star-history.com/#natekspencer/vivintpy)
+[![Star History Chart](https://api.star-history.com/chart?repos=natekspencer/vivintpy&type=date&legend=top-left&sealed_token=uFaXA3lZ5RYllWd94jYWZSxUKAfSqxVdfBnZLBLBnXhsNB0B1NQU_pULScrmOVbay3sUG9dtkKAdLFy914eYYX9IQhVE_YipQ2-W2jzDfQaF5-PyPvbfO1E3Vbv59pj4CoILXdCOJ8LZnx1C4-b8QbwIEuRO4SA6WPs1MmH5FN38-HvdwBtVGecOeBAw)](https://www.star-history.com/?repos=natekspencer%2Fvivintpy)
