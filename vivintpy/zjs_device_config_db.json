@@ -420,8 +420,8 @@
     "manufacturer": "HomeSeer Technologies"
   },
   "0x000c:0x0202:0x0001": {
-    "description": "Z-Wave Indicator Light Sensor",
-    "label": "HS-FS100-L",
+    "description": "Flex Sensor",
+    "label": "HS-FS100+",
     "manufacturer": "HomeSeer Technologies"
   },
   "0x000c:0x0203:0x0001": {
@@ -920,6 +920,11 @@
     "manufacturer": "Leviton"
   },
   "0x001d:0x0701:0x0206": {
+    "description": "4 Zone Controller",
+    "label": "VRCZ4",
+    "manufacturer": "Leviton"
+  },
+  "0x001d:0x0702:0x0243": {
     "description": "4 Zone Controller",
     "label": "VRCZ4",
     "manufacturer": "Leviton"
@@ -2492,6 +2497,11 @@
   "0x0063:0x4952:0x3437": {
     "description": "In-Wall Smart Switch, 800S",
     "label": "76596 / ZWN4015",
+    "manufacturer": "Jasco"
+  },
+  "0x0063:0x4952:0x3438": {
+    "description": "In-Wall Smart Switch, 800S",
+    "label": "76592 / ZWN4016",
     "manufacturer": "Jasco"
   },
   "0x0063:0x4953:0x3031": {
@@ -4620,6 +4630,11 @@
     "manufacturer": "Kwikset"
   },
   "0x0090:0x0811:0x13a8": {
+    "description": "Home Connect 620 Connected Smart Lock",
+    "label": "HC620",
+    "manufacturer": "Kwikset"
+  },
+  "0x0090:0x0811:0x13a9": {
     "description": "Home Connect 620 Connected Smart Lock",
     "label": "HC620",
     "manufacturer": "Kwikset"
@@ -7191,8 +7206,8 @@
   },
   "0x011a:0x0601:0x0901": {
     "description": "PIR Sensor",
-    "label": "ZWN-BPC-PLUS",
-    "manufacturer": "Wenzhou MTLC Electric Appliances Co., Ltd."
+    "label": "ZWN-BPC",
+    "manufacturer": "Enerwave / Wenzhou MTLC Electric Appliances Co., Ltd."
   },
   "0x011a:0x0601:0x0903": {
     "description": "Magnetic Door/Window Sensor",
@@ -9954,7 +9969,7 @@
   "0x015f:0x810a:0x5900": {
     "description": "Thermostat",
     "label": "MH-5900",
-    "manufacturer": "MCO Home"
+    "manufacturer": "McoHome Technology Co., Ltd."
   },
   "0x015f:0xa803:0x1351": {
     "description": "9 in 1 MULTI-SENSOR",
@@ -11337,8 +11352,8 @@
     "manufacturer": "Kaipule Technology Co., Ltd."
   },
   "0x0214:0x0002:0x0002": {
-    "description": "Smoke Sensor",
-    "label": "ES-61",
+    "description": "PIR Sensor",
+    "label": "DP-32 / IX-30 / IX-32",
     "manufacturer": "Kaipule Technology Co., Ltd."
   },
   "0x0214:0x0003:0x0001": {
@@ -12366,6 +12381,21 @@
     "label": "10002080-13X",
     "manufacturer": "SimonTech S.L.U"
   },
+  "0x0267:0x0004:0x006a": {
+    "description": "Roller Blind",
+    "label": "10002080-13X",
+    "manufacturer": "SimonTech S.L.U"
+  },
+  "0x0267:0x0004:0x006c": {
+    "description": "Roller Blind",
+    "label": "10002080-13X",
+    "manufacturer": "SimonTech S.L.U"
+  },
+  "0x0267:0x0004:0x006d": {
+    "description": "Roller Blind",
+    "label": "10002080-13X",
+    "manufacturer": "SimonTech S.L.U"
+  },
   "0x0267:0x0004:0x0091": {
     "description": "Roller Blind",
     "label": "10002080-13X",
@@ -12396,6 +12426,11 @@
     "label": "10002080-13X",
     "manufacturer": "SimonTech S.L.U"
   },
+  "0x0267:0x0004:0x0393": {
+    "description": "Roller Blind",
+    "label": "10002080-13X",
+    "manufacturer": "SimonTech S.L.U"
+  },
   "0x0267:0x0005:0x0000": {
     "description": "Simon IO: Master Roller Blind",
     "label": "10002081-13x",
@@ -12412,6 +12447,11 @@
     "manufacturer": "SimonTech S.L.U"
   },
   "0x0267:0x0007:0x0000": {
+    "description": "S100 Rocker iO for Dimmer",
+    "label": "10002020-13X",
+    "manufacturer": "SimonTech S.L.U"
+  },
+  "0x0267:0x0007:0x01ba": {
     "description": "S100 Rocker iO for Dimmer",
     "label": "10002020-13X",
     "manufacturer": "SimonTech S.L.U"
@@ -13860,9 +13900,9 @@
     "manufacturer": "Vesternet"
   },
   "0x0330:0x0300:0xa306": {
-    "description": "Wall Controller - 4 Button",
-    "label": "VES-ZW-WAL-008",
-    "manufacturer": "Vesternet"
+    "description": "2 Group Single Color Wall Mounted Remote",
+    "label": "ZV9001K4-DIM-G2",
+    "manufacturer": "Sunricher"
   },
   "0x0330:0x0300:0xa307": {
     "description": "Wall Controller - 2 Button",
@@ -14804,6 +14844,11 @@
     "label": "ZWA012",
     "manufacturer": "Aeotec Ltd."
   },
+  "0x0371:0x0202:0x0013": {
+    "description": "Water Sensor 7 Pro",
+    "label": "ZWA019",
+    "manufacturer": "Aeotec Ltd."
+  },
   "0x0371:0x0202:0x0018": {
     "description": "MultiSensor 7",
     "label": "ZWA024",
@@ -15719,6 +15764,103 @@
     "label": "QLHT-OU2Z",
     "manufacturer": "Shelly Europe Ltd."
   },
+  "0x0463:0x8107:0x89d1": {
+    "description": "Assure 2 Biometric Deadbolt",
+    "label": [
+      {
+        "$if": "productId === 0x89d1",
+        "value": "YRD410-F-ZW4"
+      },
+      {
+        "$if": "productId === 0x89d2",
+        "value": "YRD420-F-ZW4"
+      },
+      {
+        "$if": "productId === 0x89d3",
+        "value": "YRD430-F-ZW4"
+      },
+      {
+        "$if": "productId === 0x89d5",
+        "value": "YRD450-F-ZW4"
+      },
+      "YRD4X0-F-ZW4"
+    ],
+    "manufacturer": "Fortune Brands"
+  },
+  "0x0463:0x8107:0x89d2": {
+    "description": "Assure 2 Biometric Deadbolt",
+    "label": [
+      {
+        "$if": "productId === 0x89d1",
+        "value": "YRD410-F-ZW4"
+      },
+      {
+        "$if": "productId === 0x89d2",
+        "value": "YRD420-F-ZW4"
+      },
+      {
+        "$if": "productId === 0x89d3",
+        "value": "YRD430-F-ZW4"
+      },
+      {
+        "$if": "productId === 0x89d5",
+        "value": "YRD450-F-ZW4"
+      },
+      "YRD4X0-F-ZW4"
+    ],
+    "manufacturer": "Fortune Brands"
+  },
+  "0x0463:0x8107:0x89d3": {
+    "description": "Assure 2 Biometric Deadbolt",
+    "label": [
+      {
+        "$if": "productId === 0x89d1",
+        "value": "YRD410-F-ZW4"
+      },
+      {
+        "$if": "productId === 0x89d2",
+        "value": "YRD420-F-ZW4"
+      },
+      {
+        "$if": "productId === 0x89d3",
+        "value": "YRD430-F-ZW4"
+      },
+      {
+        "$if": "productId === 0x89d5",
+        "value": "YRD450-F-ZW4"
+      },
+      "YRD4X0-F-ZW4"
+    ],
+    "manufacturer": "Fortune Brands"
+  },
+  "0x0463:0x8107:0x89d5": {
+    "description": "Assure 2 Biometric Deadbolt",
+    "label": [
+      {
+        "$if": "productId === 0x89d1",
+        "value": "YRD410-F-ZW4"
+      },
+      {
+        "$if": "productId === 0x89d2",
+        "value": "YRD420-F-ZW4"
+      },
+      {
+        "$if": "productId === 0x89d3",
+        "value": "YRD430-F-ZW4"
+      },
+      {
+        "$if": "productId === 0x89d5",
+        "value": "YRD450-F-ZW4"
+      },
+      "YRD4X0-F-ZW4"
+    ],
+    "manufacturer": "Fortune Brands"
+  },
+  "0x0464:0xff00:0xff0d": {
+    "description": "Plug-In Lamp Dimmer",
+    "label": "LAMP-ZW2",
+    "manufacturer": "Versa Wireless Inc."
+  },
   "0x0466:0x0001:0x0001": {
     "description": "Home Assistant Connect ZWA-2",
     "label": "NC-ZWA-9734",
@@ -15934,5 +16076,5 @@
     "label": "BW8120",
     "manufacturer": "Remotec"
   },
-  "updated_at": "2026-06-08T18:10:42.939974"
+  "updated_at": "2026-07-06T17:56:54.821476"
 }
