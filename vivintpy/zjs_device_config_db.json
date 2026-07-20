@@ -420,8 +420,8 @@
     "manufacturer": "HomeSeer Technologies"
   },
   "0x000c:0x0202:0x0001": {
-    "description": "Flex Sensor",
-    "label": "HS-FS100+",
+    "description": "Z-Wave Indicator Light Sensor",
+    "label": "HS-FS100-L",
     "manufacturer": "HomeSeer Technologies"
   },
   "0x000c:0x0203:0x0001": {
@@ -2304,6 +2304,11 @@
     "label": "58446 / ZWA4013",
     "manufacturer": "Enbrighten"
   },
+  "0x0063:0x4944:0x3538": {
+    "description": "In-Wall Smart Dimmer, 800S",
+    "label": "76602 / 76606 / 76607 / ZWN3020",
+    "manufacturer": "UltraPro"
+  },
   "0x0063:0x494d:0x3031": {
     "description": "In-Wall Motion Switch, 500S",
     "label": "24770 / ZW4006",
@@ -2503,6 +2508,11 @@
     "description": "In-Wall Smart Switch, 800S",
     "label": "76592 / ZWN4016",
     "manufacturer": "Jasco"
+  },
+  "0x0063:0x4952:0x3534": {
+    "description": "800 Series Z-Wave On/Off Switch",
+    "label": "76601 / 76604 / 76605 / ZWN4017",
+    "manufacturer": "UltraPro"
   },
   "0x0063:0x4953:0x3031": {
     "description": "Hinge PIN Door Sensor, 500S",
@@ -5446,12 +5456,12 @@
   },
   "0x0109:0x2009:0x0901": {
     "description": "AC/DC Siren",
-    "label": "ZM1602",
+    "label": "ZM1602-5",
     "manufacturer": "Vision Security"
   },
   "0x0109:0x2009:0x0903": {
     "description": "AC/DC Siren",
-    "label": "ZM1602",
+    "label": "ZM1602-5",
     "manufacturer": "Vision Security"
   },
   "0x0109:0x2009:0x0907": {
@@ -5739,16 +5749,6 @@
     "label": "UMV3-BTZ",
     "manufacturer": "Poly-control"
   },
-  "0x010f:0x0000:0x1001": {
-    "description": "Fibaro Flood Sensor",
-    "label": "FGFS-101",
-    "manufacturer": "Fibargroup"
-  },
-  "0x010f:0x0000:0x2001": {
-    "description": "Fibaro Flood Sensor",
-    "label": "FGFS-101",
-    "manufacturer": "Fibargroup"
-  },
   "0x010f:0x0001:0x1001": {
     "description": "Fibaro",
     "label": "HC2",
@@ -5781,257 +5781,307 @@
   },
   "0x010f:0x0100:0x0100": {
     "description": "Universal Dimmer 500W",
-    "label": "FGD211",
+    "label": "FGD-211",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0100:0x0104": {
     "description": "Universal Dimmer 500W",
-    "label": "FGD211",
+    "label": "FGD-211",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0100:0x0106": {
     "description": "Universal Dimmer 500W",
-    "label": "FGD211",
+    "label": "FGD-211",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0100:0x0107": {
     "description": "Universal Dimmer 500W",
-    "label": "FGD211",
+    "label": "FGD-211",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0100:0x0109": {
     "description": "Universal Dimmer 500W",
-    "label": "FGD211",
+    "label": "FGD-211",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0100:0x100a": {
     "description": "Universal Dimmer 500W",
-    "label": "FGD211",
+    "label": "FGD-211",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0100:0x300a": {
     "description": "Universal Dimmer 500W",
-    "label": "FGD211",
+    "label": "FGD-211",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0100:0x400a": {
     "description": "Universal Dimmer 500W",
-    "label": "FGD211",
+    "label": "FGD-211",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0102:0x1000": {
     "description": "Dimmer 2",
-    "label": "FGD212",
+    "label": "FGD-212",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0102:0x1001": {
     "description": "Dimmer 2",
-    "label": "FGD212",
+    "label": "FGD-212",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0102:0x2000": {
     "description": "Dimmer 2",
-    "label": "FGD212",
+    "label": "FGD-212",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0102:0x3000": {
     "description": "Dimmer 2",
-    "label": "FGD212",
+    "label": "FGD-212",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0102:0x4000": {
     "description": "Dimmer 2",
-    "label": "FGD212",
+    "label": "FGD-212",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0102:0x6000": {
     "description": "Dimmer 2",
-    "label": "FGD212",
+    "label": "FGD-212",
     "manufacturer": "Fibargroup"
   },
-  "0x010f:0x010f:0x1c01": {
-    "description": "Fibaro Walli Dimmer",
-    "label": "FGWDEU",
+  "0x010f:0x0102:0x7000": {
+    "description": "Dimmer 2",
+    "label": "FGD-212",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0102:0x8000": {
+    "description": "Dimmer 2",
+    "label": "FGD-212",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0102:0x9000": {
+    "description": "Dimmer 2",
+    "label": "FGD-212",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0102:0xa000": {
+    "description": "Dimmer 2",
+    "label": "FGD-212",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0102:0xb000": {
+    "description": "Dimmer 2",
+    "label": "FGD-212",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0200:0x0102": {
     "description": "Double Relay Switch 2x1.5kW",
-    "label": "FGS221",
+    "label": "FGS-221",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0200:0x0103": {
     "description": "Double Relay Switch 2x1.5kW",
-    "label": "FGS221",
+    "label": "FGS-221",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0200:0x0104": {
     "description": "Double Relay Switch 2x1.5kW",
-    "label": "FGS221",
+    "label": "FGS-221",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0200:0x0105": {
     "description": "Double Relay Switch 2x1.5kW",
-    "label": "FGS221",
+    "label": "FGS-221",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0200:0x0106": {
     "description": "Double Relay Switch 2x1.5kW",
-    "label": "FGS221",
+    "label": "FGS-221",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0200:0x0107": {
     "description": "Double Relay Switch 2x1.5kW",
-    "label": "FGS221",
+    "label": "FGS-221",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0200:0x0109": {
     "description": "Double Relay Switch 2x1.5kW",
-    "label": "FGS221",
+    "label": "FGS-221",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0200:0x100a": {
     "description": "Double Relay Switch 2x1.5kW",
-    "label": "FGS221",
+    "label": "FGS-221",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0200:0x300a": {
     "description": "Double Relay Switch 2x1.5kW",
-    "label": "FGS221",
+    "label": "FGS-221",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0200:0x400a": {
     "description": "Double Relay Switch 2x1.5kW",
-    "label": "FGS221",
+    "label": "FGS-221",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0202:0x1002": {
     "description": "Double Relay Switch 2x1.5kW",
-    "label": "FGS222",
+    "label": "FGS-222",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0202:0x3002": {
     "description": "Double Relay Switch 2x1.5kW",
-    "label": "FGS221",
+    "label": "FGS-221",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0202:0x4002": {
     "description": "Double Relay Switch 2x1.5kW",
-    "label": "FGS222",
+    "label": "FGS-222",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0202:0x6002": {
     "description": "Double Relay Switch 2x1.5kW",
-    "label": "FGS222",
+    "label": "FGS-222",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0203:0x1000": {
     "description": "Double Switch 2",
-    "label": "FGS223",
+    "label": "FGS-223",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0203:0x2000": {
     "description": "Double Switch 2",
-    "label": "FGS223",
+    "label": "FGS-223",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0203:0x3000": {
     "description": "Double Switch 2",
-    "label": "FGS223",
+    "label": "FGS-223",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0203:0x4000": {
     "description": "Double Switch 2",
-    "label": "FGS223",
+    "label": "FGS-223",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0203:0x6000": {
     "description": "Double Switch 2",
-    "label": "FGS223",
+    "label": "FGS-223",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0203:0x7000": {
+    "description": "Double Switch 2",
+    "label": "FGS-223",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0203:0x8000": {
+    "description": "Double Switch 2",
+    "label": "FGS-223",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0203:0x9000": {
+    "description": "Double Switch 2",
+    "label": "FGS-223",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0203:0xa000": {
+    "description": "Double Switch 2",
+    "label": "FGS-223",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0203:0xb000": {
+    "description": "Double Switch 2",
+    "label": "FGS-223",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0204:0x1000": {
     "description": "Double Smart Module",
-    "label": "FGS224",
+    "label": "FGS-224",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0204:0x3000": {
     "description": "Double Smart Module",
-    "label": "FGS224",
+    "label": "FGS-224",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0204:0x4000": {
     "description": "Double Smart Module",
-    "label": "FGS224",
+    "label": "FGS-224",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0300:0x0102": {
     "description": "Roller Shutter 2",
-    "label": "FGR222",
+    "label": "FGR-222",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0300:0x0104": {
     "description": "Roller Shutter Controller",
-    "label": "FGR221",
+    "label": "FGR-221",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0300:0x0106": {
     "description": "Roller Shutter Controller",
-    "label": "FGR221",
+    "label": "FGR-221",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0300:0x0107": {
     "description": "Roller Shutter Controller",
-    "label": "FGR221",
+    "label": "FGR-221",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0300:0x0109": {
     "description": "Roller Shutter Controller",
-    "label": "FGR221",
+    "label": "FGR-221",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0300:0x100a": {
     "description": "Roller Shutter Controller",
-    "label": "FGR221",
+    "label": "FGR-221",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0301:0x1001": {
     "description": "Roller Shutter",
-    "label": "FGRM222",
+    "label": "FGRM-222",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0301:0x3001": {
     "description": "Roller Shutter",
-    "label": "FGRM222",
+    "label": "FGRM-222",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0302:0x1000": {
     "description": "Roller Shutter",
-    "label": "FGRM222",
+    "label": "FGRM-222",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0302:0x3000": {
     "description": "Roller Shutter 2",
-    "label": "FGR222",
+    "label": "FGR-222",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0302:0x4000": {
     "description": "Roller Shutter 2",
-    "label": "FGR222",
+    "label": "FGR-222",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0303:0x1000": {
     "description": "Roller Shutter 3",
-    "label": "FGR223",
+    "label": "FGR-223",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0303:0x3000": {
     "description": "Roller Shutter 3",
-    "label": "FGR223",
+    "label": "FGR-223",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0303:0x4000": {
     "description": "Roller Shutter 3",
-    "label": "FGR223",
+    "label": "FGR-223",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0303:0xb000": {
+    "description": "Roller Shutter 3",
+    "label": "FGR-223",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0304:0x1000": {
@@ -6041,167 +6091,207 @@
   },
   "0x010f:0x0400:0x0102": {
     "description": "Relay Switch 1x3kW",
-    "label": "FGS211",
+    "label": "FGS-211",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0400:0x0104": {
     "description": "Relay Switch 1x3kW",
-    "label": "FGS211",
+    "label": "FGS-211",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0400:0x0105": {
     "description": "Relay Switch 1x3kW",
-    "label": "FGS211",
+    "label": "FGS-211",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0400:0x0106": {
     "description": "Relay Switch 1x3kW",
-    "label": "FGS211",
+    "label": "FGS-211",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0400:0x0107": {
     "description": "Relay Switch 1x3kW",
-    "label": "FGS211",
+    "label": "FGS-211",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0400:0x0108": {
     "description": "Relay Switch 1x3kW",
-    "label": "FGS211",
+    "label": "FGS-211",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0400:0x0109": {
     "description": "Relay Switch 1x3kW",
-    "label": "FGS211",
+    "label": "FGS-211",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0400:0x100a": {
     "description": "Relay Switch 1x3kW",
-    "label": "FGS211",
+    "label": "FGS-211",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0400:0x300a": {
     "description": "Relay Switch 1x3kW",
-    "label": "FGS211",
+    "label": "FGS-211",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0401:0x100a": {
     "description": "Relay Switch 1x2.5kW",
-    "label": "FGS212",
+    "label": "FGS-212",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0402:0x1002": {
     "description": "Relay Switch 1x2.5kW",
-    "label": "FGS212",
+    "label": "FGS-212",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0402:0x3002": {
     "description": "Relay Switch 1x3kW",
-    "label": "FGS211",
+    "label": "FGS-211",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0403:0x1000": {
     "description": "Single Switch 2",
-    "label": "FGS213",
+    "label": "FGS-213",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0403:0x2000": {
     "description": "Single Switch 2",
-    "label": "FGS213",
+    "label": "FGS-213",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0403:0x3000": {
     "description": "Single Switch 2",
-    "label": "FGS213",
+    "label": "FGS-213",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0403:0x4000": {
     "description": "Single Switch 2",
-    "label": "FGS213",
+    "label": "FGS-213",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0403:0x6000": {
     "description": "Single Switch 2",
-    "label": "FGS213",
+    "label": "FGS-213",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0403:0x7000": {
+    "description": "Single Switch 2",
+    "label": "FGS-213",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0403:0x8000": {
+    "description": "Single Switch 2",
+    "label": "FGS-213",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0403:0x9000": {
+    "description": "Single Switch 2",
+    "label": "FGS-213",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0403:0xa000": {
+    "description": "Single Switch 2",
+    "label": "FGS-213",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0403:0xb000": {
+    "description": "Single Switch 2",
+    "label": "FGS-213",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0404:0x1000": {
     "description": "Smart Module",
-    "label": "FGS214",
+    "label": "FGS-214",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0404:0x3000": {
     "description": "Smart Module",
-    "label": "FGS214",
+    "label": "FGS-214",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0404:0x4000": {
     "description": "Smart Module",
-    "label": "FGS214",
+    "label": "FGS-214",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0501:0x0102": {
     "description": "Universal Binary Sensor",
-    "label": "FGBS001",
+    "label": "FGBS-001",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0501:0x0109": {
     "description": "Universal Binary Sensor",
-    "label": "FGBS001",
+    "label": "FGBS-001",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0501:0x1002": {
     "description": "Universal Binary Sensor",
-    "label": "FGBS001",
+    "label": "FGBS-001",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0501:0x2002": {
     "description": "Universal Binary Sensor",
-    "label": "FGBS001",
+    "label": "FGBS-001",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0501:0x3002": {
     "description": "Universal Binary Sensor",
-    "label": "FGBS001",
+    "label": "FGBS-001",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0501:0x4002": {
     "description": "Universal Binary Sensor",
-    "label": "FGBS001",
+    "label": "FGBS-001",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0502:0x1000": {
     "description": "Smart Implant",
-    "label": "FGBS222",
+    "label": "FGBS-222",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0502:0x2000": {
     "description": "Smart Implant",
-    "label": "FGBS222",
+    "label": "FGBS-222",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0502:0x3000": {
     "description": "Smart Implant",
-    "label": "FGBS222",
+    "label": "FGBS-222",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0502:0x4000": {
     "description": "Smart Implant",
-    "label": "FGBS222",
+    "label": "FGBS-222",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0502:0x6000": {
     "description": "Smart Implant",
-    "label": "FGBS222",
+    "label": "FGBS-222",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0502:0x7000": {
     "description": "Smart Implant",
-    "label": "FGBS222",
+    "label": "FGBS-222",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0502:0x8000": {
+    "description": "Smart Implant",
+    "label": "FGBS-222",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0502:0x9000": {
+    "description": "Smart Implant",
+    "label": "FGBS-222",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0502:0xa000": {
+    "description": "Smart Implant",
+    "label": "FGBS-222",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0502:0xb000": {
     "description": "Smart Implant",
-    "label": "FGBS222",
+    "label": "FGBS-222",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0600:0x1000": {
@@ -6216,287 +6306,497 @@
   },
   "0x010f:0x0602:0x1001": {
     "description": "Metered Wall Plug Switch",
-    "label": "FGWP102",
+    "label": "FGWP-102",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0602:0x1003": {
     "description": "Metered Wall Plug Switch",
-    "label": "FGWP102",
+    "label": "FGWP-102",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0602:0x1004": {
     "description": "Metered Wall Plug Switch",
-    "label": "FGWP102",
+    "label": "FGWP-102",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0602:0x3003": {
+    "description": "Metered Wall Plug Switch",
+    "label": "FGWP-102",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0602:0x4001": {
     "description": "Metered Wall Plug Switch",
-    "label": "FGWP102",
+    "label": "FGWP-102",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0602:0x4003": {
     "description": "Metered Wall Plug Switch",
-    "label": "FGWP102",
+    "label": "FGWP-102",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0602:0x6003": {
+    "description": "Metered Wall Plug Switch",
+    "label": "FGWP-102",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0602:0x7003": {
+    "description": "Metered Wall Plug Switch",
+    "label": "FGWP-102",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0602:0x8003": {
+    "description": "Metered Wall Plug Switch",
+    "label": "FGWP-102",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0602:0xb003": {
+    "description": "Metered Wall Plug Switch",
+    "label": "FGWP-102",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0700:0x1000": {
     "description": "Door Opening Sensor",
-    "label": "FGK101",
+    "label": "FGK-101",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0700:0x2000": {
     "description": "Door Opening Sensor",
-    "label": "FGK101",
+    "label": "FGK-101",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0700:0x3000": {
     "description": "Door Opening Sensor",
-    "label": "FGK101",
+    "label": "FGK-101",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0700:0x4000": {
     "description": "Door Opening Sensor",
-    "label": "FGK101",
+    "label": "FGK-101",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0701:0x1001": {
     "description": "Door Opening Sensor",
-    "label": "FGK101",
+    "label": "FGK-101",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0701:0x2001": {
     "description": "Door Opening Sensor",
-    "label": "FGK101",
+    "label": "FGK-101",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0701:0x3001": {
     "description": "Door Opening Sensor",
-    "label": "FGK101",
+    "label": "FGK-101",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0702:0x1000": {
     "description": "Fibaro Door Window Sensor 2",
-    "label": "FGDW002",
+    "label": "FGDW-002",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0702:0x1002": {
+    "description": "Door Opening Sensor",
+    "label": "FGK-101",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0702:0x2000": {
     "description": "Fibaro Door Window Sensor 2",
-    "label": "FGDW002",
+    "label": "FGDW-002",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0702:0x3000": {
     "description": "Fibaro Door Window Sensor 2",
-    "label": "FGDW002",
+    "label": "FGDW-002",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0702:0x4000": {
     "description": "Fibaro Door Window Sensor 2",
-    "label": "FGDW002",
+    "label": "FGDW-002",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0702:0x6000": {
+    "description": "Fibaro Door Window Sensor 2",
+    "label": "FGDW-002",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0702:0x7000": {
     "description": "Fibaro Door Window Sensor 2",
-    "label": "FGDW002",
+    "label": "FGDW-002",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0702:0x8000": {
+    "description": "Fibaro Door Window Sensor 2",
+    "label": "FGDW-002",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0702:0x9000": {
+    "description": "Fibaro Door Window Sensor 2",
+    "label": "FGDW-002",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0702:0xa000": {
+    "description": "Fibaro Door Window Sensor 2",
+    "label": "FGDW-002",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0702:0xb000": {
+    "description": "Fibaro Door Window Sensor 2",
+    "label": "FGDW-002",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0800:0x1001": {
     "description": "Motion Sensor",
-    "label": "FGMS001",
+    "label": "FGMS-001",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0800:0x2001": {
     "description": "Motion Sensor",
-    "label": "FGMS001",
+    "label": "FGMS-001",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0800:0x3001": {
     "description": "Motion Sensor",
-    "label": "FGMS001",
+    "label": "FGMS-001",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0800:0x4001": {
     "description": "Motion Sensor",
-    "label": "FGMS001",
+    "label": "FGMS-001",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0800:0x6001": {
     "description": "Motion Sensor",
-    "label": "FGMS001",
+    "label": "FGMS-001",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0801:0x1001": {
     "description": "Motion Sensor",
-    "label": "FGMS001",
+    "label": "FGMS-001",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0801:0x1002": {
     "description": "Motion Sensor",
-    "label": "FGMS001",
+    "label": "FGMS-001",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0801:0x2001": {
     "description": "Motion Sensor",
-    "label": "FGMS001",
+    "label": "FGMS-001",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0801:0x2002": {
     "description": "Motion Sensor",
-    "label": "FGMS001",
+    "label": "FGMS-001",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0801:0x3001": {
     "description": "Motion Sensor",
-    "label": "FGMS001",
+    "label": "FGMS-001",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0801:0x3002": {
     "description": "Motion Sensor",
-    "label": "FGMS001",
+    "label": "FGMS-001",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0801:0x4001": {
     "description": "Motion Sensor",
-    "label": "FGMS001",
+    "label": "FGMS-001",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0801:0x4002": {
     "description": "Motion Sensor",
-    "label": "FGMS001",
+    "label": "FGMS-001",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0801:0x6002": {
+    "description": "Motion Sensor",
+    "label": "FGMS-001",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0801:0x7002": {
+    "description": "Motion Sensor",
+    "label": "FGMS-001",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0801:0x8001": {
+    "description": "Motion Sensor",
+    "label": "FGMS-001",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0801:0x8002": {
+    "description": "Motion Sensor",
+    "label": "FGMS-001",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0801:0x9002": {
+    "description": "Motion Sensor",
+    "label": "FGMS-001",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0801:0xa001": {
+    "description": "Motion Sensor",
+    "label": "FGMS-001",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0801:0xa002": {
+    "description": "Motion Sensor",
+    "label": "FGMS-001",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0801:0xb002": {
+    "description": "Motion Sensor",
+    "label": "FGMS-001",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0900:0x1000": {
     "description": "RGBW Controller",
-    "label": "FGRGBW",
+    "label": "FGRGBWM-441",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0900:0x2000": {
     "description": "RGBW Controller",
-    "label": "FGRGBW",
+    "label": "FGRGBWM-441",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0900:0x3000": {
     "description": "RGBW Controller",
-    "label": "FGRGBW",
+    "label": "FGRGBWM-441",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0900:0x4000": {
     "description": "RGBW Controller",
-    "label": "FGRGBW",
+    "label": "FGRGBWM-441",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0902:0x1000": {
-    "description": "RGBW CONTROLLER 2",
+    "description": "RGBW Controller 2",
     "label": "FGRGBW-442",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0902:0x2000": {
-    "description": "RGBW CONTROLLER 2",
+    "description": "RGBW Controller 2",
     "label": "FGRGBW-442",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0902:0x3000": {
-    "description": "RGBW CONTROLLER 2",
+    "description": "RGBW Controller 2",
     "label": "FGRGBW-442",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0902:0x4000": {
-    "description": "RGBW CONTROLLER 2",
+    "description": "RGBW Controller 2",
     "label": "FGRGBW-442",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0b00:0x1001": {
     "description": "Flood Sensor",
-    "label": "FGFS101",
+    "label": "FGFS-101",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0b00:0x2001": {
     "description": "Flood Sensor",
-    "label": "FGFS101",
+    "label": "FGFS-101",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0b00:0x3001": {
     "description": "Flood Sensor",
-    "label": "FGFS101",
+    "label": "FGFS-101",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0b00:0x4001": {
     "description": "Flood Sensor",
-    "label": "FGFS101",
+    "label": "FGFS-101",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0b01:0x1002": {
     "description": "Flood Sensor",
-    "label": "FGFS101",
+    "label": "FGFS-101",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0b01:0x1003": {
     "description": "Flood Sensor",
-    "label": "FGFS101",
+    "label": "FGFS-101",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0b01:0x2002": {
     "description": "Flood Sensor",
-    "label": "FGFS101",
+    "label": "FGFS-101",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0b01:0x2003": {
     "description": "Flood Sensor",
-    "label": "FGFS101",
+    "label": "FGFS-101",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0b01:0x3002": {
     "description": "Flood Sensor",
-    "label": "FGFS101",
+    "label": "FGFS-101",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0b01:0x3003": {
     "description": "Flood Sensor",
-    "label": "FGFS101",
+    "label": "FGFS-101",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0b01:0x4003": {
+    "description": "Flood Sensor",
+    "label": "FGFS-101",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0b01:0x6003": {
+    "description": "Flood Sensor",
+    "label": "FGFS-101",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0b01:0x7003": {
+    "description": "Flood Sensor",
+    "label": "FGFS-101",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0b01:0x8003": {
+    "description": "Flood Sensor",
+    "label": "FGFS-101",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0b01:0x9003": {
+    "description": "Flood Sensor",
+    "label": "FGFS-101",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0b01:0xa002": {
+    "description": "Flood Sensor",
+    "label": "FGFS-101",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0b01:0xa003": {
+    "description": "Flood Sensor",
+    "label": "FGFS-101",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0b01:0xb003": {
+    "description": "Flood Sensor",
+    "label": "FGFS-101",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0c00:0x1000": {
     "description": "Smoke Sensor",
-    "label": "FGSS001",
+    "label": "FGSS-001",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0c00:0x3000": {
     "description": "Smoke Sensor",
-    "label": "FGSS001",
+    "label": "FGSS-001",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0c00:0x4000": {
     "description": "Smoke Sensor",
-    "label": "FGSS001",
+    "label": "FGSS-001",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0c02:0x1002": {
     "description": "Smoke Detector",
-    "label": "FGSD002",
+    "label": "FGSD-002",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0c02:0x1003": {
     "description": "Smoke Detector",
-    "label": "FGSD002",
+    "label": "FGSD-002",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0c02:0x2003": {
+    "description": "Smoke Detector",
+    "label": "FGSD-002",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0c02:0x3003": {
+    "description": "Smoke Detector",
+    "label": "FGSD-002",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0c02:0x4002": {
     "description": "Smoke Detector",
-    "label": "FGSD002",
+    "label": "FGSD-002",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0c02:0x4003": {
+    "description": "Smoke Detector",
+    "label": "FGSD-002",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0c02:0x6003": {
+    "description": "Smoke Detector",
+    "label": "FGSD-002",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0c02:0x7003": {
+    "description": "Smoke Detector",
+    "label": "FGSD-002",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0c02:0x9003": {
+    "description": "Smoke Detector",
+    "label": "FGSD-002",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0c02:0xa003": {
+    "description": "Smoke Detector",
+    "label": "FGSD-002",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0c02:0xb003": {
+    "description": "Smoke Detector",
+    "label": "FGSD-002",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0d01:0x1000": {
     "description": "Fibaro Swipe Scene Controller",
-    "label": "FGGC001",
+    "label": "FGGC-001",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0d01:0x2000": {
     "description": "Fibaro Swipe Scene Controller",
-    "label": "FGGC001",
+    "label": "FGGC-001",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0d01:0x3000": {
     "description": "Fibaro Swipe Scene Controller",
-    "label": "FGGC001",
+    "label": "FGGC-001",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0d01:0x4000": {
+    "description": "Fibaro Swipe Scene Controller",
+    "label": "FGGC-001",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0d01:0x6000": {
+    "description": "Fibaro Swipe Scene Controller",
+    "label": "FGGC-001",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0d01:0x7000": {
+    "description": "Fibaro Swipe Scene Controller",
+    "label": "FGGC-001",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0d01:0x8000": {
+    "description": "Fibaro Swipe Scene Controller",
+    "label": "FGGC-001",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0d01:0x9000": {
+    "description": "Fibaro Swipe Scene Controller",
+    "label": "FGGC-001",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0d01:0xa000": {
+    "description": "Fibaro Swipe Scene Controller",
+    "label": "FGGC-001",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x0d01:0xb000": {
+    "description": "Fibaro Swipe Scene Controller",
+    "label": "FGGC-001",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0f01:0x1000": {
@@ -6551,52 +6851,107 @@
   },
   "0x010f:0x1001:0x1000": {
     "description": "Keyfob",
-    "label": "FGKF601",
+    "label": "FGKF-601",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x1001:0x2000": {
     "description": "Keyfob",
-    "label": "FGKF601",
+    "label": "FGKF-601",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x1001:0x3000": {
     "description": "Keyfob",
-    "label": "FGKF601",
+    "label": "FGKF-601",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x1001:0x4000": {
     "description": "Keyfob",
-    "label": "FGKF601",
+    "label": "FGKF-601",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x1001:0x6000": {
+    "description": "Keyfob",
+    "label": "FGKF-601",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x1001:0x7000": {
+    "description": "Keyfob",
+    "label": "FGKF-601",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x1001:0x8000": {
+    "description": "Keyfob",
+    "label": "FGKF-601",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x1001:0x9000": {
+    "description": "Keyfob",
+    "label": "FGKF-601",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x1001:0xa000": {
+    "description": "Keyfob",
+    "label": "FGKF-601",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x1001:0xb000": {
+    "description": "Keyfob",
+    "label": "FGKF-601",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x1201:0x1000": {
     "description": "Carbon Monoxide Sensor",
-    "label": "FGCD001",
+    "label": "FGCD-001",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x1201:0x1001": {
     "description": "Carbon Monoxide Sensor",
-    "label": "FGCD001",
+    "label": "FGCD-001",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x1201:0x1002": {
     "description": "Carbon Monoxide Sensor",
-    "label": "FGCD001",
+    "label": "FGCD-001",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x1201:0x4001": {
+    "description": "Carbon Monoxide Sensor",
+    "label": "FGCD-001",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x1201:0x6001": {
+    "description": "Carbon Monoxide Sensor",
+    "label": "FGCD-001",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x1201:0x7001": {
+    "description": "Carbon Monoxide Sensor",
+    "label": "FGCD-001",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x1201:0x8001": {
+    "description": "Carbon Monoxide Sensor",
+    "label": "FGCD-001",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x1201:0x9001": {
+    "description": "Carbon Monoxide Sensor",
+    "label": "FGCD-001",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x1301:0x1000": {
     "description": "Thermostatic Valve",
-    "label": "FGT001",
+    "label": "FGT-001",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x1301:0x1001": {
     "description": "Thermostatic Valve",
-    "label": "FGT001",
+    "label": "FGT-001",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x1301:0x4001": {
     "description": "Thermostatic Valve",
-    "label": "FGT001",
+    "label": "FGT-001",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x1401:0x2000": {
@@ -6611,7 +6966,12 @@
   },
   "0x010f:0x1701:0x2000": {
     "description": "Fibaro Wall Plug",
-    "label": "FGWPB-111",
+    "label": "FGWPA/B-111",
+    "manufacturer": "Fibargroup"
+  },
+  "0x010f:0x1701:0xa000": {
+    "description": "Fibaro Wall Plug",
+    "label": "FGWPA/B-111",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x1801:0x1000": {
@@ -6631,7 +6991,7 @@
   },
   "0x010f:0x1c01:0x1000": {
     "description": "Fibaro Walli Dimmer",
-    "label": "FGWDEU",
+    "label": "FGWDEU-111",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x1d01:0x1000": {
@@ -6651,7 +7011,7 @@
   },
   "0x010f:0x8800:0x3001": {
     "description": "Motion Sensor",
-    "label": "FGMS001",
+    "label": "FGMS-001",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0xfb10:0x1014": {
@@ -7206,8 +7566,8 @@
   },
   "0x011a:0x0601:0x0901": {
     "description": "PIR Sensor",
-    "label": "ZWN-BPC",
-    "manufacturer": "Enerwave / Wenzhou MTLC Electric Appliances Co., Ltd."
+    "label": "ZWN-BPC-PLUS",
+    "manufacturer": "Wenzhou MTLC Electric Appliances Co., Ltd."
   },
   "0x011a:0x0601:0x0903": {
     "description": "Magnetic Door/Window Sensor",
@@ -10938,7 +11298,7 @@
   },
   "0x019b:0x0003:0x0202": {
     "description": "Floor Thermostat",
-    "label": "Z-TRM2fx",
+    "label": "Z-TRM 2",
     "manufacturer": "Heatit"
   },
   "0x019b:0x0003:0x0203": {
@@ -11352,8 +11712,8 @@
     "manufacturer": "Kaipule Technology Co., Ltd."
   },
   "0x0214:0x0002:0x0002": {
-    "description": "PIR Sensor",
-    "label": "DP-32 / IX-30 / IX-32",
+    "description": "Smoke Sensor",
+    "label": "ES-61",
     "manufacturer": "Kaipule Technology Co., Ltd."
   },
   "0x0214:0x0003:0x0001": {
@@ -13895,9 +14255,9 @@
     "manufacturer": "ShenZhen Sunricher Technology, Ltd."
   },
   "0x0330:0x0300:0xa305": {
-    "description": "Wall Controller - 8 Button",
-    "label": "VES-ZW-WAL-009",
-    "manufacturer": "Vesternet"
+    "description": "Wall Mounted Switch",
+    "label": "Heatit Z-Push Button 8",
+    "manufacturer": "Sunricher"
   },
   "0x0330:0x0300:0xa306": {
     "description": "2 Group Single Color Wall Mounted Remote",
@@ -14018,6 +14378,11 @@
     "description": "BL1000HW",
     "label": "H03HG8",
     "manufacturer": "KDDI"
+  },
+  "0x0338:0x0004:0x0002": {
+    "description": "Auto Valve",
+    "label": "GR-105N",
+    "manufacturer": "International Integrated Systems, Inc. (IISI)"
   },
   "0x033f:0x0000:0x0594": {
     "description": "August Smart Lock Pro 3rd Gen",
@@ -14560,8 +14925,8 @@
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0002:0x0009": {
-    "description": "a\u00ebrQ Temperature and Humidity Sensor V2.0",
-    "label": "ZWA039",
+    "description": "a\u00ebrQ Temperature and Humidity Sensor V1.0",
+    "label": "ZWA009",
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0002:0x000b": {
@@ -14705,8 +15070,8 @@
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0102:0x0009": {
-    "description": "a\u00ebrQ Temperature and Humidity Sensor V2.0",
-    "label": "ZWA039",
+    "description": "a\u00ebrQ Temperature and Humidity Sensor V1.0",
+    "label": "ZWA009",
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0102:0x000b": {
@@ -14830,8 +15195,8 @@
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0202:0x0009": {
-    "description": "a\u00ebrQ Temperature and Humidity Sensor V2.0",
-    "label": "ZWA039",
+    "description": "a\u00ebrQ Temperature and Humidity Sensor V1.0",
+    "label": "ZWA009",
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0202:0x000b": {
@@ -16076,5 +16441,5 @@
     "label": "BW8120",
     "manufacturer": "Remotec"
   },
-  "updated_at": "2026-07-06T17:56:54.821476"
+  "updated_at": "2026-07-20T16:56:21.083237"
 }
