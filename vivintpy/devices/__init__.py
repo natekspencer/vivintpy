@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Type, cast
+from typing import TYPE_CHECKING, cast
 
 from ..api import VivintSkyApi
 from ..const import VivintDeviceAttribute as Attribute
@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 DEVICE = "device"
 
 
-def get_device_class(device_type: str) -> Type[VivintDevice]:
+def get_device_class(device_type: str) -> type[VivintDevice]:
     """Map a device_type string to the class that implements that device."""
     # pylint: disable=import-outside-toplevel,cyclic-import
     from .camera import Camera
@@ -32,7 +32,7 @@ def get_device_class(device_type: str) -> Type[VivintDevice]:
     from .thermostat import Thermostat
     from .wireless_sensor import WirelessSensor
 
-    mapping: dict[DeviceType, Type[VivintDevice]] = {
+    mapping: dict[DeviceType, type[VivintDevice]] = {
         DeviceType.BINARY_SWITCH: BinarySwitch,
         DeviceType.CAMERA: Camera,
         DeviceType.DOOR_LOCK: DoorLock,

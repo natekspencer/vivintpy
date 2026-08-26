@@ -8,7 +8,8 @@ import hashlib
 import logging
 import os
 import re
-from typing import Any, Callable, Coroutine, Iterable, TypeVar
+from collections.abc import Callable, Coroutine, Iterable
+from typing import Any, TypeVar
 from warnings import warn
 
 _LOGGER = logging.getLogger(__name__)

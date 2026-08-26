@@ -9,9 +9,10 @@ import re
 import shutil
 import sys
 import tarfile
+from collections.abc import Generator
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Generator
+from typing import Any
 
 import aiohttp
 
@@ -54,7 +55,7 @@ def _create_db_from_zjs_config_files(
             with open(file, encoding="utf-8") as json_file:
                 json_string = "".join(
                     re.sub("((^|\\s+)//.*)|(/\\*.*\\*/)", "", line)
-                    for line in json_file.readlines()
+                    for line in json_file
                 )
                 json_string = re.sub(r"(?m)^\s*?/\*(.|\n)*?\*/\s*?$", "", json_string)
                 data = json.loads(json_string)

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
-from typing import TYPE_CHECKING, Type
+from typing import TYPE_CHECKING
 
 from ..api import VivintSkyApi
 from ..const import AlarmPanelAttribute as Attribute
@@ -193,7 +193,7 @@ class AlarmPanel(VivintDevice):
         await self.api.reboot_panel(self.id)
 
     def get_devices(
-        self, device_types: set[Type[VivintDevice]] | None = None
+        self, device_types: set[type[VivintDevice]] | None = None
     ) -> list[VivintDevice]:
         """Get a list of associated devices."""
         devices: list[VivintDevice] = []

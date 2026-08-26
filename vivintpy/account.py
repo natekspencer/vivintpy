@@ -91,11 +91,10 @@ class Account:
     async def disconnect(self) -> None:
         """Disconnect from the API."""
         _LOGGER.debug("Disconnecting from VivintSky")
-        if self.connected:
-            if self.__pubnub:
-                self.__pubnub.remove_listener(self.__pubnub_listener)
-                await self.__pubnub_unsubscribe_all()
-                await self.__pubnub.stop()
+        if self.connected and self.__pubnub:
+            self.__pubnub.remove_listener(self.__pubnub_listener)
+            await self.__pubnub_unsubscribe_all()
+            await self.__pubnub.stop()
         await self.api.disconnect()
         self.__connected = False
 
