@@ -73,7 +73,11 @@ class System(Entity):
     def update_user_data(self, data: list[dict]) -> None:
         """Update user data."""
         for d in data:
-            user = first_or_none(self.users, lambda user, d=d: user.id == d["_id"])
+
+            def _matches(user: User, _id: str = d["_id"]) -> bool:
+                return user.id == _id
+
+            user = first_or_none(self.users, _matches)
             if not user:
                 _LOGGER.debug("User not found for system %s: %s", self.id, d)
                 return

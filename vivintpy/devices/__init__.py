@@ -104,7 +104,7 @@ class VivintDevice(Entity):
         if not self.has_battery:
             return None
         if (battery_level := self.data.get(Attribute.BATTERY_LEVEL)) not in (None, ""):
-            return battery_level
+            return cast(int, battery_level)
         return 0 if self.low_battery else 100
 
     @property
