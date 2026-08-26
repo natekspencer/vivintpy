@@ -32,7 +32,7 @@ async def main() -> None:
         await account.verify_mfa(code)
         _LOGGER.debug("MFA verified")
 
-    logging.debug("Discovered systems & devices:")
+    _LOGGER.debug("Discovered systems & devices:")
     for system in account.systems:
         _LOGGER.debug(f"\tSystem {system.id}")
         for alarm_panel in system.alarm_panels:
@@ -51,8 +51,8 @@ async def main() -> None:
         while True:
             await asyncio.sleep(300)
             await account.refresh()
-    except Exception as e:
-        logging.debug(e)
+    except Exception as e:  # noqa: BLE001
+        _LOGGER.debug(e)
     finally:
         await account.disconnect()
 
