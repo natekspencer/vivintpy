@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import IntEnum
 from typing import cast
 
@@ -153,7 +153,7 @@ class Camera(VivintDevice):
         camera_thumbnail_date = datetime.strptime(
             self.data[Attribute.CAMERA_THUMBNAIL_DATE].replace("Z", ""),
             "%Y-%m-%dT%H:%M:%S.%f",
-        )
+        ).astimezone(timezone.utc)
         thumbnail_timestamp = int(camera_thumbnail_date.timestamp() * 1000)
 
         return await self.api.get_camera_thumbnail_url(
@@ -240,11 +240,11 @@ class Camera(VivintDevice):
             event = THUMBNAIL_READY
         elif message.get(Attribute.DING_DONG):
             event = DOORBELL_DING
-        elif message.keys() == set([Attribute.ID, Attribute.TYPE]):
+        elif message.keys() == {Attribute.ID, Attribute.TYPE}:
             event = VIDEO_READY
         elif message.get(Attribute.VISITOR_DETECTED) or message.keys() in [
-            set([Attribute.ID, Attribute.ACTUAL_TYPE, Attribute.STATE]),
-            set([Attribute.ID, Attribute.DETER_ON_DUTY, Attribute.TYPE]),
+            {Attribute.ID, Attribute.ACTUAL_TYPE, Attribute.STATE},
+            {Attribute.ID, Attribute.DETER_ON_DUTY, Attribute.TYPE},
         ]:
             event = MOTION_DETECTED
 

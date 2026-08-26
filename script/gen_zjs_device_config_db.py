@@ -9,14 +9,18 @@ import re
 import shutil
 import sys
 import tarfile
+from collections.abc import Generator
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Generator
+from typing import Any
 
 import aiohttp
+import anyio
 
 logging.getLogger("vivintpy.zjs_device_config_db").setLevel(logging.DEBUG)
-logging.getLogger().setLevel(logging.DEBUG)
+
+_LOGGER = logging.getLogger(__name__)
+_LOGGER.setLevel(logging.DEBUG)
 
 UPDATED_AT = "updated_at"
 TMP_DIR = os.path.join(os.path.dirname(__file__), "./.tmp/")
@@ -31,11 +35,11 @@ ZJS_DEVICE_CONFIG_DB_FILE = os.path.join(
 def _clean_temp_directory(create: bool = False) -> None:
     """Ensure the temp directory is empty and create it if specified."""
     if os.path.exists(TMP_DIR):
-        logging.debug("Removing temp directory")
+        _LOGGER.debug("Removing temp directory")
         shutil.rmtree(TMP_DIR)
 
     if create:
-        logging.debug("Creating temp directory")
+        _LOGGER.debug("Creating temp directory")
         os.mkdir(TMP_DIR)
 
 
@@ -43,7 +47,7 @@ def _create_db_from_zjs_config_files(
     updated_at: str,
 ) -> dict[str, str | dict[str, str]]:
     """Parse the Z-Wave JSON config files and create a consolidated device db."""
-    logging.debug("Parsing extracted config files")
+    _LOGGER.debug("Parsing extracted config files")
     json_files = Path(os.path.join(TMP_DIR, "devices")).glob("**/*.json")
 
     device_db: dict[str, str | dict[str, str]] = {}
@@ -54,12 +58,12 @@ def _create_db_from_zjs_config_files(
             with open(file, encoding="utf-8") as json_file:
                 json_string = "".join(
                     re.sub("((^|\\s+)//.*)|(/\\*.*\\*/)", "", line)
-                    for line in json_file.readlines()
+                    for line in json_file
                 )
                 json_string = re.sub(r"(?m)^\s*?/\*(.|\n)*?\*/\s*?$", "", json_string)
                 data = json.loads(json_string)
         except:  # noqa: E722 #pylint: disable=bare-except
-            logging.error("Unable to parse file %s", file)
+            _LOGGER.error("Unable to parse file %s", file)
             continue
 
         manufacturer_id = data["manufacturerId"]
@@ -77,9 +81,9 @@ def _create_db_from_zjs_config_files(
             }
 
     if not device_db:
-        logging.error("Unable to create consolidated device db")
+        _LOGGER.error("Unable to create consolidated device db")
     else:
-        logging.debug("Creating consolidated device db")
+        _LOGGER.debug("Creating consolidated device db")
         device_db.update({UPDATED_AT: updated_at})
         with open(ZJS_DEVICE_CONFIG_DB_FILE, "w", encoding="utf-8") as device_file:
             device_file.write(json.dumps(device_db, sort_keys=True, indent=2))
@@ -107,7 +111,8 @@ def _extract_zjs_config_files() -> None:
             prefix = os.path.commonprefix([abs_directory, abs_target])
             return prefix == abs_directory
 
-        assert (firstmember := tar_file.next())
+        firstmember = tar_file.next()
+        assert firstmember
         assert _is_within_directory(os.path.join(path, firstmember.name))
         base_path = f"{firstmember.path}{ZJS_TAR_CONFIG_BASE}"
         manufacturers_path = f"{base_path}manufacturers.json"
@@ -123,7 +128,7 @@ def _extract_zjs_config_files() -> None:
                 member.path = member.path[base_length:]
                 yield member
 
-    logging.debug("Extracting config files from download")
+    _LOGGER.debug("Extracting config files from download")
     with tarfile.open(ZJS_TAR_FILE) as tar:
         tar.extractall(TMP_DIR, members=_members(tar, TMP_DIR), numeric_owner=False)
 
@@ -141,48 +146,48 @@ async def download_zjs_device_config_db() -> dict:
     """Download the Z-Wave JS device config database."""
     if await _is_new_version_available():
         start_date = datetime.now(timezone.utc).replace(tzinfo=None).isoformat()
-        logging.debug("Beginning download process")
+        _LOGGER.debug("Beginning download process")
         _clean_temp_directory(create=True)
         await _download_zjs_tarfile()
         _extract_zjs_config_files()
         data = _create_db_from_zjs_config_files(updated_at=start_date)
         _clean_temp_directory()
         return data
-    logging.debug("Skipping file update")
+    _LOGGER.debug("Skipping file update")
     return _load_db_from_file()
 
 
 async def _download_zjs_tarfile() -> None:
     """Download the Z-Wave JS tarfile from http://github.com/zwave-js/node-zwave-js."""
     download_url = f"{REPO_URL}/tarball"
-    logging.debug("Downloading tarfile from %s", download_url)
+    _LOGGER.debug("Downloading tarfile from %s", download_url)
     async with aiohttp.ClientSession() as session:
         async with asyncio.timeout(120):
             async with session.get(download_url) as response:
-                with open(ZJS_TAR_FILE, "wb") as file:
+                async with await anyio.open_file(ZJS_TAR_FILE, "wb") as file:
                     async for data in response.content.iter_chunked(1024):
-                        file.write(data)
+                        await file.write(data)
 
 
 async def _is_new_version_available() -> bool:
     """Return `True` if a newer archive of the repo at http://github.com/zwave-js/node-zwave-js is available."""
     file_updated_at_str = _load_db_from_file().get(UPDATED_AT)
     if not isinstance(file_updated_at_str, str):
-        logging.debug("File has not yet been created")
+        _LOGGER.debug("File has not yet been created")
         return True
     file_updated_at = datetime.fromisoformat(file_updated_at_str)
 
-    logging.debug("Retrieving last updated date from %s", REPO_URL)
+    _LOGGER.debug("Retrieving last updated date from %s", REPO_URL)
     async with aiohttp.ClientSession() as session:
         async with asyncio.timeout(10):
             async with session.get(REPO_URL) as response:
                 if response.status != 200:
-                    logging.debug("Unable to check last updated date from %s", REPO_URL)
+                    _LOGGER.debug("Unable to check last updated date from %s", REPO_URL)
                     return False
                 updated_at = datetime.fromisoformat(
                     (await response.json()).get(UPDATED_AT).replace("Z", "")
                 )
-                logging.debug(
+                _LOGGER.debug(
                     "Repo was last updated at %s, while saved file was last updated at %s",
                     updated_at,
                     file_updated_at,
@@ -192,12 +197,12 @@ async def _is_new_version_available() -> bool:
 
 async def main() -> int:
     """Run the script."""
-    logging.debug("Running script")
+    _LOGGER.debug("Running script")
 
     await download_zjs_device_config_db()
 
     if not _device_config_db_file_exists():
-        logging.error("Unable to generate zjs_device_config_db.json")
+        _LOGGER.error("Unable to generate zjs_device_config_db.json")
         return 1
     return 0
 
