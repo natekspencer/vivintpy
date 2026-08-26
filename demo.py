@@ -1,3 +1,5 @@
+"""Demo."""
+
 import asyncio
 import logging
 import os
@@ -11,13 +13,16 @@ from vivintpy.exceptions import VivintSkyApiMfaRequiredError
 
 pubnub.set_stream_logger(name="pubnub", level=logging.ERROR)
 
+_LOGGER = logging.getLogger(__name__)
 
-async def main():
-    logging.getLogger().setLevel(logging.DEBUG)
-    logging.debug("Demo started")
+
+async def main() -> None:
+    """Main."""
+    _LOGGER.setLevel(logging.DEBUG)
+    _LOGGER.debug("Demo started")
 
     def camera_motion_callback(device: VivintDevice) -> None:
-        logging.debug("Motion detected from camera: %s", device)
+        _LOGGER.debug("Motion detected from camera: %s", device)
 
     account = Account(username=os.environ["username"], password=os.environ["password"])
     try:
@@ -25,17 +30,17 @@ async def main():
     except VivintSkyApiMfaRequiredError:
         code = input("Enter MFA Code: ")
         await account.verify_mfa(code)
-        logging.debug("MFA verified")
+        _LOGGER.debug("MFA verified")
 
     logging.debug("Discovered systems & devices:")
     for system in account.systems:
-        logging.debug(f"\tSystem {system.id}")
+        _LOGGER.debug(f"\tSystem {system.id}")
         for alarm_panel in system.alarm_panels:
-            logging.debug(
-                f"\t\tAlarm panel {alarm_panel.id}:{alarm_panel.partition_id}"
+            _LOGGER.debug(
+                f"\t\tAlarm panel {alarm_panel.id}:{alarm_panel.partition_id} ({alarm_panel.software_version})"
             )
             for device in alarm_panel.devices:
-                logging.debug(f"\t\t\tDevice: {device}")
+                _LOGGER.debug(f"\t\t\tDevice: {device} ({device.software_version})")
                 if isinstance(device, Camera):
                     device.on(
                         MOTION_DETECTED,
