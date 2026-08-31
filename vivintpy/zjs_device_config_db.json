@@ -12826,6 +12826,11 @@
     "label": "10002081-13x",
     "manufacturer": "SimonTech S.L.U"
   },
+  "0x0267:0x0006:0x0000": {
+    "description": "Simon 100: Battery Master Roller Blind",
+    "label": "10002181-13x",
+    "manufacturer": "SimonTech S.L.U"
+  },
   "0x0267:0x0007:0x0000": {
     "description": "S100 Rocker iO for Dimmer",
     "label": "10002020-13X",
@@ -16461,5 +16466,5 @@
     "label": "BW8120",
     "manufacturer": "Remotec"
   },
-  "updated_at": "2026-08-24T16:04:17.307397"
+  "updated_at": "2026-08-31T21:37:11.635914"
 }
