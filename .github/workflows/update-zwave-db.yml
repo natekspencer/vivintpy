@@ -15,17 +15,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the repo
-        uses: actions/checkout@v4
-      - name: Set up Python 3.13
-        uses: actions/setup-python@v5
+        uses: actions/checkout@v7
+      - name: Set up Python 3.14
+        uses: actions/setup-python@v7
         with:
-          python-version: "3.13"
+          python-version: "3.14"
       - name: Install dependencies
         run: pip install aiohttp
       - name: Update database
         run: python script/gen_zjs_device_config_db.py
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v8
         with:
           commit-message: Update Z-Wave device database
           title: Update Z-Wave device database
