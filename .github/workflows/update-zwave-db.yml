@@ -21,7 +21,7 @@ jobs:
         with:
           python-version: "3.14"
       - name: Install dependencies
-        run: pip install aiohttp
+        run: pip install aiohttp anyio
       - name: Update database
         run: python script/gen_zjs_device_config_db.py
       - name: Create Pull Request
