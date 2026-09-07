@@ -9502,8 +9502,8 @@
     "manufacturer": "Popp & Co"
   },
   "0x0154:0x0004:0x0002": {
-    "description": "Solar Powered Outdoor Siren",
-    "label": "005107",
+    "description": "POPP Solar Outdoor Siren 2",
+    "label": "700854",
     "manufacturer": "Popp & Co"
   },
   "0x0154:0x0004:0x0003": {
@@ -11313,7 +11313,7 @@
   },
   "0x019b:0x0003:0x0202": {
     "description": "Floor Thermostat",
-    "label": "Z-TRM2fx",
+    "label": "Z-TRM 2",
     "manufacturer": "Heatit"
   },
   "0x019b:0x0003:0x0203": {
@@ -11732,8 +11732,8 @@
     "manufacturer": "Kaipule Technology Co., Ltd."
   },
   "0x0214:0x0002:0x0002": {
-    "description": "PIR Sensor",
-    "label": "DP-32 / IX-30 / IX-32",
+    "description": "Smoke Sensor",
+    "label": "ES-61",
     "manufacturer": "Kaipule Technology Co., Ltd."
   },
   "0x0214:0x0003:0x0001": {
@@ -13192,6 +13192,11 @@
     "label": "ZW6302",
     "manufacturer": "Zooz"
   },
+  "0x027a:0x7000:0x0012": {
+    "description": "Motion Dimmer",
+    "label": "ZEN12",
+    "manufacturer": "Zooz"
+  },
   "0x027a:0x7000:0xa001": {
     "description": "On/Off Switch",
     "label": "ZEN71",
@@ -14280,9 +14285,9 @@
     "manufacturer": "ShenZhen Sunricher Technology, Ltd."
   },
   "0x0330:0x0300:0xa305": {
-    "description": "Wall Controller - 8 Button",
-    "label": "VES-ZW-WAL-009",
-    "manufacturer": "Vesternet"
+    "description": "Wall Mounted Switch",
+    "label": "Heatit Z-Push Button 8",
+    "manufacturer": "Sunricher"
   },
   "0x0330:0x0300:0xa306": {
     "description": "2 Group Single Color Wall Mounted Remote",
@@ -14315,9 +14320,9 @@
     "manufacturer": "Sunricher"
   },
   "0x0330:0x0300:0xb302": {
-    "description": "Remote Control - 12 Button",
-    "label": "VES-ZW-REM-010",
-    "manufacturer": "Vesternet"
+    "description": "4 Channel Dimmer Remote Control",
+    "label": "ZV9001K12-DIM-Z4",
+    "manufacturer": "Sunricher"
   },
   "0x0330:0x0301:0xa101": {
     "description": "Wall Controller",
@@ -14950,8 +14955,8 @@
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0002:0x0009": {
-    "description": "a\u00ebrQ Temperature and Humidity Sensor V1.0",
-    "label": "ZWA009",
+    "description": "a\u00ebrQ Temperature and Humidity Sensor V2.0",
+    "label": "ZWA039",
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0002:0x000b": {
@@ -15095,8 +15100,8 @@
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0102:0x0009": {
-    "description": "a\u00ebrQ Temperature and Humidity Sensor V1.0",
-    "label": "ZWA009",
+    "description": "a\u00ebrQ Temperature and Humidity Sensor V2.0",
+    "label": "ZWA039",
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0102:0x000b": {
@@ -15220,8 +15225,8 @@
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0202:0x0009": {
-    "description": "a\u00ebrQ Temperature and Humidity Sensor V1.0",
-    "label": "ZWA009",
+    "description": "a\u00ebrQ Temperature and Humidity Sensor V2.0",
+    "label": "ZWA039",
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0202:0x000b": {
@@ -16466,5 +16471,5 @@
     "label": "BW8120",
     "manufacturer": "Remotec"
   },
-  "updated_at": "2026-08-31T21:37:11.635914"
+  "updated_at": "2026-09-07T19:20:30.148732"
 }
