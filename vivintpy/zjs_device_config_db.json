@@ -5874,6 +5874,11 @@
     "label": "FGD-212",
     "manufacturer": "Fibargroup"
   },
+  "0x010f:0x0103:0x1000": {
+    "description": "Double Dimmer-Control",
+    "label": "FGD-223",
+    "manufacturer": "Nice"
+  },
   "0x010f:0x0200:0x0102": {
     "description": "Double Relay Switch 2x1.5kW",
     "label": "FGS-221",
@@ -12501,6 +12506,11 @@
     "label": "NAS-PD07ZU1",
     "manufacturer": "Shenzhen Neo Electronics Co., Ltd."
   },
+  "0x0258:0x0100:0x1025": {
+    "description": "Water Sensor",
+    "label": "NAS-WS02Z",
+    "manufacturer": "Shenzhen Neo Electronics Co., Ltd."
+  },
   "0x0258:0x0100:0x1027": {
     "description": "Wall Plug Switch",
     "label": "NAS-WR01ZE",
@@ -15014,6 +15024,26 @@
     "label": "ZWA050",
     "manufacturer": "Aeotec Ltd."
   },
+  "0x0371:0x0002:0x0037": {
+    "description": "Door / Window Sensor 8",
+    "label": "ZWA055",
+    "manufacturer": "Aeotec Ltd."
+  },
+  "0x0371:0x0002:0x0038": {
+    "description": "Water Sensor 8",
+    "label": "ZWA056",
+    "manufacturer": "Aeotec Ltd."
+  },
+  "0x0371:0x0002:0x0039": {
+    "description": "a\u00ebrQ Temperature and Humidity Sensor 8",
+    "label": "ZWA057",
+    "manufacturer": "Aeotec Ltd."
+  },
+  "0x0371:0x0002:0x0042": {
+    "description": "MultiSensor 8",
+    "label": "ZWA066",
+    "manufacturer": "Aeotec Ltd."
+  },
   "0x0371:0x0002:0x00bb": {
     "description": "Recessed Door Sensor 7",
     "label": "ZW187",
@@ -15044,6 +15074,11 @@
     "label": "ZWA046",
     "manufacturer": "Aeotec Ltd."
   },
+  "0x0371:0x0003:0x0041": {
+    "description": "Siren 8",
+    "label": "ZWA065",
+    "manufacturer": "Aeotec Ltd."
+  },
   "0x0371:0x0003:0x008d": {
     "description": "Nano Shutter V.3",
     "label": "ZW141",
@@ -15072,6 +15107,11 @@
   "0x0371:0x0004:0x003c": {
     "description": "Z-Stick 10 Pro",
     "label": "ZWA060",
+    "manufacturer": "Aeotec Ltd."
+  },
+  "0x0371:0x0004:0x0041": {
+    "description": "Siren 8",
+    "label": "ZWA065",
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0004:0x00bd": {
@@ -15149,6 +15189,26 @@
     "label": "ZWA045",
     "manufacturer": "Aeotec Ltd."
   },
+  "0x0371:0x0102:0x0037": {
+    "description": "Door / Window Sensor 8",
+    "label": "ZWA055",
+    "manufacturer": "Aeotec Ltd."
+  },
+  "0x0371:0x0102:0x0038": {
+    "description": "Water Sensor 8",
+    "label": "ZWA056",
+    "manufacturer": "Aeotec Ltd."
+  },
+  "0x0371:0x0102:0x0039": {
+    "description": "a\u00ebrQ Temperature and Humidity Sensor 8",
+    "label": "ZWA057",
+    "manufacturer": "Aeotec Ltd."
+  },
+  "0x0371:0x0102:0x0042": {
+    "description": "MultiSensor 8",
+    "label": "ZWA066",
+    "manufacturer": "Aeotec Ltd."
+  },
   "0x0371:0x0102:0x00bb": {
     "description": "Recessed Door Sensor 7",
     "label": "ZW187",
@@ -15189,6 +15249,11 @@
     "label": "ZWA046",
     "manufacturer": "Aeotec Ltd."
   },
+  "0x0371:0x0103:0x0041": {
+    "description": "Siren 8",
+    "label": "ZWA065",
+    "manufacturer": "Aeotec Ltd."
+  },
   "0x0371:0x0103:0x008d": {
     "description": "Nano Shutter V.3",
     "label": "ZW141",
@@ -15202,6 +15267,11 @@
   "0x0371:0x0103:0x00a4": {
     "description": "Indoor Siren 6",
     "label": "ZW164",
+    "manufacturer": "Aeotec Ltd."
+  },
+  "0x0371:0x0104:0x0041": {
+    "description": "Siren 8",
+    "label": "ZWA065",
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0104:0x00bd": {
@@ -15264,9 +15334,29 @@
     "label": "ZWA045",
     "manufacturer": "Aeotec Ltd."
   },
+  "0x0371:0x0202:0x0037": {
+    "description": "Door / Window Sensor 8",
+    "label": "ZWA055",
+    "manufacturer": "Aeotec Ltd."
+  },
+  "0x0371:0x0202:0x0038": {
+    "description": "Water Sensor 8",
+    "label": "ZWA056",
+    "manufacturer": "Aeotec Ltd."
+  },
+  "0x0371:0x0202:0x0042": {
+    "description": "MultiSensor 8",
+    "label": "ZWA066",
+    "manufacturer": "Aeotec Ltd."
+  },
   "0x0371:0x0202:0x00bb": {
     "description": "Recessed Door Sensor 7",
     "label": "ZW187",
+    "manufacturer": "Aeotec Ltd."
+  },
+  "0x0371:0x0203:0x0041": {
+    "description": "Siren 8",
+    "label": "ZWA065",
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0203:0x008d": {
@@ -15282,6 +15372,11 @@
   "0x0371:0x0203:0x00a4": {
     "description": "Indoor Siren 6",
     "label": "ZW164",
+    "manufacturer": "Aeotec Ltd."
+  },
+  "0x0371:0x0204:0x0041": {
+    "description": "Siren 8",
+    "label": "ZWA065",
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0302:0x002d": {
@@ -16391,6 +16486,11 @@
     "label": "ZXT-600",
     "manufacturer": "Remotec"
   },
+  "0x5254:0x0102:0x8493": {
+    "description": "IR AC & AV Extender",
+    "label": "ZXT-800",
+    "manufacturer": "Remotec"
+  },
   "0x5254:0x0107:0x8377": {
     "description": "Remotec",
     "label": "BW8377IL",
@@ -16471,5 +16571,5 @@
     "label": "BW8120",
     "manufacturer": "Remotec"
   },
-  "updated_at": "2026-09-07T19:20:30.148732"
+  "updated_at": "2026-09-21T20:05:15.706600"
 }
