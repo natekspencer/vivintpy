@@ -10,7 +10,7 @@ import shutil
 import sys
 import tarfile
 from collections.abc import Generator
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -145,7 +145,7 @@ def _load_db_from_file() -> dict[str, str | dict[str, str]]:
 async def download_zjs_device_config_db() -> dict:
     """Download the Z-Wave JS device config database."""
     if await _is_new_version_available():
-        start_date = datetime.now(timezone.utc).replace(tzinfo=None).isoformat()
+        start_date = datetime.now(UTC).replace(tzinfo=None).isoformat()
         _LOGGER.debug("Beginning download process")
         _clean_temp_directory(create=True)
         await _download_zjs_tarfile()
@@ -161,12 +161,14 @@ async def _download_zjs_tarfile() -> None:
     """Download the Z-Wave JS tarfile from http://github.com/zwave-js/node-zwave-js."""
     download_url = f"{REPO_URL}/tarball"
     _LOGGER.debug("Downloading tarfile from %s", download_url)
-    async with aiohttp.ClientSession() as session:
-        async with asyncio.timeout(120):
-            async with session.get(download_url) as response:
-                async with await anyio.open_file(ZJS_TAR_FILE, "wb") as file:
-                    async for data in response.content.iter_chunked(1024):
-                        await file.write(data)
+    async with (
+        aiohttp.ClientSession() as session,
+        asyncio.timeout(120),
+        session.get(download_url) as response,
+        await anyio.open_file(ZJS_TAR_FILE, "wb") as file,
+    ):
+        async for data in response.content.iter_chunked(1024):
+            await file.write(data)
 
 
 async def _is_new_version_available() -> bool:
