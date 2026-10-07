@@ -2,7 +2,7 @@
 name = "vivintpy"
 description = "Python library for interacting with a Vivint security and smart home system."
 authors = [{ name = "Nathan Spencer", email = "natekspencer@gmail.com" }]
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 readme = "README.md"
 license = "MIT"
 keywords = [

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import logging
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import IntEnum
 from typing import cast
 
@@ -153,7 +153,7 @@ class Camera(VivintDevice):
         camera_thumbnail_date = datetime.strptime(
             self.data[Attribute.CAMERA_THUMBNAIL_DATE].replace("Z", ""),
             "%Y-%m-%dT%H:%M:%S.%f",
-        ).astimezone(timezone.utc)
+        ).astimezone(UTC)
         thumbnail_timestamp = int(camera_thumbnail_date.timestamp() * 1000)
 
         return await self.api.get_camera_thumbnail_url(
