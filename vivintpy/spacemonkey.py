@@ -103,6 +103,14 @@ def parse_playlist(playlist: str, recording: DvrRecording) -> list[DvrSegment]:
     return segments
 
 
+async def _read_json(resp: aiohttp.ClientResponse, what: str) -> Any:
+    """Return the JSON body of a response, raising `SpaceMonkeyError` if it has none."""
+    try:
+        return await resp.json()
+    except (aiohttp.ContentTypeError, ValueError) as err:
+        raise SpaceMonkeyError(f"Unexpected {what} response") from err
+
+
 def _from_microseconds(value: int) -> datetime:
     """Convert microseconds since the epoch to an aware UTC datetime."""
     return datetime.fromtimestamp(value / 1_000_000, tz=UTC)
@@ -216,12 +224,15 @@ class SpaceMonkeyDvr:
     async def get_status(self) -> dict[str, Any]:
         """Return the DVR's status, which includes its cameras."""
         async with await self.get("/web/v1/status") as resp:
-            return cast("dict[str, Any]", await resp.json())
+            data = await _read_json(resp, "status")
+        if not isinstance(data, dict):
+            raise SpaceMonkeyError("Unexpected status response")
+        return data
 
     async def get_recordings(self, camera_id: int) -> list[DvrRecording]:
         """Return the recorded ranges stored for a camera, oldest first."""
         async with await self.get("/recordings", camera=f"Video-{camera_id}") as resp:
-            data = await resp.json()
+            data = await _read_json(resp, "recordings")
         try:
             ranges = data.get("Ranges")
             if ranges is None:
@@ -332,13 +343,13 @@ class SpaceMonkeyDvr:
         ) as resp:
             if resp.status != 200:
                 raise SpaceMonkeyError(f"Certificate request failed: {resp.status}")
-            data = await resp.json()
+            data = await _read_json(resp, "certificate")
 
         try:
             bundle = base64.b64decode(data["pkcs12_b64"])
             expiry = datetime.fromisoformat(data["expires_at"])
             hardware_id = data["hw_id"]
-        except (KeyError, ValueError) as err:
+        except (KeyError, TypeError, ValueError) as err:
             raise SpaceMonkeyError("Unexpected certificate response") from err
 
         self._ssl_context = await asyncio.get_running_loop().run_in_executor(
@@ -359,14 +370,15 @@ class SpaceMonkeyDvr:
         ) as resp:
             if resp.status != 200:
                 raise SpaceMonkeyError(f"Directory lookup failed: {resp.status}")
+            entry = await _read_json(resp, "directory")
             try:
-                entry = (await resp.json())["address"]
+                entry = entry["address"]
                 # lan_dns carries its own ":port" suffix.
                 self.address = DvrAddress(
                     host=entry["lan_dns"].rsplit(":", 1)[0],
                     port=entry["local_port"],
                     local_ip=entry["local_ip"],
                 )
-            except (KeyError, ValueError) as err:
+            except (AttributeError, KeyError, TypeError, ValueError) as err:
                 raise SpaceMonkeyError("Unexpected directory response") from err
         _LOGGER.debug("Located the DVR at %s", self.address.local_ip)
