@@ -9,7 +9,7 @@ from .const import PubNubMessageAttribute
 from .const import SystemAttribute as Attribute
 from .devices.alarm_panel import AlarmPanel
 from .entity import Entity
-from .spacemonkey import SpaceMonkeyDvr
+from .spacemonkey import SpaceMonkeyDvr, find_dvr_service_id
 from .user import User
 from .utils import first_or_none
 
@@ -63,6 +63,7 @@ class System(Entity):
     async def refresh(self) -> None:
         """Reload a system's data from the VivintSky API."""
         system_data = await self.api.get_system_data(self.id)
+        await self._refresh_dvr(system_data)
 
         for panel_data in system_data[Attribute.SYSTEM][Attribute.PARTITION]:
             alarm_panel = first_or_none(
@@ -76,6 +77,15 @@ class System(Entity):
                 alarm_panel.refresh(panel_data)
             else:
                 self.alarm_panels.append(AlarmPanel(panel_data, self))
+
+    async def _refresh_dvr(self, system_data: dict) -> None:
+        """Create, replace or drop the DVR when the system's DVR service changed."""
+        service_id = find_dvr_service_id(system_data)
+        if self._dvr and self._dvr.dvr_service_id == service_id:
+            return
+        if self._dvr:
+            await self._dvr.disconnect()
+        self._dvr = SpaceMonkeyDvr.from_system_data(self.api, system_data)
 
     def update_user_data(self, data: list[dict]) -> None:
         """Update user data."""

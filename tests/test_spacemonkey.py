@@ -6,7 +6,9 @@ import base64
 import ssl
 from collections.abc import AsyncIterator
 from datetime import UTC, datetime, timedelta
+from types import SimpleNamespace
 from typing import Any, Self
+from unittest.mock import MagicMock
 
 import pytest
 import pytest_asyncio
@@ -19,6 +21,7 @@ from cryptography.hazmat.primitives.serialization import pkcs12
 from cryptography.x509.oid import NameOID
 
 from vivintpy import spacemonkey
+from vivintpy.account import Account
 from vivintpy.exceptions import SpaceMonkeyError
 from vivintpy.spacemonkey import (
     DvrRecording,
@@ -26,6 +29,7 @@ from vivintpy.spacemonkey import (
     find_dvr_service_id,
     parse_playlist,
 )
+from vivintpy.system import System
 
 HARDWARE_ID = "0123456789abcdef0123456789abcdef01234567"
 START = datetime(2026, 10, 24, 18, 0, tzinfo=UTC)
@@ -282,3 +286,165 @@ async def test_supplied_session_is_not_closed() -> None:
         dvr = SpaceMonkeyDvr(FakeApi(), "dvr-id", session)  # type: ignore[arg-type]
         await dvr.disconnect()
         assert not session.closed
+
+
+def test_ssl_context_rejects_unreadable_bundle() -> None:
+    """Test a bundle that is not a PKCS#12 file is reported as a DVR error."""
+    with pytest.raises(SpaceMonkeyError, match="could not be read"):
+        spacemonkey._build_ssl_context(b"not a bundle")  # pylint: disable=protected-access
+
+
+def test_ssl_context_rejects_bundle_without_authorities() -> None:
+    """Test a bundle without the CAs that sign the DVR's certificate is refused."""
+    key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
+    cert = _certificate("leaf", "leaf", key, key, ca=False)
+    bundle = pkcs12.serialize_key_and_certificates(
+        b"x", key, cert, None, serialization.NoEncryption()
+    )
+    with pytest.raises(SpaceMonkeyError, match="authorities"):
+        spacemonkey._build_ssl_context(bundle)  # pylint: disable=protected-access
+
+
+class JsonResponse:
+    """Minimal async context manager standing in for a ClientResponse."""
+
+    def __init__(self, payload: Any) -> None:
+        self._payload = payload
+
+    async def __aenter__(self) -> Self:
+        return self
+
+    async def __aexit__(self, *_args: object) -> None:
+        return None
+
+    async def json(self) -> Any:
+        return self._payload
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    ("payload", "expected"),
+    [({"Ranges": None}, []), ({}, [])],
+)
+async def test_get_recordings_without_ranges(
+    monkeypatch: pytest.MonkeyPatch, payload: dict, expected: list
+) -> None:
+    """Test a camera that has no recordings yields an empty list."""
+
+    async def fake_get(
+        _self: SpaceMonkeyDvr, _path: str, **_params: str
+    ) -> JsonResponse:
+        return JsonResponse(payload)
+
+    monkeypatch.setattr(SpaceMonkeyDvr, "get", fake_get)
+    dvr = SpaceMonkeyDvr(FakeApi(), "dvr-id")  # type: ignore[arg-type]
+
+    assert await dvr.get_recordings(27) == expected
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "payload",
+    [
+        ["not", "an", "object"],
+        {"Ranges": [{"Id": "x"}]},
+        {"Ranges": [{"Id": "x", "CameraId": 1, "StartTime": "a", "EndTime": 2}]},
+    ],
+)
+async def test_get_recordings_rejects_malformed_response(
+    monkeypatch: pytest.MonkeyPatch, payload: Any
+) -> None:
+    """Test an unexpected recordings response is reported as a DVR error."""
+
+    async def fake_get(
+        _self: SpaceMonkeyDvr, _path: str, **_params: str
+    ) -> JsonResponse:
+        return JsonResponse(payload)
+
+    monkeypatch.setattr(SpaceMonkeyDvr, "get", fake_get)
+    dvr = SpaceMonkeyDvr(FakeApi(), "dvr-id")  # type: ignore[arg-type]
+
+    with pytest.raises(SpaceMonkeyError, match="Unexpected recordings"):
+        await dvr.get_recordings(27)
+
+
+def current_dvr(system: System) -> SpaceMonkeyDvr | None:
+    """Return the DVR of a system, which changes as the system is refreshed."""
+    return system.dvr
+
+
+def system_data(dvr_service_id: str | None) -> dict:
+    """Return the data of a system, optionally with a DVR service."""
+    services = [{"t": "SPMO_DVR", "exid": dvr_service_id}] if dvr_service_id else []
+    return {
+        "system": {
+            "panid": 1,
+            "par": [{"panid": 1, "parid": 1, "d": []}],
+            "u": [],
+            "srvs": services,
+        }
+    }
+
+
+@pytest.mark.asyncio
+async def test_system_refresh_follows_the_dvr_service() -> None:
+    """Test a refresh creates, keeps, replaces and drops the DVR as the service changes."""
+
+    class Api:
+        data = system_data(None)
+
+        async def get_system_data(self, _panel_id: int) -> dict:
+            return self.data
+
+    api = Api()
+    system = System(api.data, api, name="Home", is_admin=True)  # type: ignore[arg-type]
+    assert current_dvr(system) is None
+
+    api.data = system_data("first")
+    await system.refresh()
+    first = current_dvr(system)
+    assert first and first.dvr_service_id == "first"
+
+    await system.refresh()
+    assert current_dvr(system) is first
+
+    api.data = system_data("second")
+    await system.refresh()
+    second = current_dvr(system)
+    assert second and second.dvr_service_id == "second"
+    assert second is not first
+
+    api.data = system_data(None)
+    await system.refresh()
+    assert current_dvr(system) is None
+
+
+@pytest.mark.asyncio
+async def test_account_disconnect_survives_a_failing_dvr() -> None:
+    """Test every DVR is disconnected and the API is closed even if one DVR fails."""
+    closed: list[str] = []
+
+    class Dvr:
+        def __init__(self, name: str, fail: bool) -> None:
+            self.name, self.fail = name, fail
+
+        async def disconnect(self) -> None:
+            closed.append(self.name)
+            if self.fail:
+                raise RuntimeError("boom")
+
+    class Api:
+        async def disconnect(self) -> None:
+            closed.append("api")
+
+    account = Account("user", "password", client_session=MagicMock())
+    account._api = Api()  # type: ignore[assignment]  # pylint: disable=protected-access
+    account.systems = [
+        SimpleNamespace(dvr=Dvr("one", True)),  # type: ignore[list-item]
+        SimpleNamespace(dvr=None),  # type: ignore[list-item]
+        SimpleNamespace(dvr=Dvr("two", False)),  # type: ignore[list-item]
+    ]
+
+    await account.disconnect()
+
+    assert sorted(closed) == ["api", "one", "two"]

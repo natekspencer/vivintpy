@@ -109,16 +109,21 @@ def _from_microseconds(value: int) -> datetime:
 
 def _build_ssl_context(pkcs12_bytes: bytes) -> ssl.SSLContext:
     """Build a TLS context that presents the client certificate to the DVR."""
-    key, cert, chain = pkcs12.load_key_and_certificates(pkcs12_bytes, b"")
+    try:
+        key, cert, chain = pkcs12.load_key_and_certificates(pkcs12_bytes, b"")
+    except ValueError as err:
+        raise SpaceMonkeyError("The certificate bundle could not be read") from err
     if key is None or cert is None:
         raise SpaceMonkeyError("The certificate bundle is missing its key or leaf")
+    if not chain:
+        raise SpaceMonkeyError("The certificate bundle is missing its authorities")
     pem = key.private_bytes(
         serialization.Encoding.PEM,
         serialization.PrivateFormat.TraditionalOpenSSL,
         serialization.NoEncryption(),
     ) + cert.public_bytes(serialization.Encoding.PEM)
     authorities = "".join(
-        c.public_bytes(serialization.Encoding.PEM).decode() for c in chain or []
+        c.public_bytes(serialization.Encoding.PEM).decode() for c in chain
     )
 
     context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
@@ -127,15 +132,18 @@ def _build_ssl_context(pkcs12_bytes: bytes) -> ssl.SSLContext:
     context.set_ciphers("DEFAULT:@SECLEVEL=0")
     # The device certificate is signed by Space Monkey's private CA, which is
     # delivered together with the client certificate.
-    context.load_verify_locations(cadata=authorities)
-    # load_cert_chain only accepts a file path.
-    fd, path = tempfile.mkstemp(suffix=".pem")
     try:
-        with os.fdopen(fd, "wb") as handle:
-            handle.write(pem)
-        context.load_cert_chain(path)
-    finally:
-        os.unlink(path)
+        context.load_verify_locations(cadata=authorities)
+        # load_cert_chain only accepts a file path.
+        fd, path = tempfile.mkstemp(suffix=".pem")
+        try:
+            with os.fdopen(fd, "wb") as handle:
+                handle.write(pem)
+            context.load_cert_chain(path)
+        finally:
+            os.unlink(path)
+    except ssl.SSLError as err:
+        raise SpaceMonkeyError("The certificate bundle could not be used") from err
     return context
 
 
@@ -182,6 +190,11 @@ class SpaceMonkeyDvr:
         return None
 
     @property
+    def dvr_service_id(self) -> str:
+        """Return the id of the DVR service this client talks to."""
+        return self._dvr_service_id
+
+    @property
     def connected(self) -> bool:
         """Return True if the DVR has been located and a certificate is loaded."""
         return self._ssl_context is not None and self.address is not None
@@ -208,15 +221,18 @@ class SpaceMonkeyDvr:
         """Return the recorded ranges stored for a camera, oldest first."""
         async with await self.get("/recordings", camera=f"Video-{camera_id}") as resp:
             data = await resp.json()
-        return [
-            DvrRecording(
-                id=item["Id"],
-                camera_id=item["CameraId"],
-                start=_from_microseconds(item["StartTime"]),
-                end=_from_microseconds(item["EndTime"]),
-            )
-            for item in data["Ranges"]
-        ]
+        try:
+            return [
+                DvrRecording(
+                    id=item["Id"],
+                    camera_id=item["CameraId"],
+                    start=_from_microseconds(item["StartTime"]),
+                    end=_from_microseconds(item["EndTime"]),
+                )
+                for item in data.get("Ranges") or []
+            ]
+        except (AttributeError, KeyError, TypeError, ValueError, OverflowError) as err:
+            raise SpaceMonkeyError("Unexpected recordings response") from err
 
     async def get_playlist(self, camera_id: int, recording_id: str) -> str:
         """Return the HLS playlist for a recorded range."""
