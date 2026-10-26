@@ -16,6 +16,7 @@ keywords = [
 dependencies = [
     "aiohttp>=3.8.5",
     "certifi>=2022.9.24",
+    "cryptography>=42.0.0",
     "pubnub>=7",
     "grpcio>=1.51.1",
     "protobuf>=4.23.1",

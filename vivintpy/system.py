@@ -15,6 +15,7 @@ from .devices.alarm_panel import AlarmPanel
 from .entity import Entity
 from .enums import ArmedState
 from .exceptions import VivintError
+from .spacemonkey import SpaceMonkeyDvr
 from .user import User
 from .utils import first_or_none
 
@@ -51,6 +52,12 @@ class System(Entity):
             User(user_data, self)
             for user_data in self.data[Attribute.SYSTEM][Attribute.USERS]
         ]
+        self._dvr = SpaceMonkeyDvr.from_system_data(api, data)
+
+    @property
+    def dvr(self) -> SpaceMonkeyDvr | None:
+        """Return the DVR that stores this system's recordings, if there is one."""
+        return self._dvr
 
     @property
     def api(self) -> VivintSkyApi:

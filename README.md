@@ -48,6 +48,18 @@ Requires Python 3.11 or newer.
 pip install vivintpy
 ```
 
+Systems with a Vivint DVR (Smart Drive) can also list and stream the continuous recordings stored on it. The DVR is reached over the local network using a short-lived client certificate that is issued to the signed-in account and renewed automatically.
+
+```python
+dvr = account.systems[0].dvr  # None if the system has no DVR
+await dvr.connect()
+for recording in await dvr.get_recordings(camera_id):
+    playlist = await dvr.get_playlist(camera_id, recording.id)  # HLS
+    for segment in parse_playlist(playlist, recording):
+        async for chunk in dvr.stream_segment(camera_id, recording.id, segment.number):
+            ...
+```
+
 ## Usage
 
 The library is asynchronous. Everything starts from an `Account`, which holds your systems, and each system has its alarm panels and their devices.
