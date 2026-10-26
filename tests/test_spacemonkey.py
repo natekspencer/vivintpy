@@ -48,12 +48,14 @@ stream3.ts
 
 
 def _name(common_name: str) -> x509.Name:
+    """Return an X.509 name with the given common name."""
     return x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, common_name)])
 
 
 def _certificate(
     subject: str, issuer: str, key: Any, signer: Any, *, ca: bool
 ) -> x509.Certificate:
+    """Return a certificate for the subject, signed with the signer's key."""
     now = datetime.now(UTC)
     return (
         x509.CertificateBuilder()
@@ -151,6 +153,7 @@ async def cloud_fixture(
     calls: dict[str, Any] = {"paths": []}
 
     async def authorized(request: web.Request) -> web.Response:
+        """Accept the authorization code and start a Space Monkey session."""
         calls["paths"].append(request.path)
         calls["code"] = request.query.get("code")
         response = web.json_response({"response": {"message": "Success"}})
@@ -158,6 +161,7 @@ async def cloud_fixture(
         return response
 
     async def certs(request: web.Request) -> web.Response:
+        """Return the client certificate bundle for the requested DVR service."""
         calls["paths"].append(request.path)
         calls["session"] = request.cookies.get("session")
         calls["dvr_service_id"] = request.query.get("dvr_service_id")
@@ -171,6 +175,7 @@ async def cloud_fixture(
         )
 
     async def directory(request: web.Request) -> web.Response:
+        """Return where the DVR is on the local network."""
         calls["paths"].append(request.path)
         return web.json_response(
             {
@@ -258,15 +263,19 @@ async def test_get_recordings(monkeypatch: pytest.MonkeyPatch) -> None:
         """Minimal async context manager standing in for a ClientResponse."""
 
         async def __aenter__(self) -> Self:
+            """Enter the response context."""
             return self
 
         async def __aexit__(self, *_args: object) -> None:
-            return None
+            """Leave the response context."""
+            return
 
         async def json(self) -> dict:
+            """Return the canned payload."""
             return payload
 
     async def fake_get(_self: SpaceMonkeyDvr, path: str, **params: str) -> FakeResponse:
+        """Record the request and return a canned response."""
         requested.update(path=path, params=params)
         return FakeResponse()
 
@@ -309,15 +318,19 @@ class JsonResponse:
     """Minimal async context manager standing in for a ClientResponse."""
 
     def __init__(self, payload: Any) -> None:
+        """Keep the payload to return."""
         self._payload = payload
 
     async def __aenter__(self) -> Self:
+        """Enter the response context."""
         return self
 
     async def __aexit__(self, *_args: object) -> None:
-        return None
+        """Leave the response context."""
+        return
 
     async def json(self) -> Any:
+        """Return the payload."""
         return self._payload
 
 
@@ -334,6 +347,7 @@ async def test_get_recordings_without_ranges(
     async def fake_get(
         _self: SpaceMonkeyDvr, _path: str, **_params: str
     ) -> JsonResponse:
+        """Return the canned payload instead of asking the DVR."""
         return JsonResponse(payload)
 
     monkeypatch.setattr(SpaceMonkeyDvr, "get", fake_get)
@@ -363,6 +377,7 @@ async def test_get_recordings_rejects_malformed_response(
     async def fake_get(
         _self: SpaceMonkeyDvr, _path: str, **_params: str
     ) -> JsonResponse:
+        """Return the canned payload instead of asking the DVR."""
         return JsonResponse(payload)
 
     monkeypatch.setattr(SpaceMonkeyDvr, "get", fake_get)
@@ -398,6 +413,7 @@ async def test_system_refresh_follows_the_dvr_service() -> None:
         data = system_data(None)
 
         async def get_system_data(self, _panel_id: int) -> dict:
+            """Return the current system data."""
             return self.data
 
     api = Api()
@@ -441,6 +457,7 @@ async def test_account_disconnect_survives_a_failing_dvr(
     closed: list[str] = []
 
     async def disconnect(self: SpaceMonkeyDvr) -> None:
+        """Record the disconnect, failing for the DVR named one."""
         closed.append(self.dvr_service_id)
         if self.dvr_service_id == "one":
             raise RuntimeError("boom")
@@ -449,6 +466,7 @@ async def test_account_disconnect_survives_a_failing_dvr(
 
     class Api:
         async def disconnect(self) -> None:
+            """Record that the API was closed."""
             closed.append("api")
 
     account = Account("user", "password", client_session=MagicMock())
@@ -472,6 +490,7 @@ async def test_overlapping_cleanups_keep_every_failed_dvr(
     attempts: list[str] = []
 
     async def disconnect(self: SpaceMonkeyDvr) -> None:
+        """Record the attempt; the first DVR waits to be released and then fails."""
         attempts.append(self.dvr_service_id)
         if self.dvr_service_id == "first":
             await release.wait()
@@ -502,6 +521,7 @@ async def test_system_refresh_survives_a_failing_dvr_cleanup(
         data = system_data("first")
 
         async def get_system_data(self, _panel_id: int) -> dict:
+            """Return the current system data."""
             return self.data
 
     api = Api()
@@ -512,6 +532,7 @@ async def test_system_refresh_survives_a_failing_dvr_cleanup(
     attempts = 0
 
     async def failing_disconnect(_self: SpaceMonkeyDvr) -> None:
+        """Fail the first attempt only."""
         nonlocal attempts
         attempts += 1
         if attempts == 1:

@@ -104,6 +104,7 @@ def parse_playlist(playlist: str, recording: DvrRecording) -> list[DvrSegment]:
 
 
 def _from_microseconds(value: int) -> datetime:
+    """Convert microseconds since the epoch to an aware UTC datetime."""
     return datetime.fromtimestamp(value / 1_000_000, tz=UTC)
 
 
@@ -293,6 +294,7 @@ class SpaceMonkeyDvr:
         raise SpaceMonkeyError("Unable to complete the DVR request")
 
     async def _ensure_connected(self) -> None:
+        """Connect if needed, and renew the certificate shortly before it expires."""
         async with self._lock:
             if not self.connected:
                 await self._renew_certificate()
@@ -304,6 +306,7 @@ class SpaceMonkeyDvr:
                 await self._renew_certificate()
 
     def _client_session(self) -> aiohttp.ClientSession:
+        """Return the HTTP session, creating one if there is none or it was closed."""
         if self._session is None or self._session.closed:
             self._session = aiohttp.ClientSession()
             self._owns_session = True
