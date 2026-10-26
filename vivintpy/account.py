@@ -95,8 +95,11 @@ class Account:
             self.__pubnub.remove_listener(self.__pubnub_listener)
             await self.__pubnub_unsubscribe_all()
             await self.__pubnub.stop()
-        await self.api.disconnect()
-        self.__connected = False
+        try:
+            await asyncio.gather(*(system.disconnect_dvrs() for system in self.systems))
+        finally:
+            await self.api.disconnect()
+            self.__connected = False
 
     async def __pubnub_unsubscribe_all(self) -> None:
         """
