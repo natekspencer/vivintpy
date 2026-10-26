@@ -158,16 +158,16 @@ class VivintSkyApi:
         if realm:
             params["realm"] = realm
 
-        async with self.__client_session.get(
+        resp = await self.__get(
             f"{AUTH_ENDPOINT}/oauth2/auth",
-            params=params,
             headers={
                 "Authorization": f"Bearer {self.__token['access_token']}",
                 "x-vivint-adapter": "BasicAuth",
             },
+            params=params,
             allow_redirects=False,
-        ) as resp:
-            location = resp.headers.get("Location", "")
+        )
+        location = (resp or {}).get("location") or ""
 
         if codes := urllib.parse.parse_qs(urllib.parse.urlparse(location).query).get(
             "code"

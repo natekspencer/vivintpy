@@ -65,7 +65,7 @@ class System(Entity):
     async def refresh(self) -> None:
         """Reload a system's data from the VivintSky API."""
         system_data = await self.api.get_system_data(self.id)
-        await self._refresh_dvr(system_data)
+        self._refresh_dvr(system_data)
 
         for panel_data in system_data[Attribute.SYSTEM][Attribute.PARTITION]:
             alarm_panel = first_or_none(
@@ -82,7 +82,7 @@ class System(Entity):
 
         await self._close_stale_dvrs()
 
-    async def _refresh_dvr(self, system_data: dict) -> None:
+    def _refresh_dvr(self, system_data: dict) -> None:
         """Create, replace or drop the DVR when the system's DVR service changed."""
         service_id = find_dvr_service_id(system_data)
         if self._dvr and self._dvr.dvr_service_id == service_id:
@@ -98,10 +98,9 @@ class System(Entity):
 
     async def disconnect_dvrs(self) -> None:
         """Disconnect the DVR, and any replaced DVR that could not be closed before."""
-        batch, self._stale_dvrs = self._stale_dvrs, []
-        if self._dvr:
-            batch.append(self._dvr)
-        await self._disconnect_dvrs(batch)
+        if self._dvr and self._dvr not in self._stale_dvrs:
+            self._stale_dvrs.append(self._dvr)
+        await self._close_stale_dvrs()
 
     @staticmethod
     async def _disconnect_dvrs(dvrs: list[SpaceMonkeyDvr]) -> list[SpaceMonkeyDvr]:

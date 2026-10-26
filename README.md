@@ -49,11 +49,15 @@ if dvr := account.systems[0].dvr:  # None if the system has no DVR
     for recording in await dvr.get_recordings(camera_id):
         playlist = await dvr.get_playlist(camera_id, recording.id)  # HLS
         for segment in parse_playlist(playlist, recording):
-            async for chunk in dvr.stream_segment(
-                camera_id, recording.id, segment.number
-            ):
-                ...
+            # aclosing releases the connection if the loop is left early.
+            async with aclosing(
+                dvr.stream_segment(camera_id, recording.id, segment.number)
+            ) as chunks:
+                async for chunk in chunks:
+                    ...
 ```
+
+`aclosing` comes from `contextlib`.
 
 ## Usage
 

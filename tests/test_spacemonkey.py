@@ -13,7 +13,7 @@ from unittest.mock import MagicMock
 
 import pytest
 import pytest_asyncio
-from aiohttp import ClientSession, ContentTypeError, CookieJar, web
+from aiohttp import ClientOSError, ClientSession, ContentTypeError, CookieJar, web
 from aiohttp.test_utils import TestServer
 from cryptography import x509
 from cryptography.hazmat.primitives import hashes, serialization
@@ -657,5 +657,226 @@ async def test_cloud_responses_that_are_not_usable(
                     await dvr._renew_certificate()  # pylint: disable=protected-access
                 else:
                     await dvr._locate()  # pylint: disable=protected-access
+    finally:
+        await server.close()
+
+
+class FakeResponse:
+    """A response with a status code."""
+
+    def __init__(self, status: int) -> None:
+        """Keep the status."""
+        self.status = status
+        self.released = False
+
+    def release(self) -> None:
+        """Record that the response was released."""
+        self.released = True
+
+
+class FakeSession:
+    """A session that answers each request with the next canned outcome."""
+
+    closed = False
+
+    def __init__(self, *outcomes: int | Exception) -> None:
+        """Keep the outcomes, which are status codes or exceptions to raise."""
+        self.outcomes = list(outcomes)
+
+    async def get(self, _url: str, **_kwargs: Any) -> FakeResponse:
+        """Return or raise the next outcome."""
+        await asyncio.sleep(0)
+        outcome = self.outcomes.pop(0)
+        if isinstance(outcome, Exception):
+            raise outcome
+        return FakeResponse(outcome)
+
+
+def connected_dvr(
+    monkeypatch: pytest.MonkeyPatch, session: FakeSession
+) -> tuple[SpaceMonkeyDvr, dict[str, int]]:
+    """Return a connected DVR that uses the fake session and counts its lookups."""
+    dvr = SpaceMonkeyDvr(FakeApi(), "dvr-id", session)  # type: ignore[arg-type]
+    dvr._ssl_context = MagicMock()  # pylint: disable=protected-access
+    dvr.address = spacemonkey.DvrAddress("dvr.example.test", 8080, "192.0.2.10")
+    dvr.certificate_expiry = datetime.now(UTC) + timedelta(hours=24)
+    counts = {"locate": 0, "renew": 0}
+
+    async def locate(_self: SpaceMonkeyDvr) -> None:
+        """Count a lookup."""
+        counts["locate"] += 1
+
+    async def renew(self: SpaceMonkeyDvr) -> None:
+        """Count a renewal, which changes the expiry."""
+        counts["renew"] += 1
+        self.certificate_expiry = datetime.now(UTC) + timedelta(hours=24)
+
+    monkeypatch.setattr(SpaceMonkeyDvr, "_locate", locate)
+    monkeypatch.setattr(SpaceMonkeyDvr, "_renew_certificate", renew)
+    return dvr, counts
+
+
+@pytest.mark.asyncio
+async def test_get_renews_the_certificate_after_a_401(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Test a 401 renews the certificate and the request is repeated."""
+    dvr, counts = connected_dvr(monkeypatch, FakeSession(401, 200))
+
+    resp = await dvr.get("/status")
+
+    assert resp.status == 200
+    assert counts == {"locate": 0, "renew": 1}
+
+
+@pytest.mark.asyncio
+async def test_get_gives_up_after_a_second_401(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test a certificate that is still refused is reported."""
+    dvr, counts = connected_dvr(monkeypatch, FakeSession(401, 401))
+
+    with pytest.raises(SpaceMonkeyError, match="HTTP 401"):
+        await dvr.get("/status")
+
+    assert counts["renew"] == 1
+
+
+@pytest.mark.asyncio
+async def test_get_reports_other_statuses(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test a status other than 200 is reported."""
+    dvr, _ = connected_dvr(monkeypatch, FakeSession(404))
+
+    with pytest.raises(SpaceMonkeyError, match="HTTP 404"):
+        await dvr.get("/status")
+
+
+@pytest.mark.asyncio
+async def test_get_looks_the_dvr_up_again_when_unreachable(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Test a connection failure is retried after locating the DVR again."""
+    dvr, counts = connected_dvr(monkeypatch, FakeSession(ClientOSError(), 200))
+
+    await dvr.get("/status")
+
+    assert counts == {"locate": 1, "renew": 0}
+
+
+@pytest.mark.asyncio
+async def test_get_renews_a_certificate_the_dvr_drops(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Test a connection that keeps failing is retried with a new certificate."""
+    session = FakeSession(ClientOSError(), ClientOSError(), 200)
+    dvr, counts = connected_dvr(monkeypatch, session)
+
+    await dvr.get("/status")
+
+    assert counts == {"locate": 1, "renew": 1}
+
+
+@pytest.mark.asyncio
+async def test_get_gives_up_when_the_dvr_stays_unreachable(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Test a DVR that cannot be reached is reported."""
+    session = FakeSession(ClientOSError(), ClientOSError(), ClientOSError())
+    dvr, _ = connected_dvr(monkeypatch, session)
+
+    with pytest.raises(SpaceMonkeyError, match="Unable to reach"):
+        await dvr.get("/status")
+
+
+@pytest.mark.asyncio
+async def test_concurrent_401s_renew_once(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test requests refused together share one renewal."""
+    dvr, counts = connected_dvr(monkeypatch, FakeSession(401, 401, 200, 200))
+
+    await asyncio.gather(dvr.get("/a"), dvr.get("/b"))
+
+    assert counts["renew"] == 1
+
+
+@pytest.mark.asyncio
+async def test_disconnected_dvr_is_not_reopened(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Test a disconnected DVR refuses requests instead of opening a session."""
+    dvr, counts = connected_dvr(monkeypatch, FakeSession())
+
+    await dvr.disconnect()
+
+    with pytest.raises(SpaceMonkeyError, match="disconnected"):
+        await dvr.get("/status")
+    assert counts == {"locate": 0, "renew": 0}
+
+
+@pytest.mark.asyncio
+async def test_disconnect_during_a_request_is_reported(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Test a DVR disconnected while a request is retried reports it."""
+    dvr, _ = connected_dvr(monkeypatch, FakeSession(ClientOSError()))
+
+    async def locate(self: SpaceMonkeyDvr) -> None:
+        """Disconnect while the DVR is being looked up."""
+        self._closed = True  # pylint: disable=protected-access
+        self._session = None  # pylint: disable=protected-access
+
+    monkeypatch.setattr(SpaceMonkeyDvr, "_locate", locate)
+
+    with pytest.raises(SpaceMonkeyError, match="disconnected"):
+        await dvr.get("/status")
+
+
+@pytest.mark.asyncio
+async def test_network_errors_while_connecting_are_reported(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Test a failure to reach the cloud is reported as a DVR error."""
+    dvr = SpaceMonkeyDvr(FakeApi(), "dvr-id")  # type: ignore[arg-type]
+    dvr.hardware_id = HARDWARE_ID
+    monkeypatch.setattr(spacemonkey, "DIRECTORY_ENDPOINT", "http://127.0.0.1:1")
+
+    with pytest.raises(SpaceMonkeyError):
+        await dvr._locate()  # pylint: disable=protected-access
+    await dvr.disconnect()
+
+
+@pytest.mark.asyncio
+async def test_certificate_expiry_without_offset_is_utc(
+    bundle: bytes, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Test an expiry without a UTC offset is read as UTC."""
+    expires = (datetime.now(UTC) + timedelta(hours=24)).replace(tzinfo=None)
+
+    async def authorized(_request: web.Request) -> web.Response:
+        """Accept the authorization code."""
+        return web.Response(text="ok")
+
+    async def certs(_request: web.Request) -> web.Response:
+        """Return a certificate whose expiry has no offset."""
+        return web.json_response(
+            {
+                "pkcs12_b64": base64.b64encode(bundle).decode(),
+                "hw_id": HARDWARE_ID,
+                "expires_at": expires.isoformat(),
+            }
+        )
+
+    app = web.Application()
+    app.router.add_get("/authorized", authorized)
+    app.router.add_get("/v2/playback/certs", certs)
+    server = TestServer(app)
+    await server.start_server()
+    base = str(server.make_url("")).rstrip("/")
+    monkeypatch.setattr(spacemonkey, "ACCOUNTS_ENDPOINT", base)
+    monkeypatch.setattr(spacemonkey, "REDIRECT_URI", f"{base}/authorized")
+    try:
+        async with ClientSession() as session:
+            dvr = SpaceMonkeyDvr(FakeApi(), "dvr-id", session)  # type: ignore[arg-type]
+
+            await dvr._renew_certificate()  # pylint: disable=protected-access
+
+            assert dvr.certificate_expiry == expires.replace(tzinfo=UTC)
     finally:
         await server.close()

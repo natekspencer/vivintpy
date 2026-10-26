@@ -4,15 +4,16 @@ from __future__ import annotations
 
 import asyncio
 import base64
+import functools
 import logging
 import os
 import re
 import ssl
 import tempfile
-from collections.abc import AsyncIterator
+from collections.abc import AsyncIterator, Awaitable, Callable
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
-from typing import TYPE_CHECKING, Any, cast
+from typing import TYPE_CHECKING, Any, ParamSpec, TypeVar, cast
 
 import aiohttp
 from cryptography.hazmat.primitives import serialization
@@ -24,6 +25,9 @@ if TYPE_CHECKING:
     from .api import VivintSkyApi
 
 _LOGGER = logging.getLogger(__name__)
+
+_P = ParamSpec("_P")
+_T = TypeVar("_T")
 
 ACCOUNTS_ENDPOINT = "https://accounts.spacemonkey.com"
 DIRECTORY_ENDPOINT = "https://directory.spacemonkey.com"
@@ -101,6 +105,22 @@ def parse_playlist(playlist: str, recording: DvrRecording) -> list[DvrSegment]:
             elapsed += duration
             duration = None
     return segments
+
+
+def _dvr_errors(
+    func: Callable[_P, Awaitable[_T]],
+) -> Callable[_P, Awaitable[_T]]:
+    """Report network failures of a coroutine as `SpaceMonkeyError`."""
+
+    @functools.wraps(func)
+    async def wrapper(*args: _P.args, **kwargs: _P.kwargs) -> _T:
+        """Run the coroutine."""
+        try:
+            return await func(*args, **kwargs)
+        except (aiohttp.ClientError, TimeoutError) as err:
+            raise SpaceMonkeyError(f"{func.__name__.strip('_')} failed: {err}") from err
+
+    return wrapper
 
 
 async def _read_json(resp: aiohttp.ClientResponse, what: str) -> Any:
@@ -182,6 +202,7 @@ class SpaceMonkeyDvr:
         self._owns_session = client_session is None
         self._ssl_context: ssl.SSLContext | None = None
         self._lock = asyncio.Lock()
+        self._closed = False
         self.hardware_id: str | None = None
         self.certificate_expiry: datetime | None = None
         self.address: DvrAddress | None = None
@@ -211,15 +232,22 @@ class SpaceMonkeyDvr:
     async def connect(self) -> None:
         """Sign in to Space Monkey, get a certificate and locate the DVR."""
         async with self._lock:
+            self._closed = False
             await self._renew_certificate()
             await self._locate()
 
     async def disconnect(self) -> None:
-        """Close the session if it was created by this object."""
-        if self._owns_session and self._session and not self._session.closed:
-            await self._session.close()
-        self._session = None
-        self._ssl_context = None
+        """
+        Close the session if it was created by this object.
+
+        Requests made afterwards fail until `connect` is called again.
+        """
+        async with self._lock:
+            self._closed = True
+            session, self._session = self._session, None
+            self._ssl_context = None
+            if self._owns_session and session and not session.closed:
+                await session.close()
 
     async def get_status(self) -> dict[str, Any]:
         """Return the DVR's status, which includes its cameras."""
@@ -276,37 +304,55 @@ class SpaceMonkeyDvr:
         if it cannot be reached.
         """
         await self._ensure_connected()
-        assert self._session
-        for attempt in (1, 2):
-            assert self.address
-            url = f"https://{self.address.host}:{self.address.port}{path}"
+        located = renewed = False
+        while True:
+            session, address = self._session, self.address
+            if self._closed or session is None or address is None:
+                raise SpaceMonkeyError("The DVR has been disconnected")
+            seen_expiry = self.certificate_expiry
+            url = f"https://{address.host}:{address.port}{path}"
             try:
-                resp = await self._session.get(
+                resp = await session.get(
                     url, params=params or None, ssl=self._ssl_context
                 )
-            except aiohttp.ClientConnectorError as err:
-                if attempt == 2:
+            except (aiohttp.ClientOSError, aiohttp.ServerDisconnectedError) as err:
+                # A DVR that rejects the certificate drops the connection during the
+                # TLS handshake, so a connection failure is retried after looking the
+                # DVR up again and then after renewing the certificate.
+                if not located:
+                    located = True
+                    async with self._lock:
+                        await self._locate()
+                elif not renewed:
+                    renewed = True
+                    await self._renew_if_unchanged(seen_expiry)
+                else:
                     raise SpaceMonkeyError(f"Unable to reach the DVR: {err}") from err
-                async with self._lock:
-                    await self._locate()
                 continue
-            except aiohttp.ClientError as err:
+            except (aiohttp.ClientError, TimeoutError) as err:
                 raise SpaceMonkeyError(f"DVR request failed: {err}") from err
 
-            if resp.status == 401 and attempt == 1:
+            if resp.status == 401 and not renewed:
                 resp.release()
-                async with self._lock:
-                    await self._renew_certificate()
+                renewed = True
+                await self._renew_if_unchanged(seen_expiry)
                 continue
             if resp.status != 200:
                 resp.release()
                 raise SpaceMonkeyError(f"{path} returned HTTP {resp.status}")
             return resp
-        raise SpaceMonkeyError("Unable to complete the DVR request")
+
+    async def _renew_if_unchanged(self, seen_expiry: datetime | None) -> None:
+        """Renew the certificate unless another request already has."""
+        async with self._lock:
+            if self.certificate_expiry == seen_expiry:
+                await self._renew_certificate()
 
     async def _ensure_connected(self) -> None:
         """Connect if needed, and renew the certificate shortly before it expires."""
         async with self._lock:
+            if self._closed:
+                raise SpaceMonkeyError("The DVR has been disconnected")
             if not self.connected:
                 await self._renew_certificate()
                 await self._locate()
@@ -323,6 +369,7 @@ class SpaceMonkeyDvr:
             self._owns_session = True
         return self._session
 
+    @_dvr_errors
     async def _renew_certificate(self) -> None:
         """Sign in to Space Monkey and download a fresh client certificate."""
         session = self._client_session()
@@ -348,6 +395,8 @@ class SpaceMonkeyDvr:
         try:
             bundle = base64.b64decode(data["pkcs12_b64"])
             expiry = datetime.fromisoformat(data["expires_at"])
+            if expiry.tzinfo is None:
+                expiry = expiry.replace(tzinfo=UTC)
             hardware_id = data["hw_id"]
         except (KeyError, TypeError, ValueError) as err:
             raise SpaceMonkeyError("Unexpected certificate response") from err
@@ -359,6 +408,7 @@ class SpaceMonkeyDvr:
         self.certificate_expiry = expiry
         _LOGGER.debug("Renewed the DVR certificate, valid until %s", expiry)
 
+    @_dvr_errors
     async def _locate(self) -> None:
         """Ask the Space Monkey directory where the DVR is on the local network."""
         if not self.hardware_id:
