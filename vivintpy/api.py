@@ -8,7 +8,7 @@ import logging
 import ssl
 import urllib.parse
 import warnings
-from collections.abc import Callable
+from collections.abc import AsyncIterator, Callable
 from typing import Any
 
 import aiohttp
@@ -31,11 +31,14 @@ from .exceptions import (
     VivintSkyApiAuthenticationError,
     VivintSkyApiError,
     VivintSkyApiMfaRequiredError,
+    VivintSkyApiRateLimitError,
     VivintSkyGrpcError,
 )
 from .proto import (
     beam_pb2,
     beam_pb2_grpc,
+    climate_pb2,
+    climate_pb2_grpc,
     garage_pb2,
     garage_pb2_grpc,
     security_pb2,
@@ -49,6 +52,7 @@ API_ENDPOINT = "https://www.vivintsky.com/api"
 AUTH_ENDPOINT = "https://id.vivint.com"
 GRPC_ENDPOINT = "grpc.vivintsky.com:50051"
 SERVICE_TIMEOUT = 30
+CLIMATE_TIMEOUT = 20
 
 PASSWORD_DEPRECATION = (
     "Passing password to the constructor is deprecated and will be removed in "
@@ -952,6 +956,72 @@ class VivintSkyApi:
             resp.raise_for_status()
             return None
 
+    async def get_climate_devices(
+        self, system_id: int
+    ) -> list[climate_pb2.ClimateDevice]:
+        """Return the climate devices (thermostats) of a system."""
+        response = await self.climate_request(
+            "GetClimateDevices",
+            climate_pb2.GetClimateDevicesRequest(system_id=system_id),
+        )
+        return list(response.climate_devices)
+
+    async def stream_climate_devices(
+        self, system_id: int
+    ) -> AsyncIterator[climate_pb2.GetClimateDevicesStreamingResponse]:
+        """Yield climate device updates for a system as they happen."""
+        metadata = [
+            *await self._climate_metadata(),
+            ("x-viv-system-id", str(system_id)),
+        ]
+        creds = grpc.ssl_channel_credentials()
+        try:
+            async with grpc.aio.secure_channel(
+                GRPC_ENDPOINT, credentials=creds
+            ) as channel:
+                stub = climate_pb2_grpc.ClimatePublicStub(channel)  # type: ignore[no-untyped-call]
+                call = stub.GetClimateDevicesStreaming(
+                    climate_pb2.GetClimateDevicesStreamingRequest(system_id=system_id),
+                    metadata=metadata,
+                )
+                async for response in call:
+                    yield response
+        except grpc.aio.AioRpcError as err:
+            raise VivintSkyApiError(
+                _describe_rpc_error("GetClimateDevicesStreaming", err)
+            ) from err
+
+    async def climate_request(self, method: str, request: Message) -> Any:
+        """Send a request to the climate service and return its response."""
+        creds = grpc.ssl_channel_credentials()
+        for attempt in (1, 2):
+            metadata = await self._climate_metadata()
+            try:
+                async with grpc.aio.secure_channel(
+                    GRPC_ENDPOINT, credentials=creds
+                ) as channel:
+                    stub = climate_pb2_grpc.ClimatePublicStub(channel)  # type: ignore[no-untyped-call]
+                    response = await getattr(stub, method)(
+                        request, metadata=metadata, timeout=CLIMATE_TIMEOUT
+                    )
+            except grpc.aio.AioRpcError as err:
+                if attempt == 1 and err.code() == grpc.StatusCode.UNAUTHENTICATED:
+                    await self.connect()
+                    continue
+                if err.code() == grpc.StatusCode.RESOURCE_EXHAUSTED:
+                    raise VivintSkyApiRateLimitError(
+                        _describe_rpc_error(method, err)
+                    ) from err
+                raise VivintSkyApiError(_describe_rpc_error(method, err)) from err
+            _LOGGER.debug("Response received: %s", str(response))
+            return response
+
+    async def _climate_metadata(self) -> list[tuple[str, str]]:
+        """Return the call metadata for the climate service, reauthenticating if needed."""
+        if not self.is_session_valid():
+            await self.connect()
+        return [("authorization", f"Bearer {self.__token['access_token']}")]  # type: ignore[index]
+
     async def _send_grpc(
         self,
         callback: Callable[[beam_pb2_grpc.BeamStub, list[tuple[str, str]]], Message],
@@ -977,3 +1047,8 @@ def _describe_authorization_failure(
     if resp and (message := resp.get("message") or resp.get("location")):
         return str(message)[:200]
     return "no response"
+
+
+def _describe_rpc_error(method: str, err: grpc.aio.AioRpcError) -> str:
+    """Return a readable description of a failed gRPC call."""
+    return f"{method} failed: {err.code().name}: {err.details()}"
