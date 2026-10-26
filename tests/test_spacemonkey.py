@@ -880,3 +880,36 @@ async def test_certificate_expiry_without_offset_is_utc(
             assert dvr.certificate_expiry == expires.replace(tzinfo=UTC)
     finally:
         await server.close()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("outcome", [401, ClientOSError()])
+async def test_disconnect_while_waiting_for_the_lock_stops_the_retry(
+    monkeypatch: pytest.MonkeyPatch, outcome: int | Exception
+) -> None:
+    """Test a request that waited out a disconnect does not locate or renew."""
+    session = FakeSession(outcome)
+    dvr, counts = connected_dvr(monkeypatch, session)
+    disconnecting: list[asyncio.Task[None]] = []
+
+    async def disconnect_slowly() -> None:
+        """Hold the lock while disconnecting."""
+        async with dvr._lock:  # pylint: disable=protected-access
+            await asyncio.sleep(0.01)
+            dvr._closed = True  # pylint: disable=protected-access
+            dvr._session = None  # pylint: disable=protected-access
+
+    original_get = session.get
+
+    async def get(url: str, **kwargs: Any) -> FakeResponse:
+        """Start the disconnect as the request is answered."""
+        disconnecting.append(asyncio.ensure_future(disconnect_slowly()))
+        await asyncio.sleep(0)
+        return await original_get(url, **kwargs)
+
+    session.get = get  # type: ignore[method-assign,assignment]
+
+    with pytest.raises(SpaceMonkeyError, match="disconnected"):
+        await dvr.get("/status")
+    await asyncio.gather(*disconnecting)
+    assert counts == {"locate": 0, "renew": 0}
