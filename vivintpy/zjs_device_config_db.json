@@ -9507,8 +9507,8 @@
     "manufacturer": "Popp & Co"
   },
   "0x0154:0x0004:0x0002": {
-    "description": "POPP Solar Outdoor Siren 2",
-    "label": "700854",
+    "description": "Solar Powered Outdoor Siren",
+    "label": "005107",
     "manufacturer": "Popp & Co"
   },
   "0x0154:0x0004:0x0003": {
@@ -12047,8 +12047,8 @@
     "manufacturer": "Logic Group"
   },
   "0x0234:0x0003:0x010d": {
-    "description": "DIN Rail Interface",
-    "label": "ZIF5020",
+    "description": "DIN-Rail Module with 10 Digital Outputs and 4 Digital Inputs",
+    "label": "LHC5020",
     "manufacturer": "Logic Group"
   },
   "0x0234:0x0003:0x0111": {
@@ -14295,9 +14295,9 @@
     "manufacturer": "ShenZhen Sunricher Technology, Ltd."
   },
   "0x0330:0x0300:0xa305": {
-    "description": "Wall Controller - 8 Button",
-    "label": "VES-ZW-WAL-009",
-    "manufacturer": "Vesternet"
+    "description": "Wall Mounted Switch",
+    "label": "Heatit Z-Push Button 8",
+    "manufacturer": "Sunricher"
   },
   "0x0330:0x0300:0xa306": {
     "description": "Wall Controller - 4 Button",
@@ -16571,5 +16571,5 @@
     "label": "BW8120",
     "manufacturer": "Remotec"
   },
-  "updated_at": "2026-10-19T20:40:21.295276"
+  "updated_at": "2026-10-26T20:40:03.587821"
 }
