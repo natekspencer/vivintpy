@@ -95,6 +95,9 @@ class Account:
             self.__pubnub.remove_listener(self.__pubnub_listener)
             await self.__pubnub_unsubscribe_all()
             await self.__pubnub.stop()
+        for system in self.systems:
+            if system.dvr:
+                await system.dvr.disconnect()
         await self.api.disconnect()
         self.__connected = False
 

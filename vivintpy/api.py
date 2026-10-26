@@ -130,6 +130,51 @@ class VivintSkyApi:
         assert resp
         self.__token = resp
 
+    async def get_authorization_code(
+        self,
+        client_id: str,
+        redirect_uri: str,
+        *,
+        realm: str | None = None,
+        scope: str = "openid email",
+    ) -> str:
+        """
+        Get an OAuth authorization code for another Vivint-backed service.
+
+        The request is authorized by the current access token together with the
+        identity provider's session cookie, so a login or token refresh must already
+        have happened on this client session.
+        """
+        if not self.is_session_valid():
+            await self.connect()
+        assert self.__token
+
+        params = {
+            "client_id": client_id,
+            "redirect_uri": redirect_uri,
+            "response_type": "code",
+            "scope": scope,
+        }
+        if realm:
+            params["realm"] = realm
+
+        async with self.__client_session.get(
+            f"{AUTH_ENDPOINT}/oauth2/auth",
+            params=params,
+            headers={
+                "Authorization": f"Bearer {self.__token['access_token']}",
+                "x-vivint-adapter": "BasicAuth",
+            },
+            allow_redirects=False,
+        ) as resp:
+            location = resp.headers.get("Location", "")
+
+        if codes := urllib.parse.parse_qs(urllib.parse.urlparse(location).query).get(
+            "code"
+        ):
+            return str(codes[0])
+        raise VivintSkyApiAuthenticationError("Unable to get an authorization code")
+
     async def get_authuser_data(self) -> dict:
         """
         Get the authuser data.

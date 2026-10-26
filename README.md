@@ -40,6 +40,18 @@ It currently has support for the following device types:
 
 In addition, it integrates with PubNub to receive real-time updates for devices. This subscription stops receiving notifications around 15-20 minutes unless a call is made to the Vivint Sky API periodically. This **might** be related to the cookie expiration since it expires 20 minutes after the last API call was received. If another client connects, however, the notifications start to stream again for all currently connected clients.
 
+Systems with a Vivint DVR (Smart Drive) can also list and stream the continuous recordings stored on it. The DVR is reached over the local network using a short-lived client certificate that is issued to the signed-in account and renewed automatically.
+
+```python
+dvr = account.systems[0].dvr  # None if the system has no DVR
+await dvr.connect()
+for recording in await dvr.get_recordings(camera_id):
+    playlist = await dvr.get_playlist(camera_id, recording.id)  # HLS
+    for segment in parse_playlist(playlist, recording):
+        async for chunk in dvr.stream_segment(camera_id, recording.id, segment.number):
+            ...
+```
+
 ## Usage
 
 See demo.py for a demonstration on how to use this library.
