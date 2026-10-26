@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import logging
 
 from .api import VivintSkyApi
@@ -34,6 +35,7 @@ class System(Entity):
             for user_data in self.data[Attribute.SYSTEM][Attribute.USERS]
         ]
         self._dvr = SpaceMonkeyDvr.from_system_data(api, data)
+        self._stale_dvrs: list[SpaceMonkeyDvr] = []
 
     @property
     def dvr(self) -> SpaceMonkeyDvr | None:
@@ -78,14 +80,28 @@ class System(Entity):
             else:
                 self.alarm_panels.append(AlarmPanel(panel_data, self))
 
+        await self._close_stale_dvrs()
+
     async def _refresh_dvr(self, system_data: dict) -> None:
         """Create, replace or drop the DVR when the system's DVR service changed."""
         service_id = find_dvr_service_id(system_data)
         if self._dvr and self._dvr.dvr_service_id == service_id:
             return
         if self._dvr:
-            await self._dvr.disconnect()
+            self._stale_dvrs.append(self._dvr)
         self._dvr = SpaceMonkeyDvr.from_system_data(self.api, system_data)
+
+    async def _close_stale_dvrs(self) -> None:
+        """Close replaced DVRs, keeping any that fail so the next refresh retries."""
+        results = await asyncio.gather(
+            *(dvr.disconnect() for dvr in self._stale_dvrs), return_exceptions=True
+        )
+        remaining: list[SpaceMonkeyDvr] = []
+        for dvr, result in zip(self._stale_dvrs, results, strict=True):
+            if isinstance(result, BaseException):
+                _LOGGER.debug("Error disconnecting from a replaced DVR: %s", result)
+                remaining.append(dvr)
+        self._stale_dvrs = remaining
 
     def update_user_data(self, data: list[dict]) -> None:
         """Update user data."""

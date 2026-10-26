@@ -347,6 +347,10 @@ async def test_get_recordings_without_ranges(
     "payload",
     [
         ["not", "an", "object"],
+        {"Ranges": {}},
+        {"Ranges": ""},
+        {"Ranges": 0},
+        {"Ranges": False},
         {"Ranges": [{"Id": "x"}]},
         {"Ranges": [{"Id": "x", "CameraId": 1, "StartTime": "a", "EndTime": 2}]},
     ],
@@ -448,3 +452,43 @@ async def test_account_disconnect_survives_a_failing_dvr() -> None:
     await account.disconnect()
 
     assert sorted(closed) == ["api", "one", "two"]
+
+
+@pytest.mark.asyncio
+async def test_system_refresh_survives_a_failing_dvr_cleanup(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Test a DVR that fails to close neither aborts the refresh nor is forgotten."""
+
+    class Api:
+        data = system_data("first")
+
+        async def get_system_data(self, _panel_id: int) -> dict:
+            return self.data
+
+    api = Api()
+    system = System(api.data, api, name="Home", is_admin=True)  # type: ignore[arg-type]
+    first = current_dvr(system)
+    assert first
+
+    attempts = 0
+
+    async def failing_disconnect(_self: SpaceMonkeyDvr) -> None:
+        nonlocal attempts
+        attempts += 1
+        if attempts == 1:
+            raise RuntimeError("boom")
+
+    monkeypatch.setattr(SpaceMonkeyDvr, "disconnect", failing_disconnect)
+
+    api.data = system_data("second")
+    api.data["system"]["par"][0]["d"] = []
+    await system.refresh()  # must not raise
+    second = current_dvr(system)
+    assert second and second.dvr_service_id == "second"
+    assert attempts == 1
+
+    await system.refresh()  # retries the cleanup of the first DVR
+    assert attempts == 2
+    await system.refresh()  # nothing left to retry
+    assert attempts == 2
