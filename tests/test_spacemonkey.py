@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import base64
+import json
 import ssl
 from collections.abc import AsyncIterator
 from datetime import UTC, datetime, timedelta
@@ -12,7 +13,7 @@ from unittest.mock import MagicMock
 
 import pytest
 import pytest_asyncio
-from aiohttp import ClientSession, CookieJar, web
+from aiohttp import ClientSession, ContentTypeError, CookieJar, web
 from aiohttp.test_utils import TestServer
 from cryptography import x509
 from cryptography.hazmat.primitives import hashes, serialization
@@ -330,7 +331,9 @@ class JsonResponse:
         return
 
     async def json(self) -> Any:
-        """Return the payload."""
+        """Return the payload, or raise it if it is an exception."""
+        if isinstance(self._payload, Exception):
+            raise self._payload
         return self._payload
 
 
@@ -551,3 +554,108 @@ async def test_system_refresh_survives_a_failing_dvr_cleanup(
     assert attempts == 2
     await system.refresh()  # nothing left to retry
     assert attempts == 2
+
+
+NOT_JSON = [
+    ContentTypeError(MagicMock(), (), message="Attempt to decode JSON"),
+    json.JSONDecodeError("Expecting value", "", 0),
+]
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("error", NOT_JSON)
+@pytest.mark.parametrize(
+    ("call", "message"),
+    [
+        (lambda dvr: dvr.get_status(), "Unexpected status"),
+        (lambda dvr: dvr.get_recordings(27), "Unexpected recordings"),
+    ],
+)
+async def test_dvr_responses_that_are_not_json(
+    monkeypatch: pytest.MonkeyPatch, error: Exception, call: Any, message: str
+) -> None:
+    """Test a DVR response without a JSON body is reported as a DVR error."""
+
+    async def fake_get(
+        _self: SpaceMonkeyDvr, _path: str, **_params: str
+    ) -> JsonResponse:
+        """Return a response whose body cannot be parsed."""
+        return JsonResponse(error)
+
+    monkeypatch.setattr(SpaceMonkeyDvr, "get", fake_get)
+    dvr = SpaceMonkeyDvr(FakeApi(), "dvr-id")  # type: ignore[arg-type]
+
+    with pytest.raises(SpaceMonkeyError, match=message):
+        await call(dvr)
+
+
+@pytest.mark.asyncio
+async def test_status_must_be_an_object(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test a status response that is not an object is reported as a DVR error."""
+
+    async def fake_get(
+        _self: SpaceMonkeyDvr, _path: str, **_params: str
+    ) -> JsonResponse:
+        """Return a status that is a list."""
+        return JsonResponse([])
+
+    monkeypatch.setattr(SpaceMonkeyDvr, "get", fake_get)
+    dvr = SpaceMonkeyDvr(FakeApi(), "dvr-id")  # type: ignore[arg-type]
+
+    with pytest.raises(SpaceMonkeyError, match="Unexpected status"):
+        await dvr.get_status()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    ("body", "content_type"),
+    [
+        ("<html></html>", "text/html"),
+        ("not json", "application/json"),
+        ("[]", "application/json"),
+        ('{"address": "nowhere"}', "application/json"),
+    ],
+)
+@pytest.mark.parametrize(
+    ("renew", "message"),
+    [(True, "Unexpected certificate"), (False, "Unexpected directory")],
+)
+async def test_cloud_responses_that_are_not_usable(
+    monkeypatch: pytest.MonkeyPatch,
+    body: str,
+    content_type: str,
+    renew: bool,
+    message: str,
+) -> None:
+    """Test unusable certificate and directory responses are reported as DVR errors."""
+
+    async def respond(_request: web.Request) -> web.Response:
+        """Return the same unusable body for every request."""
+        return web.Response(text=body, content_type=content_type)
+
+    async def authorized(_request: web.Request) -> web.Response:
+        """Accept the authorization code."""
+        return web.Response(text="ok")
+
+    app = web.Application()
+    app.router.add_get("/authorized", authorized)
+    app.router.add_get("/v2/playback/certs", respond)
+    app.router.add_get(f"/directory/mm/entry/hardware/{HARDWARE_ID}", respond)
+    server = TestServer(app)
+    await server.start_server()
+    base = str(server.make_url("")).rstrip("/")
+    monkeypatch.setattr(spacemonkey, "ACCOUNTS_ENDPOINT", base)
+    monkeypatch.setattr(spacemonkey, "REDIRECT_URI", f"{base}/authorized")
+    monkeypatch.setattr(spacemonkey, "DIRECTORY_ENDPOINT", base)
+    try:
+        async with ClientSession() as session:
+            dvr = SpaceMonkeyDvr(FakeApi(), "dvr-id", session)  # type: ignore[arg-type]
+            dvr.hardware_id = HARDWARE_ID
+
+            with pytest.raises(SpaceMonkeyError, match=message):
+                if renew:
+                    await dvr._renew_certificate()  # pylint: disable=protected-access
+                else:
+                    await dvr._locate()  # pylint: disable=protected-access
+    finally:
+        await server.close()
