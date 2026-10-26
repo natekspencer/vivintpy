@@ -222,6 +222,11 @@ class SpaceMonkeyDvr:
         async with await self.get("/recordings", camera=f"Video-{camera_id}") as resp:
             data = await resp.json()
         try:
+            ranges = data.get("Ranges")
+            if ranges is None:
+                return []
+            if not isinstance(ranges, list):
+                raise TypeError("Ranges is not a list")
             return [
                 DvrRecording(
                     id=item["Id"],
@@ -229,7 +234,7 @@ class SpaceMonkeyDvr:
                     start=_from_microseconds(item["StartTime"]),
                     end=_from_microseconds(item["EndTime"]),
                 )
-                for item in data.get("Ranges") or []
+                for item in ranges
             ]
         except (AttributeError, KeyError, TypeError, ValueError, OverflowError) as err:
             raise SpaceMonkeyError("Unexpected recordings response") from err
