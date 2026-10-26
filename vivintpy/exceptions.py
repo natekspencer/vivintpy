@@ -9,6 +9,13 @@ class VivintSkyApiError(VivintError):
     """VivintSky API related exception occurred."""
 
 
+class VivintSkyApiRateLimitError(VivintSkyApiError):
+    """VivintSky API rate limit exceeded error occurred.
+
+    Thermostat changes are limited to a few per minute per command.
+    """
+
+
 class VivintSkyApiAuthenticationError(VivintSkyApiError):
     """VivintSky API authentication related error occurred."""
 
