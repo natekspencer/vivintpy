@@ -94,3 +94,12 @@ class Thermostat(VivintDevice):
         await self.api.set_thermostat_state(
             self.alarm_panel.id, self.alarm_panel.partition_id, self.id, **kwargs
         )
+
+    async def set_set_points(
+        self, heat: float | None = None, cool: float | None = None
+    ) -> None:
+        """Set the heat and/or cool set points, in degrees Celsius."""
+        if cool is not None:
+            await self.set_state(**{Attribute.COOL_SET_POINT: cool})
+        if heat is not None:
+            await self.set_state(**{Attribute.HEAT_SET_POINT: heat})
