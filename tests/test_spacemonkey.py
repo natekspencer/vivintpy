@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
+import asyncio
 import base64
 import ssl
 from collections.abc import AsyncIterator
 from datetime import UTC, datetime, timedelta
-from types import SimpleNamespace
 from typing import Any, Self
 from unittest.mock import MagicMock
 
@@ -423,19 +423,29 @@ async def test_system_refresh_follows_the_dvr_service() -> None:
     assert current_dvr(system) is None
 
 
+def make_system(dvr_service_id: str | None) -> System:
+    """Return a system whose API is never called."""
+    return System(
+        system_data(dvr_service_id),
+        None,  # type: ignore[arg-type]
+        name="Home",
+        is_admin=True,
+    )
+
+
 @pytest.mark.asyncio
-async def test_account_disconnect_survives_a_failing_dvr() -> None:
-    """Test every DVR is disconnected and the API is closed even if one DVR fails."""
+async def test_account_disconnect_survives_a_failing_dvr(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Test every DVR, replaced ones included, is disconnected even if one fails."""
     closed: list[str] = []
 
-    class Dvr:
-        def __init__(self, name: str, fail: bool) -> None:
-            self.name, self.fail = name, fail
+    async def disconnect(self: SpaceMonkeyDvr) -> None:
+        closed.append(self.dvr_service_id)
+        if self.dvr_service_id == "one":
+            raise RuntimeError("boom")
 
-        async def disconnect(self) -> None:
-            closed.append(self.name)
-            if self.fail:
-                raise RuntimeError("boom")
+    monkeypatch.setattr(SpaceMonkeyDvr, "disconnect", disconnect)
 
     class Api:
         async def disconnect(self) -> None:
@@ -443,15 +453,43 @@ async def test_account_disconnect_survives_a_failing_dvr() -> None:
 
     account = Account("user", "password", client_session=MagicMock())
     account._api = Api()  # type: ignore[assignment]  # pylint: disable=protected-access
-    account.systems = [
-        SimpleNamespace(dvr=Dvr("one", True)),  # type: ignore[list-item]
-        SimpleNamespace(dvr=None),  # type: ignore[list-item]
-        SimpleNamespace(dvr=Dvr("two", False)),  # type: ignore[list-item]
-    ]
+    stale = make_system("stale")
+    stale._stale_dvrs.append(SpaceMonkeyDvr(None, "replaced"))  # type: ignore[arg-type]  # pylint: disable=protected-access
+    account.systems = [make_system("one"), make_system(None), make_system("two"), stale]
 
     await account.disconnect()
 
-    assert sorted(closed) == ["api", "one", "two"]
+    assert sorted(closed) == ["api", "one", "replaced", "stale", "two"]
+
+
+@pytest.mark.asyncio
+async def test_overlapping_cleanups_keep_every_failed_dvr(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Test a DVR queued while others are being closed is neither lost nor miscounted."""
+    system = make_system(None)
+    release = asyncio.Event()
+    attempts: list[str] = []
+
+    async def disconnect(self: SpaceMonkeyDvr) -> None:
+        attempts.append(self.dvr_service_id)
+        if self.dvr_service_id == "first":
+            await release.wait()
+            raise RuntimeError("boom")
+
+    monkeypatch.setattr(SpaceMonkeyDvr, "disconnect", disconnect)
+    first = SpaceMonkeyDvr(None, "first")  # type: ignore[arg-type]
+    system._stale_dvrs.append(first)  # pylint: disable=protected-access
+
+    cleanup = asyncio.create_task(system._close_stale_dvrs())  # pylint: disable=protected-access
+    await asyncio.sleep(0)
+    second = SpaceMonkeyDvr(None, "second")  # type: ignore[arg-type]
+    system._stale_dvrs.append(second)  # pylint: disable=protected-access
+    release.set()
+    await cleanup
+
+    assert system._stale_dvrs == [second, first]  # pylint: disable=protected-access
+    assert attempts == ["first"]
 
 
 @pytest.mark.asyncio

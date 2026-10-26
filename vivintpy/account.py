@@ -96,13 +96,7 @@ class Account:
             await self.__pubnub_unsubscribe_all()
             await self.__pubnub.stop()
         try:
-            results = await asyncio.gather(
-                *(system.dvr.disconnect() for system in self.systems if system.dvr),
-                return_exceptions=True,
-            )
-            for result in results:
-                if isinstance(result, BaseException):
-                    _LOGGER.debug("Error disconnecting from a DVR: %s", result)
+            await asyncio.gather(*(system.disconnect_dvrs() for system in self.systems))
         finally:
             await self.api.disconnect()
             self.__connected = False

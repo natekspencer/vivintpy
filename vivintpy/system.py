@@ -93,15 +93,28 @@ class System(Entity):
 
     async def _close_stale_dvrs(self) -> None:
         """Close replaced DVRs, keeping any that fail so the next refresh retries."""
+        batch, self._stale_dvrs = self._stale_dvrs, []
+        self._stale_dvrs.extend(await self._disconnect_dvrs(batch))
+
+    async def disconnect_dvrs(self) -> None:
+        """Disconnect the DVR, and any replaced DVR that could not be closed before."""
+        batch, self._stale_dvrs = self._stale_dvrs, []
+        if self._dvr:
+            batch.append(self._dvr)
+        await self._disconnect_dvrs(batch)
+
+    @staticmethod
+    async def _disconnect_dvrs(dvrs: list[SpaceMonkeyDvr]) -> list[SpaceMonkeyDvr]:
+        """Disconnect the DVRs and return the ones that failed."""
         results = await asyncio.gather(
-            *(dvr.disconnect() for dvr in self._stale_dvrs), return_exceptions=True
+            *(dvr.disconnect() for dvr in dvrs), return_exceptions=True
         )
-        remaining: list[SpaceMonkeyDvr] = []
-        for dvr, result in zip(self._stale_dvrs, results, strict=True):
+        failed: list[SpaceMonkeyDvr] = []
+        for dvr, result in zip(dvrs, results, strict=True):
             if isinstance(result, BaseException):
-                _LOGGER.debug("Error disconnecting from a replaced DVR: %s", result)
-                remaining.append(dvr)
-        self._stale_dvrs = remaining
+                _LOGGER.debug("Error disconnecting from a DVR: %s", result)
+                failed.append(dvr)
+        return failed
 
     def update_user_data(self, data: list[dict]) -> None:
         """Update user data."""
