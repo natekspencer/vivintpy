@@ -307,7 +307,8 @@ class SpaceMonkeyDvr:
         located = renewed = False
         while True:
             session, address = self._session, self.address
-            if self._closed or session is None or address is None:
+            self._ensure_open()
+            if session is None or address is None:
                 raise SpaceMonkeyError("The DVR has been disconnected")
             seen_expiry = self.certificate_expiry
             url = f"https://{address.host}:{address.port}{path}"
@@ -322,6 +323,7 @@ class SpaceMonkeyDvr:
                 if not located:
                     located = True
                     async with self._lock:
+                        self._ensure_open()
                         await self._locate()
                 elif not renewed:
                     renewed = True
@@ -342,17 +344,22 @@ class SpaceMonkeyDvr:
                 raise SpaceMonkeyError(f"{path} returned HTTP {resp.status}")
             return resp
 
+    def _ensure_open(self) -> None:
+        """Raise if the DVR has been disconnected."""
+        if self._closed:
+            raise SpaceMonkeyError("The DVR has been disconnected")
+
     async def _renew_if_unchanged(self, seen_expiry: datetime | None) -> None:
         """Renew the certificate unless another request already has."""
         async with self._lock:
+            self._ensure_open()
             if self.certificate_expiry == seen_expiry:
                 await self._renew_certificate()
 
     async def _ensure_connected(self) -> None:
         """Connect if needed, and renew the certificate shortly before it expires."""
         async with self._lock:
-            if self._closed:
-                raise SpaceMonkeyError("The DVR has been disconnected")
+            self._ensure_open()
             if not self.connected:
                 await self._renew_certificate()
                 await self._locate()
