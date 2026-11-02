@@ -5456,12 +5456,12 @@
   },
   "0x0109:0x2009:0x0901": {
     "description": "AC/DC Siren",
-    "label": "ZM1602",
+    "label": "ZM1602-5",
     "manufacturer": "Vision Security"
   },
   "0x0109:0x2009:0x0903": {
     "description": "AC/DC Siren",
-    "label": "ZM1602",
+    "label": "ZM1602-5",
     "manufacturer": "Vision Security"
   },
   "0x0109:0x2009:0x0907": {
@@ -11311,6 +11311,11 @@
     "label": "Z-Smoke Battery",
     "manufacturer": "Heatit"
   },
+  "0x019b:0x0003:0x0027": {
+    "description": "Wired Smoke Detector",
+    "label": "Z-Smoke2 230V",
+    "manufacturer": "Heatit"
+  },
   "0x019b:0x0003:0x0201": {
     "description": "Z-Wave Thermostat",
     "label": "TF016 / TF021",
@@ -11737,8 +11742,8 @@
     "manufacturer": "Kaipule Technology Co., Ltd."
   },
   "0x0214:0x0002:0x0002": {
-    "description": "PIR Sensor",
-    "label": "DP-32 / IX-30 / IX-32",
+    "description": "Smoke Sensor",
+    "label": "ES-61",
     "manufacturer": "Kaipule Technology Co., Ltd."
   },
   "0x0214:0x0003:0x0001": {
@@ -12047,8 +12052,8 @@
     "manufacturer": "Logic Group"
   },
   "0x0234:0x0003:0x010d": {
-    "description": "DIN Rail Interface",
-    "label": "ZIF5020",
+    "description": "DIN-Rail Module with 10 Digital Outputs and 4 Digital Inputs",
+    "label": "LHC5020",
     "manufacturer": "Logic Group"
   },
   "0x0234:0x0003:0x0111": {
@@ -14300,9 +14305,9 @@
     "manufacturer": "Vesternet"
   },
   "0x0330:0x0300:0xa306": {
-    "description": "Wall Controller - 4 Button",
-    "label": "VES-ZW-WAL-008",
-    "manufacturer": "Vesternet"
+    "description": "2 Group Single Color Wall Mounted Remote",
+    "label": "ZV9001K4-DIM-G2",
+    "manufacturer": "Sunricher"
   },
   "0x0330:0x0300:0xa307": {
     "description": "Wall Controller - 2 Button",
@@ -16571,5 +16576,5 @@
     "label": "BW8120",
     "manufacturer": "Remotec"
   },
-  "updated_at": "2026-10-19T20:40:21.295276"
+  "updated_at": "2026-11-02T23:10:09.971673"
 }
