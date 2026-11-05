@@ -86,7 +86,7 @@ class Anomaly(_message.Message):
     excess_runtime_hours: int
     dismissed_at: _timestamp_pb2.Timestamp
     is_dismissed: bool
-    def __init__(self, vendor_device_id: _Optional[str] = ..., current_state: _Optional[_Union[Component.OperatingState.State, str]] = ..., last_detected_at: _Optional[_Union[datetime.datetime, _timestamp_pb2.Timestamp, _Mapping]] = ..., detected_at: _Optional[_Union[datetime.datetime, _timestamp_pb2.Timestamp, _Mapping]] = ..., observed_runtime_hours: _Optional[int] = ..., expected_runtime_hours: _Optional[int] = ..., excess_runtime_hours: _Optional[int] = ..., dismissed_at: _Optional[_Union[datetime.datetime, _timestamp_pb2.Timestamp, _Mapping]] = ..., is_dismissed: _Optional[bool] = ...) -> None: ...
+    def __init__(self, vendor_device_id: _Optional[str] = ..., current_state: _Optional[_Union[Component.OperatingState.State, str]] = ..., last_detected_at: _Optional[_Union[datetime.datetime, _timestamp_pb2.Timestamp, _Mapping]] = ..., detected_at: _Optional[_Union[datetime.datetime, _timestamp_pb2.Timestamp, _Mapping]] = ..., observed_runtime_hours: _Optional[int] = ..., expected_runtime_hours: _Optional[int] = ..., excess_runtime_hours: _Optional[int] = ..., dismissed_at: _Optional[_Union[datetime.datetime, _timestamp_pb2.Timestamp, _Mapping]] = ..., is_dismissed: bool = ...) -> None: ...
 
 class ClimateDevice(_message.Message):
     __slots__ = ("id", "name", "is_online", "components", "temperature_units", "ct100_thermostat_device", "ct200_thermostat_device", "ev2_thermostat_device", "nest_thermostat_device", "ev2z_thermostat_device", "pegasus_thermostat_device")
@@ -112,7 +112,7 @@ class ClimateDevice(_message.Message):
     nest_thermostat_device: NestThermostatDevice
     ev2z_thermostat_device: Ev2ZThermostatDevice
     pegasus_thermostat_device: PegasusThermostatDevice
-    def __init__(self, id: _Optional[str] = ..., name: _Optional[str] = ..., is_online: _Optional[bool] = ..., components: _Optional[_Iterable[_Union[Component, _Mapping]]] = ..., temperature_units: _Optional[_Union[GetGlobalSettingsResponse.TemperatureUnits, str]] = ..., ct100_thermostat_device: _Optional[_Union[Ct100ThermostatDevice, _Mapping]] = ..., ct200_thermostat_device: _Optional[_Union[Ct200ThermostatDevice, _Mapping]] = ..., ev2_thermostat_device: _Optional[_Union[Ev2ThermostatDevice, _Mapping]] = ..., nest_thermostat_device: _Optional[_Union[NestThermostatDevice, _Mapping]] = ..., ev2z_thermostat_device: _Optional[_Union[Ev2ZThermostatDevice, _Mapping]] = ..., pegasus_thermostat_device: _Optional[_Union[PegasusThermostatDevice, _Mapping]] = ...) -> None: ...
+    def __init__(self, id: _Optional[str] = ..., name: _Optional[str] = ..., is_online: bool = ..., components: _Optional[_Iterable[_Union[Component, _Mapping]]] = ..., temperature_units: _Optional[_Union[GetGlobalSettingsResponse.TemperatureUnits, str]] = ..., ct100_thermostat_device: _Optional[_Union[Ct100ThermostatDevice, _Mapping]] = ..., ct200_thermostat_device: _Optional[_Union[Ct200ThermostatDevice, _Mapping]] = ..., ev2_thermostat_device: _Optional[_Union[Ev2ThermostatDevice, _Mapping]] = ..., nest_thermostat_device: _Optional[_Union[NestThermostatDevice, _Mapping]] = ..., ev2z_thermostat_device: _Optional[_Union[Ev2ZThermostatDevice, _Mapping]] = ..., pegasus_thermostat_device: _Optional[_Union[PegasusThermostatDevice, _Mapping]] = ...) -> None: ...
 
 class Component(_message.Message):
     __slots__ = ("id", "temperature_detection", "setpoints", "fan_setting", "zwave_diagnostics", "humidity_detection", "setpoint_lock", "schedule", "operating_mode_setting", "operating_state", "battery", "humidity_mode", "humidity_setpoint", "deletable", "rebootable", "device_info", "hold_mode", "demand_response", "smart_comfort_targets", "online", "wi_fi")
@@ -154,7 +154,7 @@ class Component(_message.Message):
         __slots__ = ("deleted",)
         DELETED_FIELD_NUMBER: _ClassVar[int]
         deleted: bool
-        def __init__(self, deleted: _Optional[bool] = ...) -> None: ...
+        def __init__(self, deleted: bool = ...) -> None: ...
     class DeviceInfo(_message.Message):
         __slots__ = ("manufacturer", "firmware_version", "hardware_version", "serial_number", "mac_address", "vivint_product", "uei_product", "google_product")
         MANUFACTURER_FIELD_NUMBER: _ClassVar[int]
@@ -190,7 +190,7 @@ class Component(_message.Message):
         OFFLINE_REASON_FIELD_NUMBER: _ClassVar[int]
         value: bool
         offline_reason: Component.OfflineReason
-        def __init__(self, value: _Optional[bool] = ..., offline_reason: _Optional[_Union[Component.OfflineReason, str]] = ...) -> None: ...
+        def __init__(self, value: bool = ..., offline_reason: _Optional[_Union[Component.OfflineReason, str]] = ...) -> None: ...
     class Rebootable(_message.Message):
         __slots__ = ()
         def __init__(self) -> None: ...
@@ -231,7 +231,7 @@ class Component(_message.Message):
         weekend_schedule: Component.Schedule.Period
         schedule_enabled: bool
         schedule_initialized: bool
-        def __init__(self, weekday_schedule: _Optional[_Union[Component.Schedule.Period, _Mapping]] = ..., weekend_schedule: _Optional[_Union[Component.Schedule.Period, _Mapping]] = ..., schedule_enabled: _Optional[bool] = ..., schedule_initialized: _Optional[bool] = ...) -> None: ...
+        def __init__(self, weekday_schedule: _Optional[_Union[Component.Schedule.Period, _Mapping]] = ..., weekend_schedule: _Optional[_Union[Component.Schedule.Period, _Mapping]] = ..., schedule_enabled: bool = ..., schedule_initialized: bool = ...) -> None: ...
     class SetpointLock(_message.Message):
         __slots__ = ("enabled", "lower_cool", "lower_heat", "upper_cool", "upper_heat", "max_heat", "min_heat", "max_cool", "min_cool")
         ENABLED_FIELD_NUMBER: _ClassVar[int]
@@ -252,7 +252,7 @@ class Component(_message.Message):
         min_heat: float
         max_cool: float
         min_cool: float
-        def __init__(self, enabled: _Optional[bool] = ..., lower_cool: _Optional[float] = ..., lower_heat: _Optional[float] = ..., upper_cool: _Optional[float] = ..., upper_heat: _Optional[float] = ..., max_heat: _Optional[float] = ..., min_heat: _Optional[float] = ..., max_cool: _Optional[float] = ..., min_cool: _Optional[float] = ...) -> None: ...
+        def __init__(self, enabled: bool = ..., lower_cool: _Optional[float] = ..., lower_heat: _Optional[float] = ..., upper_cool: _Optional[float] = ..., upper_heat: _Optional[float] = ..., max_heat: _Optional[float] = ..., min_heat: _Optional[float] = ..., max_cool: _Optional[float] = ..., min_cool: _Optional[float] = ...) -> None: ...
     class Setpoints(_message.Message):
         __slots__ = ("cool_setpoint", "heat_setpoint", "minimum_temperature", "maximum_temperature", "min_setpoint_difference_c", "min_setpoint_difference_f")
         COOL_SETPOINT_FIELD_NUMBER: _ClassVar[int]
@@ -342,7 +342,7 @@ class Component(_message.Message):
         setpoint_target: Component.DemandResponse.SetpointTarget
         event_type: Component.DemandResponse.EventStatus
         event_status: Component.DemandResponse.EventStatus
-        def __init__(self, event_id: _Optional[str] = ..., active: _Optional[bool] = ..., start_time: _Optional[_Union[datetime.datetime, _timestamp_pb2.Timestamp, _Mapping]] = ..., end_time: _Optional[_Union[datetime.datetime, _timestamp_pb2.Timestamp, _Mapping]] = ..., setpoint_target: _Optional[_Union[Component.DemandResponse.SetpointTarget, _Mapping]] = ..., event_type: _Optional[_Union[Component.DemandResponse.EventStatus, str]] = ..., event_status: _Optional[_Union[Component.DemandResponse.EventStatus, str]] = ...) -> None: ...
+        def __init__(self, event_id: _Optional[str] = ..., active: bool = ..., start_time: _Optional[_Union[datetime.datetime, _timestamp_pb2.Timestamp, _Mapping]] = ..., end_time: _Optional[_Union[datetime.datetime, _timestamp_pb2.Timestamp, _Mapping]] = ..., setpoint_target: _Optional[_Union[Component.DemandResponse.SetpointTarget, _Mapping]] = ..., event_type: _Optional[_Union[Component.DemandResponse.EventStatus, str]] = ..., event_status: _Optional[_Union[Component.DemandResponse.EventStatus, str]] = ...) -> None: ...
     class Battery(_message.Message):
         __slots__ = ("battery_level", "battery_status")
         class Status(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
@@ -398,7 +398,7 @@ class Component(_message.Message):
         modes_supported: _containers.RepeatedScalarFieldContainer[Component.FanSetting.Mode]
         current_mode: Component.FanSetting.Mode
         is_on: bool
-        def __init__(self, modes_supported: _Optional[_Iterable[_Union[Component.FanSetting.Mode, str]]] = ..., current_mode: _Optional[_Union[Component.FanSetting.Mode, str]] = ..., is_on: _Optional[bool] = ...) -> None: ...
+        def __init__(self, modes_supported: _Optional[_Iterable[_Union[Component.FanSetting.Mode, str]]] = ..., current_mode: _Optional[_Union[Component.FanSetting.Mode, str]] = ..., is_on: bool = ...) -> None: ...
     class HoldMode(_message.Message):
         __slots__ = ("mode",)
         class Mode(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
@@ -651,7 +651,7 @@ class GetAccountInfoResponse(_message.Message):
         VALUE_FIELD_NUMBER: _ClassVar[int]
         key: str
         value: bool
-        def __init__(self, key: _Optional[str] = ..., value: _Optional[bool] = ...) -> None: ...
+        def __init__(self, key: _Optional[str] = ..., value: bool = ...) -> None: ...
     SYSTEM_ID_FIELD_NUMBER: _ClassVar[int]
     FEATURES_FIELD_NUMBER: _ClassVar[int]
     SERVICES_FIELD_NUMBER: _ClassVar[int]
@@ -742,7 +742,7 @@ class GetSmartComfortEnabledResponse(_message.Message):
     __slots__ = ("is_smart_comfort_enabled",)
     IS_SMART_COMFORT_ENABLED_FIELD_NUMBER: _ClassVar[int]
     is_smart_comfort_enabled: bool
-    def __init__(self, is_smart_comfort_enabled: _Optional[bool] = ...) -> None: ...
+    def __init__(self, is_smart_comfort_enabled: bool = ...) -> None: ...
 
 class GetSmartComfortOnboardingStatusRequest(_message.Message):
     __slots__ = ("system_id",)
@@ -754,7 +754,7 @@ class GetSmartComfortOnboardingStatusResponse(_message.Message):
     __slots__ = ("is_onboarding_completed",)
     IS_ONBOARDING_COMPLETED_FIELD_NUMBER: _ClassVar[int]
     is_onboarding_completed: bool
-    def __init__(self, is_onboarding_completed: _Optional[bool] = ...) -> None: ...
+    def __init__(self, is_onboarding_completed: bool = ...) -> None: ...
 
 class GetSmartComfortStateRequest(_message.Message):
     __slots__ = ("system_id",)
@@ -778,7 +778,7 @@ class GetTechnicianDispatchEligibilityResponse(_message.Message):
     __slots__ = ("eligible",)
     ELIGIBLE_FIELD_NUMBER: _ClassVar[int]
     eligible: bool
-    def __init__(self, eligible: _Optional[bool] = ...) -> None: ...
+    def __init__(self, eligible: bool = ...) -> None: ...
 
 class GetTimeZoneRequest(_message.Message):
     __slots__ = ("system_id",)
@@ -830,7 +830,7 @@ class HVACFilter(_message.Message):
     initial_filter_response: HVACFilter.InitialFilterResponse
     reminders_enabled: bool
     snoozed_until_days: int
-    def __init__(self, system_id: _Optional[int] = ..., device_id: _Optional[str] = ..., reminder_sensitivity: _Optional[_Union[HVACFilter.ReminderSensitivity, str]] = ..., needs_replacement: _Optional[bool] = ..., last_replaced: _Optional[_Union[datetime.datetime, _timestamp_pb2.Timestamp, _Mapping]] = ..., snoozed_until: _Optional[_Union[datetime.datetime, _timestamp_pb2.Timestamp, _Mapping]] = ..., initial_filter_response: _Optional[_Union[HVACFilter.InitialFilterResponse, str]] = ..., reminders_enabled: _Optional[bool] = ..., snoozed_until_days: _Optional[int] = ...) -> None: ...
+    def __init__(self, system_id: _Optional[int] = ..., device_id: _Optional[str] = ..., reminder_sensitivity: _Optional[_Union[HVACFilter.ReminderSensitivity, str]] = ..., needs_replacement: bool = ..., last_replaced: _Optional[_Union[datetime.datetime, _timestamp_pb2.Timestamp, _Mapping]] = ..., snoozed_until: _Optional[_Union[datetime.datetime, _timestamp_pb2.Timestamp, _Mapping]] = ..., initial_filter_response: _Optional[_Union[HVACFilter.InitialFilterResponse, str]] = ..., reminders_enabled: bool = ..., snoozed_until_days: _Optional[int] = ...) -> None: ...
 
 class IsSmartComfortEligibleRequest(_message.Message):
     __slots__ = ("system_id",)
@@ -842,7 +842,7 @@ class IsSmartComfortEligibleResponse(_message.Message):
     __slots__ = ("is_smart_comfort_eligible",)
     IS_SMART_COMFORT_ELIGIBLE_FIELD_NUMBER: _ClassVar[int]
     is_smart_comfort_eligible: bool
-    def __init__(self, is_smart_comfort_eligible: _Optional[bool] = ...) -> None: ...
+    def __init__(self, is_smart_comfort_eligible: bool = ...) -> None: ...
 
 class NestThermostatDevice(_message.Message):
     __slots__ = ()
@@ -888,7 +888,7 @@ class ServiceFieldMessage(_message.Message):
     external_id: str
     type: str
     disconnected: bool
-    def __init__(self, external_id: _Optional[str] = ..., type: _Optional[str] = ..., disconnected: _Optional[bool] = ...) -> None: ...
+    def __init__(self, external_id: _Optional[str] = ..., type: _Optional[str] = ..., disconnected: bool = ...) -> None: ...
 
 class SetCoolSetpointRequest(_message.Message):
     __slots__ = ("system_id", "device_id", "component_id", "fahrenheit", "celsius")
@@ -916,7 +916,7 @@ class SetEnableFilterReminderRequest(_message.Message):
     system_id: int
     device_id: str
     enabled: bool
-    def __init__(self, system_id: _Optional[int] = ..., device_id: _Optional[str] = ..., enabled: _Optional[bool] = ...) -> None: ...
+    def __init__(self, system_id: _Optional[int] = ..., device_id: _Optional[str] = ..., enabled: bool = ...) -> None: ...
 
 class SetEnableFilterReminderResponse(_message.Message):
     __slots__ = ()
@@ -932,7 +932,7 @@ class SetEnableSetpointLockRequest(_message.Message):
     enabled: bool
     device_id: str
     apply_to_all_thermostats: bool
-    def __init__(self, system_id: _Optional[int] = ..., enabled: _Optional[bool] = ..., device_id: _Optional[str] = ..., apply_to_all_thermostats: _Optional[bool] = ...) -> None: ...
+    def __init__(self, system_id: _Optional[int] = ..., enabled: bool = ..., device_id: _Optional[str] = ..., apply_to_all_thermostats: bool = ...) -> None: ...
 
 class SetEnableSetpointLockResponse(_message.Message):
     __slots__ = ("thermostats",)
@@ -942,7 +942,7 @@ class SetEnableSetpointLockResponse(_message.Message):
         SETPOINTS_AUTO_ADJUSTED_FIELD_NUMBER: _ClassVar[int]
         device_id: str
         setpoints_auto_adjusted: bool
-        def __init__(self, device_id: _Optional[str] = ..., setpoints_auto_adjusted: _Optional[bool] = ...) -> None: ...
+        def __init__(self, device_id: _Optional[str] = ..., setpoints_auto_adjusted: bool = ...) -> None: ...
     THERMOSTATS_FIELD_NUMBER: _ClassVar[int]
     thermostats: _containers.RepeatedCompositeFieldContainer[SetEnableSetpointLockResponse.Thermostat]
     def __init__(self, thermostats: _Optional[_Iterable[_Union[SetEnableSetpointLockResponse.Thermostat, _Mapping]]] = ...) -> None: ...
@@ -1145,7 +1145,7 @@ class SetScheduleEnabledRequest(_message.Message):
     device_id: str
     component_id: str
     enabled: bool
-    def __init__(self, system_id: _Optional[int] = ..., device_id: _Optional[str] = ..., component_id: _Optional[str] = ..., enabled: _Optional[bool] = ...) -> None: ...
+    def __init__(self, system_id: _Optional[int] = ..., device_id: _Optional[str] = ..., component_id: _Optional[str] = ..., enabled: bool = ...) -> None: ...
 
 class SetScheduleEnabledResponse(_message.Message):
     __slots__ = ()
@@ -1193,7 +1193,7 @@ class SetSetpointLockRangeRequest(_message.Message):
     apply_to_all_thermostats: bool
     celsiusrange: SetSetpointLockRangeRequest.Celsius
     fahrenheitrange: SetSetpointLockRangeRequest.Fahrenheit
-    def __init__(self, system_id: _Optional[int] = ..., device_id: _Optional[str] = ..., apply_to_all_thermostats: _Optional[bool] = ..., celsiusrange: _Optional[_Union[SetSetpointLockRangeRequest.Celsius, _Mapping]] = ..., fahrenheitrange: _Optional[_Union[SetSetpointLockRangeRequest.Fahrenheit, _Mapping]] = ...) -> None: ...
+    def __init__(self, system_id: _Optional[int] = ..., device_id: _Optional[str] = ..., apply_to_all_thermostats: bool = ..., celsiusrange: _Optional[_Union[SetSetpointLockRangeRequest.Celsius, _Mapping]] = ..., fahrenheitrange: _Optional[_Union[SetSetpointLockRangeRequest.Fahrenheit, _Mapping]] = ...) -> None: ...
 
 class SetSetpointLockRangeResponse(_message.Message):
     __slots__ = ("thermostats",)
@@ -1203,7 +1203,7 @@ class SetSetpointLockRangeResponse(_message.Message):
         SETPOINTS_AUTO_ADJUSTED_FIELD_NUMBER: _ClassVar[int]
         device_id: str
         setpoints_auto_adjusted: bool
-        def __init__(self, device_id: _Optional[str] = ..., setpoints_auto_adjusted: _Optional[bool] = ...) -> None: ...
+        def __init__(self, device_id: _Optional[str] = ..., setpoints_auto_adjusted: bool = ...) -> None: ...
     THERMOSTATS_FIELD_NUMBER: _ClassVar[int]
     thermostats: _containers.RepeatedCompositeFieldContainer[SetSetpointLockRangeResponse.Thermostat]
     def __init__(self, thermostats: _Optional[_Iterable[_Union[SetSetpointLockRangeResponse.Thermostat, _Mapping]]] = ...) -> None: ...
@@ -1214,7 +1214,7 @@ class SetSmartComfortEnabledRequest(_message.Message):
     ENABLED_FIELD_NUMBER: _ClassVar[int]
     system_id: int
     enabled: bool
-    def __init__(self, system_id: _Optional[int] = ..., enabled: _Optional[bool] = ...) -> None: ...
+    def __init__(self, system_id: _Optional[int] = ..., enabled: bool = ...) -> None: ...
 
 class SetSmartComfortEnabledResponse(_message.Message):
     __slots__ = ()
