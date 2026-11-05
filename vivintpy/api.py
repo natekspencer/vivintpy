@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import json
 import logging
 import ssl
@@ -48,13 +49,21 @@ class VivintSkyApi:
         password: str | None = None,
         refresh_token: str | None = None,
         client_session: aiohttp.ClientSession | None = None,
+        on_refresh_token_changed: Callable[[str], None] | None = None,
     ) -> None:
-        """Initialize the VivintSky API."""
+        """
+        Initialize the VivintSky API.
+
+        Refresh tokens can only be used once, and reusing one also invalidates the
+        newest token, so `on_refresh_token_changed` should save the new token.
+        """
         self.__username = username
         self.__password = password
         self.__refresh_token = refresh_token
         self.__client_session = client_session or self.__get_new_client_session()
         self.__has_custom_client_session = client_session is not None
+        self.__on_refresh_token_changed = on_refresh_token_changed
+        self.__session_lock = asyncio.Lock()
         self.__code_verifier: str | None = None
         self.__mfa_pending = False
         self.__mfa_type = "code"
@@ -81,9 +90,10 @@ class VivintSkyApi:
 
     async def connect(self) -> dict:
         """Connect to VivintSky Cloud Service."""
-        if not (self.__has_custom_client_session and self.is_session_valid()):
-            assert self.__password
-            await self.__get_vivintsky_session(self.__username, self.__password)
+        # one at a time, as refreshing with the same token twice invalidates it
+        async with self.__session_lock:
+            if not (self.__has_custom_client_session and self.is_session_valid()):
+                await self.__get_vivintsky_session(self.__username, self.__password)
         authuser_data = await self.get_authuser_data()
         if not authuser_data:
             raise VivintSkyApiAuthenticationError("Unable to login to Vivint")
@@ -128,7 +138,8 @@ class VivintSkyApi:
             data={"grant_type": "refresh_token", "refresh_token": refresh_token},
         )
         assert resp
-        self.__token = resp
+        self.__refresh_token = refresh_token
+        self.__store_token(resp)
 
     async def get_authuser_data(self) -> dict:
         """
@@ -482,7 +493,21 @@ class VivintSkyApi:
 
         return aiohttp.ClientSession(connector=connector)
 
-    async def __get_vivintsky_session(self, username: str, password: str) -> None:
+    def __store_token(self, token: dict) -> None:
+        """Store a token response, keeping the refresh token if it has no new one."""
+        previous = self.__refresh_token
+        self.__token = {"refresh_token": previous, **token}
+        self.__refresh_token = self.__token["refresh_token"]
+        if (
+            self.__on_refresh_token_changed
+            and self.__refresh_token
+            and self.__refresh_token != previous
+        ):
+            self.__on_refresh_token_changed(self.__refresh_token)
+
+    async def __get_vivintsky_session(
+        self, username: str, password: str | None
+    ) -> None:
         """Perform PKCE oauth login."""
         if self.__refresh_token:
             await self.refresh_token(self.__refresh_token)
@@ -516,6 +541,11 @@ class VivintSkyApi:
             auth_code = redirect_params["code"][0]
 
             return await self.__exchange_auth_code(auth_code)
+
+        if not password:
+            raise VivintSkyApiAuthenticationError(
+                "A password is needed to log in without a valid refresh token"
+            )
 
         # Authenticate with username/password
         resp = await self.__post(
@@ -557,7 +587,7 @@ class VivintSkyApi:
             },
         )
         assert resp
-        self.__token = resp
+        self.__store_token(resp)
 
     async def __get(
         self,

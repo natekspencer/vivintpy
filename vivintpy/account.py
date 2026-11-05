@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+from collections.abc import Callable
 
 import aiohttp
 from aiohttp.client_exceptions import ClientConnectionError
@@ -20,7 +21,7 @@ from .const import (
     SystemAttribute,
     UserAttribute,
 )
-from .exceptions import VivintSkyApiError
+from .exceptions import VivintSkyApiAuthenticationError, VivintSkyApiError
 from .pubnub import PN_CHANNEL, PN_SUBSCRIBE_KEY, VivintPubNubSubscribeListener
 from .system import System
 from .utils import first_or_none
@@ -37,6 +38,7 @@ class Account:
         password: str | None = None,
         refresh_token: str | None = None,
         client_session: aiohttp.ClientSession | None = None,
+        on_refresh_token_changed: Callable[[str], None] | None = None,
     ):
         """Initialize an account."""
         self.__connected = False
@@ -48,6 +50,7 @@ class Account:
             password=password,
             refresh_token=refresh_token,
             client_session=client_session,
+            on_refresh_token_changed=on_refresh_token_changed,
         )
         self.systems: list[System] = []
 
@@ -130,6 +133,8 @@ class Account:
         if not authuser_data:
             try:
                 authuser_data = await self.api.get_authuser_data()
+            except VivintSkyApiAuthenticationError:
+                raise
             except (ClientConnectionError, VivintSkyApiError):
                 _LOGGER.error("Unable to refresh system(s)")
 
