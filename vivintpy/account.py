@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import warnings
 from collections.abc import Callable
 
 import aiohttp
@@ -14,7 +15,7 @@ from pubnub.pubnub_asyncio import (
     PubNubAsyncio,
 )
 
-from .api import VivintSkyApi
+from .api import PASSWORD_DEPRECATION, VivintSkyApi
 from .const import (
     AuthUserAttribute,
     PubNubMessageAttribute,
@@ -40,18 +41,25 @@ class Account:
         client_session: aiohttp.ClientSession | None = None,
         on_refresh_token_changed: Callable[[str], None] | None = None,
     ):
-        """Initialize an account."""
+        """
+        Initialize an account.
+
+        Passing `password` here is deprecated, pass it to `connect` instead.
+        """
+        if password is not None:
+            warnings.warn(PASSWORD_DEPRECATION, DeprecationWarning, stacklevel=2)
         self.__connected = False
         self.__load_devices = False
+        self.__subscribe_for_realtime_updates = False
         self.__pubnub: PubNubAsyncio | None = None
         self.__pubnub_listener: VivintPubNubSubscribeListener | None = None
         self._api = VivintSkyApi(
             username=username,
-            password=password,
             refresh_token=refresh_token,
             client_session=client_session,
             on_refresh_token_changed=on_refresh_token_changed,
         )
+        self._api._set_deprecated_password(password)  # pylint: disable=protected-access
         self.systems: list[System] = []
 
     @property
@@ -70,15 +78,24 @@ class Account:
         return self.api.tokens.get("refresh_token")
 
     async def connect(
-        self, load_devices: bool = False, subscribe_for_realtime_updates: bool = False
+        self,
+        load_devices: bool = False,
+        subscribe_for_realtime_updates: bool = False,
+        password: str | None = None,
     ) -> None:
-        """Connect to the VivintSky API."""
+        """
+        Connect to the VivintSky API.
+
+        A password is only needed without a valid refresh token. It's not kept after
+        logging in, so if the refresh token stops working, call this with it again.
+        """
         _LOGGER.debug("Connecting to VivintSky")
 
         self.__load_devices = load_devices
+        self.__subscribe_for_realtime_updates = subscribe_for_realtime_updates
 
         # initialize the vivintsky cloud session
-        authuser_data = await self.api.connect()
+        authuser_data = await self.api.connect(password)
         self.__connected = True
 
         # subscribe to pubnub for realtime updates
@@ -98,6 +115,7 @@ class Account:
             self.__pubnub.remove_listener(self.__pubnub_listener)
             await self.__pubnub_unsubscribe_all()
             await self.__pubnub.stop()
+            self.__pubnub = None
         await self.api.disconnect()
         self.__connected = False
 
@@ -121,6 +139,12 @@ class Account:
     async def verify_mfa(self, code: str) -> None:
         """Verify multi-factor authentication with the VivintSky API."""
         await self.api.verify_mfa(code)
+        self.__connected = True
+
+        # subscribe to pubnub for realtime updates
+        if self.__subscribe_for_realtime_updates:
+            _LOGGER.debug("Subscribing to PubNub for realtime updates")
+            await self.subscribe_for_realtime_updates()
 
         # load all systems, panels and devices
         if self.__load_devices:
@@ -174,6 +198,9 @@ class Account:
         self, authuser_data: dict | None = None
     ) -> None:
         """Subscribe to PubNub for realtime updates."""
+        if self.__pubnub:
+            return
+
         # make a call to vivint's authuser endpoint to get message broadcast channel if not supplied
         if not authuser_data:
             authuser_data = await self.api.get_authuser_data()
