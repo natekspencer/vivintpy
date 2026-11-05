@@ -41,6 +41,7 @@ class Account:
         """Initialize an account."""
         self.__connected = False
         self.__load_devices = False
+        self.__climate_updates = False
         self.__pubnub: PubNubAsyncio | None = None
         self.__pubnub_listener: VivintPubNubSubscribeListener | None = None
         self._api = VivintSkyApi(
@@ -73,6 +74,7 @@ class Account:
         _LOGGER.debug("Connecting to VivintSky")
 
         self.__load_devices = load_devices
+        self.__climate_updates = subscribe_for_realtime_updates
 
         # initialize the vivintsky cloud session
         authuser_data = await self.api.connect()
@@ -87,10 +89,6 @@ class Account:
         if self.__load_devices:
             _LOGGER.debug("Loading devices")
             await self.refresh(authuser_data)
-
-            if subscribe_for_realtime_updates:
-                for system in self.systems:
-                    system.start_climate_updates()
 
     async def disconnect(self) -> None:
         """Disconnect from the API."""
@@ -166,6 +164,8 @@ class Account:
                     )
                     self.systems.append(system)
                     await system.load_climate_devices()
+                    if self.__climate_updates:
+                        system.start_climate_updates()
 
             _LOGGER.debug(
                 "Refreshed %s system(s)",

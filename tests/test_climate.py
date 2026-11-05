@@ -333,6 +333,8 @@ class Servicer(climate_pb2_grpc.ClimatePublicServicer):
         self, request: Any, context: Any
     ) -> AsyncIterator[Any]:
         self.metadata.append(dict(context.invocation_metadata()))
+        if self.reject_first and len(self.metadata) == 1:
+            await context.abort(grpc.StatusCode.UNAUTHENTICATED, "expired")
         yield climate_pb2.GetClimateDevicesStreamingResponse(
             climate_devices=[make_device()]
         )
@@ -399,20 +401,50 @@ async def test_climate_rate_limit(service: Servicer) -> None:
 async def test_climate_request_reauthenticates(
     service: Servicer, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    """Test an unauthenticated call is retried once with a fresh session."""
+    """Test an unauthenticated call signs in again and is retried once."""
     service.reject_first = True
     api = make_api()
-    connected = []
+    logins = []
 
-    async def connect() -> dict:
-        connected.append(True)
-        return {}
+    async def login(*_args: Any) -> None:
+        logins.append(True)
+        api._VivintSkyApi__token = {  # type: ignore[attr-defined]
+            "access_token": "fresh",
+            "id_token": jwt.encode({"exp": int(time.time()) + 3600}, "k" * 32),
+        }
 
-    monkeypatch.setattr(api, "connect", connect)
+    async def authuser() -> dict:
+        return {"u": {}}
+
+    monkeypatch.setattr(api, "_VivintSkyApi__get_vivintsky_session", login)
+    monkeypatch.setattr(api, "get_authuser_data", authuser)
+    api._VivintSkyApi__has_custom_client_session = True  # type: ignore[attr-defined]
 
     assert await api.get_climate_devices(SYSTEM_ID)
-    assert connected == [True]
-    assert len(service.metadata) == 2
+    assert logins == [True]
+    assert [m["authorization"] for m in service.metadata] == [
+        "Bearer access",
+        "Bearer fresh",
+    ]
+
+
+@pytest.mark.asyncio
+async def test_stream_reauthenticates(
+    service: Servicer, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Test a stream rejected before any update signs in again and retries."""
+    service.reject_first = True
+    api = make_api()
+    logins = []
+
+    async def reauthenticate() -> None:
+        logins.append(True)
+
+    monkeypatch.setattr(api, "_reauthenticate", reauthenticate)
+
+    updates = [update async for update in api.stream_climate_devices(SYSTEM_ID)]
+    assert logins == [True]
+    assert len(updates) == 2
 
 
 @pytest.mark.asyncio
@@ -461,11 +493,133 @@ async def test_system_applies_stream() -> None:
 
     system.start_climate_updates()
     try:
-        assert system.climate_updates_running
         await wait_for(lambda: len(devices) == 1)
+        assert system.climate_updates_running
         api.remove.set()
         await wait_for(lambda: not devices)
     finally:
         await system.stop_climate_updates()
 
     assert not system.climate_updates_running
+
+
+class FailingStreamApi(FakeApi):
+    """An API whose stream fails with an unexpected error, then recovers."""
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.calls = 0
+
+    async def stream_climate_devices(
+        self, system_id: int
+    ) -> AsyncIterator[climate_pb2.GetClimateDevicesStreamingResponse]:
+        self.calls += 1
+        if self.calls == 1:
+            raise RuntimeError("token renewal failed")
+        yield climate_pb2.GetClimateDevicesStreamingResponse(
+            climate_devices=[make_device()]
+        )
+        await asyncio.sleep(3600)
+
+
+@pytest.mark.asyncio
+async def test_stream_survives_unexpected_errors(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Test the stream task keeps retrying after any error."""
+    monkeypatch.setattr("vivintpy.system.CLIMATE_RETRY_MIN", 0)
+    system = make_system(FailingStreamApi())
+    system.start_climate_updates()
+    try:
+        await wait_for(lambda: len(system.alarm_panels[0].devices) == 1)
+    finally:
+        await system.stop_climate_updates()
+
+
+def test_unknown_enum_values_fall_back(thermostat: ClimateThermostat) -> None:
+    """Test enum values the proto doesn't define read as unknown."""
+    update = make_device()
+    for component in update.components:
+        kind = component.WhichOneof("value")
+        if kind == "fan_setting":
+            component.fan_setting.current_mode = 99
+            component.fan_setting.modes_supported.append(99)
+        elif kind == "operating_mode_setting":
+            component.operating_mode_setting.current_mode = 99
+        elif kind == "hold_mode":
+            component.hold_mode.mode = 99
+        elif kind == "operating_state":
+            component.operating_state.current_state = 99
+
+    thermostat.update_device(update)
+
+    assert thermostat.fan_mode == FanMode.UNKNOWN
+    assert thermostat.operating_mode == OperatingMode.UNKNOWN
+    assert thermostat.hold_mode == HoldMode.UNKNOWN
+    assert thermostat.operating_state == OperatingState.UNKNOWN
+    assert thermostat.capabilities[CapabilityCategoryType.THERMOSTAT]
+
+
+def test_component_only_update_keeps_device_fields(
+    thermostat: ClimateThermostat,
+) -> None:
+    """Test an update without name, online flag or details leaves them as they were."""
+    thermostat.update_device(
+        climate_pb2.ClimateDevice(
+            id=DEVICE_URN,
+            components=[
+                climate_pb2.Component(
+                    id=f"{DEVICE_URN}:temperature",
+                    temperature_detection=Component.TemperatureDetection(
+                        current_temperature=22.0
+                    ),
+                )
+            ],
+        )
+    )
+
+    assert thermostat.temperature == 22.0
+    assert thermostat.name == "Hallway"
+    assert thermostat.is_online
+    assert (thermostat.manufacturer, thermostat.model) == ("Google", "Nest")
+    assert thermostat._device.WhichOneof("details") == "nest_thermostat_device"
+
+
+def test_unset_set_points_are_none(system: System) -> None:
+    """Test set points and limits the service leaves unset read as `None`."""
+    device = make_device()
+    for component in device.components:
+        if component.WhichOneof("value") == "setpoints":
+            component.setpoints.maximum_temperature = 0
+            component.setpoints.cool_setpoint = 0
+    system.update_climate_devices([device])
+    thermostat = system.alarm_panels[0].devices[0]
+
+    assert thermostat.maximum_temperature is None  # type: ignore[attr-defined]
+    assert thermostat.cool_set_point is None  # type: ignore[attr-defined]
+    assert thermostat.heat_set_point == 15.5  # type: ignore[attr-defined]
+
+
+def test_snapshot_removes_missing_thermostats(
+    system: System, thermostat: ClimateThermostat
+) -> None:
+    """Test a full snapshot drops thermostats it no longer lists."""
+    system.update_climate_devices([], snapshot=True)
+
+    assert system.alarm_panels[0].devices == []
+
+
+@pytest.mark.asyncio
+async def test_set_state_validates_before_sending(
+    system: System, thermostat: ClimateThermostat
+) -> None:
+    """Test an unsupported value is rejected before any request is sent."""
+    with pytest.raises(ValueError, match="fan mode"):
+        await thermostat.set_state(
+            **{
+                ThermostatAttribute.COOL_SET_POINT: 21.0,
+                ThermostatAttribute.FAN_MODE: FanMode.UNKNOWN,
+            }
+        )
+
+    assert system.api.requests == []  # type: ignore[attr-defined]

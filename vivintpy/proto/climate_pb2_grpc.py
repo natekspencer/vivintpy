@@ -5,7 +5,7 @@ import warnings
 
 from vivintpy.proto import climate_pb2 as vivintpy_dot_proto_dot_climate__pb2
 
-GRPC_GENERATED_VERSION = '1.84.1'
+GRPC_GENERATED_VERSION = '1.78.0'
 GRPC_VERSION = grpc.__version__
 _version_not_supported = False
 
@@ -25,7 +25,7 @@ if _version_not_supported:
     )
 
 
-class ClimatePublicStub:
+class ClimatePublicStub(object):
     """Missing associated documentation comment in .proto file."""
 
     def __init__(self, channel):
@@ -221,7 +221,7 @@ class ClimatePublicStub:
                 _registered_method=True)
 
 
-class ClimatePublicServicer:
+class ClimatePublicServicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def DeleteDevice(self, request, context):
@@ -642,7 +642,7 @@ def add_ClimatePublicServicer_to_server(servicer, server):
 
 
  # This class is part of an EXPERIMENTAL API.
-class ClimatePublic:
+class ClimatePublic(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod

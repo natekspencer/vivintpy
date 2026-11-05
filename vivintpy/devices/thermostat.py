@@ -99,7 +99,13 @@ class Thermostat(VivintDevice):
         self, heat: float | None = None, cool: float | None = None
     ) -> None:
         """Set the heat and/or cool set points, in degrees Celsius."""
-        if cool is not None:
-            await self.set_state(**{Attribute.COOL_SET_POINT: cool})
-        if heat is not None:
-            await self.set_state(**{Attribute.HEAT_SET_POINT: heat})
+        set_points = {
+            attribute: value
+            for attribute, value in (
+                (Attribute.COOL_SET_POINT, cool),
+                (Attribute.HEAT_SET_POINT, heat),
+            )
+            if value is not None
+        }
+        if set_points:
+            await self.set_state(**set_points)

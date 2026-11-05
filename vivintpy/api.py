@@ -39,6 +39,11 @@ API_ENDPOINT = "https://www.vivintsky.com/api"
 AUTH_ENDPOINT = "https://id.vivint.com"
 GRPC_ENDPOINT = "grpc.vivintsky.com:50051"
 CLIMATE_TIMEOUT = 20
+CLIMATE_STREAM_OPTIONS = (
+    ("grpc.keepalive_time_ms", 60_000),
+    ("grpc.keepalive_timeout_ms", 20_000),
+    ("grpc.keepalive_permit_without_calls", 1),
+)
 
 
 class VivintSkyApi:
@@ -671,26 +676,39 @@ class VivintSkyApi:
         self, system_id: int
     ) -> AsyncIterator[climate_pb2.GetClimateDevicesStreamingResponse]:
         """Yield climate device updates for a system as they happen."""
-        metadata = [
-            *await self._climate_metadata(),
-            ("x-viv-system-id", str(system_id)),
-        ]
         creds = grpc.ssl_channel_credentials()
-        try:
-            async with grpc.aio.secure_channel(
-                GRPC_ENDPOINT, credentials=creds
-            ) as channel:
-                stub = climate_pb2_grpc.ClimatePublicStub(channel)  # type: ignore[no-untyped-call]
-                call = stub.GetClimateDevicesStreaming(
-                    climate_pb2.GetClimateDevicesStreamingRequest(system_id=system_id),
-                    metadata=metadata,
-                )
-                async for response in call:
-                    yield response
-        except grpc.aio.AioRpcError as err:
-            raise VivintSkyApiError(
-                _describe_rpc_error("GetClimateDevicesStreaming", err)
-            ) from err
+        for attempt in (1, 2):
+            metadata = [
+                *await self._climate_metadata(),
+                ("x-viv-system-id", str(system_id)),
+            ]
+            received = False
+            try:
+                async with grpc.aio.secure_channel(
+                    GRPC_ENDPOINT, credentials=creds, options=CLIMATE_STREAM_OPTIONS
+                ) as channel:
+                    stub = climate_pb2_grpc.ClimatePublicStub(channel)  # type: ignore[no-untyped-call]
+                    call = stub.GetClimateDevicesStreaming(
+                        climate_pb2.GetClimateDevicesStreamingRequest(
+                            system_id=system_id
+                        ),
+                        metadata=metadata,
+                    )
+                    async for response in call:
+                        received = True
+                        yield response
+                return
+            except grpc.aio.AioRpcError as err:
+                if (
+                    attempt == 1
+                    and not received
+                    and err.code() == grpc.StatusCode.UNAUTHENTICATED
+                ):
+                    await self._reauthenticate()
+                    continue
+                raise VivintSkyApiError(
+                    _describe_rpc_error("GetClimateDevicesStreaming", err)
+                ) from err
 
     async def climate_request(self, method: str, request: Message) -> Any:
         """Send a request to the climate service and return its response."""
@@ -707,7 +725,7 @@ class VivintSkyApi:
                     )
             except grpc.aio.AioRpcError as err:
                 if attempt == 1 and err.code() == grpc.StatusCode.UNAUTHENTICATED:
-                    await self.connect()
+                    await self._reauthenticate()
                     continue
                 if err.code() == grpc.StatusCode.RESOURCE_EXHAUSTED:
                     raise VivintSkyApiRateLimitError(
@@ -716,6 +734,13 @@ class VivintSkyApi:
                 raise VivintSkyApiError(_describe_rpc_error(method, err)) from err
             _LOGGER.debug("Response received: %s", str(response))
             return response
+
+    async def _reauthenticate(self) -> None:
+        """Discard the current token and sign in again."""
+        if self.__token and (refresh := self.__token.get("refresh_token")):
+            self.__refresh_token = refresh
+        self.__token = None
+        await self.connect()
 
     async def _climate_metadata(self) -> list[tuple[str, str]]:
         """Return the call metadata for the climate service, reauthenticating if needed."""
