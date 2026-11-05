@@ -346,6 +346,7 @@ async def test_disconnect_drops_a_password_waiting_for_mfa() -> None:
     await api.disconnect()
 
     assert stored_passwords(api) == [None, None]
+    assert api._VivintSkyApi__mfa_pending is False
 
 
 def create_mfa_account() -> tuple[Account, MagicMock]:
@@ -374,6 +375,7 @@ async def test_verify_mfa_finishes_connecting() -> None:
         await account.verify_mfa("123456")
 
         api.connect.assert_awaited_once_with("s")
+        api.verify_mfa.assert_awaited_once_with("123456")
         assert account.connected
         pubnub_cls.assert_called_once()
 
@@ -397,3 +399,67 @@ async def test_verify_mfa_only_subscribes_when_asked() -> None:
         await account.verify_mfa("123456")
 
     pubnub_cls.assert_not_called()
+
+
+async def test_rejected_refresh_token_is_not_kept() -> None:
+    """Test a login without a new token doesn't bring the rejected one back."""
+    post = AsyncMock(
+        side_effect=[
+            VivintSkyApiAuthenticationError("invalid_grant"),
+            token_response(None),
+        ]
+    )
+    api = create_api(post, refresh_token="first")
+
+    await api.connect(password="secret")
+
+    assert api.tokens["refresh_token"] is None
+
+
+async def test_mfa_during_a_refresh_keeps_the_password() -> None:
+    """Test an MFA challenge to a refresh isn't treated as a rejected token."""
+    post = AsyncMock(side_effect=VivintSkyApiMfaRequiredError("MFA required"))
+    api = create_api(post, refresh_token="first")
+
+    with pytest.raises(VivintSkyApiMfaRequiredError):
+        await api.connect(password="secret")
+
+    post.assert_awaited_once()
+    assert stored_passwords(api) == [None, "secret"]
+
+
+async def test_verify_mfa_finishes_an_incomplete_session() -> None:
+    """Test MFA completes the login if it didn't return any tokens."""
+    account, api = create_mfa_account()
+    api.is_session_valid = MagicMock(return_value=False)
+    api.connect = AsyncMock()
+
+    await account.verify_mfa("123456")
+
+    api.connect.assert_awaited_once_with()
+    assert account.connected
+
+
+async def test_verify_mfa_without_a_session_is_not_connected() -> None:
+    """Test a login that can't be completed isn't reported as connected."""
+    account, api = create_mfa_account()
+    api.is_session_valid = MagicMock(return_value=False)
+    api.connect = AsyncMock(side_effect=VivintSkyApiAuthenticationError("password"))
+
+    with pytest.raises(VivintSkyApiAuthenticationError):
+        await account.verify_mfa("123456")
+
+    assert not account.connected
+
+
+async def test_failed_subscribe_can_be_retried() -> None:
+    """Test a subscribe that fails doesn't count as being subscribed."""
+    account, _ = create_mfa_account()
+
+    with patch("vivintpy.account.PubNubAsyncio") as pubnub_cls:
+        pubnub_cls.return_value.subscribe.side_effect = [RuntimeError, MagicMock()]
+        with pytest.raises(RuntimeError):
+            await account.subscribe_for_realtime_updates()
+        await account.subscribe_for_realtime_updates()
+
+    assert pubnub_cls.call_count == 2

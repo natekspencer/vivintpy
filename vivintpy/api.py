@@ -113,9 +113,13 @@ class VivintSkyApi:
         # one at a time, as refreshing with the same token twice invalidates it
         async with self.__session_lock:
             if not self.is_session_valid():
-                await self.__get_vivintsky_session(
-                    self.__username, password or self.__password
-                )
+                password = password or self.__password
+                try:
+                    await self.__get_vivintsky_session(self.__username, password)
+                except VivintSkyApiMfaRequiredError:
+                    # verify_mfa has to send the password again
+                    self.__mfa_password = password
+                    raise
         authuser_data = await self.get_authuser_data()
         if not authuser_data:
             raise VivintSkyApiAuthenticationError("Unable to login to Vivint")
@@ -124,6 +128,7 @@ class VivintSkyApi:
     async def disconnect(self) -> None:
         """Disconnect from VivintSky Cloud Service."""
         self.__mfa_password = None
+        self.__mfa_pending = False
         if not self.__has_custom_client_session:
             await self.__client_session.close()
 
@@ -535,9 +540,12 @@ class VivintSkyApi:
         if self.__refresh_token:
             try:
                 await self.refresh_token(self.__refresh_token)
+            except VivintSkyApiMfaRequiredError:
+                raise
             except VivintSkyApiAuthenticationError:
                 if not password:
                     raise
+                self.__refresh_token = None
             else:
                 if self.is_session_valid():
                     return
@@ -576,33 +584,28 @@ class VivintSkyApi:
             )
 
         # Authenticate with username/password
-        try:
-            resp = await self.__post(
-                path=f"{AUTH_ENDPOINT}/idp/api/submit",
-                params={
-                    "client_id": client_id,
-                },
-                data=json.dumps({"username": username, "password": password}),
-            )
-            assert resp
+        resp = await self.__post(
+            path=f"{AUTH_ENDPOINT}/idp/api/submit",
+            params={
+                "client_id": client_id,
+            },
+            data=json.dumps({"username": username, "password": password}),
+        )
+        assert resp
 
-            # Check for TOTP/MFA requirement
-            if "validate" in resp:
-                # SMS/emailed code
-                _LOGGER.debug("MFA response: %s", resp)
-                self.__mfa_pending = True
-                self.__mfa_type = "code"
-                raise VivintSkyApiMfaRequiredError(AuthenticationResponse.MFA_REQUIRED)
-            if "mfa" in resp:
-                # Authenticator app code
-                _LOGGER.debug("MFA response: %s", resp)
-                self.__mfa_pending = True
-                self.__mfa_type = "mfa"
-                raise VivintSkyApiMfaRequiredError(AuthenticationResponse.MFA_REQUIRED)
-        except VivintSkyApiMfaRequiredError:
-            # verify_mfa has to send the password again
-            self.__mfa_password = password
-            raise
+        # Check for TOTP/MFA requirement
+        if "validate" in resp:
+            # SMS/emailed code
+            _LOGGER.debug("MFA response: %s", resp)
+            self.__mfa_pending = True
+            self.__mfa_type = "code"
+            raise VivintSkyApiMfaRequiredError(AuthenticationResponse.MFA_REQUIRED)
+        if "mfa" in resp:
+            # Authenticator app code
+            _LOGGER.debug("MFA response: %s", resp)
+            self.__mfa_pending = True
+            self.__mfa_type = "mfa"
+            raise VivintSkyApiMfaRequiredError(AuthenticationResponse.MFA_REQUIRED)
 
         self.__store_token(resp)
 

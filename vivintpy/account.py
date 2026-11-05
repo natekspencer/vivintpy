@@ -139,6 +139,10 @@ class Account:
     async def verify_mfa(self, code: str) -> None:
         """Verify multi-factor authentication with the VivintSky API."""
         await self.api.verify_mfa(code)
+
+        # some responses leave the session to be finished from the login cookies
+        if not self.api.is_session_valid():
+            await self.api.connect()
         self.__connected = True
 
         # subscribe to pubnub for realtime updates
@@ -211,18 +215,20 @@ class Account:
         pnconfig.subscribe_key = PN_SUBSCRIBE_KEY
         pnconfig.user_id = f"pn-{user_data[UserAttribute.ID].upper()}"
 
-        self.__pubnub = PubNubAsyncio(
+        pubnub = PubNubAsyncio(
             pnconfig, subscription_manager=AsyncioSubscriptionManager
         )
-        self.__pubnub_listener = VivintPubNubSubscribeListener(
-            self.handle_pubnub_message
-        )
-        self.__pubnub.add_listener(self.__pubnub_listener)
+        listener = VivintPubNubSubscribeListener(self.handle_pubnub_message)
+        pubnub.add_listener(listener)
 
         pn_channel = (
             f"{PN_CHANNEL}#{user_data[UserAttribute.MESSAGE_BROADCAST_CHANNEL]}"
         )
-        self.__pubnub.subscribe().channels(pn_channel).with_presence().execute()
+        pubnub.subscribe().channels(pn_channel).with_presence().execute()
+
+        # only now, so that a failed subscribe can be tried again
+        self.__pubnub = pubnub
+        self.__pubnub_listener = listener
 
     def handle_pubnub_message(self, message: dict) -> None:
         """Handle a pubnub message."""
