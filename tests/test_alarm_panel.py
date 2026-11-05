@@ -61,13 +61,14 @@ def test_changed_by_only_updates_panels_in_the_state() -> None:
     """Test a partition in another state keeps what last changed it."""
     system = create_system(ArmedState.ARMED_AWAY, ArmedState.DISARMED)
     armed, disarmed = system.alarm_panels
+    disarmed.update_changed_by("Earlier")
 
     system.handle_pubnub_message(
         security_message("seca", ArmedState.ARMED_AWAY, "Person")
     )
 
     assert armed.changed_by == "Person"
-    assert disarmed.changed_by is None
+    assert disarmed.changed_by == "Earlier"
 
 
 def test_changed_by_before_the_state_update() -> None:
@@ -78,6 +79,28 @@ def test_changed_by_before_the_state_update() -> None:
     system.handle_pubnub_message(
         security_message("seca", ArmedState.ARMED_STAY, "Person")
     )
+    system.handle_pubnub_message(
+        {
+            "t": "account_partition",
+            "op": "u",
+            "panid": SYSTEM_ID,
+            "parid": panel.partition_id,
+            "da": {"s": ArmedState.ARMED_STAY.value},
+        }
+    )
+
+    assert panel.state == ArmedState.ARMED_STAY
+    assert panel.changed_by == "Person"
+
+
+def test_security_value_that_is_not_an_event_is_ignored() -> None:
+    """Test a malformed value is skipped and doesn't stop a valid event."""
+    system = create_system(ArmedState.DISARMED)
+    (panel,) = system.alarm_panels
+    message = security_message("secd", ArmedState.DISARMED, "Person")
+    message["da"]["seca"] = True
+
+    system.handle_pubnub_message(message)
 
     assert panel.changed_by == "Person"
 

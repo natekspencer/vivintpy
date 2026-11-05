@@ -92,7 +92,7 @@ class System(Entity):
         update, so they go to every panel if none match.
         """
         for key in (Attribute.SECURITY_ARMED, Attribute.SECURITY_DISARMED):
-            if not (event := data.get(key)):
+            if not isinstance(event := data.get(key), dict):
                 continue
             state = event.get(Attribute.SECURITY_STATE)
             panels = [panel for panel in self.alarm_panels if panel.state == state]
