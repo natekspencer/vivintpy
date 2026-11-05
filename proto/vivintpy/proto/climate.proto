@@ -1,0 +1,833 @@
+syntax = "proto3";
+
+// Reconstructed from the generated protobuf-lite classes of the Vivint Android app (package com.vivint.grpc.climate).
+// Field names, numbers and wire types are exact; comments and file layout are not preserved.
+package climate;
+
+import "google/protobuf/timestamp.proto";
+
+enum DemandResponsePlatformSource {
+  DEMAND_RESPONSE_PLATFORM_SOURCE_UNSPECIFIED = 0;
+  DEMAND_RESPONSE_PLATFORM_SOURCE_APP = 1;
+  DEMAND_RESPONSE_PLATFORM_SOURCE_CARE = 2;
+}
+
+enum OccupancyState {
+  Unspecified = 0;
+  Home = 1;
+  Away = 2;
+  Sleep = 3;
+  Vacation = 4;
+}
+
+enum RetailElectricProvider {
+  UNSPECIFIED_PROVIDER = 0;
+  RELIANT = 1;
+  GME = 2;
+  DE = 3;
+  CIRRO = 4;
+  DISCOUNT = 5;
+}
+
+enum TimeZones {
+  UNSPECIFIED = 0;
+  AMERICA_NEWYORK = 1;
+  AMERICA_CHICAGO = 2;
+  AMERICA_DENVER = 3;
+  AMERICA_PHOENIX = 4;
+  AMERICA_LOSANGELES = 5;
+  AMERICA_ANCHORAGE = 6;
+  PACIFIC_HONOLULU = 7;
+}
+
+message Anomaly {
+  string vendor_device_id = 1;
+  Component.OperatingState.State current_state = 2;
+  google.protobuf.Timestamp last_detected_at = 3;
+  google.protobuf.Timestamp detected_at = 4;
+  uint32 observed_runtime_hours = 5;
+  uint32 expected_runtime_hours = 6;
+  uint32 excess_runtime_hours = 7;
+  google.protobuf.Timestamp dismissed_at = 8;
+  bool is_dismissed = 9;
+}
+
+message ClimateDevice {
+  string id = 1;
+  string name = 2;
+  bool is_online = 3;
+  repeated Component components = 4;
+  GetGlobalSettingsResponse.TemperatureUnits temperature_units = 9;
+  oneof details {
+    Ct100ThermostatDevice ct100_thermostat_device = 5;
+    Ct200ThermostatDevice ct200_thermostat_device = 6;
+    Ev2ThermostatDevice ev2_thermostat_device = 7;
+    NestThermostatDevice nest_thermostat_device = 8;
+    Ev2ZThermostatDevice ev2z_thermostat_device = 10;
+    PegasusThermostatDevice pegasus_thermostat_device = 11;
+  }
+}
+
+message Component {
+  enum OfflineReason {
+    UNKNOWN = 0;
+    POWER_OFF = 1;
+    HARDWARE_FAILURE = 2;
+    SOFTWARE_ERROR = 3;
+    MAINTENANCE = 4;
+    BRIDGE_OFFLINE = 5;
+    MQTT_BROKER_ISSUES = 6;
+    LOSS_OF_WIFI_OR_CELLULAR = 7;
+    NETWORK_CONGESTION = 8;
+    ROUTER_OR_MODEM_MALFUNCTION = 9;
+    FIREWALL_OR_SECURITY_SETTINGS = 10;
+    DNS_PROBLEMS = 11;
+    IP_ADDRESS_CHANGE = 12;
+    REBOOT = 13;
+    SOFTWARE_UPDATE = 14;
+    INVALID_VENDOR_TOKEN = 15;
+  }
+  message Deletable {
+    bool deleted = 1;
+  }
+  message DeviceInfo {
+    int32 /* enum, type unresolved */ manufacturer = 1;
+    string firmware_version = 8;
+    string hardware_version = 9;
+    string serial_number = 10;
+    string mac_address = 11;
+    oneof product {
+      int32 /* enum, type unresolved */ vivint_product = 5;
+      int32 /* enum, type unresolved */ uei_product = 6;
+      int32 /* enum, type unresolved */ google_product = 7;
+    }
+  }
+  message HumidityDetection {
+    int64 value = 1;
+  }
+  message HumiditySetpoint {
+    int64 setpoint = 1;
+  }
+  message Online {
+    bool value = 1;
+    Component.OfflineReason offline_reason = 2;
+  }
+  message Rebootable {
+  }
+  message Schedule {
+    message Period {
+      message Stage {
+        message Time {
+          int32 hour = 1;
+          int32 minute = 2;
+        }
+        Component.Schedule.Period.Stage.Time start_time = 1;
+        double heat_setpoint = 2;
+        double cool_setpoint = 3;
+      }
+      Component.Schedule.Period.Stage wake = 1;
+      Component.Schedule.Period.Stage leave = 2;
+      Component.Schedule.Period.Stage arrive = 3;
+      Component.Schedule.Period.Stage sleep = 4;
+    }
+    Component.Schedule.Period weekday_schedule = 1;
+    Component.Schedule.Period weekend_schedule = 2;
+    bool schedule_enabled = 3;
+    bool schedule_initialized = 4;
+  }
+  message SetpointLock {
+    bool enabled = 1;
+    double lower_cool = 2;
+    double lower_heat = 3;
+    double upper_cool = 4;
+    double upper_heat = 5;
+    double max_heat = 6;
+    double min_heat = 7;
+    double max_cool = 8;
+    double min_cool = 9;
+  }
+  message Setpoints {
+    double cool_setpoint = 1;
+    double heat_setpoint = 2;
+    double minimum_temperature = 3;
+    double maximum_temperature = 4;
+    double min_setpoint_difference_c = 5;
+    double min_setpoint_difference_f = 6;
+  }
+  message SmartComfortTargets {
+    message Setpoints {
+      double home = 1;
+      double away = 2;
+      double sleep = 3;
+      double vacation = 4;
+    }
+    Component.SmartComfortTargets.Setpoints cool_setpoints = 1;
+    Component.SmartComfortTargets.Setpoints heat_setpoints = 2;
+  }
+  message TemperatureDetection {
+    double current_temperature = 1;
+  }
+  message WiFi {
+    string ssid = 1;
+  }
+  message ZwaveDiagnostics {
+    string protocol_description = 1;
+  }
+  message DemandResponse {
+    enum EventStatus {
+      EVENT_STATUS_UNSPECIFIED = 0;
+      EVENT_STATUS_NORMAL = 1;
+      EVENT_STATUS_PRE_CONDITIONING = 2;
+      EVENT_STATUS_INACTIVE = 3;
+    }
+    message SetpointTarget {
+      enum TargetType {
+        UNSPECIFIED = 0;
+        COOL = 1;
+        HEAT = 2;
+      }
+      Component.DemandResponse.SetpointTarget.TargetType target_type = 1;
+      double setpoint = 2;
+    }
+    string event_id = 1;
+    bool active = 2;
+    google.protobuf.Timestamp start_time = 3;
+    google.protobuf.Timestamp end_time = 4;
+    Component.DemandResponse.SetpointTarget setpoint_target = 5;
+    Component.DemandResponse.EventStatus event_type = 6;
+    Component.DemandResponse.EventStatus event_status = 7;
+  }
+  message Battery {
+    enum Status {
+      UNSPECIFIED = 0;
+      NORMAL = 1;
+      LOW = 2;
+      CRITICAL = 3;
+    }
+    int32 battery_level = 1;
+    Component.Battery.Status battery_status = 2;
+  }
+  message FanSetting {
+    enum Mode {
+      UNSPECIFIED = 0;
+      FIFTEEN_MINUTE = 1;
+      THIRTY_MINUTE = 2;
+      FORTY_FIVE_MINUTE = 3;
+      SIXTY_MINUTE = 4;
+      ONE_TWENTY_MINUTE = 5;
+      TWO_FORTY_MINUTE = 6;
+      FOUR_EIGHTY_MINUTE = 7;
+      SEVEN_TWENTY_MINUTE = 8;
+      NINE_SIXTY_MINUTE = 9;
+      AUTO_LOW = 10;
+      AUTO_HIGH = 11;
+      ON_LOW = 12;
+      ON_HIGH = 13;
+    }
+    repeated Component.FanSetting.Mode modes_supported = 1;
+    Component.FanSetting.Mode current_mode = 2;
+    bool is_on = 3;
+  }
+  message HoldMode {
+    enum Mode {
+      UNSPECIFIED = 0;
+      BY_SCHEDULE = 1;
+      UNTIL_NEXT = 2;
+      TWO_HOURS = 3;
+      PERMANENT = 4;
+    }
+    Component.HoldMode.Mode mode = 2;
+  }
+  message HumidityMode {
+    enum Mode {
+      UNSPECIFIED = 0;
+      OFF = 1;
+      HUMIDIFY = 2;
+      DEHUMIDIFY = 3;
+    }
+    Component.HumidityMode.Mode mode = 1;
+    repeated Component.HumidityMode.Mode modes_supported = 2;
+  }
+  message OperatingModeSetting {
+    enum Mode {
+      UNSPECIFIED = 0;
+      OFF = 1;
+      HEAT = 2;
+      COOL = 3;
+      AUTO = 4;
+      EMERGENCY_HEAT = 5;
+      RESUME = 6;
+      FAN_ONLY = 7;
+      FURNACE = 8;
+      DRY_AIR = 9;
+      MOIST_AIR = 10;
+      AUTO_CHANGEOVER = 11;
+      ENERGY_SAVE_HEAT = 12;
+      ENERGY_SAVE_COOL = 13;
+      AWAY = 14;
+      ECO = 101;
+    }
+    repeated Component.OperatingModeSetting.Mode modes_supported = 1;
+    Component.OperatingModeSetting.Mode current_mode = 2;
+    Component.OperatingModeSetting.Mode last_active_mode = 3;
+  }
+  message OperatingState {
+    enum State {
+      UNSPECIFIED = 0;
+      IDLE = 1;
+      HEATING = 2;
+      COOLING = 3;
+      FAN_ON = 4;
+      ERROR = 5;
+    }
+    Component.OperatingState.State current_state = 1;
+    Component.OperatingState.State last_active_state = 2;
+  }
+  string id = 1;
+  oneof value {
+    Component.TemperatureDetection temperature_detection = 2;
+    Component.Setpoints setpoints = 3;
+    Component.FanSetting fan_setting = 4;
+    Component.ZwaveDiagnostics zwave_diagnostics = 5;
+    Component.HumidityDetection humidity_detection = 6;
+    Component.SetpointLock setpoint_lock = 8;
+    Component.Schedule schedule = 9;
+    Component.OperatingModeSetting operating_mode_setting = 10;
+    Component.OperatingState operating_state = 11;
+    Component.Battery battery = 12;
+    Component.HumidityMode humidity_mode = 14;
+    Component.HumiditySetpoint humidity_setpoint = 15;
+    Component.Deletable deletable = 16;
+    Component.Rebootable rebootable = 17;
+    Component.DeviceInfo device_info = 18;
+    Component.HoldMode hold_mode = 19;
+    Component.DemandResponse demand_response = 20;
+    Component.SmartComfortTargets smart_comfort_targets = 21;
+    Component.Online online = 22;
+    Component.WiFi wi_fi = 23;
+  }
+}
+
+message Ct100ThermostatDevice {
+}
+
+message Ct200ThermostatDevice {
+}
+
+message DeleteDeviceRequest {
+  int64 system_id = 1;
+  string device_id = 2;
+}
+
+message DeleteDeviceResponse {
+  message Failure {
+    int32 /* enum, type unresolved */ reason = 1;
+    string message = 2;
+  }
+  message Success {
+  }
+  oneof result {
+    DeleteDeviceResponse.Success success = 1;
+    DeleteDeviceResponse.Failure failure = 2;
+  }
+}
+
+message DemandResponseEasyEnrollmentRequest {
+  int64 system_id = 1;
+  RetailElectricProvider retail_electric_provider = 2;
+  int32 /* enum, type unresolved */ platform_source = 3;
+}
+
+message DemandResponseEasyEnrollmentResponse {
+}
+
+message DemandResponseEnrollmentRequest {
+  int64 system_id = 1;
+  RetailElectricProvider retail_electric_provider = 2;
+  string utility_account_number = 3;
+  int32 /* enum, type unresolved */ platform_source = 4;
+}
+
+message DemandResponseEnrollmentResponse {
+}
+
+message DemandResponseOptOutRequest {
+  int64 system_id = 1;
+  string device_id = 2;
+}
+
+message DemandResponseOptOutResponse {
+}
+
+message DismissAnomalyAlertRequest {
+  int64 system_id = 1;
+  string vendor_device_id = 2;
+}
+
+message DismissAnomalyAlertResponse {
+}
+
+message Ev2ThermostatDevice {
+}
+
+message Ev2ZThermostatDevice {
+}
+
+message GetAccountInfoRequest {
+  int64 system_id = 1;
+}
+
+message GetAccountInfoResponse {
+  int64 system_id = 1;
+  map<string, bool> features = 2;
+  repeated ServiceFieldMessage services = 3;
+}
+
+message GetAnomaliesRequest {
+  int64 system_id = 1;
+}
+
+message GetAnomaliesResponse {
+  repeated Anomaly anomalies = 1;
+}
+
+message GetClimateDevicesRequest {
+  int64 system_id = 1;
+}
+
+message GetClimateDevicesResponse {
+  repeated ClimateDevice climate_devices = 1;
+}
+
+message GetClimateDevicesStreamingRequest {
+  int64 system_id = 1;
+}
+
+message GetClimateDevicesStreamingResponse {
+  repeated ClimateDevice climate_devices = 1;
+  repeated string deleted_device_ids = 2;
+}
+
+message GetGlobalSettingsRequest {
+  int64 system_id = 1;
+}
+
+message GetGlobalSettingsResponse {
+  enum TemperatureUnits {
+    UNSPECIFIED = 0;
+    CELSIUS = 1;
+    FAHRENHEIT = 2;
+  }
+  GetGlobalSettingsResponse.TemperatureUnits temperature_units = 1;
+}
+
+message GetHVACFilterRequest {
+  int64 system_id = 1;
+  string device_id = 2;
+}
+
+message GetHVACFilterResponse {
+  HVACFilter filter = 1;
+}
+
+message GetSmartComfortEnabledRequest {
+  int64 system_id = 1;
+}
+
+message GetSmartComfortEnabledResponse {
+  bool is_smart_comfort_enabled = 1;
+}
+
+message GetSmartComfortOnboardingStatusRequest {
+  int64 system_id = 1;
+}
+
+message GetSmartComfortOnboardingStatusResponse {
+  bool is_onboarding_completed = 1;
+}
+
+message GetSmartComfortStateRequest {
+  int64 system_id = 1;
+}
+
+message GetSmartComfortStateResponse {
+  Component.OperatingState.State vacancy_state = 1;
+}
+
+message GetTechnicianDispatchEligibilityRequest {
+  int64 system_id = 1;
+}
+
+message GetTechnicianDispatchEligibilityResponse {
+  bool eligible = 1;
+}
+
+message GetTimeZoneRequest {
+  int64 system_id = 1;
+}
+
+message GetTimeZoneResponse {
+  TimeZones timezone = 1;
+}
+
+message HVACFilter {
+  enum InitialFilterResponse {
+    INITIAL_FILTER_RESPONSE_UNSPECIFIED = 0;
+    INITIAL_FILTER_RESPONSE_YES = 1;
+    INITIAL_FILTER_RESPONSE_NO = 2;
+    INITIAL_FILTER_RESPONSE_DONT_REMEMBER = 3;
+  }
+  enum ReminderSensitivity {
+    REMINDER_SENSITIVITY_UNSPECIFIED = 0;
+    REMINDER_SENSITIVITY_STANDARD = 1;
+    REMINDER_SENSITIVITY_HIGH = 2;
+  }
+  int64 system_id = 1;
+  string device_id = 2;
+  HVACFilter.ReminderSensitivity reminder_sensitivity = 3;
+  bool needs_replacement = 4;
+  google.protobuf.Timestamp last_replaced = 5;
+  google.protobuf.Timestamp snoozed_until = 6;
+  HVACFilter.InitialFilterResponse initial_filter_response = 7;
+  bool reminders_enabled = 8;
+  int32 snoozed_until_days = 9;
+}
+
+message IsSmartComfortEligibleRequest {
+  int64 system_id = 1;
+}
+
+message IsSmartComfortEligibleResponse {
+  bool is_smart_comfort_eligible = 1;
+}
+
+message NestThermostatDevice {
+}
+
+message PairThermostatRequest {
+  int64 system_id = 1;
+  repeated string existingdeviceids = 2;
+}
+
+message PairThermostatResponse {
+  ClimateDevice climate_device = 1;
+}
+
+message PegasusThermostatDevice {
+}
+
+message RebootThermostatRequest {
+  int64 system_id = 1;
+  string device_id = 2;
+  string component_id = 4;
+}
+
+message RebootThermostatResponse {
+}
+
+message ServiceFieldMessage {
+  string external_id = 1;
+  string type = 2;
+  bool disconnected = 3;
+}
+
+message SetCoolSetpointRequest {
+  int64 system_id = 1;
+  string device_id = 2;
+  string component_id = 5;
+  oneof setpoint {
+    double fahrenheit = 3;
+    double celsius = 4;
+  }
+}
+
+message SetCoolSetpointResponse {
+}
+
+message SetEnableFilterReminderRequest {
+  int64 system_id = 1;
+  string device_id = 2;
+  bool enabled = 3;
+}
+
+message SetEnableFilterReminderResponse {
+}
+
+message SetEnableSetpointLockRequest {
+  int64 system_id = 1;
+  bool enabled = 3;
+  oneof target {
+    string device_id = 2;
+    bool apply_to_all_thermostats = 5;
+  }
+}
+
+message SetEnableSetpointLockResponse {
+  message Thermostat {
+    string device_id = 1;
+    bool setpoints_auto_adjusted = 2;
+  }
+  repeated SetEnableSetpointLockResponse.Thermostat thermostats = 1;
+}
+
+message SetFanModeRequest {
+  int64 system_id = 1;
+  string device_id = 2;
+  Component.FanSetting.Mode mode = 3;
+  string component_id = 4;
+}
+
+message SetFanModeResponse {
+}
+
+message SetFilterReminderLevelRequest {
+  int64 system_id = 1;
+  string device_id = 2;
+  HVACFilter.ReminderSensitivity reminder_sensitivity = 3;
+}
+
+message SetFilterReminderLevelResponse {
+}
+
+message SetGlobalSettingsRequest {
+  enum TemperatureUnits {
+    UNSPECIFIED = 0;
+    CELSIUS = 1;
+    FAHRENHEIT = 2;
+  }
+  int64 system_id = 1;
+  SetGlobalSettingsRequest.TemperatureUnits temperature_units = 2;
+}
+
+message SetGlobalSettingsResponse {
+  GetGlobalSettingsResponse.TemperatureUnits temperature_units = 1;
+}
+
+message SetHVACFilterReminderSnoozedRequest {
+  int64 system_id = 1;
+  string device_id = 2;
+}
+
+message SetHVACFilterReminderSnoozedResponse {
+}
+
+message SetHVACFilterReplacedRequest {
+  int64 system_id = 1;
+  string device_id = 2;
+}
+
+message SetHVACFilterReplacedResponse {
+}
+
+message SetHeatSetpointRequest {
+  int64 system_id = 1;
+  string device_id = 2;
+  string component_id = 5;
+  oneof setpoint {
+    double fahrenheit = 3;
+    double celsius = 4;
+  }
+}
+
+message SetHeatSetpointResponse {
+}
+
+message SetHoldModeRequest {
+  int64 system_id = 1;
+  string device_id = 2;
+  Component.HoldMode.Mode mode = 3;
+  string component_id = 4;
+}
+
+message SetHoldModeResponse {
+}
+
+message SetHumidityModeRequest {
+  int64 system_id = 1;
+  string device_id = 2;
+  string component_id = 3;
+  Component.HumidityMode.Mode mode = 4;
+}
+
+message SetHumidityModeResponse {
+}
+
+message SetHumiditySetpointRequest {
+  int64 system_id = 1;
+  string device_id = 2;
+  string component_id = 3;
+  int64 percentage = 4;
+}
+
+message SetHumiditySetpointResponse {
+}
+
+message SetInitialFilterReplacementStatusRequest {
+  int64 system_id = 1;
+  string device_id = 2;
+  HVACFilter.InitialFilterResponse initial_filter_response = 3;
+}
+
+message SetInitialFilterReplacementStatusResponse {
+}
+
+message SetNameRequest {
+  int64 system_id = 1;
+  string device_id = 2;
+  string name = 3;
+  string component_id = 4;
+}
+
+message SetNameResponse {
+}
+
+message SetOperatingModeRequest {
+  int64 system_id = 1;
+  string device_id = 2;
+  Component.OperatingModeSetting.Mode mode = 3;
+  string component_id = 4;
+}
+
+message SetOperatingModeResponse {
+}
+
+message SetScheduleEnabledRequest {
+  int64 system_id = 1;
+  string device_id = 2;
+  string component_id = 3;
+  bool enabled = 4;
+}
+
+message SetScheduleEnabledResponse {
+}
+
+message SetScheduleRequest {
+  int64 system_id = 1;
+  string device_id = 2;
+  string component_id = 3;
+  Component.Schedule schedule = 4;
+}
+
+message SetScheduleResponse {
+}
+
+message SetSetpointLockRangeRequest {
+  message Celsius {
+    double lower = 3;
+    double upper = 4;
+  }
+  message Fahrenheit {
+    double lower = 3;
+    double upper = 4;
+  }
+  int64 system_id = 1;
+  oneof target {
+    string device_id = 2;
+    bool apply_to_all_thermostats = 6;
+  }
+  oneof range {
+    SetSetpointLockRangeRequest.Celsius celsiusrange = 3;
+    SetSetpointLockRangeRequest.Fahrenheit fahrenheitrange = 4;
+  }
+}
+
+message SetSetpointLockRangeResponse {
+  message Thermostat {
+    string device_id = 1;
+    bool setpoints_auto_adjusted = 2;
+  }
+  repeated SetSetpointLockRangeResponse.Thermostat thermostats = 1;
+}
+
+message SetSmartComfortEnabledRequest {
+  int64 system_id = 1;
+  bool enabled = 2;
+}
+
+message SetSmartComfortEnabledResponse {
+}
+
+message SetSmartComfortSetpointRequest {
+  int64 system_id = 1;
+  Component.OperatingState.State state = 2;
+  double cool_setpoint = 3;
+  double heat_setpoint = 4;
+  string device_id = 5;
+}
+
+message SetSmartComfortSetpointResponse {
+}
+
+message SetSmartComfortStateRequest {
+  int64 system_id = 1;
+  Component.OperatingState.State state = 2;
+}
+
+message SetSmartComfortStateResponse {
+}
+
+message SetTemperatureSetpointsRequest {
+  int64 system_id = 1;
+  string device_id = 2;
+  string component_id = 7;
+  oneof heat_setpoint {
+    double heat_fahrenheit = 3;
+    double heat_celsius = 4;
+  }
+  oneof cool_setpoint {
+    double cool_fahrenheit = 5;
+    double cool_celsius = 6;
+  }
+}
+
+message SetTemperatureSetpointsResponse {
+}
+
+message SetTimeZoneRequest {
+  int64 system_id = 1;
+  TimeZones timezone = 2;
+}
+
+message SetTimeZoneResponse {
+  TimeZones timezone = 1;
+}
+
+service ClimatePublic {
+  rpc DeleteDevice(DeleteDeviceRequest) returns (DeleteDeviceResponse);
+  rpc DemandResponseEasyEnrollment(DemandResponseEasyEnrollmentRequest) returns (DemandResponseEasyEnrollmentResponse);
+  rpc DemandResponseEnrollment(DemandResponseEnrollmentRequest) returns (DemandResponseEnrollmentResponse);
+  rpc DemandResponseOptOut(DemandResponseOptOutRequest) returns (DemandResponseOptOutResponse);
+  rpc DismissAnomalyAlert(DismissAnomalyAlertRequest) returns (DismissAnomalyAlertResponse);
+  rpc GetAccountInfo(GetAccountInfoRequest) returns (GetAccountInfoResponse);
+  rpc GetAnomalies(GetAnomaliesRequest) returns (GetAnomaliesResponse);
+  rpc GetClimateDevices(GetClimateDevicesRequest) returns (GetClimateDevicesResponse);
+  rpc GetClimateDevicesStreaming(GetClimateDevicesStreamingRequest) returns (stream GetClimateDevicesStreamingResponse);
+  rpc GetGlobalSettings(GetGlobalSettingsRequest) returns (GetGlobalSettingsResponse);
+  rpc GetHVACFilter(GetHVACFilterRequest) returns (GetHVACFilterResponse);
+  rpc GetSmartComfortEnabled(GetSmartComfortEnabledRequest) returns (GetSmartComfortEnabledResponse);
+  rpc GetTechnicianDispatchEligibility(GetTechnicianDispatchEligibilityRequest) returns (GetTechnicianDispatchEligibilityResponse);
+  rpc GetTimeZone(GetTimeZoneRequest) returns (GetTimeZoneResponse);
+  rpc PairThermostat(PairThermostatRequest) returns (PairThermostatResponse);
+  rpc RebootThermostat(RebootThermostatRequest) returns (RebootThermostatResponse);
+  rpc SetCoolSetpoint(SetCoolSetpointRequest) returns (SetCoolSetpointResponse);
+  rpc SetEnableFilterReminder(SetEnableFilterReminderRequest) returns (SetEnableFilterReminderResponse);
+  rpc SetEnableSetpointLockLimit(SetEnableSetpointLockRequest) returns (SetEnableSetpointLockResponse);
+  rpc SetFanMode(SetFanModeRequest) returns (SetFanModeResponse);
+  rpc SetFilterReminderLevel(SetFilterReminderLevelRequest) returns (SetFilterReminderLevelResponse);
+  rpc SetGlobalSettings(SetGlobalSettingsRequest) returns (SetGlobalSettingsResponse);
+  rpc SetHVACFilterReminderSnoozed(SetHVACFilterReminderSnoozedRequest) returns (SetHVACFilterReminderSnoozedResponse);
+  rpc SetHVACFilterReplaced(SetHVACFilterReplacedRequest) returns (SetHVACFilterReplacedResponse);
+  rpc SetHeatSetpoint(SetHeatSetpointRequest) returns (SetHeatSetpointResponse);
+  rpc SetHoldMode(SetHoldModeRequest) returns (SetHoldModeResponse);
+  rpc SetHumidityMode(SetHumidityModeRequest) returns (SetHumidityModeResponse);
+  rpc SetHumiditySetpoint(SetHumiditySetpointRequest) returns (SetHumiditySetpointResponse);
+  rpc SetInitialFilterReplacementStatus(SetInitialFilterReplacementStatusRequest) returns (SetInitialFilterReplacementStatusResponse);
+  rpc SetName(SetNameRequest) returns (SetNameResponse);
+  rpc SetOperatingMode(SetOperatingModeRequest) returns (SetOperatingModeResponse);
+  rpc SetSchedule(SetScheduleRequest) returns (SetScheduleResponse);
+  rpc SetScheduleEnabled(SetScheduleEnabledRequest) returns (SetScheduleEnabledResponse);
+  rpc SetSetpointLockRange(SetSetpointLockRangeRequest) returns (SetSetpointLockRangeResponse);
+  rpc SetSmartComfortEnabled(SetSmartComfortEnabledRequest) returns (SetSmartComfortEnabledResponse);
+  rpc SetTemperatureSetpoints(SetTemperatureSetpointsRequest) returns (SetTemperatureSetpointsResponse);
+  rpc SetTimeZone(SetTimeZoneRequest) returns (SetTimeZoneResponse);
+}

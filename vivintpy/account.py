@@ -41,6 +41,7 @@ class Account:
         """Initialize an account."""
         self.__connected = False
         self.__load_devices = False
+        self.__climate_updates = False
         self.__pubnub: PubNubAsyncio | None = None
         self.__pubnub_listener: VivintPubNubSubscribeListener | None = None
         self._api = VivintSkyApi(
@@ -73,6 +74,7 @@ class Account:
         _LOGGER.debug("Connecting to VivintSky")
 
         self.__load_devices = load_devices
+        self.__climate_updates = subscribe_for_realtime_updates
 
         # initialize the vivintsky cloud session
         authuser_data = await self.api.connect()
@@ -91,6 +93,9 @@ class Account:
     async def disconnect(self) -> None:
         """Disconnect from the API."""
         _LOGGER.debug("Disconnecting from VivintSky")
+        await asyncio.gather(
+            *(system.stop_climate_updates() for system in self.systems)
+        )
         if self.connected and self.__pubnub:
             self.__pubnub.remove_listener(self.__pubnub_listener)
             await self.__pubnub_unsubscribe_all()
@@ -151,14 +156,16 @@ class Account:
                     full_system_data = await self.api.get_system_data(
                         system_data[SystemAttribute.PANEL_ID]
                     )
-                    self.systems.append(
-                        System(
-                            data=full_system_data,
-                            api=self.api,
-                            name=system_data.get(SystemAttribute.SYSTEM_NICKNAME),
-                            is_admin=system_data.get(SystemAttribute.ADMIN, False),
-                        )
+                    system = System(
+                        data=full_system_data,
+                        api=self.api,
+                        name=system_data.get(SystemAttribute.SYSTEM_NICKNAME),
+                        is_admin=system_data.get(SystemAttribute.ADMIN, False),
                     )
+                    self.systems.append(system)
+                    await system.load_climate_devices()
+                    if self.__climate_updates:
+                        system.start_climate_updates()
 
             _LOGGER.debug(
                 "Refreshed %s system(s)",

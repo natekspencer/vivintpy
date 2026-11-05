@@ -17,8 +17,8 @@ dependencies = [
     "aiohttp>=3.8.5",
     "certifi>=2022.9.24",
     "pubnub>=7",
-    "grpcio>=1.51.1",
-    "protobuf>=4.23.1",
+    "grpcio>=1.78.0",
+    "protobuf>=6.32.0",
     "pyjwt>=2.9.0",
 ]
 dynamic = ["version"]
@@ -29,7 +29,7 @@ Repository = "https://github.com/natekspencer/vivintpy"
 
 [dependency-groups]
 dev = [
-    "grpcio-tools>=1.76,<2",
+    "grpcio-tools>=1.78,<2",
     "mypy>=1.19,<3",
     "pre-commit>=4.5,<5",
     "pytest>=9.0,<10",

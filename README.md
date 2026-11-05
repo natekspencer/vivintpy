@@ -38,6 +38,14 @@ It currently has support for the following device types:
   - smoke/fire
   - etc
 
+Thermostats, including Google Nest thermostats linked to the system, are read from and controlled through the Vivint climate service and are kept up to date by a realtime stream. Temperatures are in degrees Celsius.
+
+```python
+for device in account.systems[0].alarm_panels[0].devices:
+    if isinstance(device, Thermostat):
+        await device.set_set_points(heat=18.0, cool=24.0)
+```
+
 In addition, it integrates with PubNub to receive real-time updates for devices. This subscription stops receiving notifications around 15-20 minutes unless a call is made to the Vivint Sky API periodically. This **might** be related to the cookie expiration since it expires 20 minutes after the last API call was received. If another client connects, however, the notifications start to stream again for all currently connected clients.
 
 ## Usage
@@ -48,8 +56,6 @@ See demo.py for a demonstration on how to use this library.
 
 - write a better readme
 - write some documentation
-- add advanced support for:
-  - thermostats
 - add tests
 
 ---
