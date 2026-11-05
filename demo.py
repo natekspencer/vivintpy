@@ -39,9 +39,11 @@ async def main() -> None:
     _LOGGER.debug("Demo started")
 
     def camera_motion_callback(device: VivintDevice) -> None:
+        """Log motion from a camera."""
         _LOGGER.debug("Motion detected from camera: %s", device)
 
     def alarm_panel_update_callback(panel: AlarmPanel) -> None:
+        """Log a change to an alarm panel."""
         # refreshes also emit updates, so only log actual changes
         status = (panel.state, panel.changed_by)
         if status != panel_statuses.get(panel):
@@ -54,6 +56,7 @@ async def main() -> None:
             )
 
     def refresh_token_changed(_: str) -> None:
+        """Log that the refresh token changed, without showing it."""
         # Each refresh token can only be used once, so a real application should save
         # this one now and use it to log in next time, instead of a password.
         _LOGGER.debug("Refresh token changed")
