@@ -116,6 +116,32 @@ async def test_refresh_token_changed_callback() -> None:
     assert [call.args[0] for call in callback.call_args_list] == ["second", "third"]
 
 
+async def test_refresh_token_changed_callback_for_a_supplied_token() -> None:
+    """Test a different token is reported even if the response has no new one."""
+    callback = MagicMock()
+    post = AsyncMock(return_value=token_response(None))
+    api = create_api(post, refresh_token="first", on_refresh_token_changed=callback)
+
+    await api.refresh_token("other")
+
+    callback.assert_called_once_with("other")
+    assert api.tokens["refresh_token"] == "other"
+
+
+async def test_connect_with_a_valid_session_does_not_refresh() -> None:
+    """Test the default session isn't renewed while it is still valid."""
+    post = AsyncMock(return_value=token_response("second"))
+    api: Any = VivintSkyApi(username=USERNAME, refresh_token="first")
+    api._VivintSkyApi__post = post
+    api.get_authuser_data = AsyncMock(return_value={"u": {}})
+
+    await api.connect()
+    await api.connect()
+    await api.disconnect()
+
+    assert posted_tokens(post) == ["first"]
+
+
 async def test_connect_without_credentials() -> None:
     """Test there is a clear error when there is nothing to log in with."""
     post = AsyncMock()
@@ -155,6 +181,10 @@ async def test_account_refresh_raises_authentication_errors() -> None:
 @pytest.mark.parametrize(
     "error", [VivintSkyApiError("Unavailable"), ClientConnectionError()]
 )
-async def test_account_refresh_logs_connection_errors(error: Exception) -> None:
-    """Test a temporary failure doesn't raise."""
+async def test_account_refresh_logs_connection_errors(
+    error: Exception, caplog: pytest.LogCaptureFixture
+) -> None:
+    """Test a temporary failure is logged and doesn't raise."""
     await create_account(error).refresh()
+
+    assert "Unable to refresh system(s)" in caplog.text

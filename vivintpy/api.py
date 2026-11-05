@@ -92,7 +92,7 @@ class VivintSkyApi:
         """Connect to VivintSky Cloud Service."""
         # one at a time, as refreshing with the same token twice invalidates it
         async with self.__session_lock:
-            if not (self.__has_custom_client_session and self.is_session_valid()):
+            if not self.is_session_valid():
                 await self.__get_vivintsky_session(self.__username, self.__password)
         authuser_data = await self.get_authuser_data()
         if not authuser_data:
@@ -138,8 +138,7 @@ class VivintSkyApi:
             data={"grant_type": "refresh_token", "refresh_token": refresh_token},
         )
         assert resp
-        self.__refresh_token = refresh_token
-        self.__store_token(resp)
+        self.__store_token({"refresh_token": refresh_token, **resp})
 
     async def get_authuser_data(self) -> dict:
         """
