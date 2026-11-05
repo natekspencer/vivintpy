@@ -123,6 +123,11 @@ class System(Entity):
                 return
 
             alarm_panel.handle_pubnub_message(message)
+        elif message_type == "adaptive_home_settings":
+            # Smart Comfort's home or away state, which nothing uses yet
+            _LOGGER.debug(
+                "Ignoring adaptive home settings for system %s: %s", self.id, message
+            )
         else:
             _LOGGER.warning(
                 "Unknown message received by system %s: %s", self.id, message
