@@ -59,6 +59,7 @@ source = "uv-dynamic-versioning"
 
 [tool.pytest.ini_options]
 addopts = ["--cov=./"]
+asyncio_mode = "auto"
 
 [tool.uv]
 cache-keys = [{ file = "pyproject.toml" }, { git = { commit = true, tags = true }}]

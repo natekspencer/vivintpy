@@ -1,7 +1,12 @@
 """
 Demo.
 
-Run with your credentials in a .env file:
+Put your credentials in a .env file, using lowercase names:
+
+    username=you@example.com
+    password='your-password'
+
+Then run:
 
     uv run --env-file .env python demo.py
 
@@ -57,39 +62,43 @@ async def main() -> None:
 
     account = Account(
         username=os.environ["username"],
-        password=os.environ["password"],
         on_refresh_token_changed=refresh_token_changed,
     )
     try:
-        await account.connect(load_devices=True, subscribe_for_realtime_updates=True)
-    except VivintSkyApiMfaRequiredError:
-        code = input("Enter MFA Code: ")
-        await account.verify_mfa(code)
-        _LOGGER.debug("MFA verified")
-        # verify_mfa doesn't subscribe to pubnub, so do it here
-        await account.subscribe_for_realtime_updates()
-
-    _LOGGER.debug("Discovered systems & devices:")
-    for system in account.systems:
-        _LOGGER.debug(f"\tSystem {system.id}")
-        for alarm_panel in system.alarm_panels:
-            _LOGGER.debug(
-                f"\t\tAlarm panel {alarm_panel.id}:{alarm_panel.partition_id} ({alarm_panel.software_version})"
+        try:
+            await account.connect(
+                load_devices=True,
+                subscribe_for_realtime_updates=True,
+                password=os.environ["password"],
             )
-            panel_statuses[alarm_panel] = (alarm_panel.state, alarm_panel.changed_by)
-            alarm_panel.on(
-                UPDATE,
-                lambda _, panel=alarm_panel: alarm_panel_update_callback(panel),
-            )
-            for device in alarm_panel.devices:
-                _LOGGER.debug(f"\t\t\tDevice: {device} ({device.software_version})")
-                if isinstance(device, Camera):
-                    device.on(
-                        MOTION_DETECTED,
-                        lambda event: camera_motion_callback(event["device"]),
-                    )
+        except VivintSkyApiMfaRequiredError:
+            code = input("Enter MFA Code: ")
+            await account.verify_mfa(code)
+            _LOGGER.debug("MFA verified")
 
-    try:
+        _LOGGER.debug("Discovered systems & devices:")
+        for system in account.systems:
+            _LOGGER.debug(f"\tSystem {system.id}")
+            for alarm_panel in system.alarm_panels:
+                _LOGGER.debug(
+                    f"\t\tAlarm panel {alarm_panel.id}:{alarm_panel.partition_id} ({alarm_panel.software_version})"
+                )
+                panel_statuses[alarm_panel] = (
+                    alarm_panel.state,
+                    alarm_panel.changed_by,
+                )
+                alarm_panel.on(
+                    UPDATE,
+                    lambda event: alarm_panel_update_callback(event["device"]),
+                )
+                for device in alarm_panel.devices:
+                    _LOGGER.debug(f"\t\t\tDevice: {device} ({device.software_version})")
+                    if isinstance(device, Camera):
+                        device.on(
+                            MOTION_DETECTED,
+                            lambda event: camera_motion_callback(event["device"]),
+                        )
+
         while True:
             await asyncio.sleep(300)
             await account.refresh()
