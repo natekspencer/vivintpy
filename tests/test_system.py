@@ -34,7 +34,7 @@ def test_adaptive_home_settings_message_is_not_a_warning(
     with caplog.at_level(logging.DEBUG, logger="vivintpy.system"):
         system.handle_pubnub_message(ADAPTIVE_HOME_SETTINGS)
 
-    assert not [r for r in caplog.records if r.levelno >= logging.WARNING]
+    assert [record.levelno for record in caplog.records] == [logging.DEBUG]
     assert "Ignoring adaptive home settings" in caplog.text
 
 
@@ -44,4 +44,5 @@ def test_unknown_message_is_a_warning(
     """Test a message type that isn't handled is still reported."""
     system.handle_pubnub_message({"t": "something_new"})
 
+    assert [record.levelno for record in caplog.records] == [logging.WARNING]
     assert "Unknown message received" in caplog.text
