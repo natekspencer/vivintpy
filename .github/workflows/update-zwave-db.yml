@@ -29,6 +29,8 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v8
         with:
+          # PRs opened with the default token don't start CI without approval
+          token: ${{ secrets.BUMP_PR_TOKEN || github.token }}
           commit-message: Update Z-Wave device database
           title: Update Z-Wave device database
           body: Update Z-Wave device database
