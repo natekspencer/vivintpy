@@ -9,6 +9,7 @@ import logging
 import os
 import re
 from collections.abc import Callable, Coroutine, Iterable
+from datetime import UTC, datetime
 from typing import Any, TypeVar
 from warnings import warn
 
@@ -21,6 +22,11 @@ def first_or_none(lst: Iterable[_T], predicate: Callable[[_T], Any]) -> _T | Non
     """Return the first occurrence or `None` of an iterable, given a predicate."""
     filter_iter = filter(predicate, lst)
     return next(filter_iter, None)
+
+
+def from_microseconds(value: int) -> datetime:
+    """Convert microseconds since the epoch to an aware UTC datetime."""
+    return datetime.fromtimestamp(value / 1_000_000, tz=UTC)
 
 
 def add_async_job(
