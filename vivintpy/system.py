@@ -83,6 +83,22 @@ class System(Entity):
                 return
             user.handle_pubnub_message(d)
 
+    def __update_changed_by(self, data: dict) -> None:
+        """
+        Update the alarm panels with what armed or disarmed the system.
+
+        These events are sent for the system rather than a partition, so they go to
+        the panels in the event's state. They can arrive before the panel's own state
+        update, so they go to every panel if none match.
+        """
+        for key in (Attribute.SECURITY_ARMED, Attribute.SECURITY_DISARMED):
+            if not isinstance(event := data.get(key), dict):
+                continue
+            state = event.get(Attribute.SECURITY_STATE)
+            panels = [panel for panel in self.alarm_panels if panel.state == state]
+            for panel in panels or self.alarm_panels:
+                panel.update_changed_by(event.get(Attribute.SECURITY_NAME))
+
     def handle_pubnub_message(self, message: dict) -> None:
         """Handle a pubnub message."""
         if (message_type := message[PubNubMessageAttribute.TYPE]) == "account_system":
@@ -95,6 +111,7 @@ class System(Entity):
                     self.update_user_data(data[Attribute.USERS])
                     del data[Attribute.USERS]
                 self.update_data(data)
+                self.__update_changed_by(data)
 
         elif message_type == "account_partition":
             # this is a message for one of the devices attached to this system
