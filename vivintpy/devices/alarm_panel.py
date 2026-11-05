@@ -14,6 +14,7 @@ from ..const import (
     PubNubOperatorAttribute,
     SystemAttribute,
 )
+from ..entity import UPDATE
 from ..enums import ArmedState, DeviceType
 from ..exceptions import VivintSkyApiError
 from ..utils import add_async_job, first_or_none
@@ -37,6 +38,7 @@ class AlarmPanel(VivintDevice):
         super().__init__(data)
         self.devices: list[VivintDevice] = []
         self.unregistered_devices: dict[int, tuple] = {}
+        self.__changed_by: str | None = None
 
         self.__parse_data(data=data, init=True)
 
@@ -116,6 +118,16 @@ class AlarmPanel(VivintDevice):
     def state(self) -> ArmedState:
         """Return the panel's armed state."""
         return ArmedState(self.data.get(Attribute.STATE))  # type: ignore
+
+    @property
+    def changed_by(self) -> str | None:
+        """Return what last armed or disarmed the panel, such as a user's name."""
+        return self.__changed_by
+
+    def update_changed_by(self, changed_by: str | None) -> None:
+        """Update what last armed or disarmed the panel."""
+        self.__changed_by = changed_by
+        self.emit(UPDATE, {"data": {}})
 
     @property
     def credentials(self) -> dict:
