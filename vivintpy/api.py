@@ -7,6 +7,7 @@ import json
 import logging
 import ssl
 import urllib.parse
+import warnings
 from collections.abc import Callable
 from typing import Any
 
@@ -39,6 +40,11 @@ API_ENDPOINT = "https://www.vivintsky.com/api"
 AUTH_ENDPOINT = "https://id.vivint.com"
 GRPC_ENDPOINT = "grpc.vivintsky.com:50051"
 
+PASSWORD_DEPRECATION = (
+    "Passing password to the constructor is deprecated and will be removed in "
+    "2027.1.0. Pass it to connect() instead, so that it isn't stored."
+)
+
 
 class VivintSkyApi:
     """Class to communicate with the VivintSky API."""
@@ -56,7 +62,11 @@ class VivintSkyApi:
 
         Refresh tokens can only be used once, and reusing one also invalidates the
         newest token, so `on_refresh_token_changed` should save the new token.
+
+        Passing `password` here is deprecated, pass it to `connect` instead.
         """
+        if password is not None:
+            warnings.warn(PASSWORD_DEPRECATION, DeprecationWarning, stacklevel=2)
         self.__username = username
         self.__password = password
         self.__refresh_token = refresh_token
@@ -65,6 +75,7 @@ class VivintSkyApi:
         self.__on_refresh_token_changed = on_refresh_token_changed
         self.__session_lock = asyncio.Lock()
         self.__code_verifier: str | None = None
+        self.__mfa_password: str | None = None
         self.__mfa_pending = False
         self.__mfa_type = "code"
         self.__token: dict | None = None
@@ -88,12 +99,27 @@ class VivintSkyApi:
             return False
         return True
 
-    async def connect(self) -> dict:
-        """Connect to VivintSky Cloud Service."""
+    def _set_deprecated_password(self, password: str | None) -> None:
+        """Keep a password from `Account`, which has already warned about it."""
+        self.__password = password
+
+    async def connect(self, password: str | None = None) -> dict:
+        """
+        Connect to VivintSky Cloud Service.
+
+        A password is only needed without a valid refresh token. It's not kept after
+        logging in, so if the refresh token stops working, call this with it again.
+        """
         # one at a time, as refreshing with the same token twice invalidates it
         async with self.__session_lock:
             if not self.is_session_valid():
-                await self.__get_vivintsky_session(self.__username, self.__password)
+                password = password or self.__password
+                try:
+                    await self.__get_vivintsky_session(self.__username, password)
+                except VivintSkyApiMfaRequiredError:
+                    # verify_mfa has to send the password again
+                    self.__mfa_password = password
+                    raise
         authuser_data = await self.get_authuser_data()
         if not authuser_data:
             raise VivintSkyApiAuthenticationError("Unable to login to Vivint")
@@ -101,6 +127,8 @@ class VivintSkyApi:
 
     async def disconnect(self) -> None:
         """Disconnect from VivintSky Cloud Service."""
+        self.__mfa_password = None
+        self.__mfa_pending = False
         if not self.__has_custom_client_session:
             await self.__client_session.close()
 
@@ -115,7 +143,7 @@ class VivintSkyApi:
                 {
                     self.__mfa_type: code,
                     "username": self.__username,
-                    "password": self.__password,
+                    "password": self.__mfa_password or self.__password,
                 }
             ),
         )
@@ -497,6 +525,7 @@ class VivintSkyApi:
         previous = self.__refresh_token
         self.__token = {"refresh_token": previous, **token}
         self.__refresh_token = self.__token["refresh_token"]
+        self.__mfa_password = None
         if (
             self.__on_refresh_token_changed
             and self.__refresh_token
@@ -509,9 +538,17 @@ class VivintSkyApi:
     ) -> None:
         """Perform PKCE oauth login."""
         if self.__refresh_token:
-            await self.refresh_token(self.__refresh_token)
-            if self.is_session_valid():
-                return
+            try:
+                await self.refresh_token(self.__refresh_token)
+            except VivintSkyApiMfaRequiredError:
+                raise
+            except VivintSkyApiAuthenticationError:
+                if not password:
+                    raise
+                self.__refresh_token = None
+            else:
+                if self.is_session_valid():
+                    return
 
         client_id = "ios"
         redirect_uri = "vivint://app/oauth_redirect"
@@ -570,8 +607,7 @@ class VivintSkyApi:
             self.__mfa_type = "mfa"
             raise VivintSkyApiMfaRequiredError(AuthenticationResponse.MFA_REQUIRED)
 
-        assert resp
-        self.__token = resp
+        self.__store_token(resp)
 
     async def __exchange_auth_code(self, auth_code: str) -> None:
         """Exchange an authorization code for an access token."""
