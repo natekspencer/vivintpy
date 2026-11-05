@@ -53,7 +53,29 @@ OPERATING_STATES = {
     "HEATING": OperatingState.HEATING,
     "COOLING": OperatingState.COOLING,
     "ERROR": OperatingState.UNKNOWN,
+    "UNKNOWN": OperatingState.UNKNOWN,
 }
+
+
+def _enum_name(enum_type: Any, value: int) -> str:
+    """Return the name of an enum value, or `UNKNOWN` if the proto doesn't define it."""
+    try:
+        return str(enum_type.Name(value))
+    except ValueError:
+        return "UNKNOWN"
+
+
+def _enum_value(enum_type: Any, name: str) -> int:
+    """Return the value of an enum name, raising `ValueError` if it isn't defined."""
+    try:
+        return int(enum_type.Value(name))
+    except ValueError:
+        raise ValueError(f"Unsupported value: {name}") from None
+
+
+def _set_value(value: float) -> float | None:
+    """Return a proto3 double that has no presence tracking, `None` if it is unset."""
+    return value or None
 
 
 class ClimateThermostat(Thermostat):
@@ -89,14 +111,22 @@ class ClimateThermostat(Thermostat):
         the components already known.
         """
         assert self.alarm_panel
-        components = {component.id: component for component in self._device.components}
-        components.update({component.id: component for component in device.components})
         merged = climate_pb2.ClimateDevice()
-        merged.CopyFrom(device)
+        merged.CopyFrom(self._device)
+        if device.name:
+            merged.name = device.name
+        # `is_online` has no presence tracking, so it is only trusted on updates that
+        # carry the device's identity
+        if device.name or device.WhichOneof("details"):
+            merged.is_online = device.is_online
+        if kind := device.WhichOneof("details"):
+            getattr(merged, kind).CopyFrom(getattr(device, kind))
+        components = {component.id: component for component in merged.components}
+        components.update({component.id: component for component in device.components})
         del merged.components[:]
         merged.components.extend(components.values())
         self._device = merged
-        self.update_data(self._build_data(device, self.alarm_panel))
+        self.update_data(self._build_data(merged, self.alarm_panel))
 
     def _component(self, kind: str) -> Any | None:
         """Return the component of the given kind, if the device has one."""
@@ -125,7 +155,7 @@ class ClimateThermostat(Thermostat):
         fan_setting = self._component("fan_setting")
         modes = (
             [
-                FAN_MODES.get(Component.FanSetting.Mode.Name(mode))
+                FAN_MODES.get(_enum_name(Component.FanSetting.Mode, mode))
                 for mode in fan_setting.modes_supported
             ]
             if fan_setting
@@ -160,25 +190,25 @@ class ClimateThermostat(Thermostat):
     def cool_set_point(self) -> float | None:
         """Return the cool set point of the thermostat."""
         setpoints = self._component("setpoints")
-        return setpoints.cool_setpoint if setpoints else None
+        return _set_value(setpoints.cool_setpoint) if setpoints else None
 
     @property
     def heat_set_point(self) -> float | None:
         """Return the heat set point of the thermostat."""
         setpoints = self._component("setpoints")
-        return setpoints.heat_setpoint if setpoints else None
+        return _set_value(setpoints.heat_setpoint) if setpoints else None
 
     @property
     def maximum_temperature(self) -> float | None:
         """Return the maximum temperature of the thermostat."""
         setpoints = self._component("setpoints")
-        return setpoints.maximum_temperature if setpoints else None
+        return _set_value(setpoints.maximum_temperature) if setpoints else None
 
     @property
     def minimum_temperature(self) -> float | None:
         """Return the minimum temperature of the thermostat."""
         setpoints = self._component("setpoints")
-        return setpoints.minimum_temperature if setpoints else None
+        return _set_value(setpoints.minimum_temperature) if setpoints else None
 
     @property
     def temperature(self) -> float | None:
@@ -199,7 +229,8 @@ class ClimateThermostat(Thermostat):
         if not fan_setting:
             return FanMode.UNKNOWN
         return FAN_MODES.get(
-            Component.FanSetting.Mode.Name(fan_setting.current_mode), FanMode.UNKNOWN
+            _enum_name(Component.FanSetting.Mode, fan_setting.current_mode),
+            FanMode.UNKNOWN,
         )
 
     @property
@@ -215,7 +246,7 @@ class ClimateThermostat(Thermostat):
         if not hold:
             return HoldMode.UNKNOWN
         return HoldMode.__members__.get(
-            Component.HoldMode.Mode.Name(hold.mode), HoldMode.UNKNOWN
+            _enum_name(Component.HoldMode.Mode, hold.mode), HoldMode.UNKNOWN
         )
 
     @property
@@ -225,7 +256,7 @@ class ClimateThermostat(Thermostat):
         if not setting:
             return OperatingMode.UNKNOWN
         return OperatingMode.__members__.get(
-            Component.OperatingModeSetting.Mode.Name(setting.current_mode),
+            _enum_name(Component.OperatingModeSetting.Mode, setting.current_mode),
             OperatingMode.UNKNOWN,
         )
 
@@ -236,7 +267,7 @@ class ClimateThermostat(Thermostat):
         if not state:
             return OperatingState.UNKNOWN
         return OPERATING_STATES.get(
-            Component.OperatingState.State.Name(state.current_state),
+            _enum_name(Component.OperatingState.State, state.current_state),
             OperatingState.IDLE,
         )
 
@@ -244,36 +275,60 @@ class ClimateThermostat(Thermostat):
         """Set the state of the thermostat."""
         heat = kwargs.pop(Attribute.HEAT_SET_POINT, None)
         cool = kwargs.pop(Attribute.COOL_SET_POINT, None)
-        if heat is not None or cool is not None:
-            await self.set_set_points(heat=heat, cool=cool)
-        if (fan_mode := kwargs.pop(Attribute.FAN_MODE, None)) is not None:
+        fan_mode = kwargs.pop(Attribute.FAN_MODE, None)
+        operating_mode = kwargs.pop(Attribute.OPERATING_MODE, None)
+        hold_mode = kwargs.pop(Attribute.HOLD_MODE, None)
+        if kwargs:
+            raise ValueError(f"Unsupported thermostat attributes: {', '.join(kwargs)}")
+
+        # Resolve every value before sending anything, so a bad one sends no RPCs
+        requests: list[tuple[str, Any, str, dict[str, Any]]] = []
+        if fan_mode is not None:
             name = FAN_MODE_NAMES.get(FanMode(fan_mode))
             if name is None:
                 raise ValueError(f"Unsupported fan mode: {fan_mode!r}")
-            await self._send(
-                "SetFanMode",
-                climate_pb2.SetFanModeRequest,
-                "fan_setting",
-                mode=Component.FanSetting.Mode.Value(name),
+            requests.append(
+                (
+                    "SetFanMode",
+                    climate_pb2.SetFanModeRequest,
+                    "fan_setting",
+                    {"mode": Component.FanSetting.Mode.Value(name)},
+                )
             )
-        if (operating_mode := kwargs.pop(Attribute.OPERATING_MODE, None)) is not None:
-            await self._send(
-                "SetOperatingMode",
-                climate_pb2.SetOperatingModeRequest,
-                "operating_mode_setting",
-                mode=Component.OperatingModeSetting.Mode.Value(
-                    OperatingMode(operating_mode).name
-                ),
+        if operating_mode is not None:
+            requests.append(
+                (
+                    "SetOperatingMode",
+                    climate_pb2.SetOperatingModeRequest,
+                    "operating_mode_setting",
+                    {
+                        "mode": _enum_value(
+                            Component.OperatingModeSetting.Mode,
+                            OperatingMode(operating_mode).name,
+                        )
+                    },
+                )
             )
-        if (hold_mode := kwargs.pop(Attribute.HOLD_MODE, None)) is not None:
-            await self._send(
-                "SetHoldMode",
-                climate_pb2.SetHoldModeRequest,
-                "hold_mode",
-                mode=Component.HoldMode.Mode.Value(HoldMode(hold_mode).name),
+        if hold_mode is not None:
+            requests.append(
+                (
+                    "SetHoldMode",
+                    climate_pb2.SetHoldModeRequest,
+                    "hold_mode",
+                    {
+                        "mode": _enum_value(
+                            Component.HoldMode.Mode, HoldMode(hold_mode).name
+                        )
+                    },
+                )
             )
-        if kwargs:
-            raise ValueError(f"Unsupported thermostat attributes: {', '.join(kwargs)}")
+        for _, _, component, _ in requests:
+            self._component_id(component)
+
+        if heat is not None or cool is not None:
+            await self.set_set_points(heat=heat, cool=cool)
+        for method, request_type, component, fields in requests:
+            await self._send(method, request_type, component, **fields)
 
     async def set_set_points(
         self, heat: float | None = None, cool: float | None = None

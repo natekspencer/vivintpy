@@ -108,10 +108,6 @@ class Account:
             _LOGGER.debug("Loading devices")
             await self.refresh(authuser_data)
 
-            if subscribe_for_realtime_updates:
-                for system in self.systems:
-                    system.start_climate_updates()
-
     async def disconnect(self) -> None:
         """Disconnect from the API."""
         _LOGGER.debug("Disconnecting from VivintSky")
@@ -204,6 +200,8 @@ class Account:
                     )
                     self.systems.append(system)
                     await system.load_climate_devices()
+                    if self.__subscribe_for_realtime_updates:
+                        system.start_climate_updates()
 
             _LOGGER.debug(
                 "Refreshed %s system(s)",

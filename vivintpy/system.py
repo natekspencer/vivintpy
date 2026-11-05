@@ -38,6 +38,7 @@ HISTORY_RETRY_DELAYS = (0.5, 1, 2, 4)
 HISTORY_TIME_TOLERANCE = timedelta(seconds=5)
 CLIMATE_RETRY_MIN = 5
 CLIMATE_RETRY_MAX = 300
+CLIMATE_REFRESH_DELAY = 2
 
 
 class System(Entity):
@@ -62,6 +63,7 @@ class System(Entity):
         self._stale_dvrs: list[SpaceMonkeyDvr] = []
         self._climate_task: asyncio.Task | None = None
         self._climate_refresh_task: asyncio.Task | None = None
+        self._climate_stream_connected = False
 
     @property
     def dvr(self) -> SpaceMonkeyDvr | None:
@@ -154,7 +156,11 @@ class System(Entity):
     @property
     def climate_updates_running(self) -> bool:
         """Return `True` if thermostat updates are being received in real time."""
-        return self._climate_task is not None and not self._climate_task.done()
+        return (
+            self._climate_task is not None
+            and not self._climate_task.done()
+            and self._climate_stream_connected
+        )
 
     async def load_climate_devices(self) -> None:
         """Load the thermostats managed by the climate service."""
@@ -165,11 +171,11 @@ class System(Entity):
                 "Unable to load climate devices for system %s: %s", self.id, err
             )
             return
-        self.update_climate_devices(devices)
+        self.update_climate_devices(devices, snapshot=True)
 
     def start_climate_updates(self) -> None:
         """Receive thermostat updates in real time."""
-        if not self.climate_updates_running:
+        if self._climate_task is None or self._climate_task.done():
             self._climate_task = asyncio.create_task(self._stream_climate_devices())
 
     async def stop_climate_updates(self) -> None:
@@ -189,8 +195,13 @@ class System(Entity):
             return
         if self._climate_refresh_task is None or self._climate_refresh_task.done():
             self._climate_refresh_task = asyncio.create_task(
-                self.load_climate_devices()
+                self._refresh_climate_devices_later()
             )
+
+    async def _refresh_climate_devices_later(self) -> None:
+        """Reload the thermostats after giving the service time to apply a change."""
+        await asyncio.sleep(CLIMATE_REFRESH_DELAY)
+        await self.load_climate_devices()
 
     async def _stream_climate_devices(self) -> None:
         """Apply thermostat updates from the climate service, reconnecting on failure."""
@@ -199,13 +210,15 @@ class System(Entity):
             try:
                 async for response in self.api.stream_climate_devices(self.id):
                     delay = CLIMATE_RETRY_MIN
+                    self._climate_stream_connected = True
                     self.update_climate_devices(
                         response.climate_devices, response.deleted_device_ids
                     )
-            except VivintSkyApiError as err:
+            except Exception as err:  # noqa: BLE001
                 _LOGGER.debug("Climate updates for system %s stopped: %s", self.id, err)
             else:
                 _LOGGER.debug("Climate updates for system %s ended", self.id)
+            self._climate_stream_connected = False
             await asyncio.sleep(delay)
             delay = min(delay * 2, CLIMATE_RETRY_MAX)
 
@@ -213,22 +226,34 @@ class System(Entity):
         self,
         devices: Iterable[climate_pb2.ClimateDevice],
         deleted_ids: Iterable[str] = (),
+        *,
+        snapshot: bool = False,
     ) -> None:
-        """Create, update and remove climate thermostats on the system's panel."""
+        """Create, update and remove climate thermostats on the system's panel.
+
+        With `snapshot`, `devices` is the complete list and any other known thermostat
+        is removed.
+        """
         if not self.alarm_panels:
             return
         panel = self.alarm_panels[0]
         known = {
             device.id: device
-            for device in panel.devices
+            for panel_ in self.alarm_panels
+            for device in panel_.devices
             if isinstance(device, ClimateThermostat)
         }
         legacy_ids = {
-            device.id
-            for device in panel.devices
+            str(device.id)
+            for panel_ in self.alarm_panels
+            for device in panel_.devices
             if isinstance(device, Thermostat)
             and not isinstance(device, ClimateThermostat)
         }
+        devices = list(devices)
+        removed_ids = set(deleted_ids)
+        if snapshot:
+            removed_ids |= known.keys() - {data.id for data in devices}
 
         for data in devices:
             if existing := known.get(data.id):
@@ -238,10 +263,11 @@ class System(Entity):
                 panel.devices.append(device)
                 panel.emit(DEVICE_DISCOVERED, {"device": device})
 
-        for device_id in deleted_ids:
+        for device_id in removed_ids:
             if removed := known.get(device_id):
-                panel.devices.remove(removed)
-                panel.emit(DEVICE_DELETED, {"device": removed})
+                owner = removed.alarm_panel or panel
+                owner.devices.remove(removed)
+                owner.emit(DEVICE_DELETED, {"device": removed})
 
     def update_user_data(self, data: list[dict]) -> None:
         """Update user data."""
@@ -395,11 +421,7 @@ def _parse_timestamp(value: str | None) -> datetime | None:
         return None
 
 
-def _legacy_device_id(urn: str) -> int | None:
-    """Return the numeric device id embedded in a panel device URN, if any."""
-    prefix, _, device_id = urn.rpartition(":")
-    return (
-        int(device_id)
-        if prefix.startswith("urn:vivint:panel:") and device_id.isdigit()
-        else None
-    )
+def _legacy_device_id(urn: str) -> str | None:
+    """Return the trailing numeric device id of a device URN, if it has one."""
+    _, _, device_id = urn.rpartition(":")
+    return device_id if device_id.isdigit() else None
