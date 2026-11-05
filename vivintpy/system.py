@@ -93,14 +93,23 @@ class System(Entity):
 
     async def _close_stale_dvrs(self) -> None:
         """Close replaced DVRs, keeping any that fail so the next refresh retries."""
-        batch, self._stale_dvrs = self._stale_dvrs, []
-        self._stale_dvrs.extend(await self._disconnect_dvrs(batch))
+        batch = list(self._stale_dvrs)
+        failed = await self._disconnect_dvrs(batch)
+        self._stale_dvrs = [
+            dvr for dvr in self._stale_dvrs if dvr not in batch or dvr in failed
+        ]
 
     async def disconnect_dvrs(self) -> None:
         """Disconnect the DVR, and any replaced DVR that could not be closed before."""
-        if self._dvr and self._dvr not in self._stale_dvrs:
-            self._stale_dvrs.append(self._dvr)
-        await self._close_stale_dvrs()
+        batch = list(self._stale_dvrs)
+        if self._dvr:
+            batch.append(self._dvr)
+        failed = await self._disconnect_dvrs(batch)
+        self._stale_dvrs = [
+            dvr
+            for dvr in self._stale_dvrs
+            if dvr is not self._dvr and (dvr not in batch or dvr in failed)
+        ]
 
     @staticmethod
     async def _disconnect_dvrs(dvrs: list[SpaceMonkeyDvr]) -> list[SpaceMonkeyDvr]:
