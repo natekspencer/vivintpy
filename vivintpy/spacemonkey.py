@@ -19,7 +19,8 @@ import aiohttp
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.serialization import pkcs12
 
-from .exceptions import SpaceMonkeyError
+from .exceptions import SpaceMonkeyError, VivintError
+from .utils import from_microseconds
 
 if TYPE_CHECKING:
     from .api import VivintSkyApi
@@ -79,9 +80,9 @@ class DvrAddress:
 
 def find_dvr_service_id(system_data: dict[str, Any]) -> str | None:
     """Return the DVR service id from a system's data, if the system has a DVR."""
-    for service in system_data.get("system", {}).get("srvs", []):
-        if service.get("t") == DVR_SERVICE_TYPE:
-            return cast("str | None", service.get("exid"))
+    for service in (system_data.get("system") or {}).get("srvs") or []:
+        if service.get("t") == DVR_SERVICE_TYPE and (exid := service.get("exid")):
+            return cast("str", exid)
     return None
 
 
@@ -117,7 +118,14 @@ def _dvr_errors(
         """Run the coroutine."""
         try:
             return await func(*args, **kwargs)
-        except (aiohttp.ClientError, TimeoutError) as err:
+        except SpaceMonkeyError:
+            raise
+        except (
+            aiohttp.ClientError,
+            TimeoutError,
+            UnicodeDecodeError,
+            VivintError,
+        ) as err:
             raise SpaceMonkeyError(f"{func.__name__.strip('_')} failed: {err}") from err
 
     return wrapper
@@ -129,11 +137,6 @@ async def _read_json(resp: aiohttp.ClientResponse, what: str) -> Any:
         return await resp.json()
     except (aiohttp.ContentTypeError, ValueError) as err:
         raise SpaceMonkeyError(f"Unexpected {what} response") from err
-
-
-def _from_microseconds(value: int) -> datetime:
-    """Convert microseconds since the epoch to an aware UTC datetime."""
-    return datetime.fromtimestamp(value / 1_000_000, tz=UTC)
 
 
 def _build_ssl_context(pkcs12_bytes: bytes) -> ssl.SSLContext:
@@ -156,12 +159,13 @@ def _build_ssl_context(pkcs12_bytes: bytes) -> ssl.SSLContext:
     )
 
     context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
-    # The DVR issues 1024-bit client keys, which OpenSSL rejects at its default
-    # security level. The relaxation only applies to connections made with this context.
-    context.set_ciphers("DEFAULT:@SECLEVEL=0")
-    # The device certificate is signed by Space Monkey's private CA, which is
-    # delivered together with the client certificate.
     try:
+        # The DVR issues 1024-bit client keys, which OpenSSL rejects at its default
+        # security level. The relaxation only applies to connections made with this
+        # context.
+        context.set_ciphers("DEFAULT:@SECLEVEL=0")
+        # The device certificate is signed by Space Monkey's private CA, which is
+        # delivered together with the client certificate.
         context.load_verify_locations(cadata=authorities)
         # load_cert_chain only accepts a file path.
         fd, path = tempfile.mkstemp(suffix=".pem")
@@ -244,11 +248,15 @@ class SpaceMonkeyDvr:
         """
         async with self._lock:
             self._closed = True
-            session, self._session = self._session, None
             self._ssl_context = None
-            if self._owns_session and session and not session.closed:
-                await session.close()
+            session = self._session
+            if self._owns_session and session:
+                # Cleared only once closed, so a failed close can be retried
+                if not session.closed:
+                    await session.close()
+                self._session = None
 
+    @_dvr_errors
     async def get_status(self) -> dict[str, Any]:
         """Return the DVR's status, which includes its cameras."""
         async with await self.get("/web/v1/status") as resp:
@@ -257,6 +265,7 @@ class SpaceMonkeyDvr:
             raise SpaceMonkeyError("Unexpected status response")
         return data
 
+    @_dvr_errors
     async def get_recordings(self, camera_id: int) -> list[DvrRecording]:
         """Return the recorded ranges stored for a camera, oldest first."""
         async with await self.get("/recordings", camera=f"Video-{camera_id}") as resp:
@@ -271,14 +280,15 @@ class SpaceMonkeyDvr:
                 DvrRecording(
                     id=item["Id"],
                     camera_id=item["CameraId"],
-                    start=_from_microseconds(item["StartTime"]),
-                    end=_from_microseconds(item["EndTime"]),
+                    start=from_microseconds(item["StartTime"]),
+                    end=from_microseconds(item["EndTime"]),
                 )
                 for item in ranges
             ]
         except (AttributeError, KeyError, TypeError, ValueError, OverflowError) as err:
             raise SpaceMonkeyError("Unexpected recordings response") from err
 
+    @_dvr_errors
     async def get_playlist(self, camera_id: int, recording_id: str) -> str:
         """Return the HLS playlist for a recorded range."""
         async with await self.get(
@@ -293,8 +303,11 @@ class SpaceMonkeyDvr:
         async with await self.get(
             f"/camstreams/Video-{camera_id}/{recording_id}/stream{number}.ts"
         ) as resp:
-            async for chunk in resp.content.iter_chunked(1 << 16):
-                yield chunk
+            try:
+                async for chunk in resp.content.iter_chunked(1 << 16):
+                    yield chunk
+            except (aiohttp.ClientError, TimeoutError) as err:
+                raise SpaceMonkeyError(f"stream_segment failed: {err}") from err
 
     async def get(self, path: str, **params: str) -> aiohttp.ClientResponse:
         """
@@ -310,16 +323,19 @@ class SpaceMonkeyDvr:
             self._ensure_open()
             if session is None or address is None:
                 raise SpaceMonkeyError("The DVR has been disconnected")
+            if session.closed:
+                raise SpaceMonkeyError("The client session has been closed")
             seen_expiry = self.certificate_expiry
             url = f"https://{address.host}:{address.port}{path}"
             try:
                 resp = await session.get(
                     url, params=params or None, ssl=self._ssl_context
                 )
-            except (aiohttp.ClientOSError, aiohttp.ServerDisconnectedError) as err:
+            except (aiohttp.ClientConnectionError, TimeoutError) as err:
                 # A DVR that rejects the certificate drops the connection during the
-                # TLS handshake, so a connection failure is retried after looking the
-                # DVR up again and then after renewing the certificate.
+                # TLS handshake, and one that moved stops answering, so a connection
+                # failure is retried after looking the DVR up again and then after
+                # renewing the certificate.
                 if not located:
                     located = True
                     async with self._lock:
@@ -331,7 +347,7 @@ class SpaceMonkeyDvr:
                 else:
                     raise SpaceMonkeyError(f"Unable to reach the DVR: {err}") from err
                 continue
-            except (aiohttp.ClientError, TimeoutError) as err:
+            except aiohttp.ClientError as err:
                 raise SpaceMonkeyError(f"DVR request failed: {err}") from err
 
             if resp.status == 401 and not renewed:
@@ -367,7 +383,12 @@ class SpaceMonkeyDvr:
                 self.certificate_expiry is not None
                 and self.certificate_expiry - datetime.now(UTC) < RENEW_MARGIN
             ):
-                await self._renew_certificate()
+                try:
+                    await self._renew_certificate()
+                except SpaceMonkeyError as err:
+                    if self.certificate_expiry <= datetime.now(UTC):
+                        raise
+                    _LOGGER.debug("Unable to renew the DVR certificate yet: %s", err)
 
     def _client_session(self) -> aiohttp.ClientSession:
         """Return the HTTP session, creating one if there is none or it was closed."""

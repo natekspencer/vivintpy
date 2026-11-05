@@ -11,6 +11,7 @@ from datetime import UTC, datetime, timedelta
 from typing import Any, Self
 from unittest.mock import MagicMock
 
+import aiohttp
 import pytest
 import pytest_asyncio
 from aiohttp import ClientOSError, ClientSession, ContentTypeError, CookieJar, web
@@ -23,7 +24,12 @@ from cryptography.x509.oid import NameOID
 
 from vivintpy import spacemonkey
 from vivintpy.account import Account
-from vivintpy.exceptions import SpaceMonkeyError
+from vivintpy.exceptions import (
+    SpaceMonkeyError,
+    VivintSkyApiAuthenticationError,
+    VivintSkyApiError,
+    VivintSkyApiMfaRequiredError,
+)
 from vivintpy.spacemonkey import (
     DvrRecording,
     SpaceMonkeyDvr,
@@ -510,7 +516,7 @@ async def test_overlapping_cleanups_keep_every_failed_dvr(
     release.set()
     await cleanup
 
-    assert system._stale_dvrs == [second, first]  # pylint: disable=protected-access
+    assert system._stale_dvrs == [first, second]  # pylint: disable=protected-access
     assert attempts == ["first"]
 
 
@@ -913,3 +919,221 @@ async def test_disconnect_while_waiting_for_the_lock_stops_the_retry(
         await dvr.get("/status")
     await asyncio.gather(*disconnecting)
     assert counts == {"locate": 0, "renew": 0}
+
+
+def test_find_dvr_service_id_tolerates_missing_data() -> None:
+    """Test null services and entries without an id are skipped."""
+    assert find_dvr_service_id({"system": {"srvs": None}}) is None
+    assert find_dvr_service_id({"system": None}) is None
+    data = {
+        "system": {
+            "srvs": [{"t": "SPMO_DVR"}, {"t": "SPMO_DVR", "exid": "dvr-id"}],
+        }
+    }
+    assert find_dvr_service_id(data) == "dvr-id"
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "error",
+    [
+        aiohttp.ConnectionTimeoutError(),
+        aiohttp.ClientConnectionResetError(),
+        TimeoutError(),
+    ],
+)
+async def test_get_looks_the_dvr_up_again_after_a_timeout(
+    monkeypatch: pytest.MonkeyPatch, error: Exception
+) -> None:
+    """Test timeouts and resets are retried like other connection failures."""
+    dvr, counts = connected_dvr(monkeypatch, FakeSession(error, 200))
+
+    await dvr.get("/status")
+
+    assert counts == {"locate": 1, "renew": 0}
+
+
+class FailingBody:
+    """A response whose body fails while being read."""
+
+    def __init__(self, error: Exception) -> None:
+        """Keep the error to raise."""
+        self._error = error
+        self.content = self
+
+    async def __aenter__(self) -> Self:
+        """Enter the response context."""
+        return self
+
+    async def __aexit__(self, *_args: object) -> None:
+        """Leave the response context."""
+        return
+
+    def iter_chunked(self, _size: int) -> Self:
+        """Return the chunk iterator."""
+        return self
+
+    def __aiter__(self) -> Self:
+        """Iterate over the chunks."""
+        return self
+
+    async def __anext__(self) -> bytes:
+        """Fail instead of returning a chunk."""
+        raise self._error
+
+    async def text(self) -> str:
+        """Fail instead of returning the text."""
+        raise self._error
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "error",
+    [
+        aiohttp.ClientPayloadError(),
+        TimeoutError(),
+        UnicodeDecodeError("utf-8", b"", 0, 1, "bad"),
+    ],
+)
+async def test_errors_reading_a_body_are_reported(
+    monkeypatch: pytest.MonkeyPatch, error: Exception
+) -> None:
+    """Test failures while reading a response body are DVR errors."""
+
+    async def fake_get(_self: SpaceMonkeyDvr, _path: str, **_params: str) -> Any:
+        """Return a response whose body fails."""
+        return FailingBody(error)
+
+    monkeypatch.setattr(SpaceMonkeyDvr, "get", fake_get)
+    dvr = SpaceMonkeyDvr(FakeApi(), "dvr-id")  # type: ignore[arg-type]
+
+    with pytest.raises(SpaceMonkeyError):
+        await dvr.get_playlist(1, "rec")
+    if not isinstance(error, UnicodeDecodeError):
+        with pytest.raises(SpaceMonkeyError):
+            async for _ in dvr.stream_segment(1, "rec", 1):
+                pass
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "error",
+    [
+        VivintSkyApiAuthenticationError("nope"),
+        VivintSkyApiError("down"),
+        VivintSkyApiMfaRequiredError("mfa"),
+    ],
+)
+async def test_vivint_errors_while_renewing_are_reported(error: Exception) -> None:
+    """Test Vivint errors during renewal are DVR errors."""
+
+    class RaisingApi:
+        """An API that cannot hand out a code."""
+
+        async def get_authorization_code(self, *_args: Any, **_kwargs: Any) -> str:
+            """Raise the error."""
+            raise error
+
+    dvr = SpaceMonkeyDvr(RaisingApi(), "dvr-id")  # type: ignore[arg-type]
+
+    with pytest.raises(SpaceMonkeyError):
+        await dvr.connect()
+    await dvr.disconnect()
+
+
+@pytest.mark.asyncio
+async def test_failed_early_renewal_keeps_the_valid_certificate(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Test a renewal that fails before expiry doesn't fail the request."""
+    dvr, _ = connected_dvr(monkeypatch, FakeSession(200))
+    dvr.certificate_expiry = datetime.now(UTC) + timedelta(minutes=10)
+
+    async def renew(_self: SpaceMonkeyDvr) -> None:
+        """Fail to renew."""
+        raise SpaceMonkeyError("outage")
+
+    monkeypatch.setattr(SpaceMonkeyDvr, "_renew_certificate", renew)
+
+    await dvr.get("/status")
+
+    dvr.certificate_expiry = datetime.now(UTC) - timedelta(minutes=1)
+    with pytest.raises(SpaceMonkeyError, match="outage"):
+        await dvr.get("/status")
+
+
+@pytest.mark.asyncio
+async def test_failed_close_can_be_retried() -> None:
+    """Test the session is kept when closing it fails."""
+    dvr = SpaceMonkeyDvr(FakeApi(), "dvr-id")  # type: ignore[arg-type]
+    session = MagicMock()
+    session.closed = False
+    session.close = MagicMock(side_effect=[RuntimeError("boom"), _done()])
+    dvr._session = session  # pylint: disable=protected-access
+
+    with pytest.raises(RuntimeError):
+        await dvr.disconnect()
+    assert dvr._session is session  # pylint: disable=protected-access
+
+    await dvr.disconnect()
+    assert dvr._session is None  # pylint: disable=protected-access
+
+
+def _done() -> Any:
+    """Return an awaitable that completes immediately."""
+    future: asyncio.Future[None] = asyncio.get_running_loop().create_future()
+    future.set_result(None)
+    return future
+
+
+@pytest.mark.asyncio
+async def test_closed_supplied_session_is_reported() -> None:
+    """Test a closed caller-supplied session raises a DVR error."""
+    session = ClientSession()
+    await session.close()
+    dvr = SpaceMonkeyDvr(FakeApi(), "dvr-id", session)  # type: ignore[arg-type]
+    dvr._ssl_context = MagicMock()  # pylint: disable=protected-access
+    dvr.address = spacemonkey.DvrAddress("dvr.example.test", 8080, "192.0.2.10")
+
+    with pytest.raises(SpaceMonkeyError, match="closed"):
+        await dvr.get("/status")
+
+
+@pytest.mark.asyncio
+async def test_cancelled_cleanup_keeps_the_stale_dvrs() -> None:
+    """Test cancelling a cleanup doesn't lose the DVRs being closed."""
+    system = make_system(None)
+    stale = SpaceMonkeyDvr(None, "stale")  # type: ignore[arg-type]
+    system._stale_dvrs.append(stale)  # pylint: disable=protected-access
+
+    async def hang(_self: SpaceMonkeyDvr) -> None:
+        """Never finish closing."""
+        await asyncio.sleep(3600)
+
+    with pytest.MonkeyPatch.context() as patch:
+        patch.setattr(SpaceMonkeyDvr, "disconnect", hang)
+        task = asyncio.create_task(system._close_stale_dvrs())  # pylint: disable=protected-access
+        await asyncio.sleep(0)
+        task.cancel()
+        with pytest.raises(asyncio.CancelledError):
+            await task
+
+    assert system._stale_dvrs == [stale]  # pylint: disable=protected-access
+
+
+@pytest.mark.asyncio
+async def test_failed_disconnect_does_not_stale_the_current_dvr(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Test a DVR that failed to close isn't disconnected again by a later refresh."""
+    system = make_system("dvr-id")
+
+    async def disconnect(_self: SpaceMonkeyDvr) -> None:
+        """Fail to close."""
+        raise RuntimeError("boom")
+
+    monkeypatch.setattr(SpaceMonkeyDvr, "disconnect", disconnect)
+
+    await system.disconnect_dvrs()
+
+    assert system._stale_dvrs == []  # pylint: disable=protected-access
