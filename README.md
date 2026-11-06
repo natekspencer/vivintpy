@@ -40,17 +40,118 @@ It currently has support for the following device types:
 
 In addition, it integrates with PubNub to receive real-time updates for devices. This subscription stops receiving notifications around 15-20 minutes unless a call is made to the Vivint Sky API periodically. This **might** be related to the cookie expiration since it expires 20 minutes after the last API call was received. If another client connects, however, the notifications start to stream again for all currently connected clients.
 
+## Installation
+
+Requires Python 3.11 or newer.
+
+```bash
+pip install vivintpy
+```
+
 ## Usage
 
-See demo.py for a demonstration on how to use this library.
+The library is asynchronous. Everything starts from an `Account`, which holds your systems, and each system has its alarm panels and their devices.
 
-## TODO:
+```python
+import asyncio
 
-- write a better readme
-- write some documentation
-- add advanced support for:
-  - thermostats
-- add tests
+from vivintpy.account import Account
+from vivintpy.entity import UPDATE
+from vivintpy.exceptions import VivintSkyApiMfaRequiredError
+
+
+def on_panel_update(event: dict) -> None:
+    panel = event["device"]
+    print(panel.state.name, panel.changed_by)
+
+
+async def main() -> None:
+    account = Account(username="you@example.com")
+
+    try:
+        try:
+            await account.connect(
+                load_devices=True,
+                subscribe_for_realtime_updates=True,
+                password="your-password",
+            )
+        except VivintSkyApiMfaRequiredError:
+            await account.verify_mfa(input("Enter MFA code: "))
+
+        for system in account.systems:
+            for panel in system.alarm_panels:
+                print(f"{panel.name}: {panel.state.name}")
+
+                for device in panel.devices:
+                    print(f"  {device.name} ({type(device).__name__})")
+
+                panel.on(UPDATE, on_panel_update)
+
+        while True:
+            await asyncio.sleep(300)
+            await account.refresh()
+    finally:
+        await account.disconnect()
+
+
+asyncio.run(main())
+```
+
+### Controlling devices
+
+Each device type has its own methods. For example, an alarm panel:
+
+```python
+await panel.arm_stay()
+await panel.arm_away()
+await panel.disarm()
+```
+
+### Listening for changes
+
+`on` registers a callback for an event and returns a function that removes it. Every device has `UPDATE`, and some have their own events:
+
+```python
+from vivintpy.devices.camera import MOTION_DETECTED
+
+remove_listener = camera.on(MOTION_DETECTED, lambda event: print(event["device"]))
+```
+
+`AlarmPanel.changed_by` reports what last armed or disarmed a panel, such as a user's name, `panel` or a rule. It is `None` until the first change after connecting. It can arrive just before or just after the panel's state changes, so an update can briefly show the previous value. `UPDATE` also fires on refreshes, when nothing may have changed.
+
+### Staying logged in
+
+The password you pass to `connect` is only used to log in, and vivintpy doesn't keep it. Save the refresh token from that first login, then use it to log in next time:
+
+```python
+def save_token(token: str) -> None:
+    """Store the token somewhere safe."""
+
+
+# the first time
+account = Account(username="you@example.com", on_refresh_token_changed=save_token)
+await account.connect(password="your-password")
+
+# after that
+account = Account(
+    username="you@example.com",
+    refresh_token=saved_token,
+    on_refresh_token_changed=save_token,
+)
+await account.connect()
+```
+
+Vivint's refresh tokens can only be used once. Each refresh returns a new one, and using an old one fails and also invalidates the newest one. So save every new token as soon as `on_refresh_token_changed` provides it, and don't share a token between running instances.
+
+Passing `password` to `Account` still works, and it's kept so that vivintpy can log in with it again, but it's deprecated and will be removed in 2027.1.0.
+
+### Errors
+
+Errors from vivintpy inherit from `VivintError`, in `vivintpy.exceptions`. Network problems can also raise `aiohttp` errors and `TimeoutError`, so catch those too if your program should keep running. `VivintSkyApiAuthenticationError` means Vivint rejected the login, and `VivintSkyApiMfaRequiredError` means a code is needed. Pass that code to `verify_mfa`.
+
+`Account.refresh` raises `VivintSkyApiAuthenticationError` if the session can't be renewed or no user data comes back. That usually means Vivint rejected the refresh token, so log in again with `await account.connect(password="your-password")`, which can also ask for an MFA code. Do this before calling `disconnect`, which closes the session, or afterward repeat the full setup from the example above with a new `Account`, including its `connect` options and listeners. If a lost connection or a `VivintSkyApiError` stops it getting your list of systems, `refresh` logs the error and carries on. Anything else is raised, including a server error such as an HTTP 500 and any error from refreshing a system, and that ends a loop like the one above unless you catch it.
+
+See [demo.py](demo.py) for a longer example.
 
 ---
 
