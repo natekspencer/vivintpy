@@ -149,7 +149,7 @@ Passing `password` to `Account` still works, and it's kept so that vivintpy can 
 
 Errors from vivintpy inherit from `VivintError`, in `vivintpy.exceptions`. Network problems can also raise `aiohttp` errors, so catch those too if your program should keep running. `VivintSkyApiAuthenticationError` means Vivint rejected the login, and `VivintSkyApiMfaRequiredError` means a code is needed. Pass that code to `verify_mfa`.
 
-`Account.refresh` raises `VivintSkyApiAuthenticationError` if the session can't be renewed. Vivint has rejected the refresh token at that point, so log in again with `await account.connect(password="your-password")`. If it can't get your list of systems, `refresh` logs the error and carries on, but errors from refreshing each system are raised.
+`Account.refresh` raises `VivintSkyApiAuthenticationError` if the session can't be renewed. Vivint has rejected the refresh token at that point, so log in again with `await account.connect(password="your-password")`. If a lost connection or a `VivintSkyApiError` stops it getting your list of systems, `refresh` logs the error and carries on. Anything else is raised, including a server error such as an HTTP 500 and any error from refreshing a system, and that ends a loop like the one above unless you catch it.
 
 See [demo.py](demo.py) for a longer example.
 

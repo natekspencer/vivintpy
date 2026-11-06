@@ -32,12 +32,15 @@ uv run python script/gen_zjs_device_config_db.py
 
 Publishing a GitHub release tags the commit, and the tag starts a workflow that builds the package, smoke tests it and publishes it to PyPI. The version comes from the tag, so nothing needs changing in the code.
 
-Check that the Publish python package workflow succeeded, because a release can appear on GitHub without reaching PyPI. If the run failed, re-run it from the Actions tab. If it never started, delete the tag from GitHub and push it again, as publishing the release again won't start it:
+Check that the Publish python package workflow succeeded, because a release can appear on GitHub without reaching PyPI. If the run failed, re-run it from the Actions tab. If it never started, publishing the release again won't start it, so delete the tag from GitHub and push it again. A tag created by a release may not exist locally, so fetch it first:
 
 ```bash
-git push origin --delete <tag>
-git push origin <tag>
+git fetch origin tag <tag> &&
+  git push origin --delete <tag> &&
+  git push origin <tag>
 ```
+
+GitHub can turn a release into a draft when its tag is deleted, so check the release afterwards.
 
 To check the package builds locally, run:
 
