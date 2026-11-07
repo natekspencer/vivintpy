@@ -258,7 +258,9 @@ async def test_changed_by_skips_invalid_history_events() -> None:
 
 async def test_changed_by_ignores_the_history_after_a_state_change() -> None:
     """Test a lookup can't update a panel that has since changed state."""
-    system = create_fob_system(ArmedState.ARMED_AWAY, [history_event()])
+    system = create_fob_system(
+        ArmedState.ARMED_AWAY, [history_event()], [history_event()]
+    )
     (panel,) = system.alarm_panels
 
     system.handle_pubnub_message(
@@ -269,6 +271,27 @@ async def test_changed_by_ignores_the_history_after_a_state_change() -> None:
 
     assert panel.changed_by == "panel"
     assert panel.changed_by_message is None
+
+
+async def test_changed_by_waits_for_the_panel_state_update() -> None:
+    """Test a history result isn't lost if the panel's state update is late."""
+    system = create_fob_system(ArmedState.DISARMED)
+    (panel,) = system.alarm_panels
+
+    def get_history(*_: object) -> list[dict]:
+        if history_mock(system).await_count == 2:
+            panel.data["s"] = ArmedState.ARMED_AWAY.value
+        return [history_event()]
+
+    history_mock(system).side_effect = get_history
+
+    system.handle_pubnub_message(
+        security_message("seca", ArmedState.ARMED_AWAY, "panel")
+    )
+    await finish_lookup(system)
+
+    assert panel.changed_by == FOB
+    assert panel.changed_by_message == MESSAGE
 
 
 async def test_changed_by_stays_the_panel_without_a_device() -> None:
@@ -400,9 +423,19 @@ async def test_get_history(response: dict, expected: list[dict]) -> None:
 
 
 @pytest.mark.parametrize(
-    "response", [None, {}, {"message": "Not JSON"}, {"his": "Not a list"}]
+    "response",
+    [
+        None,
+        {},
+        {"message": "Not JSON"},
+        {"his": "Not a list"},
+        {"his": [None]},
+        [{"his": []}],
+    ],
 )
-async def test_get_history_with_an_invalid_response(response: dict | None) -> None:
+async def test_get_history_with_an_invalid_response(
+    response: dict | list | None,
+) -> None:
     """Test a response that couldn't be read is reported as an error."""
     api = VivintSkyApi("user@example.com")
     with (

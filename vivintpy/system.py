@@ -148,10 +148,15 @@ class System(Entity):
                 _LOGGER.debug("Unable to get the history for %s: %s", self.id, err)
                 return
             if (match := _find_history_event(event, history)) is not None:
+                # The panel's own state update can arrive after the history has this
+                # event. If it has moved on instead, the retries just run out.
+                state = event.get(Attribute.SECURITY_STATE)
+                in_state = [panel for panel in panels if panel.state == state]
+                if not in_state:
+                    continue
                 context = match.get(HistoryAttribute.PANEL_CONTEXT) or {}
                 device_name = context.get(HistoryAttribute.DEVICE_NAME)
-                state = event.get(Attribute.SECURITY_STATE)
-                for panel in (panel for panel in panels if panel.state == state):
+                for panel in in_state:
                     panel.update_changed_by(
                         device_name if is_device and device_name else changed_by,
                         match.get(HistoryAttribute.MESSAGE),

@@ -204,10 +204,16 @@ class VivintSkyApi:
     async def get_history(self, panel_id: int, limit: int = 10) -> list[dict]:
         """Get a system's most recent history events."""
         resp = await self.__get(f"{panel_id}/1/history", params={"lim": limit})
-        events = (resp or {}).get(HistoryAttribute.EVENTS, False)
+        events = (
+            resp.get(HistoryAttribute.EVENTS, False)
+            if isinstance(resp, dict)
+            else False
+        )
         if events is None:
             return []
-        if not isinstance(events, list):
+        if not isinstance(events, list) or not all(
+            isinstance(event, dict) for event in events
+        ):
             raise VivintSkyApiError("Unable to retrieve the history")
         return events
 
