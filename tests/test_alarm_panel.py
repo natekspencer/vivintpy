@@ -2,6 +2,7 @@
 
 import asyncio
 from collections.abc import Iterator
+from typing import cast
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -88,10 +89,15 @@ async def finish_lookup(system: System) -> None:
             raise result
 
 
+def history_mock(system: System) -> AsyncMock:
+    """Return the mock for a system's history."""
+    return cast(AsyncMock, system.api.get_history)
+
+
 def create_fob_system(state: ArmedState, *results: object) -> System:
     """Return a system whose history gives each of the results in turn."""
     system = create_system(state)
-    system.api.get_history = AsyncMock(side_effect=results)
+    history_mock(system).side_effect = results
     return system
 
 
@@ -211,7 +217,7 @@ async def test_changed_by_retries_until_the_event_is_in_the_history() -> None:
     await finish_lookup(system)
 
     assert panel.changed_by == FOB
-    assert system.api.get_history.await_count == 2
+    assert history_mock(system).await_count == 2
 
 
 @pytest.mark.parametrize(
@@ -236,6 +242,35 @@ async def test_changed_by_ignores_other_history_events(event: dict) -> None:
     assert panel.changed_by == "panel"
 
 
+async def test_changed_by_skips_invalid_history_events() -> None:
+    """Test an invalid history event doesn't hide the one that matches."""
+    invalid = history_event(timestamp="not a time")
+    system = create_fob_system(ArmedState.ARMED_AWAY, [invalid, history_event()])
+    (panel,) = system.alarm_panels
+
+    system.handle_pubnub_message(
+        security_message("seca", ArmedState.ARMED_AWAY, "panel")
+    )
+    await finish_lookup(system)
+
+    assert panel.changed_by == FOB
+
+
+async def test_changed_by_ignores_the_history_after_a_state_change() -> None:
+    """Test a lookup can't update a panel that has since changed state."""
+    system = create_fob_system(ArmedState.ARMED_AWAY, [history_event()])
+    (panel,) = system.alarm_panels
+
+    system.handle_pubnub_message(
+        security_message("seca", ArmedState.ARMED_AWAY, "panel")
+    )
+    panel.data["s"] = ArmedState.DISARMED.value
+    await finish_lookup(system)
+
+    assert panel.changed_by == "panel"
+    assert panel.changed_by_message is None
+
+
 async def test_changed_by_stays_the_panel_without_a_device() -> None:
     """Test an event at the panel itself gets its message and stays the panel."""
     system = create_fob_system(ArmedState.ARMED_AWAY, [history_event(device_name=None)])
@@ -248,12 +283,17 @@ async def test_changed_by_stays_the_panel_without_a_device() -> None:
 
     assert panel.changed_by == "panel"
     assert panel.changed_by_message == MESSAGE
-    system.api.get_history.assert_awaited_once()
+    history_mock(system).assert_awaited_once()
 
 
 @pytest.mark.parametrize(
     "error",
-    [VivintSkyApiError("Failed"), ClientError("Failed"), TimeoutError()],
+    [
+        VivintSkyApiError("Failed"),
+        ClientError("Failed"),
+        TimeoutError(),
+        ValueError("Invalid JSON"),
+    ],
 )
 async def test_changed_by_stays_the_panel_if_the_history_fails(
     error: Exception,
@@ -268,7 +308,7 @@ async def test_changed_by_stays_the_panel_if_the_history_fails(
     await finish_lookup(system)
 
     assert panel.changed_by == "panel"
-    system.api.get_history.assert_awaited_once()
+    history_mock(system).assert_awaited_once()
 
 
 @pytest.mark.parametrize(
@@ -304,7 +344,7 @@ async def test_exit_delay_skips_the_history_and_clears_the_message() -> None:
 
     assert panel.changed_by == "panel"
     assert panel.changed_by_message is None
-    system.api.get_history.assert_not_awaited()
+    history_mock(system).assert_not_awaited()
 
 
 async def test_newer_event_replaces_the_changed_by_lookup() -> None:
@@ -338,18 +378,30 @@ async def test_disconnect_cancels_the_changed_by_lookup() -> None:
     await account.disconnect()
     await finish_lookup(system)
 
-    system.api.get_history.assert_not_awaited()
+    history_mock(system).assert_not_awaited()
 
 
 @pytest.mark.parametrize(
     ("response", "expected"),
-    [({"his": [{"icon": "disarmed"}]}, [{"icon": "disarmed"}]), ({}, []), (None, [])],
+    [({"his": [{"icon": "disarmed"}]}, [{"icon": "disarmed"}]), ({"his": []}, [])],
 )
-async def test_get_history(response: dict | None, expected: list[dict]) -> None:
+async def test_get_history(response: dict, expected: list[dict]) -> None:
     """Test getting a system's history."""
     api = VivintSkyApi("user@example.com")
     get = AsyncMock(return_value=response)
     with patch.object(api, "_VivintSkyApi__get", get):
         assert await api.get_history(SYSTEM_ID, 5) == expected
     get.assert_awaited_once_with(f"{SYSTEM_ID}/1/history", params={"lim": 5})
+    await api.disconnect()
+
+
+@pytest.mark.parametrize("response", [None, {}, {"message": "Not JSON"}])
+async def test_get_history_with_an_invalid_response(response: dict | None) -> None:
+    """Test a response that couldn't be read is reported as an error."""
+    api = VivintSkyApi("user@example.com")
+    with (
+        patch.object(api, "_VivintSkyApi__get", AsyncMock(return_value=response)),
+        pytest.raises(VivintSkyApiError),
+    ):
+        await api.get_history(SYSTEM_ID)
     await api.disconnect()

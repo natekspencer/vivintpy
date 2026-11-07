@@ -144,13 +144,14 @@ class System(Entity):
             await asyncio.sleep(delay)
             try:
                 history = await self.api.get_history(self.id)
-            except (VivintError, ClientError, TimeoutError) as err:
+            except (VivintError, ClientError, TimeoutError, ValueError) as err:
                 _LOGGER.debug("Unable to get the history for %s: %s", self.id, err)
                 return
             if (match := _find_history_event(event, history)) is not None:
                 context = match.get(HistoryAttribute.PANEL_CONTEXT) or {}
                 device_name = context.get(HistoryAttribute.DEVICE_NAME)
-                for panel in panels:
+                state = event.get(Attribute.SECURITY_STATE)
+                for panel in (panel for panel in panels if panel.state == state):
                     panel.update_changed_by(
                         device_name if is_device and device_name else changed_by,
                         match.get(HistoryAttribute.MESSAGE),
@@ -212,20 +213,24 @@ class System(Entity):
 def _find_history_event(event: dict, history: list[dict]) -> dict | None:
     """Return the history event for an armed or disarmed event, if it's there."""
     icon = HISTORY_ICONS[event[Attribute.SECURITY_STATE]]
+    timestamp = _parse_timestamp(event[Attribute.SECURITY_TIMESTAMP])
+    if timestamp is None:
+        return None
+    for item in history:
+        item_timestamp = _parse_timestamp(item.get(HistoryAttribute.TIMESTAMP))
+        if (
+            item.get(HistoryAttribute.ICON) == icon
+            and item_timestamp is not None
+            and abs(item_timestamp - timestamp) <= HISTORY_TIME_TOLERANCE
+        ):
+            return item
+    return None
+
+
+def _parse_timestamp(value: str | None) -> datetime | None:
+    """Return a timestamp from Vivint, or None if it isn't valid."""
     try:
-        timestamp = datetime.fromisoformat(event[Attribute.SECURITY_TIMESTAMP])
-        return next(
-            (
-                item
-                for item in history
-                if item.get(HistoryAttribute.ICON) == icon
-                and abs(
-                    datetime.fromisoformat(item[HistoryAttribute.TIMESTAMP]) - timestamp
-                )
-                <= HISTORY_TIME_TOLERANCE
-            ),
-            None,
-        )
-    except (KeyError, TypeError, ValueError) as err:
-        _LOGGER.debug("Unable to match the history for %s: %s", event, err)
+        return datetime.fromisoformat(value or "")
+    except ValueError:
+        _LOGGER.debug("Ignoring an invalid timestamp: %s", value)
         return None
