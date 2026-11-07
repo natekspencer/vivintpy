@@ -117,7 +117,7 @@ from vivintpy.devices.camera import MOTION_DETECTED
 remove_listener = camera.on(MOTION_DETECTED, lambda event: print(event["device"]))
 ```
 
-`AlarmPanel.changed_by` reports what last armed or disarmed a panel, such as a user's name, `panel` or a rule. It is `None` until the first change after connecting. It can arrive just before or just after the panel's state changes, so an update can briefly show the previous value. `UPDATE` also fires on refreshes, when nothing may have changed.
+`AlarmPanel.changed_by` reports what last armed or disarmed a panel, such as a user's name, a key fob's name, `panel` or a rule. Vivint only reports a key fob as `panel`, so its name comes from the system's history a moment later. It shows `panel` until then, including during an exit delay, and stays `panel` if the history can't be read. `AlarmPanel.changed_by_message` has Vivint's own description from the history, such as `Your home was disarmed by Sam from an Android device`, which also says where the change came from. It is `None` until the history has the event, so it stays `None` during an exit delay. `changed_by` is `None` until the first change after connecting. It can arrive just before or just after the panel's state changes, so an update can briefly show the previous value. `UPDATE` also fires on refreshes, when nothing may have changed.
 
 ### Staying logged in
 

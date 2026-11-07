@@ -2,17 +2,35 @@
 
 from __future__ import annotations
 
+import asyncio
 import logging
+from datetime import datetime, timedelta
+
+from aiohttp import ClientError
 
 from .api import VivintSkyApi
-from .const import PubNubMessageAttribute
+from .const import HistoryAttribute, PubNubMessageAttribute
 from .const import SystemAttribute as Attribute
 from .devices.alarm_panel import AlarmPanel
 from .entity import Entity
+from .enums import ArmedState
+from .exceptions import VivintError
 from .user import User
 from .utils import first_or_none
 
 _LOGGER = logging.getLogger(__name__)
+
+# What Vivint reports for anything at the panel that it doesn't name a user for
+CHANGED_BY_PANEL = "panel"
+# History icons for the states that are recorded there. Exit delays aren't recorded
+# until they finish, when another event is sent with the armed state.
+HISTORY_ICONS = {
+    ArmedState.DISARMED: "disarmed",
+    ArmedState.ARMED_STAY: "armed_stay",
+    ArmedState.ARMED_AWAY: "armed_away",
+}
+HISTORY_RETRY_DELAYS = (0.5, 1, 2, 4)
+HISTORY_TIME_TOLERANCE = timedelta(seconds=5)
 
 
 class System(Entity):
@@ -24,6 +42,7 @@ class System(Entity):
         self._api = api
         self._name = name
         self._is_admin = is_admin
+        self.__changed_by_lookup: asyncio.Task | None = None
         self.alarm_panels: list[AlarmPanel] = [
             AlarmPanel(panel_data, self)
             for panel_data in self.data[Attribute.SYSTEM][Attribute.PARTITION]
@@ -90,14 +109,53 @@ class System(Entity):
         These events are sent for the system rather than a partition, so they go to
         the panels in the event's state. They can arrive before the panel's own state
         update, so they go to every panel if none match.
+
+        The history is then checked for Vivint's description of the event, and for the
+        name of a key fob or other device that's only reported as the panel. Any newer
+        event replaces that lookup.
         """
         for key in (Attribute.SECURITY_ARMED, Attribute.SECURITY_DISARMED):
             if not isinstance(event := data.get(key), dict):
                 continue
             state = event.get(Attribute.SECURITY_STATE)
             panels = [panel for panel in self.alarm_panels if panel.state == state]
-            for panel in panels or self.alarm_panels:
+            panels = panels or self.alarm_panels
+            for panel in panels:
                 panel.update_changed_by(event.get(Attribute.SECURITY_NAME))
+            self.cancel_changed_by_lookup()
+            if state in HISTORY_ICONS and event.get(Attribute.SECURITY_TIMESTAMP):
+                self.__changed_by_lookup = asyncio.create_task(
+                    self.__look_up_changed_by(event, panels)
+                )
+
+    def cancel_changed_by_lookup(self) -> None:
+        """Cancel any history lookup for what armed or disarmed the system."""
+        if self.__changed_by_lookup:
+            self.__changed_by_lookup.cancel()
+            self.__changed_by_lookup = None
+
+    async def __look_up_changed_by(self, event: dict, panels: list[AlarmPanel]) -> None:
+        """Update the panels with what the history has for an event."""
+        changed_by = event.get(Attribute.SECURITY_NAME)
+        is_device = changed_by == CHANGED_BY_PANEL and not event.get(
+            Attribute.SECURITY_USER_ID
+        )
+        for delay in HISTORY_RETRY_DELAYS:
+            await asyncio.sleep(delay)
+            try:
+                history = await self.api.get_history(self.id)
+            except (VivintError, ClientError, TimeoutError) as err:
+                _LOGGER.debug("Unable to get the history for %s: %s", self.id, err)
+                return
+            if (match := _find_history_event(event, history)) is not None:
+                context = match.get(HistoryAttribute.PANEL_CONTEXT) or {}
+                device_name = context.get(HistoryAttribute.DEVICE_NAME)
+                for panel in panels:
+                    panel.update_changed_by(
+                        device_name if is_device and device_name else changed_by,
+                        match.get(HistoryAttribute.MESSAGE),
+                    )
+                return
 
     def handle_pubnub_message(self, message: dict) -> None:
         """Handle a pubnub message."""
@@ -149,3 +207,25 @@ class System(Entity):
             _LOGGER.warning(
                 "Unknown message received by system %s: %s", self.id, message
             )
+
+
+def _find_history_event(event: dict, history: list[dict]) -> dict | None:
+    """Return the history event for an armed or disarmed event, if it's there."""
+    icon = HISTORY_ICONS[event[Attribute.SECURITY_STATE]]
+    try:
+        timestamp = datetime.fromisoformat(event[Attribute.SECURITY_TIMESTAMP])
+        return next(
+            (
+                item
+                for item in history
+                if item.get(HistoryAttribute.ICON) == icon
+                and abs(
+                    datetime.fromisoformat(item[HistoryAttribute.TIMESTAMP]) - timestamp
+                )
+                <= HISTORY_TIME_TOLERANCE
+            ),
+            None,
+        )
+    except (KeyError, TypeError, ValueError) as err:
+        _LOGGER.debug("Unable to match the history for %s: %s", event, err)
+        return None

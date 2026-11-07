@@ -21,6 +21,7 @@ from google.protobuf.message import Message
 
 from .const import (
     AuthenticationResponse,
+    HistoryAttribute,
     MfaVerificationResponse,
     SwitchAttribute,
     VivintDeviceAttribute,
@@ -199,6 +200,11 @@ class VivintSkyApi:
         if not resp:
             raise VivintSkyApiError("Unable to retrieve system data")
         return resp
+
+    async def get_history(self, panel_id: int, limit: int = 10) -> list[dict]:
+        """Get a system's most recent history events."""
+        resp = await self.__get(f"{panel_id}/1/history", params={"lim": limit})
+        return (resp or {}).get(HistoryAttribute.EVENTS) or []
 
     async def get_system_update(self, panel_id: int) -> dict:
         """Get panel software update details."""

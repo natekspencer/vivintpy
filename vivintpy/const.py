@@ -81,9 +81,22 @@ class SystemAttribute:
     SECURITY_DISARMED = "secd"
     SECURITY_NAME = "n"
     SECURITY_STATE = "s"
+    SECURITY_TIMESTAMP = "ts"
+    SECURITY_USER_ID = "uid"
     SYSTEM = "system"
     SYSTEM_NICKNAME = "sn"
     USERS = "u"
+
+
+class HistoryAttribute:
+    """History event attributes."""
+
+    DEVICE_NAME = "dn"
+    EVENTS = "his"
+    ICON = "icon"
+    MESSAGE = "me"
+    PANEL_CONTEXT = "pnlctx"
+    TIMESTAMP = "ts"
 
 
 class PubNubMessageAttribute:

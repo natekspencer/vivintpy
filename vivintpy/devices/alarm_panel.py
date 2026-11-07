@@ -39,6 +39,7 @@ class AlarmPanel(VivintDevice):
         self.devices: list[VivintDevice] = []
         self.unregistered_devices: dict[int, tuple] = {}
         self.__changed_by: str | None = None
+        self.__changed_by_message: str | None = None
 
         self.__parse_data(data=data, init=True)
 
@@ -124,9 +125,17 @@ class AlarmPanel(VivintDevice):
         """Return what last armed or disarmed the panel, such as a user's name."""
         return self.__changed_by
 
-    def update_changed_by(self, changed_by: str | None) -> None:
+    @property
+    def changed_by_message(self) -> str | None:
+        """Return Vivint's description of what last armed or disarmed the panel."""
+        return self.__changed_by_message
+
+    def update_changed_by(
+        self, changed_by: str | None, message: str | None = None
+    ) -> None:
         """Update what last armed or disarmed the panel."""
         self.__changed_by = changed_by
+        self.__changed_by_message = message
         self.emit(UPDATE, {"data": {}})
 
     @property
