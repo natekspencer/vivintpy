@@ -383,7 +383,11 @@ async def test_disconnect_cancels_the_changed_by_lookup() -> None:
 
 @pytest.mark.parametrize(
     ("response", "expected"),
-    [({"his": [{"icon": "disarmed"}]}, [{"icon": "disarmed"}]), ({"his": []}, [])],
+    [
+        ({"his": [{"icon": "disarmed"}]}, [{"icon": "disarmed"}]),
+        ({"his": []}, []),
+        ({"his": None}, []),
+    ],
 )
 async def test_get_history(response: dict, expected: list[dict]) -> None:
     """Test getting a system's history."""
@@ -395,7 +399,9 @@ async def test_get_history(response: dict, expected: list[dict]) -> None:
     await api.disconnect()
 
 
-@pytest.mark.parametrize("response", [None, {}, {"message": "Not JSON"}])
+@pytest.mark.parametrize(
+    "response", [None, {}, {"message": "Not JSON"}, {"his": "Not a list"}]
+)
 async def test_get_history_with_an_invalid_response(response: dict | None) -> None:
     """Test a response that couldn't be read is reported as an error."""
     api = VivintSkyApi("user@example.com")
