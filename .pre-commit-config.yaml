@@ -21,8 +21,8 @@ repos:
         name: mypy
         entry: uv run mypy vivintpy tests
         language: system
-        # Python code, plus mypy's settings and version
-        files: ^(vivintpy/|tests/|pyproject\.toml$|uv\.lock$)
+        # Python code, plus mypy's settings (setup.cfg) and version
+        files: ^(vivintpy/|tests/|pyproject\.toml$|setup\.cfg$|uv\.lock$)
         pass_filenames: false
 
 ci:
