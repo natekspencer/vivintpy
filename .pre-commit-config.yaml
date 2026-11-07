@@ -14,3 +14,16 @@ repos:
         args: [--fix]
       # Run the formatter.
       - id: ruff-format
+  - repo: local
+    hooks:
+      # Type check. pre-commit.ci skips this, as it can't run local hooks.
+      - id: mypy
+        name: mypy
+        entry: uv run mypy vivintpy tests
+        language: system
+        # Python code, plus mypy's settings (setup.cfg) and version
+        files: ^(vivintpy/|tests/|pyproject\.toml$|setup\.cfg$|uv\.lock$)
+        pass_filenames: false
+
+ci:
+  skip: [mypy]
