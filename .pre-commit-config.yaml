@@ -19,9 +19,10 @@ repos:
       # Type check. pre-commit.ci skips this, as it can't run local hooks.
       - id: mypy
         name: mypy
-        # Sync dependencies without building the package: a build rewrites __version__,
-        # which pre-commit treats as the hook changing files.
-        entry: sh -c 'uv sync --quiet --inexact --no-install-project && uv run --no-sync mypy vivintpy tests'
+        # Sync dependencies without building the package: a build rewrites
+        # __version__, and pre-commit fails a hook that changes files. --frozen installs
+        # uv.lock as is (uv-lock runs first), so the sync never rewrites that either.
+        entry: sh -c 'uv sync --quiet --frozen --inexact --no-install-project && uv run --no-sync mypy vivintpy tests'
         language: system
         # Python code, mypy's settings (setup.cfg) and version, and this hook's own config
         files: ^(vivintpy/|tests/|pyproject\.toml$|setup\.cfg$|uv\.lock$|\.pre-commit-config\.yaml$)
