@@ -23,8 +23,8 @@ repos:
         # which pre-commit treats as the hook changing files.
         entry: sh -c 'uv sync --quiet --inexact --no-install-project && uv run --no-sync mypy vivintpy tests'
         language: system
-        # Python code, plus mypy's settings (setup.cfg) and version
-        files: ^(vivintpy/|tests/|pyproject\.toml$|setup\.cfg$|uv\.lock$)
+        # Python code, mypy's settings (setup.cfg) and version, and this hook's own config
+        files: ^(vivintpy/|tests/|pyproject\.toml$|setup\.cfg$|uv\.lock$|\.pre-commit-config\.yaml$)
         pass_filenames: false
 
 ci:
