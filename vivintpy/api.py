@@ -212,7 +212,9 @@ class VivintSkyApi:
             if codes := query.get("code"):
                 return str(codes[0])
             if attempt == 1:
-                self.__refresh_token = None
+                # Only a full sign-in sets the cookie, and it needs the password
+                if self.__password:
+                    self.__refresh_token = None
                 self.__token = None
                 await self.connect()
 
