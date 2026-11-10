@@ -478,3 +478,34 @@ async def test_failed_authorization_retry_keeps_the_access_token() -> None:
 
     assert api.tokens is token
     assert api.is_session_valid()
+
+
+async def test_failed_authorization_retry_keeps_the_refresh_token() -> None:
+    """Test the refresh token is restored when the password sign-in fails."""
+    api = create_api(AsyncMock(), password="secret", refresh_token="first")
+    api._VivintSkyApi__token = token_response("first")
+    api._VivintSkyApi__get = AsyncMock(return_value={})
+    api.connect = AsyncMock(side_effect=VivintSkyApiError("outage"))
+
+    with pytest.raises(VivintSkyApiError):
+        await api.get_authorization_code("client", "https://example.test/cb")
+
+    assert api._VivintSkyApi__refresh_token == "first"
+
+
+async def test_failed_authorization_retry_does_not_restore_a_consumed_token() -> None:
+    """Test a refresh token that connect() consumed is not put back."""
+    api = create_api(AsyncMock(), refresh_token="first")
+    api._VivintSkyApi__token = token_response("first")
+    api._VivintSkyApi__get = AsyncMock(return_value={})
+
+    async def consume_refresh_token() -> None:
+        api._VivintSkyApi__refresh_token = None
+        raise VivintSkyApiError("rejected")
+
+    api.connect = AsyncMock(side_effect=consume_refresh_token)
+
+    with pytest.raises(VivintSkyApiError):
+        await api.get_authorization_code("client", "https://example.test/cb")
+
+    assert api._VivintSkyApi__refresh_token is None

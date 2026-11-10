@@ -214,15 +214,22 @@ class VivintSkyApi:
             if attempt == 1:
                 # Only a full sign-in sets the cookie, and it needs the password
                 previous = self.__token
+                previous_refresh_token = None
                 if self.__password:
+                    # Clearing it makes connect() sign in with the password instead
+                    # of refreshing; connect() never tries this token, so it is
+                    # still unused if the sign-in fails
+                    previous_refresh_token = self.__refresh_token
                     self.__refresh_token = None
                 self.__token = None
                 try:
                     await self.connect()
                 except BaseException:
-                    # keep the old token usable if the sign-in didn't replace it
+                    # keep the old tokens usable if the sign-in didn't replace them
                     if self.__token is None:
                         self.__token = previous
+                        if self.__refresh_token is None:
+                            self.__refresh_token = previous_refresh_token
                     raise
 
         raise VivintSkyApiAuthenticationError(
