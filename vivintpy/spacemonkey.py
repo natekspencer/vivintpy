@@ -163,7 +163,7 @@ def _build_ssl_context(pkcs12_bytes: bytes) -> ssl.SSLContext:
         # The DVR issues 1024-bit client keys, which OpenSSL rejects at its default
         # security level. The relaxation only applies to connections made with this
         # context.
-        context.set_ciphers("DEFAULT:@SECLEVEL=0")
+        context.set_ciphers("DEFAULT:@SECLEVEL=1")
         # The device certificate is signed by Space Monkey's private CA, which is
         # delivered together with the client certificate.
         context.load_verify_locations(cadata=authorities)
