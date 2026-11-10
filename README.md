@@ -65,7 +65,7 @@ if dvr := account.systems[0].dvr:  # None if the system has no DVR
                     ...
 ```
 
-`aclosing` comes from `contextlib`.
+`aclosing` comes from `contextlib`, and `parse_playlist` comes from `vivintpy.spacemonkey`.
 
 ## Usage
 

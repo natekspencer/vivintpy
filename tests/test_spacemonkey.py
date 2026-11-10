@@ -1063,6 +1063,32 @@ async def test_failed_early_renewal_keeps_the_valid_certificate(
 
 
 @pytest.mark.asyncio
+async def test_failed_early_renewal_backs_off(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Test a failed early renewal isn't retried until the interval passes."""
+    dvr, _ = connected_dvr(monkeypatch, FakeSession(200, 200, 200))
+    dvr.certificate_expiry = datetime.now(UTC) + timedelta(minutes=10)
+    attempts = 0
+
+    async def renew(_self: SpaceMonkeyDvr) -> None:
+        """Fail to renew."""
+        nonlocal attempts
+        attempts += 1
+        raise SpaceMonkeyError("outage")
+
+    monkeypatch.setattr(SpaceMonkeyDvr, "_renew_certificate", renew)
+
+    await dvr.get("/status")
+    await dvr.get("/status")
+    assert attempts == 1
+
+    dvr._renew_failed_at = datetime.now(UTC) - timedelta(minutes=6)  # pylint: disable=protected-access
+    await dvr.get("/status")
+    assert attempts == 2
+
+
+@pytest.mark.asyncio
 async def test_failed_close_can_be_retried() -> None:
     """Test the session is kept when closing it fails."""
     dvr = SpaceMonkeyDvr(FakeApi(), "dvr-id")  # type: ignore[arg-type]

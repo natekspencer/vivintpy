@@ -39,6 +39,7 @@ DVR_SERVICE_TYPE = "SPMO_DVR"
 
 # Certificates last 24 hours; renew well before the DVR starts rejecting them.
 RENEW_MARGIN = timedelta(minutes=30)
+RENEW_RETRY_INTERVAL = timedelta(minutes=5)
 
 _EXTINF = re.compile(r"#EXTINF:([\d.]+),")
 _SEGMENT_NUMBER = re.compile(r"(\d+)\.ts$")
@@ -209,6 +210,7 @@ class SpaceMonkeyDvr:
         self._closed = False
         self.hardware_id: str | None = None
         self.certificate_expiry: datetime | None = None
+        self._renew_failed_at: datetime | None = None
         self.address: DvrAddress | None = None
 
     @classmethod
@@ -382,12 +384,19 @@ class SpaceMonkeyDvr:
             elif (
                 self.certificate_expiry is not None
                 and self.certificate_expiry - datetime.now(UTC) < RENEW_MARGIN
+                and (
+                    self._renew_failed_at is None
+                    or datetime.now(UTC) - self._renew_failed_at >= RENEW_RETRY_INTERVAL
+                    or self.certificate_expiry <= datetime.now(UTC)
+                )
             ):
                 try:
                     await self._renew_certificate()
+                    self._renew_failed_at = None
                 except SpaceMonkeyError as err:
                     if self.certificate_expiry <= datetime.now(UTC):
                         raise
+                    self._renew_failed_at = datetime.now(UTC)
                     _LOGGER.debug("Unable to renew the DVR certificate yet: %s", err)
 
     def _client_session(self) -> aiohttp.ClientSession:
