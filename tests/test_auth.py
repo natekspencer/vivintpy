@@ -463,3 +463,18 @@ async def test_failed_subscribe_can_be_retried() -> None:
         await account.subscribe_for_realtime_updates()
 
     assert pubnub_cls.call_count == 2
+
+
+async def test_failed_authorization_retry_keeps_the_access_token() -> None:
+    """Test the token is kept when signing in again for a code fails."""
+    api = create_api(AsyncMock(), refresh_token="first")
+    token = token_response("first")
+    api._VivintSkyApi__token = token
+    api._VivintSkyApi__get = AsyncMock(return_value={})
+    api.connect = AsyncMock(side_effect=VivintSkyApiError("outage"))
+
+    with pytest.raises(VivintSkyApiError):
+        await api.get_authorization_code("client", "https://example.test/cb")
+
+    assert api.tokens is token
+    assert api.is_session_valid()

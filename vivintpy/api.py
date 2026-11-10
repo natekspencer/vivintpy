@@ -213,10 +213,17 @@ class VivintSkyApi:
                 return str(codes[0])
             if attempt == 1:
                 # Only a full sign-in sets the cookie, and it needs the password
+                previous = self.__token
                 if self.__password:
                     self.__refresh_token = None
                 self.__token = None
-                await self.connect()
+                try:
+                    await self.connect()
+                except BaseException:
+                    # keep the old token usable if the sign-in didn't replace it
+                    if self.__token is None:
+                        self.__token = previous
+                    raise
 
         raise VivintSkyApiAuthenticationError(
             "Unable to get an authorization code: "
