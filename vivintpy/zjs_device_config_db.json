@@ -5456,12 +5456,12 @@
   },
   "0x0109:0x2009:0x0901": {
     "description": "AC/DC Siren",
-    "label": "ZM1602-5",
+    "label": "ZM1602",
     "manufacturer": "Vision Security"
   },
   "0x0109:0x2009:0x0903": {
     "description": "AC/DC Siren",
-    "label": "ZM1602-5",
+    "label": "ZM1602",
     "manufacturer": "Vision Security"
   },
   "0x0109:0x2009:0x0907": {
@@ -6045,8 +6045,8 @@
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0301:0x1001": {
-    "description": "Roller Shutter 2",
-    "label": "FGR-222",
+    "description": "Roller Shutter",
+    "label": "FGRM-222",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0301:0x3001": {
@@ -6055,8 +6055,8 @@
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0302:0x1000": {
-    "description": "Roller Shutter 2",
-    "label": "FGR-222",
+    "description": "Roller Shutter",
+    "label": "FGRM-222",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0302:0x3000": {
@@ -9507,8 +9507,8 @@
     "manufacturer": "Popp & Co"
   },
   "0x0154:0x0004:0x0002": {
-    "description": "POPP Solar Outdoor Siren 2",
-    "label": "700854",
+    "description": "Solar Powered Outdoor Siren",
+    "label": "005107",
     "manufacturer": "Popp & Co"
   },
   "0x0154:0x0004:0x0003": {
@@ -11323,7 +11323,7 @@
   },
   "0x019b:0x0003:0x0202": {
     "description": "Floor Thermostat",
-    "label": "Z-TRM2fx",
+    "label": "Z-TRM 2",
     "manufacturer": "Heatit"
   },
   "0x019b:0x0003:0x0203": {
@@ -11742,8 +11742,8 @@
     "manufacturer": "Kaipule Technology Co., Ltd."
   },
   "0x0214:0x0002:0x0002": {
-    "description": "Smoke Sensor",
-    "label": "ES-61",
+    "description": "PIR Sensor",
+    "label": "DP-32 / IX-30 / IX-32",
     "manufacturer": "Kaipule Technology Co., Ltd."
   },
   "0x0214:0x0003:0x0001": {
@@ -12052,8 +12052,8 @@
     "manufacturer": "Logic Group"
   },
   "0x0234:0x0003:0x010d": {
-    "description": "DIN-Rail Module with 10 Digital Outputs and 4 Digital Inputs",
-    "label": "LHC5020",
+    "description": "DIN Rail Interface",
+    "label": "ZIF5020",
     "manufacturer": "Logic Group"
   },
   "0x0234:0x0003:0x0111": {
@@ -14300,9 +14300,9 @@
     "manufacturer": "ShenZhen Sunricher Technology, Ltd."
   },
   "0x0330:0x0300:0xa305": {
-    "description": "Wall Controller - 8 Button",
-    "label": "VES-ZW-WAL-009",
-    "manufacturer": "Vesternet"
+    "description": "Wall Mounted Switch",
+    "label": "Heatit Z-Push Button 8",
+    "manufacturer": "Sunricher"
   },
   "0x0330:0x0300:0xa306": {
     "description": "2 Group Single Color Wall Mounted Remote",
@@ -14970,8 +14970,8 @@
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0002:0x0009": {
-    "description": "a\u00ebrQ Temperature and Humidity Sensor V1.0",
-    "label": "ZWA009",
+    "description": "a\u00ebrQ Temperature and Humidity Sensor V2.0",
+    "label": "ZWA039",
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0002:0x000b": {
@@ -15145,8 +15145,8 @@
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0102:0x0009": {
-    "description": "a\u00ebrQ Temperature and Humidity Sensor V1.0",
-    "label": "ZWA009",
+    "description": "a\u00ebrQ Temperature and Humidity Sensor V2.0",
+    "label": "ZWA039",
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0102:0x000b": {
@@ -15300,8 +15300,8 @@
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0202:0x0009": {
-    "description": "a\u00ebrQ Temperature and Humidity Sensor V1.0",
-    "label": "ZWA009",
+    "description": "a\u00ebrQ Temperature and Humidity Sensor V2.0",
+    "label": "ZWA039",
     "manufacturer": "Aeotec Ltd."
   },
   "0x0371:0x0202:0x000b": {
@@ -16371,6 +16371,31 @@
     "label": "WM25L",
     "manufacturer": "SmartWings"
   },
+  "0x046d:0x2774:0x1a2d": {
+    "description": "On/Off Switch",
+    "label": "NVN-100",
+    "manufacturer": "NOVON"
+  },
+  "0x046d:0x2774:0x1a2e": {
+    "description": "Dimmer Switch",
+    "label": "NVN-110",
+    "manufacturer": "NOVON"
+  },
+  "0x046d:0x27d8:0x1a2f": {
+    "description": "On/Off Plug",
+    "label": "NVN-200",
+    "manufacturer": "NOVON"
+  },
+  "0x046d:0x27d8:0x1a30": {
+    "description": "Dimmer Plug",
+    "label": "NVN-210",
+    "manufacturer": "NOVON"
+  },
+  "0x046d:0x283c:0x1a31": {
+    "description": "Outdoor Dual Plug",
+    "label": "NVN-220",
+    "manufacturer": "NOVON"
+  },
   "0x4118:0x0002:0x0002": {
     "description": "Slim Multi-Sensor",
     "label": "TSM02",
@@ -16576,5 +16601,5 @@
     "label": "BW8120",
     "manufacturer": "Remotec"
   },
-  "updated_at": "2026-11-02T23:10:09.971673"
+  "updated_at": "2026-11-09T23:49:38.646873"
 }
