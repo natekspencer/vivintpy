@@ -243,6 +243,11 @@ class Account:
         self.__pubnub = pubnub
         self.__pubnub_listener = listener
 
+        # thermostat updates follow the same option, including when it's set here
+        self.__subscribe_for_realtime_updates = True
+        for system in self.systems:
+            system.start_climate_updates()
+
     def handle_pubnub_message(self, message: dict) -> None:
         """Handle a pubnub message."""
         panel_id = message.get(PubNubMessageAttribute.PANEL_ID)

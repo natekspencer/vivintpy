@@ -31,7 +31,11 @@ from vivintpy.enums import (
     OperatingMode,
     OperatingState,
 )
-from vivintpy.exceptions import VivintSkyApiError, VivintSkyApiRateLimitError
+from vivintpy.exceptions import (
+    VivintSkyApiAuthenticationError,
+    VivintSkyApiError,
+    VivintSkyApiRateLimitError,
+)
 from vivintpy.proto import climate_pb2, climate_pb2_grpc
 from vivintpy.system import System
 
@@ -868,3 +872,177 @@ async def test_snapshot_does_not_overwrite_a_newer_stream_update() -> None:
     await load
 
     assert thermostat.name == "Renamed"
+
+
+class ReconnectingStreamApi(FakeApi):
+    """An API whose stream lists two thermostats and, after dropping, only one."""
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.calls = 0
+        self.other = make_device(id=f"urn:vivint:google:{SYSTEM_ID}:other")
+
+    async def stream_climate_devices(
+        self, system_id: int
+    ) -> AsyncIterator[climate_pb2.GetClimateDevicesStreamingResponse]:
+        self.calls += 1
+        if self.calls == 1:
+            yield climate_pb2.GetClimateDevicesStreamingResponse(
+                climate_devices=[make_device(), self.other]
+            )
+            raise RuntimeError("connection dropped")
+        yield climate_pb2.GetClimateDevicesStreamingResponse(
+            climate_devices=[make_device()]
+        )
+        await asyncio.sleep(3600)
+
+
+@pytest.mark.asyncio
+async def test_first_stream_message_removes_what_went_missing(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Test a thermostat deleted while the stream was down is removed on reconnect."""
+    monkeypatch.setattr("vivintpy.system.CLIMATE_RETRY_MIN", 0)
+    api = ReconnectingStreamApi()
+    system = make_system(api)
+    devices = system.alarm_panels[0].devices
+
+    system.start_climate_updates()
+    try:
+        await wait_for(lambda: api.calls == 2 and len(devices) == 1)
+    finally:
+        await system.stop_climate_updates()
+
+    assert [device.id for device in devices] == [DEVICE_URN]
+
+
+@pytest.mark.asyncio
+async def test_first_stream_message_drops_a_removed_component(
+    system: System, thermostat: ClimateThermostat
+) -> None:
+    """Test a full listing replaces the components, and later messages merge."""
+    listing = make_device()
+    kept = [c for c in listing.components if c.WhichOneof("value") != "fan_setting"]
+    del listing.components[:]
+    listing.components.extend(kept)
+
+    system.update_climate_devices([listing], snapshot=True)
+    assert thermostat._component("fan_setting") is None
+
+    system.update_climate_devices([climate_pb2.ClimateDevice(id=DEVICE_URN)])
+    assert thermostat._component("setpoints") is not None
+
+
+@pytest.mark.asyncio
+async def test_authentication_errors_from_a_load_are_raised() -> None:
+    """Test a failed sign-in isn't hidden by the load."""
+
+    class Api(FakeApi):
+        async def get_climate_devices(self, system_id: int) -> list[Any]:
+            raise VivintSkyApiAuthenticationError("rejected")
+
+    with pytest.raises(VivintSkyApiAuthenticationError):
+        await make_system(Api()).load_climate_devices()
+
+
+@pytest.mark.asyncio
+async def test_other_errors_from_a_load_are_logged() -> None:
+    """Test an outage during a load leaves the thermostats as they were."""
+
+    class Api(FakeApi):
+        async def get_climate_devices(self, system_id: int) -> list[Any]:
+            raise VivintSkyApiError("outage")
+
+    system = make_system(Api())
+    system.update_climate_devices([make_device()])
+
+    await system.load_climate_devices()
+
+    assert len(system.alarm_panels[0].devices) == 1
+
+
+@pytest.mark.asyncio
+async def test_loads_do_not_overlap() -> None:
+    """Test a load fetches only after the previous one has applied its result."""
+
+    class Api(FakeApi):
+        def __init__(self) -> None:
+            super().__init__()
+            self.active = 0
+            self.most = 0
+
+        async def get_climate_devices(self, system_id: int) -> list[Any]:
+            self.active += 1
+            self.most = max(self.most, self.active)
+            await asyncio.sleep(0.01)
+            self.active -= 1
+            return [make_device()]
+
+    api = Api()
+    system = make_system(api)
+
+    await asyncio.gather(system.load_climate_devices(), system.load_climate_devices())
+
+    assert api.most == 1
+
+
+@pytest.mark.asyncio
+async def test_snapshot_fills_in_a_thermostat_the_stream_reported_in_part() -> None:
+    """Test a snapshot supplies what a partial stream update left out."""
+    api = SnapshotApi()
+    system = make_system(api)
+    partial = climate_pb2.ClimateDevice(
+        id=DEVICE_URN,
+        name="Hallway",
+        components=[
+            climate_pb2.Component(
+                id=f"{DEVICE_URN}:temperature",
+                temperature_detection=Component.TemperatureDetection(
+                    current_temperature=25.0
+                ),
+            )
+        ],
+    )
+
+    load = asyncio.create_task(system.load_climate_devices())
+    await api.started.wait()
+    system.update_climate_devices([partial])
+    api.release.set()
+    await load
+
+    thermostat = system.alarm_panels[0].devices[0]
+    assert thermostat.temperature == 25.0  # type: ignore[attr-defined]
+    assert thermostat.heat_set_point == 15.5  # type: ignore[attr-defined]
+
+
+def test_unset_temperature_and_humidity_are_none(
+    system: System, thermostat: ClimateThermostat
+) -> None:
+    """Test a detection component with no value isn't reported as zero."""
+    thermostat._component("temperature_detection").current_temperature = 0.0  # type: ignore[union-attr]
+    thermostat._component("humidity_detection").value = 0  # type: ignore[union-attr]
+
+    assert thermostat.temperature is None
+    assert thermostat.humidity is None
+
+
+@pytest.mark.asyncio
+async def test_subscribing_later_starts_climate_updates(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Test subscribing for realtime updates after connecting starts the streams."""
+    monkeypatch.setattr("vivintpy.account.PubNubAsyncio", MagicMock())
+    account = Account("user", client_session=MagicMock())
+    system = MagicMock()
+    account.systems = [system]
+
+    await account.subscribe_for_realtime_updates(
+        {
+            AuthUserAttribute.USERS: {
+                UserAttribute.ID: "abc",
+                UserAttribute.MESSAGE_BROADCAST_CHANNEL: "channel",
+            }
+        }
+    )
+
+    system.start_climate_updates.assert_called_once_with()
