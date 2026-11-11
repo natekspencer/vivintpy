@@ -20,7 +20,7 @@ from .thermostat import Thermostat
 
 Component = climate_pb2.Component
 
-# Fan modes by the name the climate service uses for them.
+# fan modes by the name the climate service uses for them
 FAN_MODES = {
     "AUTO_LOW": FanMode.AUTO_LOW,
     "ON_LOW": FanMode.ON_LOW,
@@ -281,7 +281,7 @@ class ClimateThermostat(Thermostat):
         if kwargs:
             raise ValueError(f"Unsupported thermostat attributes: {', '.join(kwargs)}")
 
-        # Resolve every value before sending anything, so a bad one sends no RPCs
+        # resolve every value before sending anything, so a bad one sends no RPCs
         requests: list[tuple[str, Any, str, dict[str, Any]]] = []
         if fan_mode is not None:
             name = FAN_MODE_NAMES.get(FanMode(fan_mode))
