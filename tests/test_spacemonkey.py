@@ -1150,6 +1150,7 @@ async def test_closed_supplied_session_is_reported() -> None:
     dvr = SpaceMonkeyDvr(FakeApi(), "dvr-id", session)  # type: ignore[arg-type]
     dvr._ssl_context = MagicMock()  # pylint: disable=protected-access
     dvr.address = spacemonkey.DvrAddress("dvr.example.test", 8080, "192.0.2.10")
+    dvr.certificate_expiry = datetime.now(UTC) + timedelta(hours=24)
 
     with pytest.raises(SpaceMonkeyError, match="closed"):
         await dvr.get("/status")
@@ -1193,3 +1194,78 @@ async def test_failed_disconnect_does_not_stale_the_current_dvr(
     await system.disconnect_dvrs()
 
     assert system._stale_dvrs == []  # pylint: disable=protected-access
+
+
+@pytest.mark.asyncio
+async def test_get_uses_a_short_connect_timeout(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Test a DVR that doesn't answer is reported without the default 30 seconds."""
+    session = FakeSession(200)
+    dvr, _ = connected_dvr(monkeypatch, session)
+
+    await dvr.get("/status")
+
+    timeout = session.requests[0][1]["timeout"]
+    assert timeout is spacemonkey.DVR_TIMEOUT
+    assert timeout.sock_connect == 5
+    assert timeout.sock_read == 30
+    assert timeout.total is None
+
+
+@pytest.mark.asyncio
+async def test_failed_lookup_does_not_renew_the_certificate_again(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Test a DVR with a valid certificate that isn't located is only looked up."""
+    session = FakeSession(200, 200)
+    dvr, counts = connected_dvr(monkeypatch, session)
+    dvr.address = None
+
+    async def locate(self: SpaceMonkeyDvr) -> None:
+        """Fail once, as a directory that is briefly down does, then succeed."""
+        counts["locate"] += 1
+        if counts["locate"] == 1:
+            raise SpaceMonkeyError("Directory lookup failed: 503")
+        self.address = spacemonkey.DvrAddress("dvr.example.test", 8080, "192.0.2.10")
+
+    monkeypatch.setattr(SpaceMonkeyDvr, "_locate", locate)
+
+    with pytest.raises(SpaceMonkeyError, match="Directory lookup"):
+        await dvr.get("/status")
+    await dvr.get("/status")
+
+    assert counts == {"locate": 2, "renew": 0}
+
+
+@pytest.mark.asyncio
+async def test_get_does_not_renew_again_after_a_renewed_certificate_is_refused(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Test requests made one after another don't each sign in again."""
+    dvr, counts = connected_dvr(monkeypatch, FakeSession(401, 401, 401, 401))
+
+    for _ in range(3):
+        with pytest.raises(SpaceMonkeyError, match="HTTP 401"):
+            await dvr.get("/status")
+
+    assert counts["renew"] == 1
+
+
+@pytest.mark.asyncio
+async def test_get_renews_after_a_refusal_once_the_interval_has_passed(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Test a refused certificate is tried again after the retry interval."""
+    dvr, counts = connected_dvr(monkeypatch, FakeSession(401, 401, 401, 200))
+
+    with pytest.raises(SpaceMonkeyError, match="HTTP 401"):
+        await dvr.get("/status")
+    dvr._rejected_at = (  # pylint: disable=protected-access
+        datetime.now(UTC) - spacemonkey.RENEW_RETRY_INTERVAL - timedelta(seconds=1)
+    )
+
+    resp = await dvr.get("/status")
+
+    assert resp.status == 200
+    assert counts["renew"] == 2

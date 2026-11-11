@@ -41,6 +41,10 @@ DVR_SERVICE_TYPE = "SPMO_DVR"
 RENEW_MARGIN = timedelta(minutes=30)
 RENEW_RETRY_INTERVAL = timedelta(minutes=5)
 
+# The DVR is on the local network, so a DVR that doesn't answer is reported quickly;
+# sock_read keeps a stalled segment stream from hanging without capping a download.
+DVR_TIMEOUT = aiohttp.ClientTimeout(sock_connect=5, sock_read=30)
+
 _EXTINF = re.compile(r"#EXTINF:([\d.]+),")
 _SEGMENT_NUMBER = re.compile(r"(\d+)\.ts$")
 
@@ -211,6 +215,7 @@ class SpaceMonkeyDvr:
         self.hardware_id: str | None = None
         self.certificate_expiry: datetime | None = None
         self._renew_failed_at: datetime | None = None
+        self._rejected_at: datetime | None = None
         self.address: DvrAddress | None = None
 
     @classmethod
@@ -239,6 +244,7 @@ class SpaceMonkeyDvr:
         """Sign in to Space Monkey, get a certificate and locate the DVR."""
         async with self._lock:
             self._closed = False
+            self._rejected_at = None
             await self._renew_certificate()
             await self._locate()
 
@@ -341,6 +347,7 @@ class SpaceMonkeyDvr:
                     ssl=self._ssl_context,
                     server_hostname=address.host,
                     headers={"Host": f"{address.host}:{address.port}"},
+                    timeout=DVR_TIMEOUT,
                 )
             except (aiohttp.ClientConnectionError, TimeoutError) as err:
                 # A DVR that rejects the certificate drops the connection during the
@@ -361,14 +368,25 @@ class SpaceMonkeyDvr:
             except aiohttp.ClientError as err:
                 raise SpaceMonkeyError(f"DVR request failed: {err}") from err
 
-            if resp.status == 401 and not renewed:
+            if resp.status == 401:
                 resp.release()
-                renewed = True
-                await self._renew_if_unchanged(seen_expiry)
-                continue
+                if (
+                    not renewed
+                    and self._rejected_at is not None
+                    and datetime.now(UTC) - self._rejected_at < RENEW_RETRY_INTERVAL
+                ):
+                    # A renewal just now was refused too, so don't sign in again
+                    raise SpaceMonkeyError(f"{path} returned HTTP 401")
+                if not renewed:
+                    renewed = True
+                    await self._renew_if_unchanged(seen_expiry)
+                    continue
+                self._rejected_at = datetime.now(UTC)
+                raise SpaceMonkeyError(f"{path} returned HTTP 401")
             if resp.status != 200:
                 resp.release()
                 raise SpaceMonkeyError(f"{path} returned HTTP {resp.status}")
+            self._rejected_at = None
             return resp
 
     def _ensure_open(self) -> None:
@@ -387,17 +405,12 @@ class SpaceMonkeyDvr:
         """Connect if needed, and renew the certificate shortly before it expires."""
         async with self._lock:
             self._ensure_open()
-            if not self.connected:
+            if self._ssl_context is None or self.certificate_expiry is None:
                 await self._renew_certificate()
-                await self._locate()
-            elif (
-                self.certificate_expiry is not None
-                and self.certificate_expiry - datetime.now(UTC) < RENEW_MARGIN
-                and (
-                    self._renew_failed_at is None
-                    or datetime.now(UTC) - self._renew_failed_at >= RENEW_RETRY_INTERVAL
-                    or self.certificate_expiry <= datetime.now(UTC)
-                )
+            elif self.certificate_expiry - datetime.now(UTC) < RENEW_MARGIN and (
+                self._renew_failed_at is None
+                or datetime.now(UTC) - self._renew_failed_at >= RENEW_RETRY_INTERVAL
+                or self.certificate_expiry <= datetime.now(UTC)
             ):
                 try:
                     await self._renew_certificate()
@@ -407,6 +420,8 @@ class SpaceMonkeyDvr:
                         raise
                     self._renew_failed_at = datetime.now(UTC)
                     _LOGGER.debug("Unable to renew the DVR certificate yet: %s", err)
+            if self.address is None:
+                await self._locate()
 
     def _client_session(self) -> aiohttp.ClientSession:
         """Return the HTTP session, creating one if there is none or it was closed."""

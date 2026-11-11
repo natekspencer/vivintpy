@@ -230,6 +230,10 @@ class VivintSkyApi:
                         self.__token = previous
                         if self.__refresh_token is None:
                             self.__refresh_token = previous_refresh_token
+                        # The old tokens are valid, so don't leave the API waiting
+                        # for MFA that nobody is going to complete
+                        self.__mfa_pending = False
+                        self.__mfa_password = None
                     raise
 
         raise VivintSkyApiAuthenticationError(

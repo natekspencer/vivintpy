@@ -509,3 +509,25 @@ async def test_failed_authorization_retry_does_not_restore_a_consumed_token() ->
         await api.get_authorization_code("client", "https://example.test/cb")
 
     assert api._VivintSkyApi__refresh_token is None
+
+
+async def test_failed_authorization_retry_clears_the_mfa_state() -> None:
+    """Test MFA started by the forced sign-in doesn't block the restored tokens."""
+    api = create_api(AsyncMock(), password="secret", refresh_token="first")
+    token = token_response("first")
+    api._VivintSkyApi__token = token
+    api._VivintSkyApi__get = AsyncMock(return_value={})
+
+    async def require_mfa() -> None:
+        api._VivintSkyApi__mfa_pending = True
+        api._VivintSkyApi__mfa_password = "secret"
+        raise VivintSkyApiMfaRequiredError("MFA required")
+
+    api.connect = AsyncMock(side_effect=require_mfa)
+
+    with pytest.raises(VivintSkyApiMfaRequiredError):
+        await api.get_authorization_code("client", "https://example.test/cb")
+
+    assert api.tokens is token
+    assert api._VivintSkyApi__mfa_pending is False
+    assert api._VivintSkyApi__mfa_password is None
