@@ -17,13 +17,13 @@ class VivintSkyApiMfaRequiredError(VivintSkyApiAuthenticationError):
     """VivintSky API MFA required related error occurred."""
 
 
-class SpaceMonkeyError(VivintError):
-    """Space Monkey DVR related exception occurred."""
-
-
 class VivintSkyApiExpiredCookieError(VivintSkyApiError):
     """VivintSky API cookie expired error occurred."""
 
 
 class VivintSkyApiMissingCookieError(VivintSkyApiError):
     """VivintSky API missing cookie error occurred."""
+
+
+class SpaceMonkeyError(VivintError):
+    """Space Monkey DVR related exception occurred."""

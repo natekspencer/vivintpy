@@ -83,9 +83,17 @@ class SystemAttribute:
     SECURITY_STATE = "s"
     SECURITY_TIMESTAMP = "ts"
     SECURITY_USER_ID = "uid"
+    SERVICES = "srvs"
     SYSTEM = "system"
     SYSTEM_NICKNAME = "sn"
     USERS = "u"
+
+
+class SystemServiceAttribute:
+    """System service attributes."""
+
+    EXTERNAL_ID = "exid"
+    TYPE = "t"
 
 
 class HistoryAttribute:

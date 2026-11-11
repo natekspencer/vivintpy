@@ -19,6 +19,7 @@ import aiohttp
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.serialization import pkcs12
 
+from .const import SystemAttribute, SystemServiceAttribute
 from .exceptions import SpaceMonkeyError, VivintError
 from .utils import from_microseconds
 
@@ -87,9 +88,12 @@ class DvrAddress:
 
 def find_dvr_service_id(system_data: dict[str, Any]) -> str | None:
     """Return the DVR service id from a system's data, if the system has a DVR."""
-    for service in (system_data.get("system") or {}).get("srvs") or []:
-        if service.get("t") == DVR_SERVICE_TYPE and (exid := service.get("exid")):
-            return cast("str", exid)
+    system = system_data.get(SystemAttribute.SYSTEM) or {}
+    for service in system.get(SystemAttribute.SERVICES) or []:
+        if service.get(SystemServiceAttribute.TYPE) == DVR_SERVICE_TYPE and (
+            exid := service.get(SystemServiceAttribute.EXTERNAL_ID)
+        ):
+            return cast(str, exid)
     return None
 
 
@@ -167,14 +171,14 @@ def _build_ssl_context(pkcs12_bytes: bytes) -> ssl.SSLContext:
 
     context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
     try:
-        # The DVR issues 1024-bit client keys, which OpenSSL rejects at its default
-        # security level. The relaxation only applies to connections made with this
-        # context.
+        # the DVR issues 1024-bit client keys, which OpenSSL rejects at its default
+        # security level; the relaxation only applies to connections made with this
+        # context
         context.set_ciphers("DEFAULT:@SECLEVEL=1")
-        # The device certificate is signed by Space Monkey's private CA, which is
-        # delivered together with the client certificate.
+        # the device certificate is signed by Space Monkey's private CA, which is
+        # delivered together with the client certificate
         context.load_verify_locations(cadata=authorities)
-        # load_cert_chain only accepts a file path.
+        # load_cert_chain only accepts a file path
         fd, path = tempfile.mkstemp(suffix=".pem")
         try:
             with os.fdopen(fd, "wb") as handle:
@@ -261,7 +265,7 @@ class SpaceMonkeyDvr:
             self._ssl_context = None
             session = self._session
             if self._owns_session and session:
-                # Cleared only once closed, so a failed close can be retried
+                # cleared only once closed, so a failed close can be retried
                 if not session.closed:
                     await session.close()
                 self._session = None
@@ -336,7 +340,7 @@ class SpaceMonkeyDvr:
             if session.closed:
                 raise SpaceMonkeyError("The client session has been closed")
             seen_expiry = self.certificate_expiry
-            # The DVR's name doesn't resolve on every network, so connect to its
+            # the DVR's name doesn't resolve on every network, so connect to its
             # local IP and verify the certificate against the name instead
             ip = (
                 f"[{address.local_ip}]" if ":" in address.local_ip else address.local_ip
@@ -352,10 +356,10 @@ class SpaceMonkeyDvr:
                     timeout=DVR_TIMEOUT,
                 )
             except (aiohttp.ClientConnectionError, TimeoutError) as err:
-                # A DVR that rejects the certificate drops the connection during the
+                # a DVR that rejects the certificate drops the connection during the
                 # TLS handshake, and one that moved stops answering, so a connection
                 # failure is retried after looking the DVR up again and then after
-                # renewing the certificate.
+                # renewing the certificate
                 if not located:
                     located = True
                     async with self._lock:
@@ -377,7 +381,7 @@ class SpaceMonkeyDvr:
                     and self._rejected_at is not None
                     and datetime.now(UTC) - self._rejected_at < RENEW_RETRY_INTERVAL
                 ):
-                    # A renewal just now was refused too, so don't sign in again
+                    # a renewal just now was refused too, so don't sign in again
                     raise SpaceMonkeyError(f"{path} returned HTTP 401")
                 if not renewed:
                     renewed = True
@@ -486,7 +490,7 @@ class SpaceMonkeyDvr:
             entry = await _read_json(resp, "directory")
             try:
                 entry = entry["address"]
-                # lan_dns carries its own ":port" suffix.
+                # lan_dns carries its own ":port" suffix
                 self.address = DvrAddress(
                     host=entry["lan_dns"].rsplit(":", 1)[0],
                     port=entry["local_port"],

@@ -212,11 +212,11 @@ class VivintSkyApi:
             if codes := query.get("code"):
                 return str(codes[0])
             if attempt == 1:
-                # Only a full sign-in sets the cookie, and it needs the password
+                # only a full sign-in sets the cookie, and it needs the password
                 previous = self.__token
                 previous_refresh_token = None
                 if self.__password:
-                    # Clearing it makes connect() sign in with the password instead
+                    # clearing it makes connect() sign in with the password instead
                     # of refreshing; connect() never tries this token, so it is
                     # still unused if the sign-in fails
                     previous_refresh_token = self.__refresh_token
@@ -230,7 +230,7 @@ class VivintSkyApi:
                         self.__token = previous
                         if self.__refresh_token is None:
                             self.__refresh_token = previous_refresh_token
-                        # The old tokens are valid, so don't leave the API waiting
+                        # the old tokens are valid, so don't leave the API waiting
                         # for MFA that nobody is going to complete
                         self.__mfa_pending = False
                         self.__mfa_password = None

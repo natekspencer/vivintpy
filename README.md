@@ -38,6 +38,8 @@ It currently has support for the following device types:
   - smoke/fire
   - etc
 
+It can also list and stream the recordings stored on a Vivint DVR (Smart Drive).
+
 In addition, it integrates with PubNub to receive real-time updates for devices. This subscription stops receiving notifications around 15-20 minutes unless a call is made to the Vivint Sky API periodically. This **might** be related to the cookie expiration since it expires 20 minutes after the last API call was received. If another client connects, however, the notifications start to stream again for all currently connected clients.
 
 ## Installation
@@ -47,25 +49,6 @@ Requires Python 3.11 or newer.
 ```bash
 pip install vivintpy
 ```
-
-Systems with a Vivint DVR (Smart Drive) can also list and stream the continuous recordings stored on it. The DVR is reached over the local network using a short-lived client certificate that is issued to the signed-in account and renewed automatically.
-
-```python
-await account.connect(load_devices=True)
-if dvr := account.systems[0].dvr:  # None if the system has no DVR
-    await dvr.connect()
-    for recording in await dvr.get_recordings(camera_id):
-        playlist = await dvr.get_playlist(camera_id, recording.id)  # HLS
-        for segment in parse_playlist(playlist, recording):
-            # aclosing releases the connection if the loop is left early.
-            async with aclosing(
-                dvr.stream_segment(camera_id, recording.id, segment.number)
-            ) as chunks:
-                async for chunk in chunks:
-                    ...
-```
-
-`aclosing` comes from `contextlib`, and `parse_playlist` comes from `vivintpy.spacemonkey`.
 
 ## Usage
 
@@ -138,6 +121,27 @@ remove_listener = camera.on(MOTION_DETECTED, lambda event: print(event["device"]
 
 `AlarmPanel.changed_by` reports what last armed or disarmed a panel, such as a user's name, a key fob's name, `panel` or a rule. Vivint only reports a key fob as `panel`, so its name comes from the system's history a moment later. It shows `panel` until then, including during an exit delay, and stays `panel` if the history can't be read. `AlarmPanel.changed_by_message` has Vivint's own description from the history, such as `Your home was disarmed by Sam from an Android device`, which also says where the change came from. It is `None` until the history has the event, so it stays `None` during an exit delay. `changed_by` is `None` until the first change after connecting. It can arrive just before or just after the panel's state changes, so an update can briefly show the previous value. `UPDATE` also fires on refreshes, when nothing may have changed.
 
+### Recordings on the DVR
+
+Systems with a Vivint DVR (Smart Drive) can also list and stream the continuous recordings stored on it. The DVR is reached over the local network using a short-lived client certificate that is issued to the signed-in account and renewed automatically.
+
+```python
+await account.connect(load_devices=True)
+if dvr := account.systems[0].dvr:  # None if the system has no DVR
+    await dvr.connect()
+    for recording in await dvr.get_recordings(camera_id):
+        playlist = await dvr.get_playlist(camera_id, recording.id)  # HLS
+        for segment in parse_playlist(playlist, recording):
+            # aclosing releases the connection if the loop is left early
+            async with aclosing(
+                dvr.stream_segment(camera_id, recording.id, segment.number)
+            ) as chunks:
+                async for chunk in chunks:
+                    ...
+```
+
+`aclosing` comes from `contextlib`, and `parse_playlist` comes from `vivintpy.spacemonkey`.
+
 ### Staying logged in
 
 The password you pass to `connect` is only used to log in, and vivintpy doesn't keep it. Save the refresh token from that first login, then use it to log in next time:
@@ -166,7 +170,7 @@ Passing `password` to `Account` still works, and it's kept so that vivintpy can 
 
 ### Errors
 
-Errors from vivintpy inherit from `VivintError`, in `vivintpy.exceptions`. Network problems can also raise `aiohttp` errors and `TimeoutError`, so catch those too if your program should keep running. `VivintSkyApiAuthenticationError` means Vivint rejected the login, and `VivintSkyApiMfaRequiredError` means a code is needed. Pass that code to `verify_mfa`.
+Errors from vivintpy inherit from `VivintError`, in `vivintpy.exceptions`. Network problems can also raise `aiohttp` errors and `TimeoutError`, so catch those too if your program should keep running. `VivintSkyApiAuthenticationError` means Vivint rejected the login, and `VivintSkyApiMfaRequiredError` means a code is needed. Pass that code to `verify_mfa`. Calls to a DVR report every failure, including a network problem, as `SpaceMonkeyError`.
 
 `Account.refresh` raises `VivintSkyApiAuthenticationError` if the session can't be renewed or no user data comes back. That usually means Vivint rejected the refresh token, so log in again with `await account.connect(password="your-password")`, which can also ask for an MFA code. Do this before calling `disconnect`, which closes the session, or afterward repeat the full setup from the example above with a new `Account`, including its `connect` options and listeners. If a lost connection or a `VivintSkyApiError` stops it getting your list of systems, `refresh` logs the error and carries on. Anything else is raised, including a server error such as an HTTP 500 and any error from refreshing a system, and that ends a loop like the one above unless you catch it.
 
