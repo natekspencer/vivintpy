@@ -806,3 +806,30 @@ def test_climate_thermostat_is_removed_when_its_panel_thermostat_appears(
 
     assert panel.devices == [panel_thermostat]
     assert len(deleted) == 1
+
+
+def test_snapshot_drops_a_removed_component(
+    system: System, thermostat: ClimateThermostat
+) -> None:
+    """Test a full snapshot replaces the components instead of merging them."""
+    assert thermostat.fan_mode is not None
+    snapshot = make_device()
+    kept = [c for c in snapshot.components if c.WhichOneof("value") != "fan_setting"]
+    del snapshot.components[:]
+    snapshot.components.extend(kept)
+
+    system.update_climate_devices([snapshot], snapshot=True)
+
+    assert thermostat._component("fan_setting") is None
+    assert thermostat._component("setpoints") is not None
+
+
+def test_partial_update_still_merges_components(
+    system: System, thermostat: ClimateThermostat
+) -> None:
+    """Test an update from the stream keeps the components it doesn't carry."""
+    update = climate_pb2.ClimateDevice(id=DEVICE_URN)
+
+    system.update_climate_devices([update])
+
+    assert thermostat._component("fan_setting") is not None
