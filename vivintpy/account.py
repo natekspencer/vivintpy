@@ -188,6 +188,9 @@ class Account:
                 )
                 if system:
                     await system.refresh()
+                    if self.__subscribe_for_realtime_updates:
+                        # a disconnect stops the stream but keeps the system
+                        system.start_climate_updates()
                 else:
                     full_system_data = await self.api.get_system_data(
                         system_data[SystemAttribute.PANEL_ID]

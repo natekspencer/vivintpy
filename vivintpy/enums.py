@@ -441,6 +441,7 @@ class OperatingState(IntEnum):
     IDLE = 0
     HEATING = 1
     COOLING = 2
+    FAN_ON = 3
 
     # Handle unknown/future operating state
     UNKNOWN = -1

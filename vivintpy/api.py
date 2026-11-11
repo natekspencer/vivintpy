@@ -886,7 +886,8 @@ class VivintSkyApi:
                         _describe_rpc_error(method, err)
                     ) from err
                 raise VivintSkyApiError(_describe_rpc_error(method, err)) from err
-            _LOGGER.debug("Response received: %s", str(response))
+            # the response has device names, serial numbers and network details
+            _LOGGER.debug("Response received from %s", method)
             return response
 
     async def _reauthenticate(self) -> None:
