@@ -41,9 +41,11 @@ DVR_SERVICE_TYPE = "SPMO_DVR"
 RENEW_MARGIN = timedelta(minutes=30)
 RENEW_RETRY_INTERVAL = timedelta(minutes=5)
 
-# The DVR is on the local network, so a DVR that doesn't answer is reported quickly;
-# sock_read keeps a stalled segment stream from hanging without capping a download.
-DVR_TIMEOUT = aiohttp.ClientTimeout(sock_connect=5, sock_read=30)
+# The DVR is on the local network, so a DVR that doesn't answer is reported quickly:
+# connect limits the wait for a free connection in a supplied session's pool and
+# sock_connect the wait to open the socket. sock_read keeps a stalled segment stream
+# from hanging, and there is no total so a long download isn't cut off.
+DVR_TIMEOUT = aiohttp.ClientTimeout(connect=5, sock_connect=5, sock_read=30)
 
 _EXTINF = re.compile(r"#EXTINF:([\d.]+),")
 _SEGMENT_NUMBER = re.compile(r"(\d+)\.ts$")

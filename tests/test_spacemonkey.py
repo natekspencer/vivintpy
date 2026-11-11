@@ -1208,6 +1208,7 @@ async def test_get_uses_a_short_connect_timeout(
 
     timeout = session.requests[0][1]["timeout"]
     assert timeout is spacemonkey.DVR_TIMEOUT
+    assert timeout.connect == 5
     assert timeout.sock_connect == 5
     assert timeout.sock_read == 30
     assert timeout.total is None
