@@ -66,7 +66,7 @@ class System(Entity):
         self._climate_stream_connected = False
         self._climate_refresh_due: float | None = None
         self._climate_loads = 0
-        self._climate_deleted_during_load: set[str] = set()
+        self._climate_changed_during_load: set[str] = set()
 
     @property
     def dvr(self) -> SpaceMonkeyDvr | None:
@@ -167,9 +167,10 @@ class System(Entity):
 
     async def load_climate_devices(self) -> None:
         """Load the thermostats managed by the climate service."""
-        # thermostats the stream deletes while the snapshot is in flight stay deleted
+        # what the stream adds, changes or deletes while the snapshot is in flight is
+        # newer than the snapshot, so the snapshot leaves it alone
         if not self._climate_loads:
-            self._climate_deleted_during_load.clear()
+            self._climate_changed_during_load.clear()
         self._climate_loads += 1
         try:
             devices = await self.api.get_climate_devices(self.id)
@@ -180,9 +181,11 @@ class System(Entity):
             return
         finally:
             self._climate_loads -= 1
+        changed = set(self._climate_changed_during_load)
         self.update_climate_devices(
-            [d for d in devices if d.id not in self._climate_deleted_during_load],
+            [d for d in devices if d.id not in changed],
             snapshot=True,
+            keep_ids=changed,
         )
 
     def start_climate_updates(self) -> None:
@@ -252,11 +255,12 @@ class System(Entity):
         deleted_ids: Iterable[str] = (),
         *,
         snapshot: bool = False,
+        keep_ids: Iterable[str] = (),
     ) -> None:
         """Create, update and remove climate thermostats on the system's panel.
 
         With `snapshot`, `devices` is the complete list and any other known thermostat
-        is removed.
+        is removed, except those in `keep_ids`.
         """
         if not self.alarm_panels:
             return
@@ -277,10 +281,11 @@ class System(Entity):
         devices = list(devices)
         removed_ids = set(deleted_ids)
         if snapshot:
-            removed_ids |= known.keys() - {data.id for data in devices}
+            removed_ids |= known.keys() - {data.id for data in devices} - set(keep_ids)
         elif self._climate_loads:
-            self._climate_deleted_during_load |= removed_ids
-            self._climate_deleted_during_load -= {data.id for data in devices}
+            self._climate_changed_during_load |= removed_ids | {
+                data.id for data in devices
+            }
         # a panel thermostat that appeared after its climate twin takes precedence
         duplicate_ids = {
             device_id
