@@ -169,6 +169,78 @@ class VivintSkyApi:
         assert resp
         self.__store_token({"refresh_token": refresh_token, **resp})
 
+    async def get_authorization_code(
+        self,
+        client_id: str,
+        redirect_uri: str,
+        *,
+        realm: str | None = None,
+        scope: str = "openid email",
+    ) -> str:
+        """
+        Get an OAuth authorization code for another Vivint-backed service.
+
+        The request is authorized by the current access token together with the
+        identity provider's session cookie. If no code is returned, for example because
+        the cookie expired, a full sign-in is done and the request is tried once more.
+        """
+        if not self.is_session_valid():
+            await self.connect()
+
+        params = {
+            "client_id": client_id,
+            "redirect_uri": redirect_uri,
+            "response_type": "code",
+            "scope": scope,
+        }
+        if realm:
+            params["realm"] = realm
+
+        for attempt in (1, 2):
+            assert self.__token
+            resp = await self.__get(
+                f"{AUTH_ENDPOINT}/oauth2/auth",
+                headers={
+                    "Authorization": f"Bearer {self.__token['access_token']}",
+                    "x-vivint-adapter": "BasicAuth",
+                },
+                params=params,
+                allow_redirects=False,
+            )
+            location = (resp or {}).get("location") or ""
+            query = urllib.parse.parse_qs(urllib.parse.urlparse(location).query)
+            if codes := query.get("code"):
+                return str(codes[0])
+            if attempt == 1:
+                # only a full sign-in sets the cookie, and it needs the password
+                previous = self.__token
+                previous_refresh_token = None
+                if self.__password:
+                    # clearing it makes connect() sign in with the password instead
+                    # of refreshing; connect() never tries this token, so it is
+                    # still unused if the sign-in fails
+                    previous_refresh_token = self.__refresh_token
+                    self.__refresh_token = None
+                self.__token = None
+                try:
+                    await self.connect()
+                except BaseException:
+                    # keep the old tokens usable if the sign-in didn't replace them
+                    if self.__token is None:
+                        self.__token = previous
+                        if self.__refresh_token is None:
+                            self.__refresh_token = previous_refresh_token
+                        # the old tokens are valid, so don't leave the API waiting
+                        # for MFA that nobody is going to complete
+                        self.__mfa_pending = False
+                        self.__mfa_password = None
+                    raise
+
+        raise VivintSkyApiAuthenticationError(
+            "Unable to get an authorization code: "
+            + _describe_authorization_failure(resp, query)
+        )
+
     async def get_authuser_data(self) -> dict:
         """
         Get the authuser data.
@@ -750,3 +822,15 @@ class VivintSkyApi:
             stub: beam_pb2_grpc.BeamStub = beam_pb2_grpc.BeamStub(channel)  # type: ignore
             response = await callback(stub, [("token", self.__token["access_token"])])
             _LOGGER.debug("Response received: %s", str(response))
+
+
+def _describe_authorization_failure(
+    resp: dict | None, query: dict[str, list[str]]
+) -> str:
+    """Return what the identity provider said when it didn't issue a code."""
+    if error := query.get("error"):
+        description = query.get("error_description", [""])[0]
+        return f"{error[0]}: {description}" if description else str(error[0])
+    if resp and (message := resp.get("message") or resp.get("location")):
+        return str(message)[:200]
+    return "no response"

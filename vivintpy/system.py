@@ -15,6 +15,7 @@ from .devices.alarm_panel import AlarmPanel
 from .entity import Entity
 from .enums import ArmedState
 from .exceptions import VivintError
+from .spacemonkey import SpaceMonkeyDvr, find_dvr_service_id
 from .user import User
 from .utils import first_or_none
 
@@ -51,6 +52,13 @@ class System(Entity):
             User(user_data, self)
             for user_data in self.data[Attribute.SYSTEM][Attribute.USERS]
         ]
+        self._dvr = SpaceMonkeyDvr.from_system_data(api, data)
+        self._stale_dvrs: list[SpaceMonkeyDvr] = []
+
+    @property
+    def dvr(self) -> SpaceMonkeyDvr | None:
+        """Return the DVR that stores this system's recordings, if there is one."""
+        return self._dvr
 
     @property
     def api(self) -> VivintSkyApi:
@@ -75,6 +83,7 @@ class System(Entity):
     async def refresh(self) -> None:
         """Reload a system's data from the VivintSky API."""
         system_data = await self.api.get_system_data(self.id)
+        self._refresh_dvr(system_data)
 
         for panel_data in system_data[Attribute.SYSTEM][Attribute.PARTITION]:
             alarm_panel = first_or_none(
@@ -88,6 +97,50 @@ class System(Entity):
                 alarm_panel.refresh(panel_data)
             else:
                 self.alarm_panels.append(AlarmPanel(panel_data, self))
+
+        await self._close_stale_dvrs()
+
+    def _refresh_dvr(self, system_data: dict) -> None:
+        """Create, replace or drop the DVR when the system's DVR service changed."""
+        service_id = find_dvr_service_id(system_data)
+        if self._dvr and self._dvr.dvr_service_id == service_id:
+            return
+        if self._dvr:
+            self._stale_dvrs.append(self._dvr)
+        self._dvr = SpaceMonkeyDvr.from_system_data(self.api, system_data)
+
+    async def _close_stale_dvrs(self) -> None:
+        """Close replaced DVRs, keeping any that fail so the next refresh retries."""
+        batch = list(self._stale_dvrs)
+        failed = await self._disconnect_dvrs(batch)
+        self._stale_dvrs = [
+            dvr for dvr in self._stale_dvrs if dvr not in batch or dvr in failed
+        ]
+
+    async def disconnect_dvrs(self) -> None:
+        """Disconnect the DVR, and any replaced DVR that could not be closed before."""
+        batch = list(self._stale_dvrs)
+        if self._dvr:
+            batch.append(self._dvr)
+        failed = await self._disconnect_dvrs(batch)
+        self._stale_dvrs = [
+            dvr
+            for dvr in self._stale_dvrs
+            if dvr is not self._dvr and (dvr not in batch or dvr in failed)
+        ]
+
+    @staticmethod
+    async def _disconnect_dvrs(dvrs: list[SpaceMonkeyDvr]) -> list[SpaceMonkeyDvr]:
+        """Disconnect the DVRs and return the ones that failed."""
+        results = await asyncio.gather(
+            *(dvr.disconnect() for dvr in dvrs), return_exceptions=True
+        )
+        failed: list[SpaceMonkeyDvr] = []
+        for dvr, result in zip(dvrs, results, strict=True):
+            if isinstance(result, BaseException):
+                _LOGGER.debug("Error disconnecting from a DVR: %s", result)
+                failed.append(dvr)
+        return failed
 
     def update_user_data(self, data: list[dict]) -> None:
         """Update user data."""

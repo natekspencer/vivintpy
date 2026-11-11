@@ -23,3 +23,7 @@ class VivintSkyApiExpiredCookieError(VivintSkyApiError):
 
 class VivintSkyApiMissingCookieError(VivintSkyApiError):
     """VivintSky API missing cookie error occurred."""
+
+
+class SpaceMonkeyError(VivintError):
+    """Space Monkey DVR related exception occurred."""

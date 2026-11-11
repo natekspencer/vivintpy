@@ -118,8 +118,11 @@ class Account:
             await self.__pubnub_unsubscribe_all()
             await self.__pubnub.stop()
             self.__pubnub = None
-        await self.api.disconnect()
-        self.__connected = False
+        try:
+            await asyncio.gather(*(system.disconnect_dvrs() for system in self.systems))
+        finally:
+            await self.api.disconnect()
+            self.__connected = False
 
     async def __pubnub_unsubscribe_all(self) -> None:
         """
