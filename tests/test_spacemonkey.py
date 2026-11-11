@@ -943,7 +943,7 @@ async def test_disconnect_while_waiting_for_the_lock_stops_the_retry(
         await asyncio.sleep(0)
         return await original_get(url, **kwargs)
 
-    session.get = get  # type: ignore[method-assign,assignment]
+    session.get = get  # type: ignore[method-assign]
 
     with pytest.raises(SpaceMonkeyError, match="disconnected"):
         await dvr.get("/status")
