@@ -52,6 +52,7 @@ FAN_TIMER_CAPABILITIES = {
 OPERATING_STATES = {
     "HEATING": OperatingState.HEATING,
     "COOLING": OperatingState.COOLING,
+    "FAN_ON": OperatingState.FAN_ON,
     "ERROR": OperatingState.UNKNOWN,
     "UNKNOWN": OperatingState.UNKNOWN,
 }

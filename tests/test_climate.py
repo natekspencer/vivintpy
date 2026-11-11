@@ -6,15 +6,21 @@ import asyncio
 import time
 from collections.abc import AsyncIterator, Callable
 from typing import Any
-from unittest.mock import MagicMock
+from unittest.mock import AsyncMock, MagicMock
 
 import grpc
 import jwt
 import pytest
 import pytest_asyncio
 
+from vivintpy.account import Account
 from vivintpy.api import VivintSkyApi
-from vivintpy.const import ThermostatAttribute
+from vivintpy.const import (
+    AuthUserAttribute,
+    SystemAttribute,
+    ThermostatAttribute,
+    UserAttribute,
+)
 from vivintpy.devices.alarm_panel import DEVICE_DELETED, DEVICE_DISCOVERED
 from vivintpy.devices.climate_thermostat import ClimateThermostat
 from vivintpy.enums import (
@@ -623,3 +629,180 @@ async def test_set_state_validates_before_sending(
         )
 
     assert system.api.requests == []  # type: ignore[attr-defined]
+
+
+def test_fan_on_is_reported_as_its_own_state(thermostat: ClimateThermostat) -> None:
+    """Test a thermostat that is only running its fan is not reported as idle."""
+    thermostat._component("operating_state").current_state = (  # type: ignore[union-attr]
+        Component.OperatingState.FAN_ON
+    )
+
+    assert thermostat.operating_state == OperatingState.FAN_ON
+    assert thermostat.is_on
+
+
+@pytest.mark.asyncio
+async def test_climate_response_is_not_logged(
+    service: Servicer, caplog: pytest.LogCaptureFixture
+) -> None:
+    """Test the debug log has no thermostat details."""
+    api = make_api()
+
+    with caplog.at_level("DEBUG", logger="vivintpy.api"):
+        await api.get_climate_devices(SYSTEM_ID)
+
+    assert "GetClimateDevices" in caplog.text
+    assert "Hallway" not in caplog.text
+    assert DEVICE_URN not in caplog.text
+
+
+@pytest.mark.asyncio
+async def test_reconnect_restarts_climate_updates() -> None:
+    """Test an account that reconnects starts the streams of the systems it kept."""
+    account = Account("user", client_session=MagicMock())
+    account._Account__subscribe_for_realtime_updates = True  # type: ignore[attr-defined]
+    system = MagicMock()
+    system.id = SYSTEM_ID
+    system.refresh = AsyncMock()
+    account.systems = [system]
+
+    await account.refresh(
+        {
+            AuthUserAttribute.USERS: {
+                UserAttribute.SYSTEM: [{SystemAttribute.PANEL_ID: SYSTEM_ID}]
+            }
+        }
+    )
+
+    system.refresh.assert_awaited_once()
+    system.start_climate_updates.assert_called_once_with()
+
+
+class SnapshotApi(FakeApi):
+    """An API whose snapshot is held back until the test releases it."""
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.started = asyncio.Event()
+        self.release = asyncio.Event()
+        self.loads = 0
+
+    async def get_climate_devices(self, system_id: int) -> list[Any]:
+        self.loads += 1
+        self.started.set()
+        snapshot = [make_device()]
+        await self.release.wait()
+        return snapshot
+
+
+@pytest.mark.asyncio
+async def test_snapshot_does_not_undo_a_deletion_from_the_stream() -> None:
+    """Test a thermostat the stream deletes while a snapshot loads stays deleted."""
+    api = SnapshotApi()
+    system = make_system(api)
+    system.update_climate_devices([make_device()])
+    devices = system.alarm_panels[0].devices
+
+    load = asyncio.create_task(system.load_climate_devices())
+    await api.started.wait()
+    system.update_climate_devices([], [DEVICE_URN])
+    assert not devices
+    api.release.set()
+    await load
+
+    assert not devices
+
+
+@pytest.mark.asyncio
+async def test_snapshot_keeps_a_thermostat_the_stream_recreates() -> None:
+    """Test a thermostat deleted and then reported again during a load is kept."""
+    api = SnapshotApi()
+    system = make_system(api)
+    system.update_climate_devices([make_device()])
+    devices = system.alarm_panels[0].devices
+
+    load = asyncio.create_task(system.load_climate_devices())
+    await api.started.wait()
+    system.update_climate_devices([], [DEVICE_URN])
+    system.update_climate_devices([make_device()])
+    api.release.set()
+    await load
+
+    assert len(devices) == 1
+
+
+@pytest.mark.asyncio
+async def test_stop_clears_the_stream_connected_flag() -> None:
+    """Test updates that are started again aren't reported as running early."""
+    api = StreamApi()
+    system = make_system(api)
+
+    system.start_climate_updates()
+    await wait_for(lambda: system.climate_updates_running)
+    await system.stop_climate_updates()
+    system.start_climate_updates()
+    try:
+        assert not system.climate_updates_running
+    finally:
+        await system.stop_climate_updates()
+
+
+@pytest.mark.asyncio
+async def test_a_later_command_resets_the_refresh_delay(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Test each command waits out the delay again before thermostats reload."""
+    monkeypatch.setattr("vivintpy.system.CLIMATE_REFRESH_DELAY", 0.2)
+    api = SnapshotApi()
+    api.release.set()
+    system = make_system(api)
+
+    system.request_climate_refresh()
+    await asyncio.sleep(0.12)
+    system.request_climate_refresh()
+    await asyncio.sleep(0.12)
+    assert api.loads == 0
+
+    await wait_for(lambda: api.loads == 1)
+    await system.stop_climate_updates()
+
+
+@pytest.mark.asyncio
+async def test_a_command_during_a_load_gets_another_load(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Test a command that completes while thermostats load is followed by a load."""
+    monkeypatch.setattr("vivintpy.system.CLIMATE_REFRESH_DELAY", 0.01)
+    api = SnapshotApi()
+    system = make_system(api)
+
+    system.request_climate_refresh()
+    await api.started.wait()
+    system.request_climate_refresh()
+    api.release.set()
+
+    await wait_for(lambda: api.loads == 2)
+    await system.stop_climate_updates()
+
+
+def test_climate_thermostat_is_removed_when_its_panel_thermostat_appears(
+    system: System,
+) -> None:
+    """Test the panel's own thermostat replaces a climate twin found earlier."""
+    from vivintpy.devices.thermostat import Thermostat
+
+    panel = system.alarm_panels[0]
+    deleted: list[dict] = []
+    panel.on(DEVICE_DELETED, deleted.append)
+    twin = make_device(id=f"urn:vivint:panel:{SYSTEM_ID}:12")
+    system.update_climate_devices([twin])
+    assert isinstance(panel.devices[0], ClimateThermostat)
+
+    panel_thermostat = Thermostat(
+        {"_id": 12, "t": "thermostat_device", "panid": SYSTEM_ID}, panel
+    )
+    panel.devices.append(panel_thermostat)
+    system.update_climate_devices([twin])
+
+    assert panel.devices == [panel_thermostat]
+    assert len(deleted) == 1

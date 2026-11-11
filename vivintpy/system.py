@@ -64,6 +64,9 @@ class System(Entity):
         self._climate_task: asyncio.Task | None = None
         self._climate_refresh_task: asyncio.Task | None = None
         self._climate_stream_connected = False
+        self._climate_refresh_due: float | None = None
+        self._climate_loads = 0
+        self._climate_deleted_during_load: set[str] = set()
 
     @property
     def dvr(self) -> SpaceMonkeyDvr | None:
@@ -164,6 +167,10 @@ class System(Entity):
 
     async def load_climate_devices(self) -> None:
         """Load the thermostats managed by the climate service."""
+        # thermostats the stream deletes while the snapshot is in flight stay deleted
+        if not self._climate_loads:
+            self._climate_deleted_during_load.clear()
+        self._climate_loads += 1
         try:
             devices = await self.api.get_climate_devices(self.id)
         except VivintSkyApiError as err:
@@ -171,7 +178,12 @@ class System(Entity):
                 "Unable to load climate devices for system %s: %s", self.id, err
             )
             return
-        self.update_climate_devices(devices, snapshot=True)
+        finally:
+            self._climate_loads -= 1
+        self.update_climate_devices(
+            [d for d in devices if d.id not in self._climate_deleted_during_load],
+            snapshot=True,
+        )
 
     def start_climate_updates(self) -> None:
         """Receive thermostat updates in real time."""
@@ -188,11 +200,18 @@ class System(Entity):
             return_exceptions=True,
         )
         self._climate_task = self._climate_refresh_task = None
+        self._climate_stream_connected = False
+        self._climate_refresh_due = None
 
     def request_climate_refresh(self) -> None:
         """Reload the thermostats soon, unless real time updates are running."""
         if self.climate_updates_running:
             return
+        # every command waits out the delay again, and one that completes while the
+        # thermostats are loading gets another load
+        self._climate_refresh_due = (
+            asyncio.get_running_loop().time() + CLIMATE_REFRESH_DELAY
+        )
         if self._climate_refresh_task is None or self._climate_refresh_task.done():
             self._climate_refresh_task = asyncio.create_task(
                 self._refresh_climate_devices_later()
@@ -200,8 +219,13 @@ class System(Entity):
 
     async def _refresh_climate_devices_later(self) -> None:
         """Reload the thermostats after giving the service time to apply a change."""
-        await asyncio.sleep(CLIMATE_REFRESH_DELAY)
-        await self.load_climate_devices()
+        loop = asyncio.get_running_loop()
+        while self._climate_refresh_due is not None:
+            if (delay := self._climate_refresh_due - loop.time()) > 0:
+                await asyncio.sleep(delay)
+                continue
+            self._climate_refresh_due = None
+            await self.load_climate_devices()
 
     async def _stream_climate_devices(self) -> None:
         """Apply thermostat updates from the climate service, reconnecting on failure."""
@@ -254,8 +278,20 @@ class System(Entity):
         removed_ids = set(deleted_ids)
         if snapshot:
             removed_ids |= known.keys() - {data.id for data in devices}
+        elif self._climate_loads:
+            self._climate_deleted_during_load |= removed_ids
+            self._climate_deleted_during_load -= {data.id for data in devices}
+        # a panel thermostat that appeared after its climate twin takes precedence
+        duplicate_ids = {
+            device_id
+            for device_id in known
+            if _legacy_device_id(device_id) in legacy_ids
+        }
+        removed_ids |= duplicate_ids
 
         for data in devices:
+            if data.id in duplicate_ids:
+                continue
             if existing := known.get(data.id):
                 existing.update_device(data)
             elif _legacy_device_id(data.id) not in legacy_ids:
