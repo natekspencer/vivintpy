@@ -833,3 +833,38 @@ def test_partial_update_still_merges_components(
     system.update_climate_devices([update])
 
     assert thermostat._component("fan_setting") is not None
+
+
+@pytest.mark.asyncio
+async def test_snapshot_keeps_a_thermostat_the_stream_adds() -> None:
+    """Test a snapshot taken before the stream adds a thermostat doesn't remove it."""
+    api = SnapshotApi()
+    system = make_system(api)
+    devices = system.alarm_panels[0].devices
+
+    load = asyncio.create_task(system.load_climate_devices())
+    await api.started.wait()
+    other = make_device(id=f"urn:vivint:google:{SYSTEM_ID}:other", name="Bedroom")
+    system.update_climate_devices([other])
+    api.release.set()
+    await load
+
+    assert sorted(device.id for device in devices) == sorted([DEVICE_URN, other.id])
+    assert next(d for d in devices if d.id == other.id).name == "Bedroom"
+
+
+@pytest.mark.asyncio
+async def test_snapshot_does_not_overwrite_a_newer_stream_update() -> None:
+    """Test a stale snapshot doesn't undo a change the stream reported meanwhile."""
+    api = SnapshotApi()
+    system = make_system(api)
+    system.update_climate_devices([make_device()])
+    thermostat = system.alarm_panels[0].devices[0]
+
+    load = asyncio.create_task(system.load_climate_devices())
+    await api.started.wait()
+    system.update_climate_devices([make_device(name="Renamed")])
+    api.release.set()
+    await load
+
+    assert thermostat.name == "Renamed"

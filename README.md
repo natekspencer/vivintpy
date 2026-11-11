@@ -123,7 +123,7 @@ remove_listener = camera.on(MOTION_DETECTED, lambda event: print(event["device"]
 
 ### Thermostats
 
-Thermostats, including Google Nest thermostats linked to the system, are read from and controlled through the Vivint climate service. Pass `subscribe_for_realtime_updates=True` to `connect` to keep them up to date by a realtime stream; without it they are loaded when you connect or refresh, and after a change you make. Temperatures are in degrees Celsius.
+Thermostats, including Google Nest thermostats linked to the system, are read from and controlled through the Vivint climate service. Pass `load_devices=True` to `connect` to load them, and `subscribe_for_realtime_updates=True` as well to keep them up to date by a realtime stream. Without the stream they are reloaded when you refresh and after a change you make. Temperatures are in degrees Celsius.
 
 ```python
 for device in account.systems[0].alarm_panels[0].devices:
