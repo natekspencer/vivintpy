@@ -328,10 +328,19 @@ class SpaceMonkeyDvr:
             if session.closed:
                 raise SpaceMonkeyError("The client session has been closed")
             seen_expiry = self.certificate_expiry
-            url = f"https://{address.host}:{address.port}{path}"
+            # The DVR's name doesn't resolve on every network, so connect to its
+            # local IP and verify the certificate against the name instead
+            ip = (
+                f"[{address.local_ip}]" if ":" in address.local_ip else address.local_ip
+            )
+            url = f"https://{ip}:{address.port}{path}"
             try:
                 resp = await session.get(
-                    url, params=params or None, ssl=self._ssl_context
+                    url,
+                    params=params or None,
+                    ssl=self._ssl_context,
+                    server_hostname=address.host,
+                    headers={"Host": f"{address.host}:{address.port}"},
                 )
             except (aiohttp.ClientConnectionError, TimeoutError) as err:
                 # A DVR that rejects the certificate drops the connection during the

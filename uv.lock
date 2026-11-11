@@ -2124,7 +2124,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "aiohttp", specifier = ">=3.8.5" },
+    { name = "aiohttp", specifier = ">=3.9" },
     { name = "certifi", specifier = ">=2022.9.24" },
     { name = "cryptography", specifier = ">=42.0.0" },
     { name = "grpcio", specifier = ">=1.51.1" },

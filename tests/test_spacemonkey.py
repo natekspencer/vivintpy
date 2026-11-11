@@ -688,9 +688,11 @@ class FakeSession:
     def __init__(self, *outcomes: int | Exception) -> None:
         """Keep the outcomes, which are status codes or exceptions to raise."""
         self.outcomes = list(outcomes)
+        self.requests: list[tuple[str, dict[str, Any]]] = []
 
-    async def get(self, _url: str, **_kwargs: Any) -> FakeResponse:
-        """Return or raise the next outcome."""
+    async def get(self, url: str, **kwargs: Any) -> FakeResponse:
+        """Record the request, then return or raise the next outcome."""
+        self.requests.append((url, kwargs))
         await asyncio.sleep(0)
         outcome = self.outcomes.pop(0)
         if isinstance(outcome, Exception):
@@ -733,6 +735,34 @@ async def test_get_renews_the_certificate_after_a_401(
 
     assert resp.status == 200
     assert counts == {"locate": 0, "renew": 1}
+
+
+@pytest.mark.asyncio
+async def test_get_connects_to_the_local_ip_and_verifies_the_name(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Test a request doesn't depend on DNS resolving the DVR's name."""
+    session = FakeSession(200)
+    dvr, _ = connected_dvr(monkeypatch, session)
+
+    await dvr.get("/status")
+
+    [(url, kwargs)] = session.requests
+    assert url == "https://192.0.2.10:8080/status"
+    assert kwargs["server_hostname"] == "dvr.example.test"
+    assert kwargs["headers"] == {"Host": "dvr.example.test:8080"}
+
+
+@pytest.mark.asyncio
+async def test_get_brackets_an_ipv6_local_ip(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test an IPv6 address is written as a valid URL host."""
+    session = FakeSession(200)
+    dvr, _ = connected_dvr(monkeypatch, session)
+    dvr.address = spacemonkey.DvrAddress("dvr.example.test", 8080, "2001:db8::10")
+
+    await dvr.get("/status")
+
+    assert session.requests[0][0] == "https://[2001:db8::10]:8080/status"
 
 
 @pytest.mark.asyncio

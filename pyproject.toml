@@ -14,7 +14,7 @@ keywords = [
     "asynchronous",
 ]
 dependencies = [
-    "aiohttp>=3.8.5",
+    "aiohttp>=3.9",
     "certifi>=2022.9.24",
     "cryptography>=42.0.0",
     "pubnub>=7",
