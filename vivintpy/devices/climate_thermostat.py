@@ -136,6 +136,13 @@ class ClimateThermostat(Thermostat):
         self._device = merged
         self.update_data(self._build_data(merged, self.alarm_panel))
 
+    def add_missing_components(self, device: climate_pb2.ClimateDevice) -> None:
+        """Add the components of a snapshot that the thermostat doesn't have yet."""
+        known = {component.id for component in self._device.components}
+        self._device.components.extend(
+            component for component in device.components if component.id not in known
+        )
+
     def _component(self, kind: str) -> Any | None:
         """Return the component of the given kind, if the device has one."""
         for component in self._device.components:
@@ -222,13 +229,14 @@ class ClimateThermostat(Thermostat):
     def temperature(self) -> float | None:
         """Return the temperature of the thermostat."""
         detection = self._component("temperature_detection")
-        return detection.current_temperature if detection else None
+        return _set_value(detection.current_temperature) if detection else None
 
     @property
     def humidity(self) -> int | None:
         """Return the humidity of the thermostat."""
         detection = self._component("humidity_detection")
-        return int(detection.value) if detection else None
+        value = _set_value(detection.value) if detection else None
+        return int(value) if value is not None else None
 
     @property
     def fan_mode(self) -> FanMode:
