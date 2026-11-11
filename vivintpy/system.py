@@ -293,7 +293,7 @@ class System(Entity):
             if data.id in duplicate_ids:
                 continue
             if existing := known.get(data.id):
-                existing.update_device(data)
+                existing.update_device(data, snapshot=snapshot)
             elif _legacy_device_id(data.id) not in legacy_ids:
                 device = ClimateThermostat(data, panel)
                 panel.devices.append(device)

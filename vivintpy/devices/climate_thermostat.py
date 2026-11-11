@@ -105,11 +105,14 @@ class ClimateThermostat(Thermostat):
             Attribute.TYPE: DeviceType.THERMOSTAT.value,
         }
 
-    def update_device(self, device: climate_pb2.ClimateDevice) -> None:
+    def update_device(
+        self, device: climate_pb2.ClimateDevice, *, snapshot: bool = False
+    ) -> None:
         """Apply a device update received from the service.
 
         An update only carries the components that changed, so they are merged into
-        the components already known.
+        the components already known. A `snapshot` has all of them, so it replaces
+        them and a component the device no longer has is dropped.
         """
         assert self.alarm_panel
         merged = climate_pb2.ClimateDevice()
@@ -122,7 +125,11 @@ class ClimateThermostat(Thermostat):
             merged.is_online = device.is_online
         if kind := device.WhichOneof("details"):
             getattr(merged, kind).CopyFrom(getattr(device, kind))
-        components = {component.id: component for component in merged.components}
+        components = (
+            {}
+            if snapshot
+            else {component.id: component for component in merged.components}
+        )
         components.update({component.id: component for component in device.components})
         del merged.components[:]
         merged.components.extend(components.values())
