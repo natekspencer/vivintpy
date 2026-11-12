@@ -111,6 +111,8 @@ class Account:
     async def disconnect(self) -> None:
         """Disconnect from the API."""
         _LOGGER.debug("Disconnecting from VivintSky")
+        # so a refresh that is still running can't start the streams again
+        self.__subscribe_for_realtime_updates = False
         for system in self.systems:
             system.cancel_changed_by_lookup()
         await asyncio.gather(

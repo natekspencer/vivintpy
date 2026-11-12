@@ -92,7 +92,11 @@ class ClimateThermostat(Thermostat):
         """Initialize a thermostat."""
         self._device = device
         super().__init__(self._build_data(device, alarm_panel), alarm_panel)
-        if device.WhichOneof("details") == "nest_thermostat_device":
+        self._set_manufacturer()
+
+    def _set_manufacturer(self) -> None:
+        """Set the manufacturer and model from the kind of device."""
+        if self._device.WhichOneof("details") == "nest_thermostat_device":
             [self._manufacturer, self._model] = ["Google", "Nest"]
 
     @staticmethod
@@ -136,12 +140,28 @@ class ClimateThermostat(Thermostat):
         self._device = merged
         self.update_data(self._build_data(merged, self.alarm_panel))
 
-    def add_missing_components(self, device: climate_pb2.ClimateDevice) -> None:
-        """Add the components of a snapshot that the thermostat doesn't have yet."""
+    def fill_from_snapshot(self, device: climate_pb2.ClimateDevice) -> None:
+        """Add what a snapshot has that the updates received so far didn't carry.
+
+        That is the components the thermostat doesn't have yet and, when the updates
+        carried no identity, its name, details and whether it is online.
+        """
+        assert self.alarm_panel
+        if not (self._device.name or self._device.WhichOneof("details")):
+            self._device.is_online = device.is_online
+            self._device.temperature_units = device.temperature_units
+        if not self._device.name:
+            self._device.name = device.name
+        if (kind := device.WhichOneof("details")) and not self._device.WhichOneof(
+            "details"
+        ):
+            getattr(self._device, kind).CopyFrom(getattr(device, kind))
         known = {component.id for component in self._device.components}
         self._device.components.extend(
             component for component in device.components if component.id not in known
         )
+        self._set_manufacturer()
+        self.update_data(self._build_data(self._device, self.alarm_panel))
 
     def _component(self, kind: str) -> Any | None:
         """Return the component of the given kind, if the device has one."""
