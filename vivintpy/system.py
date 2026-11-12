@@ -71,6 +71,7 @@ class System(Entity):
         self._climate_refresh_due: float | None = None
         self._climate_lock = asyncio.Lock()
         self._climate_loading = False
+        self._climate_load_superseded = False
         self._climate_changed_during_load: set[str] = set()
 
     @property
@@ -177,6 +178,7 @@ class System(Entity):
             # what the stream reports while the snapshot is in flight is newer than
             # the snapshot, so the snapshot only fills in what the stream didn't send
             self._climate_changed_during_load = set()
+            self._climate_load_superseded = False
             self._climate_loading = True
             try:
                 devices = await self.api.get_climate_devices(self.id)
@@ -189,6 +191,10 @@ class System(Entity):
                 return
             finally:
                 self._climate_loading = False
+            if self._climate_load_superseded:
+                # a full listing from the stream arrived meanwhile and is newer
+                _LOGGER.debug("Ignoring outdated climate devices for %s", self.id)
+                return
             changed = self._climate_changed_during_load
             known = self._climate_thermostats()
             self._apply_climate_devices(
@@ -199,7 +205,7 @@ class System(Entity):
             for data in devices:
                 # a thermostat the stream reported in part gets the rest from here
                 if data.id in changed and (existing := known.get(data.id)):
-                    existing.add_missing_components(data)
+                    existing.fill_from_snapshot(data)
 
     def start_climate_updates(self) -> None:
         """Receive thermostat updates in real time."""
@@ -289,6 +295,7 @@ class System(Entity):
             removed_ids |= self._climate_thermostats().keys() - {d.id for d in devices}
         if self._climate_loading:
             self._climate_changed_during_load |= removed_ids | {d.id for d in devices}
+            self._climate_load_superseded |= snapshot
         self._apply_climate_devices(devices, removed_ids, snapshot=snapshot)
 
     def _climate_thermostats(self) -> dict[str, ClimateThermostat]:

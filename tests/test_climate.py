@@ -1046,3 +1046,100 @@ async def test_subscribing_later_starts_climate_updates(
     )
 
     system.start_climate_updates.assert_called_once_with()
+
+
+@pytest.mark.asyncio
+async def test_snapshot_supplies_the_identity_a_partial_update_lacked() -> None:
+    """Test a thermostat first reported without a name gets one from the snapshot."""
+    api = SnapshotApi()
+    system = make_system(api)
+    partial = climate_pb2.ClimateDevice(
+        id=DEVICE_URN,
+        components=[
+            climate_pb2.Component(
+                id=f"{DEVICE_URN}:temperature",
+                temperature_detection=Component.TemperatureDetection(
+                    current_temperature=25.0
+                ),
+            )
+        ],
+    )
+
+    load = asyncio.create_task(system.load_climate_devices())
+    await api.started.wait()
+    system.update_climate_devices([partial])
+    api.release.set()
+    await load
+
+    thermostat = system.alarm_panels[0].devices[0]
+    assert thermostat.name == "Hallway"
+    assert thermostat.is_online  # type: ignore[attr-defined]
+    assert thermostat.manufacturer == "Google"
+    assert thermostat.temperature == 25.0  # type: ignore[attr-defined]
+
+
+@pytest.mark.asyncio
+async def test_load_is_discarded_after_a_full_listing_from_the_stream() -> None:
+    """Test an older response doesn't add back what a newer full listing omits."""
+    api = SnapshotApi()
+    system = make_system(api)
+    devices = system.alarm_panels[0].devices
+
+    load = asyncio.create_task(system.load_climate_devices())
+    await api.started.wait()
+    system.update_climate_devices([], snapshot=True)
+    api.release.set()
+    await load
+
+    assert not devices
+
+
+@pytest.mark.asyncio
+async def test_load_does_not_restore_a_component_a_full_listing_dropped() -> None:
+    """Test an older response doesn't bring back a component the stream removed."""
+    api = SnapshotApi()
+    system = make_system(api)
+    system.update_climate_devices([make_device()])
+    thermostat = system.alarm_panels[0].devices[0]
+    listing = make_device()
+    kept = [c for c in listing.components if c.WhichOneof("value") != "fan_setting"]
+    del listing.components[:]
+    listing.components.extend(kept)
+
+    load = asyncio.create_task(system.load_climate_devices())
+    await api.started.wait()
+    system.update_climate_devices([listing], snapshot=True)
+    api.release.set()
+    await load
+
+    assert thermostat._component("fan_setting") is None  # type: ignore[attr-defined]
+
+
+@pytest.mark.asyncio
+async def test_disconnect_stops_a_refresh_from_restarting_the_streams() -> None:
+    """Test a refresh that finishes after a disconnect doesn't start climate streams."""
+
+    class Api:
+        async def disconnect(self) -> None:
+            """Do nothing."""
+
+    account = Account("user", client_session=MagicMock())
+    account._api = Api()  # type: ignore[assignment]
+    account._Account__subscribe_for_realtime_updates = True  # type: ignore[attr-defined]
+    system = MagicMock()
+    system.id = SYSTEM_ID
+    system.refresh = AsyncMock()
+    system.stop_climate_updates = AsyncMock()
+    system.disconnect_dvrs = AsyncMock()
+    account.systems = [system]
+
+    await account.disconnect()
+    await account.refresh(
+        {
+            AuthUserAttribute.USERS: {
+                UserAttribute.SYSTEM: [{SystemAttribute.PANEL_ID: SYSTEM_ID}]
+            }
+        }
+    )
+
+    system.start_climate_updates.assert_not_called()
