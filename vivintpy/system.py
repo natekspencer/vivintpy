@@ -73,6 +73,7 @@ class System(Entity):
         self._climate_loading = False
         self._climate_load_superseded = False
         self._climate_changed_during_load: set[str] = set()
+        self._climate_deleted_during_load: set[str] = set()
 
     @property
     def dvr(self) -> SpaceMonkeyDvr | None:
@@ -178,6 +179,7 @@ class System(Entity):
             # what the stream reports while the snapshot is in flight is newer than
             # the snapshot, so the snapshot only fills in what the stream didn't send
             self._climate_changed_during_load = set()
+            self._climate_deleted_during_load = set()
             self._climate_load_superseded = False
             self._climate_loading = True
             try:
@@ -197,6 +199,8 @@ class System(Entity):
                 return
             changed = self._climate_changed_during_load
             known = self._climate_thermostats()
+            # deleted and then reported again, so the response describes the old one
+            recreated = self._climate_deleted_during_load & known.keys()
             self._apply_climate_devices(
                 [d for d in devices if d.id not in changed],
                 known.keys() - {d.id for d in devices} - changed,
@@ -204,8 +208,15 @@ class System(Entity):
             )
             for data in devices:
                 # a thermostat the stream reported in part gets the rest from here
-                if data.id in changed and (existing := known.get(data.id)):
+                if (
+                    data.id in changed
+                    and data.id not in recreated
+                    and (existing := known.get(data.id))
+                ):
                     existing.fill_from_snapshot(data)
+            if recreated:
+                # what the stream reported for them is all there is, so load again
+                self._schedule_climate_refresh()
 
     def start_climate_updates(self) -> None:
         """Receive thermostat updates in real time."""
@@ -227,8 +238,11 @@ class System(Entity):
 
     def request_climate_refresh(self) -> None:
         """Reload the thermostats soon, unless real time updates are running."""
-        if self.climate_updates_running:
-            return
+        if not self.climate_updates_running:
+            self._schedule_climate_refresh()
+
+    def _schedule_climate_refresh(self) -> None:
+        """Reload the thermostats after the delay, which each call starts again."""
         # every command waits out the delay again, and one that completes while the
         # thermostats are loading gets another load
         self._climate_refresh_due = (
@@ -295,6 +309,7 @@ class System(Entity):
             removed_ids |= self._climate_thermostats().keys() - {d.id for d in devices}
         if self._climate_loading:
             self._climate_changed_during_load |= removed_ids | {d.id for d in devices}
+            self._climate_deleted_during_load |= removed_ids
             self._climate_load_superseded |= snapshot
         self._apply_climate_devices(devices, removed_ids, snapshot=snapshot)
 

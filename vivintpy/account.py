@@ -50,6 +50,7 @@ class Account:
             warnings.warn(PASSWORD_DEPRECATION, DeprecationWarning, stacklevel=2)
         self.__connected = False
         self.__load_devices = False
+        self.__disconnects = 0
         self.__subscribe_for_realtime_updates = False
         self.__pubnub: PubNubAsyncio | None = None
         self.__pubnub_listener: VivintPubNubSubscribeListener | None = None
@@ -111,7 +112,8 @@ class Account:
     async def disconnect(self) -> None:
         """Disconnect from the API."""
         _LOGGER.debug("Disconnecting from VivintSky")
-        # so a refresh that is still running can't start the streams again
+        # so a refresh or a subscription that is still running can't start the streams
+        self.__disconnects += 1
         self.__subscribe_for_realtime_updates = False
         for system in self.systems:
             system.cancel_changed_by_lookup()
@@ -222,7 +224,11 @@ class Account:
 
         # make a call to vivint's authuser endpoint to get message broadcast channel if not supplied
         if not authuser_data:
+            disconnects = self.__disconnects
             authuser_data = await self.api.get_authuser_data()
+            if disconnects != self.__disconnects:
+                _LOGGER.debug("Not subscribing to PubNub, as the account disconnected")
+                return
 
         user_data = authuser_data[AuthUserAttribute.USERS]
 

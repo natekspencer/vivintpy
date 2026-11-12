@@ -1143,3 +1143,80 @@ async def test_disconnect_stops_a_refresh_from_restarting_the_streams() -> None:
     )
 
     system.start_climate_updates.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_snapshot_does_not_fill_a_recreated_thermostat(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Test a thermostat deleted and recreated during a load gets a fresh load."""
+    monkeypatch.setattr("vivintpy.system.CLIMATE_REFRESH_DELAY", 0.01)
+    api = SnapshotApi()
+    system = make_system(api)
+    system.update_climate_devices([make_device()])
+    thermostat = system.alarm_panels[0].devices[0]
+    replacement = climate_pb2.ClimateDevice(
+        id=DEVICE_URN,
+        name="Hallway",
+        components=[
+            climate_pb2.Component(
+                id=f"{DEVICE_URN}:temperature",
+                temperature_detection=Component.TemperatureDetection(
+                    current_temperature=25.0
+                ),
+            )
+        ],
+    )
+
+    load = asyncio.create_task(system.load_climate_devices())
+    await api.started.wait()
+    system.update_climate_devices([], [DEVICE_URN])
+    system.update_climate_devices([replacement])
+    api.release.set()
+    await load
+
+    recreated = system.alarm_panels[0].devices[0]
+    assert recreated is not thermostat
+    assert recreated._component("fan_setting") is None  # type: ignore[attr-defined]
+    await wait_for(lambda: recreated._component("fan_setting") is not None)  # type: ignore[attr-defined]
+    await system.stop_climate_updates()
+
+
+@pytest.mark.asyncio
+async def test_pending_subscription_does_not_outlive_a_disconnect(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Test a subscription that is waiting for the account's data gives up."""
+    pubnub = MagicMock()
+    monkeypatch.setattr("vivintpy.account.PubNubAsyncio", pubnub)
+    release = asyncio.Event()
+
+    class Api:
+        async def get_authuser_data(self) -> dict:
+            """Return the user's data once released."""
+            await release.wait()
+            return {
+                AuthUserAttribute.USERS: {
+                    UserAttribute.ID: "abc",
+                    UserAttribute.MESSAGE_BROADCAST_CHANNEL: "channel",
+                }
+            }
+
+        async def disconnect(self) -> None:
+            """Do nothing."""
+
+    account = Account("user", client_session=MagicMock())
+    account._api = Api()  # type: ignore[assignment]
+    system = MagicMock()
+    system.stop_climate_updates = AsyncMock()
+    system.disconnect_dvrs = AsyncMock()
+    account.systems = [system]
+
+    subscription = asyncio.create_task(account.subscribe_for_realtime_updates())
+    await asyncio.sleep(0)
+    await account.disconnect()
+    release.set()
+    await subscription
+
+    pubnub.assert_not_called()
+    system.start_climate_updates.assert_not_called()
