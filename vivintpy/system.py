@@ -359,7 +359,7 @@ class System(Entity):
             if existing := known.get(data.id):
                 existing.update_device(data, snapshot=snapshot)
             elif _legacy_device_id(data.id) not in legacy_ids:
-                device = ClimateThermostat(data, panel)
+                device = ClimateThermostat(data, panel, snapshot=snapshot)
                 panel.devices.append(device)
                 panel.emit(DEVICE_DISCOVERED, {"device": device})
 

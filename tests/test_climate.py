@@ -1310,3 +1310,51 @@ async def test_snapshot_does_not_overwrite_a_newer_offline_status() -> None:
     await load
 
     assert not thermostat.is_online  # type: ignore[attr-defined]
+
+
+@pytest.mark.asyncio
+async def test_full_listing_offline_status_is_not_overwritten_by_a_load() -> None:
+    """Test an offline status from a full listing counts as reported."""
+    api = SnapshotApi()
+    system = make_system(api)
+    offline = make_device()
+    offline.is_online = False
+    system.update_climate_devices([offline], snapshot=True)
+    thermostat = system.alarm_panels[0].devices[0]
+
+    load = asyncio.create_task(system.load_climate_devices())
+    await api.started.wait()
+    system.update_climate_devices([offline])
+    api.release.set()
+    await load
+
+    assert not thermostat.is_online  # type: ignore[attr-defined]
+
+
+@pytest.mark.asyncio
+async def test_stale_connect_leaves_a_newer_connections_flag_alone() -> None:
+    """Test a connect that raises after a disconnect doesn't clear the realtime flag."""
+    release = asyncio.Event()
+
+    class Api:
+        async def connect(self, password: str | None = None) -> dict:
+            """Finish once released."""
+            await release.wait()
+            return {}
+
+        async def disconnect(self) -> None:
+            """Do nothing."""
+
+    account = Account("user", client_session=MagicMock())
+    account._api = Api()  # type: ignore[assignment]
+
+    connecting = asyncio.create_task(account.connect())
+    await asyncio.sleep(0)
+    await account.disconnect()
+    # a newer connect has set it by now
+    account._Account__subscribe_for_realtime_updates = True  # type: ignore[attr-defined]
+    release.set()
+    with pytest.raises(VivintSkyApiError, match="disconnected"):
+        await connecting
+
+    assert account._Account__subscribe_for_realtime_updates  # type: ignore[attr-defined]
