@@ -91,6 +91,9 @@ class ClimateThermostat(Thermostat):
     ) -> None:
         """Initialize a thermostat."""
         self._device = device
+        # `is_online` has no presence tracking, so only `True` and a full listing say
+        # that the service reported it
+        self._online_known = bool(device.is_online)
         super().__init__(self._build_data(device, alarm_panel), alarm_panel)
         self._set_manufacturer()
 
@@ -123,10 +126,13 @@ class ClimateThermostat(Thermostat):
         merged.CopyFrom(self._device)
         if device.name:
             merged.name = device.name
-        # `is_online` has no presence tracking, so it is only trusted on updates that
-        # carry the device's identity
-        if device.name or device.WhichOneof("details"):
+        # an update that carries the device's identity reports `is_online`, but an
+        # unset one reads as `False`, so that is only believed when it can't be unset
+        if (device.name or device.WhichOneof("details")) and (
+            device.is_online or snapshot or self._online_known
+        ):
             merged.is_online = device.is_online
+            self._online_known = True
         if kind := device.WhichOneof("details"):
             getattr(merged, kind).CopyFrom(getattr(device, kind))
         components = (
@@ -147,8 +153,10 @@ class ClimateThermostat(Thermostat):
         carried no identity, its name, details and whether it is online.
         """
         assert self.alarm_panel
-        if not (self._device.name or self._device.WhichOneof("details")):
+        if not self._online_known:
             self._device.is_online = device.is_online
+            self._online_known = True
+        if not (self._device.name or self._device.WhichOneof("details")):
             self._device.temperature_units = device.temperature_units
         if not self._device.name:
             self._device.name = device.name
