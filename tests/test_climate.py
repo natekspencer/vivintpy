@@ -1220,3 +1220,64 @@ async def test_pending_subscription_does_not_outlive_a_disconnect(
 
     pubnub.assert_not_called()
     system.start_climate_updates.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_stopped_system_does_not_schedule_a_follow_up_load(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Test a load that finishes after updates were stopped doesn't load again."""
+    monkeypatch.setattr("vivintpy.system.CLIMATE_REFRESH_DELAY", 0.01)
+    api = SnapshotApi()
+    system = make_system(api)
+    system.update_climate_devices([make_device()])
+
+    load = asyncio.create_task(system.load_climate_devices())
+    await api.started.wait()
+    system.update_climate_devices([], [DEVICE_URN])
+    system.update_climate_devices([make_device(name="Renamed")])
+    await system.stop_climate_updates()
+    api.release.set()
+    await load
+    await asyncio.sleep(0.1)
+
+    assert api.loads == 1
+
+
+@pytest.mark.asyncio
+async def test_connect_that_finishes_after_a_disconnect_is_rejected(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Test a connect that was waiting on the API doesn't subscribe afterwards."""
+    pubnub = MagicMock()
+    monkeypatch.setattr("vivintpy.account.PubNubAsyncio", pubnub)
+    release = asyncio.Event()
+
+    class Api:
+        async def connect(self, password: str | None = None) -> dict:
+            """Return the user's data once released."""
+            await release.wait()
+            return {
+                AuthUserAttribute.USERS: {
+                    UserAttribute.ID: "abc",
+                    UserAttribute.MESSAGE_BROADCAST_CHANNEL: "channel",
+                }
+            }
+
+        async def disconnect(self) -> None:
+            """Do nothing."""
+
+    account = Account("user", client_session=MagicMock())
+    account._api = Api()  # type: ignore[assignment]
+
+    connecting = asyncio.create_task(
+        account.connect(subscribe_for_realtime_updates=True)
+    )
+    await asyncio.sleep(0)
+    await account.disconnect()
+    release.set()
+    with pytest.raises(VivintSkyApiError, match="disconnected"):
+        await connecting
+
+    pubnub.assert_not_called()
+    assert not account.connected
