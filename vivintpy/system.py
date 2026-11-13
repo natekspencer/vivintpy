@@ -72,6 +72,7 @@ class System(Entity):
         self._climate_lock = asyncio.Lock()
         self._climate_loading = False
         self._climate_load_superseded = False
+        self._climate_stops = 0
         self._climate_changed_during_load: set[str] = set()
         self._climate_deleted_during_load: set[str] = set()
 
@@ -176,6 +177,7 @@ class System(Entity):
         """Load the thermostats managed by the climate service."""
         # one load at a time, so an older response can't replace a newer one
         async with self._climate_lock:
+            stops = self._climate_stops
             # what the stream reports while the snapshot is in flight is newer than
             # the snapshot, so the snapshot only fills in what the stream didn't send
             self._climate_changed_during_load = set()
@@ -214,8 +216,9 @@ class System(Entity):
                     and (existing := known.get(data.id))
                 ):
                     existing.fill_from_snapshot(data)
-            if recreated:
-                # what the stream reported for them is all there is, so load again
+            if recreated and stops == self._climate_stops:
+                # what the stream reported for them is all there is, so load again,
+                # unless updates were stopped in the meantime
                 self._schedule_climate_refresh()
 
     def start_climate_updates(self) -> None:
@@ -225,6 +228,7 @@ class System(Entity):
 
     async def stop_climate_updates(self) -> None:
         """Stop receiving thermostat updates."""
+        self._climate_stops += 1
         for task in (self._climate_task, self._climate_refresh_task):
             if task:
                 task.cancel()

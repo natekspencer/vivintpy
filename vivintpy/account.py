@@ -96,7 +96,11 @@ class Account:
         self.__subscribe_for_realtime_updates = subscribe_for_realtime_updates
 
         # initialize the vivintsky cloud session
+        disconnects = self.__disconnects
         authuser_data = await self.api.connect(password)
+        if disconnects != self.__disconnects:
+            self.__subscribe_for_realtime_updates = False
+            raise VivintSkyApiError("The account was disconnected while connecting")
         self.__connected = True
 
         # subscribe to pubnub for realtime updates
