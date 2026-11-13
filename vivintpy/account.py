@@ -99,7 +99,6 @@ class Account:
         disconnects = self.__disconnects
         authuser_data = await self.api.connect(password)
         if disconnects != self.__disconnects:
-            self.__subscribe_for_realtime_updates = False
             raise VivintSkyApiError("The account was disconnected while connecting")
         self.__connected = True
 

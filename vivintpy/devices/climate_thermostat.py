@@ -87,13 +87,17 @@ class ClimateThermostat(Thermostat):
     """
 
     def __init__(
-        self, device: climate_pb2.ClimateDevice, alarm_panel: AlarmPanel
+        self,
+        device: climate_pb2.ClimateDevice,
+        alarm_panel: AlarmPanel,
+        *,
+        snapshot: bool = False,
     ) -> None:
-        """Initialize a thermostat."""
+        """Initialize a thermostat, from a full listing if `snapshot`."""
         self._device = device
         # `is_online` has no presence tracking, so only `True` and a full listing say
         # that the service reported it
-        self._online_known = bool(device.is_online)
+        self._online_known = bool(device.is_online) or snapshot
         super().__init__(self._build_data(device, alarm_panel), alarm_panel)
         self._set_manufacturer()
 
