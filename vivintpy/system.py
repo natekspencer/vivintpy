@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+from collections.abc import Iterable
 from datetime import datetime, timedelta
 
 from aiohttp import ClientError
@@ -11,10 +12,17 @@ from aiohttp import ClientError
 from .api import VivintSkyApi
 from .const import HistoryAttribute, PubNubMessageAttribute
 from .const import SystemAttribute as Attribute
-from .devices.alarm_panel import AlarmPanel
+from .devices.alarm_panel import DEVICE_DELETED, DEVICE_DISCOVERED, AlarmPanel
+from .devices.climate_thermostat import ClimateThermostat
+from .devices.thermostat import Thermostat
 from .entity import Entity
 from .enums import ArmedState
-from .exceptions import VivintError
+from .exceptions import (
+    VivintError,
+    VivintSkyApiAuthenticationError,
+    VivintSkyApiError,
+)
+from .proto import climate_pb2
 from .spacemonkey import SpaceMonkeyDvr, find_dvr_service_id
 from .user import User
 from .utils import first_or_none
@@ -32,6 +40,9 @@ HISTORY_ICONS = {
 }
 HISTORY_RETRY_DELAYS = (0.5, 1, 2, 4)
 HISTORY_TIME_TOLERANCE = timedelta(seconds=5)
+CLIMATE_RETRY_MIN = 5
+CLIMATE_RETRY_MAX = 300
+CLIMATE_REFRESH_DELAY = 2
 
 
 class System(Entity):
@@ -54,6 +65,16 @@ class System(Entity):
         ]
         self._dvr = SpaceMonkeyDvr.from_system_data(api, data)
         self._stale_dvrs: list[SpaceMonkeyDvr] = []
+        self._climate_task: asyncio.Task | None = None
+        self._climate_refresh_task: asyncio.Task | None = None
+        self._climate_stream_connected = False
+        self._climate_refresh_due: float | None = None
+        self._climate_lock = asyncio.Lock()
+        self._climate_loading = False
+        self._climate_load_superseded = False
+        self._climate_stops = 0
+        self._climate_changed_during_load: set[str] = set()
+        self._climate_deleted_during_load: set[str] = set()
 
     @property
     def dvr(self) -> SpaceMonkeyDvr | None:
@@ -99,6 +120,7 @@ class System(Entity):
                 self.alarm_panels.append(AlarmPanel(panel_data, self))
 
         await self._close_stale_dvrs()
+        await self.load_climate_devices()
 
     def _refresh_dvr(self, system_data: dict) -> None:
         """Create, replace or drop the DVR when the system's DVR service changed."""
@@ -141,6 +163,211 @@ class System(Entity):
                 _LOGGER.debug("Error disconnecting from a DVR: %s", result)
                 failed.append(dvr)
         return failed
+
+    @property
+    def climate_updates_running(self) -> bool:
+        """Return `True` if thermostat updates are being received in real time."""
+        return (
+            self._climate_task is not None
+            and not self._climate_task.done()
+            and self._climate_stream_connected
+        )
+
+    async def load_climate_devices(self) -> None:
+        """Load the thermostats managed by the climate service."""
+        # one load at a time, so an older response can't replace a newer one
+        async with self._climate_lock:
+            stops = self._climate_stops
+            # what the stream reports while the snapshot is in flight is newer than
+            # the snapshot, so the snapshot only fills in what the stream didn't send
+            self._climate_changed_during_load = set()
+            self._climate_deleted_during_load = set()
+            self._climate_load_superseded = False
+            self._climate_loading = True
+            try:
+                devices = await self.api.get_climate_devices(self.id)
+            except VivintSkyApiAuthenticationError:
+                raise
+            except VivintSkyApiError as err:
+                _LOGGER.debug(
+                    "Unable to load climate devices for system %s: %s", self.id, err
+                )
+                return
+            finally:
+                self._climate_loading = False
+            if self._climate_load_superseded:
+                # a full listing from the stream arrived meanwhile and is newer
+                _LOGGER.debug("Ignoring outdated climate devices for %s", self.id)
+                return
+            changed = self._climate_changed_during_load
+            known = self._climate_thermostats()
+            # deleted and then reported again, so the response describes the old one
+            recreated = self._climate_deleted_during_load & known.keys()
+            self._apply_climate_devices(
+                [d for d in devices if d.id not in changed],
+                known.keys() - {d.id for d in devices} - changed,
+                snapshot=True,
+            )
+            for data in devices:
+                # a thermostat the stream reported in part gets the rest from here
+                if (
+                    data.id in changed
+                    and data.id not in recreated
+                    and (existing := known.get(data.id))
+                ):
+                    existing.fill_from_snapshot(data)
+            if recreated and stops == self._climate_stops:
+                # what the stream reported for them is all there is, so load again,
+                # unless updates were stopped in the meantime
+                self._schedule_climate_refresh()
+
+    def start_climate_updates(self) -> None:
+        """Receive thermostat updates in real time."""
+        if self._climate_task is None or self._climate_task.done():
+            self._climate_task = asyncio.create_task(self._stream_climate_devices())
+
+    async def stop_climate_updates(self) -> None:
+        """Stop receiving thermostat updates."""
+        self._climate_stops += 1
+        for task in (self._climate_task, self._climate_refresh_task):
+            if task:
+                task.cancel()
+        await asyncio.gather(
+            *(t for t in (self._climate_task, self._climate_refresh_task) if t),
+            return_exceptions=True,
+        )
+        self._climate_task = self._climate_refresh_task = None
+        self._climate_stream_connected = False
+        self._climate_refresh_due = None
+
+    def request_climate_refresh(self) -> None:
+        """Reload the thermostats soon, unless real time updates are running."""
+        if not self.climate_updates_running:
+            self._schedule_climate_refresh()
+
+    def _schedule_climate_refresh(self) -> None:
+        """Reload the thermostats after the delay, which each call starts again."""
+        # every command waits out the delay again, and one that completes while the
+        # thermostats are loading gets another load
+        self._climate_refresh_due = (
+            asyncio.get_running_loop().time() + CLIMATE_REFRESH_DELAY
+        )
+        if self._climate_refresh_task is None or self._climate_refresh_task.done():
+            self._climate_refresh_task = asyncio.create_task(
+                self._refresh_climate_devices_later()
+            )
+
+    async def _refresh_climate_devices_later(self) -> None:
+        """Reload the thermostats after giving the service time to apply a change."""
+        loop = asyncio.get_running_loop()
+        while self._climate_refresh_due is not None:
+            if (delay := self._climate_refresh_due - loop.time()) > 0:
+                await asyncio.sleep(delay)
+                continue
+            self._climate_refresh_due = None
+            try:
+                await self.load_climate_devices()
+            except VivintSkyApiAuthenticationError as err:
+                # nothing is waiting on this, and the next request reports it
+                _LOGGER.debug("Unable to reload thermostats: %s", err)
+
+    async def _stream_climate_devices(self) -> None:
+        """Apply thermostat updates from the climate service, reconnecting on failure."""
+        delay = CLIMATE_RETRY_MIN
+        while True:
+            # the first message on each connection lists every thermostat
+            first = True
+            try:
+                async for response in self.api.stream_climate_devices(self.id):
+                    delay = CLIMATE_RETRY_MIN
+                    self._climate_stream_connected = True
+                    self.update_climate_devices(
+                        response.climate_devices,
+                        response.deleted_device_ids,
+                        snapshot=first,
+                    )
+                    first = False
+            except Exception as err:  # noqa: BLE001
+                _LOGGER.debug("Climate updates for system %s stopped: %s", self.id, err)
+            else:
+                _LOGGER.debug("Climate updates for system %s ended", self.id)
+            self._climate_stream_connected = False
+            await asyncio.sleep(delay)
+            delay = min(delay * 2, CLIMATE_RETRY_MAX)
+
+    def update_climate_devices(
+        self,
+        devices: Iterable[climate_pb2.ClimateDevice],
+        deleted_ids: Iterable[str] = (),
+        *,
+        snapshot: bool = False,
+    ) -> None:
+        """Create, update and remove climate thermostats on the system's panel.
+
+        With `snapshot`, `devices` is the complete list and any other known thermostat
+        is removed.
+        """
+        devices = list(devices)
+        removed_ids = set(deleted_ids)
+        if snapshot:
+            removed_ids |= self._climate_thermostats().keys() - {d.id for d in devices}
+        if self._climate_loading:
+            self._climate_changed_during_load |= removed_ids | {d.id for d in devices}
+            self._climate_deleted_during_load |= removed_ids
+            self._climate_load_superseded |= snapshot
+        self._apply_climate_devices(devices, removed_ids, snapshot=snapshot)
+
+    def _climate_thermostats(self) -> dict[str, ClimateThermostat]:
+        """Return the climate thermostats of the system by id."""
+        return {
+            device.id: device
+            for panel in self.alarm_panels
+            for device in panel.devices
+            if isinstance(device, ClimateThermostat)
+        }
+
+    def _apply_climate_devices(
+        self,
+        devices: list[climate_pb2.ClimateDevice],
+        removed_ids: set[str],
+        *,
+        snapshot: bool,
+    ) -> None:
+        """Add, update and remove climate thermostats."""
+        if not self.alarm_panels:
+            return
+        panel = self.alarm_panels[0]
+        known = self._climate_thermostats()
+        legacy_ids = {
+            str(device.id)
+            for panel_ in self.alarm_panels
+            for device in panel_.devices
+            if isinstance(device, Thermostat)
+            and not isinstance(device, ClimateThermostat)
+        }
+        # a panel thermostat that appeared after its climate twin takes precedence
+        duplicate_ids = {
+            device_id
+            for device_id in known
+            if _legacy_device_id(device_id) in legacy_ids
+        }
+        removed_ids |= duplicate_ids
+
+        for data in devices:
+            if data.id in duplicate_ids:
+                continue
+            if existing := known.get(data.id):
+                existing.update_device(data, snapshot=snapshot)
+            elif _legacy_device_id(data.id) not in legacy_ids:
+                device = ClimateThermostat(data, panel, snapshot=snapshot)
+                panel.devices.append(device)
+                panel.emit(DEVICE_DISCOVERED, {"device": device})
+
+        for device_id in removed_ids:
+            if removed := known.get(device_id):
+                owner = removed.alarm_panel or panel
+                owner.devices.remove(removed)
+                owner.emit(DEVICE_DELETED, {"device": removed})
 
     def update_user_data(self, data: list[dict]) -> None:
         """Update user data."""
@@ -292,3 +519,9 @@ def _parse_timestamp(value: str | None) -> datetime | None:
     except ValueError:
         _LOGGER.debug("Ignoring an invalid timestamp: %s", value)
         return None
+
+
+def _legacy_device_id(urn: str) -> str | None:
+    """Return the trailing numeric device id of a device URN, if it has one."""
+    _, _, device_id = urn.rpartition(":")
+    return device_id if device_id.isdigit() else None

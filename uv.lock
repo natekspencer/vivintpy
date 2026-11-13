@@ -2127,15 +2127,15 @@ requires-dist = [
     { name = "aiohttp", specifier = ">=3.9" },
     { name = "certifi", specifier = ">=2022.9.24" },
     { name = "cryptography", specifier = ">=42.0.0" },
-    { name = "grpcio", specifier = ">=1.51.1" },
-    { name = "protobuf", specifier = ">=4.23.1" },
+    { name = "grpcio", specifier = ">=1.78.0" },
+    { name = "protobuf", specifier = ">=6.32.0" },
     { name = "pubnub", specifier = ">=7" },
     { name = "pyjwt", specifier = ">=2.9.0" },
 ]
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "grpcio-tools", specifier = ">=1.76,<2" },
+    { name = "grpcio-tools", specifier = ">=1.78,<2" },
     { name = "mypy", specifier = ">=1.19,<3" },
     { name = "pre-commit", specifier = ">=4.5,<5" },
     { name = "pytest", specifier = ">=9.0,<10" },

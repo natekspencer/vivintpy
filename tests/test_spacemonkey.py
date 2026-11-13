@@ -425,6 +425,10 @@ async def test_system_refresh_follows_the_dvr_service() -> None:
             """Return the current system data."""
             return self.data
 
+        async def get_climate_devices(self, _system_id: int) -> list:
+            """Return no thermostats."""
+            return []
+
     api = Api()
     system = System(api.data, api, name="Home", is_admin=True)  # type: ignore[arg-type]
     assert current_dvr(system) is None
@@ -532,6 +536,10 @@ async def test_system_refresh_survives_a_failing_dvr_cleanup(
         async def get_system_data(self, _panel_id: int) -> dict:
             """Return the current system data."""
             return self.data
+
+        async def get_climate_devices(self, _system_id: int) -> list:
+            """Return no thermostats."""
+            return []
 
     api = Api()
     system = System(api.data, api, name="Home", is_admin=True)  # type: ignore[arg-type]
