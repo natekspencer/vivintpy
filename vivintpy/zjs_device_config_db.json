@@ -10266,6 +10266,11 @@
     "label": "MH3900",
     "manufacturer": "McoHome Technology Co., Ltd."
   },
+  "0x015f:0x3902:0x5102": {
+    "description": "Boiler Thermostat",
+    "label": "MH3901-Z",
+    "manufacturer": "McoHome Technology Co., Ltd."
+  },
   "0x015f:0x3910:0x5102": {
     "description": "Boiler Thermostat",
     "label": "MH3901-Z",
@@ -16601,5 +16606,5 @@
     "label": "BW8120",
     "manufacturer": "Remotec"
   },
-  "updated_at": "2026-11-09T23:49:38.646873"
+  "updated_at": "2026-11-16T23:47:33.406467"
 }
