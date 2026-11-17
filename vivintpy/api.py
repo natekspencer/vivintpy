@@ -1003,7 +1003,7 @@ class VivintSkyApi:
                     and not received
                     and err.code() == grpc.StatusCode.UNAUTHENTICATED
                 ):
-                    await self._reauthenticate()
+                    await self._reauthenticate(metadata)
                     continue
                 raise VivintSkyApiError(
                     _describe_rpc_error("GetClimateDevicesStreaming", err)
@@ -1024,7 +1024,7 @@ class VivintSkyApi:
                     )
             except grpc.aio.AioRpcError as err:
                 if attempt == 1 and err.code() == grpc.StatusCode.UNAUTHENTICATED:
-                    await self._reauthenticate()
+                    await self._reauthenticate(metadata)
                     continue
                 if err.code() == grpc.StatusCode.RESOURCE_EXHAUSTED:
                     raise VivintSkyApiRateLimitError(
@@ -1035,12 +1035,22 @@ class VivintSkyApi:
             _LOGGER.debug("Response received from %s", method)
             return response
 
-    async def _reauthenticate(self) -> None:
-        """Discard the current token and sign in again."""
-        if self.__token and (refresh := self.__token.get("refresh_token")):
-            self.__refresh_token = refresh
-        self.__token = None
-        await self.connect()
+    async def _reauthenticate(self, metadata: list[tuple[str, str]]) -> None:
+        """Sign in again after the service rejected the token in `metadata`.
+
+        Signing in replaces the token only once it succeeds, and a request that finds
+        the token already replaced doesn't sign in again.
+        """
+        rejected = metadata[0][1].removeprefix("Bearer ")
+        async with self.__session_lock:
+            token = self.__token
+            if not token or token.get("access_token") != rejected:
+                return
+            try:
+                await self.__get_vivintsky_session(self.__username, self.__password)
+            except VivintSkyApiMfaRequiredError:
+                self.__mfa_password = self.__password
+                raise
 
     async def _climate_metadata(self) -> list[tuple[str, str]]:
         """Return the call metadata for the climate service, reauthenticating if needed."""

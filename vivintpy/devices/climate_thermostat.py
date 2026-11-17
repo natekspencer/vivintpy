@@ -148,32 +148,8 @@ class ClimateThermostat(Thermostat):
         del merged.components[:]
         merged.components.extend(components.values())
         self._device = merged
-        self.update_data(self._build_data(merged, self.alarm_panel))
-
-    def fill_from_snapshot(self, device: climate_pb2.ClimateDevice) -> None:
-        """Add what a snapshot has that the updates received so far didn't carry.
-
-        That is the components the thermostat doesn't have yet and, when the updates
-        carried no identity, its name, details and whether it is online.
-        """
-        assert self.alarm_panel
-        if not self._online_known:
-            self._device.is_online = device.is_online
-            self._online_known = True
-        if not (self._device.name or self._device.WhichOneof("details")):
-            self._device.temperature_units = device.temperature_units
-        if not self._device.name:
-            self._device.name = device.name
-        if (kind := device.WhichOneof("details")) and not self._device.WhichOneof(
-            "details"
-        ):
-            getattr(self._device, kind).CopyFrom(getattr(device, kind))
-        known = {component.id for component in self._device.components}
-        self._device.components.extend(
-            component for component in device.components if component.id not in known
-        )
         self._set_manufacturer()
-        self.update_data(self._build_data(self._device, self.alarm_panel))
+        self.update_data(self._build_data(merged, self.alarm_panel))
 
     def _component(self, kind: str) -> Any | None:
         """Return the component of the given kind, if the device has one."""
@@ -215,6 +191,14 @@ class ClimateThermostat(Thermostat):
                 if mode in FAN_TIMER_CAPABILITIES
             ]
         }
+
+    @property
+    def is_on(self) -> bool:
+        """Return `True` if the thermostat is heating, cooling or running its fan."""
+        return self.operating_state not in (
+            OperatingState.IDLE,
+            OperatingState.UNKNOWN,
+        )
 
     @property
     def is_online(self) -> bool:

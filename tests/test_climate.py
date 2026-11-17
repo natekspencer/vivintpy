@@ -447,7 +447,7 @@ async def test_stream_reauthenticates(
     api = make_api()
     logins = []
 
-    async def reauthenticate() -> None:
+    async def reauthenticate(_metadata: Any) -> None:
         logins.append(True)
 
     monkeypatch.setattr(api, "_reauthenticate", reauthenticate)
@@ -840,24 +840,6 @@ def test_partial_update_still_merges_components(
 
 
 @pytest.mark.asyncio
-async def test_snapshot_keeps_a_thermostat_the_stream_adds() -> None:
-    """Test a snapshot taken before the stream adds a thermostat doesn't remove it."""
-    api = SnapshotApi()
-    system = make_system(api)
-    devices = system.alarm_panels[0].devices
-
-    load = asyncio.create_task(system.load_climate_devices())
-    await api.started.wait()
-    other = make_device(id=f"urn:vivint:google:{SYSTEM_ID}:other", name="Bedroom")
-    system.update_climate_devices([other])
-    api.release.set()
-    await load
-
-    assert sorted(device.id for device in devices) == sorted([DEVICE_URN, other.id])
-    assert next(d for d in devices if d.id == other.id).name == "Bedroom"
-
-
-@pytest.mark.asyncio
 async def test_snapshot_does_not_overwrite_a_newer_stream_update() -> None:
     """Test a stale snapshot doesn't undo a change the stream reported meanwhile."""
     api = SnapshotApi()
@@ -986,36 +968,6 @@ async def test_loads_do_not_overlap() -> None:
     assert api.most == 1
 
 
-@pytest.mark.asyncio
-async def test_snapshot_fills_in_a_thermostat_the_stream_reported_in_part() -> None:
-    """Test a snapshot supplies what a partial stream update left out."""
-    api = SnapshotApi()
-    system = make_system(api)
-    partial = climate_pb2.ClimateDevice(
-        id=DEVICE_URN,
-        name="Hallway",
-        components=[
-            climate_pb2.Component(
-                id=f"{DEVICE_URN}:temperature",
-                temperature_detection=Component.TemperatureDetection(
-                    current_temperature=25.0
-                ),
-            )
-        ],
-    )
-
-    load = asyncio.create_task(system.load_climate_devices())
-    await api.started.wait()
-    system.update_climate_devices([partial])
-    api.release.set()
-    await load
-
-    thermostat = system.alarm_panels[0].devices[0]
-    assert thermostat.temperature == 25.0  # type: ignore[attr-defined]
-    assert thermostat.heat_set_point == 15.5  # type: ignore[attr-defined]
-    assert thermostat.is_online  # type: ignore[attr-defined]
-
-
 def test_unset_temperature_and_humidity_are_none(
     system: System, thermostat: ClimateThermostat
 ) -> None:
@@ -1047,36 +999,6 @@ async def test_subscribing_later_starts_climate_updates(
     )
 
     system.start_climate_updates.assert_called_once_with()
-
-
-@pytest.mark.asyncio
-async def test_snapshot_supplies_the_identity_a_partial_update_lacked() -> None:
-    """Test a thermostat first reported without a name gets one from the snapshot."""
-    api = SnapshotApi()
-    system = make_system(api)
-    partial = climate_pb2.ClimateDevice(
-        id=DEVICE_URN,
-        components=[
-            climate_pb2.Component(
-                id=f"{DEVICE_URN}:temperature",
-                temperature_detection=Component.TemperatureDetection(
-                    current_temperature=25.0
-                ),
-            )
-        ],
-    )
-
-    load = asyncio.create_task(system.load_climate_devices())
-    await api.started.wait()
-    system.update_climate_devices([partial])
-    api.release.set()
-    await load
-
-    thermostat = system.alarm_panels[0].devices[0]
-    assert thermostat.name == "Hallway"
-    assert thermostat.is_online  # type: ignore[attr-defined]
-    assert thermostat.manufacturer == "Google"
-    assert thermostat.temperature == 25.0  # type: ignore[attr-defined]
 
 
 @pytest.mark.asyncio
@@ -1153,43 +1075,6 @@ async def test_disconnect_stops_a_refresh_from_restarting_the_streams() -> None:
     await refreshing
 
     system.start_climate_updates.assert_not_called()
-
-
-@pytest.mark.asyncio
-async def test_snapshot_does_not_fill_a_recreated_thermostat(
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    """Test a thermostat deleted and recreated during a load gets a fresh load."""
-    monkeypatch.setattr("vivintpy.system.CLIMATE_REFRESH_DELAY", 0.01)
-    api = SnapshotApi()
-    system = make_system(api)
-    system.update_climate_devices([make_device()])
-    thermostat = system.alarm_panels[0].devices[0]
-    replacement = climate_pb2.ClimateDevice(
-        id=DEVICE_URN,
-        name="Hallway",
-        components=[
-            climate_pb2.Component(
-                id=f"{DEVICE_URN}:temperature",
-                temperature_detection=Component.TemperatureDetection(
-                    current_temperature=25.0
-                ),
-            )
-        ],
-    )
-
-    load = asyncio.create_task(system.load_climate_devices())
-    await api.started.wait()
-    system.update_climate_devices([], [DEVICE_URN])
-    system.update_climate_devices([replacement])
-    api.release.set()
-    await load
-
-    recreated = system.alarm_panels[0].devices[0]
-    assert recreated is not thermostat
-    assert recreated._component("fan_setting") is None  # type: ignore[attr-defined]
-    await wait_for(lambda: recreated._component("fan_setting") is not None)  # type: ignore[attr-defined]
-    await system.stop_climate_updates()
 
 
 @pytest.mark.asyncio
@@ -1358,3 +1243,169 @@ async def test_stale_connect_leaves_a_newer_connections_flag_alone() -> None:
         await connecting
 
     assert account._Account__subscribe_for_realtime_updates  # type: ignore[attr-defined]
+
+
+@pytest.mark.asyncio
+async def test_load_is_dropped_when_the_stream_reports_meanwhile() -> None:
+    """Test a response that the stream overtook doesn't replace what it reported."""
+    api = SnapshotApi()
+    system = make_system(api)
+    system.update_climate_devices([make_device()])
+    thermostat = system.alarm_panels[0].devices[0]
+    update = climate_pb2.ClimateDevice(
+        id=DEVICE_URN,
+        components=[
+            climate_pb2.Component(
+                id=f"{DEVICE_URN}:temperature",
+                temperature_detection=Component.TemperatureDetection(
+                    current_temperature=25.0
+                ),
+            )
+        ],
+    )
+
+    load = asyncio.create_task(system.load_climate_devices())
+    await api.started.wait()
+    system.update_climate_devices([update])
+    api.release.set()
+    await load
+
+    assert thermostat.temperature == 25.0  # type: ignore[attr-defined]
+    assert system.alarm_panels[0].devices == [thermostat]
+
+
+@pytest.mark.asyncio
+async def test_load_does_nothing_while_the_stream_is_running() -> None:
+    """Test the stream is the only source of thermostats while it is connected."""
+
+    class Api(StreamApi):
+        loads = 0
+
+        async def get_climate_devices(self, system_id: int) -> list[Any]:
+            self.loads += 1
+            return []
+
+    api = Api()
+    system = make_system(api)
+    system.start_climate_updates()
+    await wait_for(lambda: system.climate_updates_running)
+
+    await system.load_climate_devices()
+
+    assert api.loads == 0
+    assert len(system.alarm_panels[0].devices) == 1
+    await system.stop_climate_updates()
+
+
+@pytest.mark.asyncio
+async def test_load_is_dropped_when_the_stream_connects_meanwhile() -> None:
+    """Test a response that arrives after the stream connected is ignored."""
+    api = SnapshotApi()
+    system = make_system(api)
+
+    load = asyncio.create_task(system.load_climate_devices())
+    await api.started.wait()
+    system._climate_stream_connected = True
+    system._climate_task = asyncio.create_task(asyncio.sleep(10))
+    api.release.set()
+    await load
+
+    assert not system.alarm_panels[0].devices
+    await system.stop_climate_updates()
+
+
+def test_update_without_identity_does_not_create_a_thermostat(system: System) -> None:
+    """Test a partial update for an unknown thermostat waits for its full listing."""
+    other = f"urn:vivint:google:{SYSTEM_ID}:other"
+    partial = climate_pb2.ClimateDevice(id=other)
+    before = len(system.alarm_panels[0].devices)
+
+    system.update_climate_devices([partial])
+
+    assert len(system.alarm_panels[0].devices) == before
+
+
+def test_update_sets_manufacturer_from_details(
+    system: System, thermostat: ClimateThermostat
+) -> None:
+    """Test details that arrive in an update set the manufacturer and model."""
+    bare = climate_pb2.ClimateDevice(id=DEVICE_URN, name="Hallway")
+    nameless = ClimateThermostat(bare, thermostat.alarm_panel)  # type: ignore[arg-type]
+    assert nameless.manufacturer is None
+
+    nameless.update_device(make_device())
+
+    assert nameless.manufacturer == "Google"
+
+
+def test_thermostat_without_an_operating_state_is_not_on(
+    thermostat: ClimateThermostat,
+) -> None:
+    """Test an unknown operating state doesn't read as on."""
+    thermostat._device.ClearField("components")
+
+    assert thermostat.operating_state == OperatingState.UNKNOWN
+    assert not thermostat.is_on
+
+
+@pytest.mark.asyncio
+async def test_delayed_reload_survives_a_network_error(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Test a reload that fails to sign in ends quietly instead of as a task error."""
+    monkeypatch.setattr("vivintpy.system.CLIMATE_REFRESH_DELAY", 0.01)
+
+    class Api(FakeApi):
+        async def get_climate_devices(self, system_id: int) -> list[Any]:
+            raise TimeoutError("sign-in timed out")
+
+    system = make_system(Api())
+
+    system.request_climate_refresh()
+    assert system._climate_refresh_task
+    await asyncio.wait_for(system._climate_refresh_task, 1)
+
+    assert system._climate_refresh_task.exception() is None
+
+
+@pytest.mark.asyncio
+async def test_rejected_token_is_replaced_once(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Test concurrent rejections of the same token sign in once and keep a token."""
+    api = make_api()
+    logins = []
+
+    async def login(*_args: Any) -> None:
+        logins.append(True)
+        await asyncio.sleep(0.01)
+        api._VivintSkyApi__token = {  # type: ignore[attr-defined]
+            "access_token": "fresh",
+            "id_token": jwt.encode({"exp": int(time.time()) + 3600}, "k" * 32),
+        }
+
+    monkeypatch.setattr(api, "_VivintSkyApi__get_vivintsky_session", login)
+    metadata = [("authorization", "Bearer access")]
+
+    await asyncio.gather(api._reauthenticate(metadata), api._reauthenticate(metadata))
+
+    assert logins == [True]
+    assert api.tokens["access_token"] == "fresh"
+
+
+@pytest.mark.asyncio
+async def test_failed_reauthentication_keeps_the_token(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Test a sign-in that fails leaves the previous token in place."""
+    api = make_api()
+
+    async def login(*_args: Any) -> None:
+        raise VivintSkyApiError("down")
+
+    monkeypatch.setattr(api, "_VivintSkyApi__get_vivintsky_session", login)
+
+    with pytest.raises(VivintSkyApiError):
+        await api._reauthenticate([("authorization", "Bearer access")])
+
+    assert api.tokens["access_token"] == "access"

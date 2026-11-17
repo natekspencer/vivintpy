@@ -70,11 +70,7 @@ class System(Entity):
         self._climate_stream_connected = False
         self._climate_refresh_due: float | None = None
         self._climate_lock = asyncio.Lock()
-        self._climate_loading = False
-        self._climate_load_superseded = False
-        self._climate_stops = 0
-        self._climate_changed_during_load: set[str] = set()
-        self._climate_deleted_during_load: set[str] = set()
+        self._climate_messages = 0
 
     @property
     def dvr(self) -> SpaceMonkeyDvr | None:
@@ -174,16 +170,16 @@ class System(Entity):
         )
 
     async def load_climate_devices(self) -> None:
-        """Load the thermostats managed by the climate service."""
+        """Load the thermostats managed by the climate service.
+
+        While real time updates are running they are the source of the thermostats,
+        so a load that finds them running, or that they overtake, is dropped.
+        """
         # one load at a time, so an older response can't replace a newer one
         async with self._climate_lock:
-            stops = self._climate_stops
-            # what the stream reports while the snapshot is in flight is newer than
-            # the snapshot, so the snapshot only fills in what the stream didn't send
-            self._climate_changed_during_load = set()
-            self._climate_deleted_during_load = set()
-            self._climate_load_superseded = False
-            self._climate_loading = True
+            if self.climate_updates_running:
+                return
+            messages = self._climate_messages
             try:
                 devices = await self.api.get_climate_devices(self.id)
             except VivintSkyApiAuthenticationError:
@@ -193,33 +189,14 @@ class System(Entity):
                     "Unable to load climate devices for system %s: %s", self.id, err
                 )
                 return
-            finally:
-                self._climate_loading = False
-            if self._climate_load_superseded:
-                # a full listing from the stream arrived meanwhile and is newer
+            if self._climate_messages != messages or self.climate_updates_running:
                 _LOGGER.debug("Ignoring outdated climate devices for %s", self.id)
                 return
-            changed = self._climate_changed_during_load
-            known = self._climate_thermostats()
-            # deleted and then reported again, so the response describes the old one
-            recreated = self._climate_deleted_during_load & known.keys()
             self._apply_climate_devices(
-                [d for d in devices if d.id not in changed],
-                known.keys() - {d.id for d in devices} - changed,
+                devices,
+                self._climate_thermostats().keys() - {d.id for d in devices},
                 snapshot=True,
             )
-            for data in devices:
-                # a thermostat the stream reported in part gets the rest from here
-                if (
-                    data.id in changed
-                    and data.id not in recreated
-                    and (existing := known.get(data.id))
-                ):
-                    existing.fill_from_snapshot(data)
-            if recreated and stops == self._climate_stops:
-                # what the stream reported for them is all there is, so load again,
-                # unless updates were stopped in the meantime
-                self._schedule_climate_refresh()
 
     def start_climate_updates(self) -> None:
         """Receive thermostat updates in real time."""
@@ -228,7 +205,6 @@ class System(Entity):
 
     async def stop_climate_updates(self) -> None:
         """Stop receiving thermostat updates."""
-        self._climate_stops += 1
         for task in (self._climate_task, self._climate_refresh_task):
             if task:
                 task.cancel()
@@ -267,7 +243,7 @@ class System(Entity):
             self._climate_refresh_due = None
             try:
                 await self.load_climate_devices()
-            except VivintSkyApiAuthenticationError as err:
+            except Exception as err:  # noqa: BLE001
                 # nothing is waiting on this, and the next request reports it
                 _LOGGER.debug("Unable to reload thermostats: %s", err)
 
@@ -311,10 +287,7 @@ class System(Entity):
         removed_ids = set(deleted_ids)
         if snapshot:
             removed_ids |= self._climate_thermostats().keys() - {d.id for d in devices}
-        if self._climate_loading:
-            self._climate_changed_during_load |= removed_ids | {d.id for d in devices}
-            self._climate_deleted_during_load |= removed_ids
-            self._climate_load_superseded |= snapshot
+        self._climate_messages += 1
         self._apply_climate_devices(devices, removed_ids, snapshot=snapshot)
 
     def _climate_thermostats(self) -> dict[str, ClimateThermostat]:
@@ -358,7 +331,11 @@ class System(Entity):
                 continue
             if existing := known.get(data.id):
                 existing.update_device(data, snapshot=snapshot)
-            elif _legacy_device_id(data.id) not in legacy_ids:
+            elif _legacy_device_id(data.id) not in legacy_ids and (
+                snapshot or data.name or data.WhichOneof("details")
+            ):
+                # an update without the device's identity can't create it, and the
+                # next full listing will
                 device = ClimateThermostat(data, panel, snapshot=snapshot)
                 panel.devices.append(device)
                 panel.emit(DEVICE_DISCOVERED, {"device": device})
