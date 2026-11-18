@@ -331,11 +331,7 @@ class System(Entity):
                 continue
             if existing := known.get(data.id):
                 existing.update_device(data, snapshot=snapshot)
-            elif _legacy_device_id(data.id) not in legacy_ids and (
-                snapshot or data.name or data.WhichOneof("details")
-            ):
-                # an update without the device's identity can't create it, and the
-                # next full listing will
+            elif _legacy_device_id(data.id) not in legacy_ids:
                 device = ClimateThermostat(data, panel, snapshot=snapshot)
                 panel.devices.append(device)
                 panel.emit(DEVICE_DISCOVERED, {"device": device})
