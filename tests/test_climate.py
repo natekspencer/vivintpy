@@ -1314,15 +1314,21 @@ async def test_load_is_dropped_when_the_stream_connects_meanwhile() -> None:
     await system.stop_climate_updates()
 
 
-def test_update_without_identity_does_not_create_a_thermostat(system: System) -> None:
-    """Test a partial update for an unknown thermostat waits for its full listing."""
+def test_update_without_identity_creates_a_thermostat_that_later_updates_fill_in(
+    system: System,
+) -> None:
+    """Test a thermostat first reported without its identity is created and named."""
     other = f"urn:vivint:google:{SYSTEM_ID}:other"
     partial = climate_pb2.ClimateDevice(id=other)
-    before = len(system.alarm_panels[0].devices)
+    devices = system.alarm_panels[0].devices
 
     system.update_climate_devices([partial])
 
-    assert len(system.alarm_panels[0].devices) == before
+    created = next(d for d in devices if d.id == other)
+    assert created.name == ""
+    system.update_climate_devices([make_device(id=other, name="Bedroom")])
+    assert created.name == "Bedroom"
+    assert created.manufacturer == "Google"
 
 
 def test_update_sets_manufacturer_from_details(
