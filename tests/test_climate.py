@@ -22,7 +22,9 @@ from vivintpy.const import (
     UserAttribute,
 )
 from vivintpy.devices.alarm_panel import DEVICE_DELETED, DEVICE_DISCOVERED
+from vivintpy.devices.camera import Camera
 from vivintpy.devices.climate_thermostat import ClimateThermostat
+from vivintpy.devices.thermostat import Thermostat
 from vivintpy.enums import (
     CapabilityCategoryType,
     CapabilityType,
@@ -1415,3 +1417,15 @@ async def test_failed_reauthentication_keeps_the_token(
         await api._reauthenticate([("authorization", "Bearer access")])
 
     assert api.tokens["access_token"] == "access"
+
+
+def test_get_devices_includes_climate_thermostats(
+    system: System, thermostat: ClimateThermostat
+) -> None:
+    """Test filtering by the panel's thermostat type also finds a subclass."""
+    panel = system.alarm_panels[0]
+
+    assert panel.get_devices({Thermostat}) == [thermostat]
+    assert panel.get_devices({ClimateThermostat}) == [thermostat]
+    assert panel.get_devices({Camera}) == []
+    assert thermostat in panel.get_devices()
