@@ -1,15 +1,21 @@
 """Test the garage door."""
 
+import logging
 from typing import cast
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import grpc
 import pytest
+from aiohttp import ClientResponseError
 
-from vivintpy.api import VivintSkyApi, garage_vendor_device_id
+from vivintpy.api import AUTH_ENDPOINT, VivintSkyApi, garage_vendor_device_id
 from vivintpy.devices.garage_door import GarageDoor
 from vivintpy.enums import GarageDoorState
-from vivintpy.exceptions import VivintSkyGrpcError
+from vivintpy.exceptions import (
+    VivintSkyApiAuthenticationError,
+    VivintSkyApiError,
+    VivintSkyGrpcError,
+)
 from vivintpy.proto import garage_pb2
 from vivintpy.system import System
 
@@ -185,3 +191,55 @@ async def test_api_raises_status_code() -> None:
         channel.return_value.__aexit__ = AsyncMock(return_value=False)
         await api.open_garage_door(PANEL_ID, DEVICE_ID)
     assert err.value.code == grpc.StatusCode.UNIMPLEMENTED
+
+
+def http_response(status: int, body: dict) -> MagicMock:
+    """Return a JSON response with the status and body."""
+    resp = MagicMock()
+    resp.status = status
+    resp.content_type = "application/json"
+    resp.json = AsyncMock(return_value=body)
+    resp.method = "PUT"
+    resp.url.path = f"/api/{PANEL_ID}/{PARTITION_ID}/door/{DEVICE_ID}"
+    resp.raise_for_status.side_effect = ClientResponseError(
+        MagicMock(), (), status=status
+    )
+    resp.__aenter__ = AsyncMock(return_value=resp)
+    resp.__aexit__ = AsyncMock(return_value=False)
+    return resp
+
+
+@pytest.mark.parametrize(
+    ("status", "error"), [(500, ClientResponseError), (403, VivintSkyApiError)]
+)
+async def test_failed_request_logs_body(
+    status: int, error: type[Exception], caplog: pytest.LogCaptureFixture
+) -> None:
+    """A failed request logs the server's response before raising."""
+    api = create_api()
+    session = api._VivintSkyApi__client_session  # type: ignore[attr-defined]
+    session.closed = False
+    session.put = AsyncMock(return_value=http_response(status, {"msg": "door busy"}))
+    caplog.set_level(logging.DEBUG, logger="vivintpy.api")
+    with (
+        patch.object(api, "is_session_valid", return_value=True),
+        pytest.raises(error),
+    ):
+        await api.set_garage_door_state(
+            PANEL_ID, PARTITION_ID, DEVICE_ID, GarageDoorState.OPENING
+        )
+    assert f"failed with {status}: {{'msg': 'door busy'}}" in caplog.text
+
+
+async def test_failed_sign_in_is_not_logged(caplog: pytest.LogCaptureFixture) -> None:
+    """A failed sign-in doesn't put the identity provider's response in the log."""
+    api = create_api()
+    session = api._VivintSkyApi__client_session  # type: ignore[attr-defined]
+    session.closed = False
+    session.post = AsyncMock(return_value=http_response(401, {"error": "denied"}))
+    caplog.set_level(logging.DEBUG, logger="vivintpy.api")
+    with pytest.raises(VivintSkyApiAuthenticationError):
+        await api._VivintSkyApi__call(  # type: ignore[attr-defined]
+            session.post, f"{AUTH_ENDPOINT}/oauth2/token"
+        )
+    assert "failed with" not in caplog.text

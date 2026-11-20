@@ -847,6 +847,15 @@ class VivintSkyApi:
                 return resp_data
             if resp.status == 302:
                 return {"location": resp.headers.get("Location")}
+            if resp.status >= 400 and AUTH_ENDPOINT not in path and not is_mfa_request:
+                # sign-in responses are left out so they don't end up in logs
+                _LOGGER.debug(
+                    "%s %s failed with %s: %s",
+                    resp.method,
+                    resp.url.path,
+                    resp.status,
+                    str(resp_data)[:500],
+                )
             if resp.status in (400, 401, 403):
                 message = (
                     resp_data.get(MfaVerificationResponse.MESSAGE)
@@ -864,14 +873,6 @@ class VivintSkyApi:
                 if AUTH_ENDPOINT in path:
                     cls = VivintSkyApiAuthenticationError
                 raise cls(message)
-            if resp.status >= 400:
-                _LOGGER.debug(
-                    "%s %s failed with %s: %s",
-                    resp.method,
-                    resp.url.path,
-                    resp.status,
-                    str(resp_data)[:500],
-                )
             resp.raise_for_status()
             return None
 
