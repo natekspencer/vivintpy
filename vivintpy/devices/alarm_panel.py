@@ -6,6 +6,8 @@ import asyncio
 import logging
 from typing import TYPE_CHECKING
 
+import grpc
+
 from ..api import VivintSkyApi
 from ..const import AlarmPanelAttribute as Attribute
 from ..const import (
@@ -16,7 +18,8 @@ from ..const import (
 )
 from ..entity import UPDATE
 from ..enums import ArmedState, DeviceType
-from ..exceptions import VivintSkyApiError
+from ..exceptions import VivintSkyApiError, VivintSkyGrpcError
+from ..proto import security_pb2
 from ..utils import add_async_job, first_or_none
 from . import VivintDevice, get_device_class
 
@@ -28,9 +31,18 @@ _LOGGER = logging.getLogger(__name__)
 DEVICE_DELETED = "device_deleted"
 DEVICE_DISCOVERED = "device_discovered"
 
+# the security service's arm state for each armed state it can set
+SERVICE_ARM_STATES = {
+    ArmedState.ARMED_STAY: security_pb2.ArmSecurityRequest.ARM_STATE_ARMED_STAY,
+    ArmedState.ARMED_AWAY: security_pb2.ArmSecurityRequest.ARM_STATE_ARMED_AWAY,
+}
+
 
 class AlarmPanel(VivintDevice):
     """Describe a Vivint alarm panel."""
+
+    # the security service's id for this panel, once looked up
+    _service_id: str | None = None
 
     def __init__(self, data: dict, system: System):
         """Initialize an alarm panel."""
@@ -144,9 +156,46 @@ class AlarmPanel(VivintDevice):
         return self.__panel_credentials
 
     async def set_armed_state(self, state: int) -> None:
-        """Set the armed state for a panel."""
-        _LOGGER.debug("Setting %s to %s", self.name, ArmedState(state).name)
+        """Set the armed state for a panel.
+
+        Arming and disarming go through the security service, which the Vivint
+        app uses in place of the armed states endpoint, and use that endpoint
+        only when the service doesn't support the request. The service arms a
+        whole system, so a panel on another partition uses the endpoint.
+        """
+        armed_state = ArmedState(state)
+        _LOGGER.debug("Setting %s to %s", self.name, armed_state.name)
+        if self.partition_id == 1 and (
+            armed_state == ArmedState.DISARMED or armed_state in SERVICE_ARM_STATES
+        ):
+            try:
+                await self.__set_service_armed_state(armed_state)
+                return
+            except VivintSkyGrpcError as err:
+                if err.code != grpc.StatusCode.UNIMPLEMENTED:
+                    raise
+                _LOGGER.debug(
+                    "%s isn't supported for %s, using the armed states endpoint",
+                    err.method,
+                    self.name,
+                )
         await self.api.set_alarm_state(self.id, self.partition_id, state)
+
+    async def __set_service_armed_state(self, state: ArmedState) -> None:
+        """Arm or disarm the panel through the security service."""
+        if not self._service_id:
+            security_state = await self.api.get_security_state(self.id)
+            if not security_state.vendor_device_id:
+                raise VivintSkyApiError(
+                    f"The security service didn't return an id for {self.name}"
+                )
+            self._service_id = security_state.vendor_device_id
+        if state == ArmedState.DISARMED:
+            await self.api.disarm_security(self.id, self._service_id)
+        else:
+            await self.api.arm_security(
+                self.id, self._service_id, SERVICE_ARM_STATES[state]
+            )
 
     async def trigger_alarm(self) -> None:
         """Trigger an alarm."""
