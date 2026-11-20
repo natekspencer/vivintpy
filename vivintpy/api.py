@@ -31,8 +31,9 @@ from .exceptions import (
     VivintSkyApiAuthenticationError,
     VivintSkyApiError,
     VivintSkyApiMfaRequiredError,
+    VivintSkyGrpcError,
 )
-from .proto import beam_pb2, beam_pb2_grpc
+from .proto import beam_pb2, beam_pb2_grpc, garage_pb2, garage_pb2_grpc
 from .utils import generate_code_challenge, generate_state
 
 _LOGGER = logging.getLogger(__name__)
@@ -40,6 +41,7 @@ _LOGGER = logging.getLogger(__name__)
 API_ENDPOINT = "https://www.vivintsky.com/api"
 AUTH_ENDPOINT = "https://id.vivint.com"
 GRPC_ENDPOINT = "grpc.vivintsky.com:50051"
+GARAGE_TIMEOUT = 30
 
 PASSWORD_DEPRECATION = (
     "Passing password to the constructor is deprecated and will be removed in "
@@ -445,6 +447,64 @@ class VivintSkyApi:
             )
             raise VivintSkyApiError("Failed to set garage door state")
 
+    async def get_garage_doors(
+        self, system_id: int
+    ) -> list[garage_pb2.GarageDoorDevice]:
+        """Return the garage doors of a system from the garage service."""
+        response = await self._garage_request(
+            system_id,
+            "GetAllGarageDoors",
+            garage_pb2.GetAllGarageDoorsRequest(system_id=system_id),
+        )
+        return list(response.garage_doors)
+
+    async def open_garage_door(self, system_id: int, vendor_device_id: str) -> None:
+        """Open a garage door through the garage service.
+
+        `vendor_device_id` is the id `get_garage_doors` lists for the door.
+        """
+        await self._garage_request(
+            system_id,
+            "OpenGarageDoor",
+            garage_pb2.OpenGarageDoorRequest(vendor_device_id=vendor_device_id),
+        )
+
+    async def close_garage_door(self, system_id: int, vendor_device_id: str) -> None:
+        """Close a garage door through the garage service.
+
+        `vendor_device_id` is the id `get_garage_doors` lists for the door.
+        """
+        await self._garage_request(
+            system_id,
+            "CloseGarageDoor",
+            garage_pb2.CloseGarageDoorRequest(vendor_device_id=vendor_device_id),
+        )
+
+    async def _garage_request(
+        self, system_id: int, method: str, request: Message
+    ) -> Any:
+        """Send a request to the garage service and return its response."""
+        if not self.is_session_valid():
+            await self.connect()
+        assert self.__token
+        metadata = [
+            ("authorization", f"Bearer {self.__token['access_token']}"),
+            ("x-viv-system-id", str(system_id)),
+        ]
+        creds = grpc.ssl_channel_credentials()
+        try:
+            async with grpc.aio.secure_channel(
+                GRPC_ENDPOINT, credentials=creds
+            ) as channel:
+                stub = garage_pb2_grpc.GarageStub(channel)  # type: ignore[no-untyped-call]
+                response = await getattr(stub, method)(
+                    request, metadata=metadata, timeout=GARAGE_TIMEOUT
+                )
+        except grpc.aio.AioRpcError as err:
+            raise VivintSkyGrpcError(method, err.code(), err.details()) from err
+        _LOGGER.debug("Response received from %s", method)
+        return response
+
     async def set_lock_state(
         self, panel_id: int, partition_id: int, device_id: int, locked: bool
     ) -> None:
@@ -789,6 +849,15 @@ class VivintSkyApi:
                 return resp_data
             if resp.status == 302:
                 return {"location": resp.headers.get("Location")}
+            if resp.status >= 400 and AUTH_ENDPOINT not in path and not is_mfa_request:
+                # sign-in responses are left out so they don't end up in logs
+                _LOGGER.debug(
+                    "%s %s failed with %s: %s",
+                    resp.method,
+                    resp.url.path,
+                    resp.status,
+                    str(resp_data)[:500],
+                )
             if resp.status in (400, 401, 403):
                 message = (
                     resp_data.get(MfaVerificationResponse.MESSAGE)

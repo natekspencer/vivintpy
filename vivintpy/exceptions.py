@@ -1,5 +1,9 @@
 """The exceptions used by the vivintpy library."""
 
+from __future__ import annotations
+
+import grpc
+
 
 class VivintError(Exception):
     """General vivintpy exception occurred."""
@@ -23,6 +27,16 @@ class VivintSkyApiExpiredCookieError(VivintSkyApiError):
 
 class VivintSkyApiMissingCookieError(VivintSkyApiError):
     """VivintSky API missing cookie error occurred."""
+
+
+class VivintSkyGrpcError(VivintSkyApiError):
+    """A VivintSky gRPC service rejected a request."""
+
+    def __init__(self, method: str, code: grpc.StatusCode, details: str | None) -> None:
+        """Initialize the error with the rejected method and its status."""
+        super().__init__(f"{method} failed: {code.name}: {details or 'no details'}")
+        self.method = method
+        self.code = code
 
 
 class SpaceMonkeyError(VivintError):

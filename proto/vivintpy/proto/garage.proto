@@ -1,0 +1,49 @@
+// Garage door service used by the Vivint app (26.11.200) to open and close doors.
+// Reconstructed from the app's generated protobuf classes.
+syntax = "proto3";
+
+package garageprotobuf.v1;
+
+service Garage {
+  rpc GetAllGarageDoors(GetAllGarageDoorsRequest) returns (GetAllGarageDoorsResponse);
+  rpc OpenGarageDoor(OpenGarageDoorRequest) returns (OpenGarageDoorResponse);
+  rpc CloseGarageDoor(CloseGarageDoorRequest) returns (CloseGarageDoorResponse);
+}
+
+enum GarageDoorState {
+  GARAGE_DOOR_STATE_UNSPECIFIED = 0;
+  GARAGE_DOOR_STATE_CLOSED = 1;
+  GARAGE_DOOR_STATE_CLOSING = 2;
+  GARAGE_DOOR_STATE_STOPPED = 3;
+  GARAGE_DOOR_STATE_OPENING = 4;
+  GARAGE_DOOR_STATE_OPENED = 5;
+}
+
+message GarageDoorDevice {
+  // "urn:vivint:panel:<panel id>:<device id>" for a panel garage door
+  string vendor_device_id = 1;
+  string name = 2;
+  GarageDoorState state = 3;
+  bool online = 4;
+  bool cannot_remote_close = 5;
+}
+
+message GetAllGarageDoorsRequest {
+  int64 system_id = 1;
+}
+
+message GetAllGarageDoorsResponse {
+  repeated GarageDoorDevice garage_doors = 1;
+}
+
+message OpenGarageDoorRequest {
+  string vendor_device_id = 1;
+}
+
+message OpenGarageDoorResponse {}
+
+message CloseGarageDoorRequest {
+  string vendor_device_id = 1;
+}
+
+message CloseGarageDoorResponse {}
