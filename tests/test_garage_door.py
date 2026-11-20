@@ -164,6 +164,28 @@ async def test_door_is_matched_to_the_listed_id(
     api.open_garage_door.assert_awaited_once_with(PANEL_ID, expected)
 
 
+async def test_listed_id_is_kept() -> None:
+    """Later commands reuse the door's id without listing the doors again."""
+    door, api = create_garage_door()
+    await door.open()
+    await door.close()
+    api.get_garage_doors.assert_awaited_once_with(PANEL_ID)
+    api.open_garage_door.assert_awaited_once_with(PANEL_ID, VENDOR_ID)
+    api.close_garage_door.assert_awaited_once_with(PANEL_ID, VENDOR_ID)
+
+
+async def test_unmatched_door_is_looked_up_again() -> None:
+    """A door that wasn't matched is looked up again on the next command."""
+    door, api = create_garage_door()
+    api.get_garage_doors.return_value = []
+    with pytest.raises(VivintSkyApiError):
+        await door.open()
+    api.get_garage_doors.return_value = [listed(VENDOR_ID, "Garage")]
+    await door.open()
+    assert api.get_garage_doors.await_count == 2
+    api.open_garage_door.assert_awaited_once_with(PANEL_ID, VENDOR_ID)
+
+
 @pytest.mark.parametrize(
     "doors",
     [

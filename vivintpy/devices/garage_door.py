@@ -19,6 +19,9 @@ _LOGGER = logging.getLogger(__name__)
 class GarageDoor(VivintDevice):
     """Represents a vivint garage door device."""
 
+    # the garage service's id for this door, once looked up
+    _service_id: str | None = None
+
     @property
     def is_closed(self) -> bool | None:
         """Return True if garage dooor is closed and None if unknown."""
@@ -86,7 +89,16 @@ class GarageDoor(VivintDevice):
         from the panel and device ids, but a door linked from another service,
         such as myQ, can use a different one, so the door is matched by its
         device id and then by its name.
+
+        A matched id is kept for later commands. It's made of the panel and
+        device ids, which don't change for this door.
         """
+        if self._service_id is None:
+            self._service_id = await self._find_vendor_device_id(panel_id)
+        return self._service_id
+
+    async def _find_vendor_device_id(self, panel_id: int) -> str:
+        """Look up this door's id in the garage service's list of doors."""
         doors = await self.api.get_garage_doors(panel_id)
         _LOGGER.debug(
             "Garage service lists %s",
