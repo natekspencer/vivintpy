@@ -2,11 +2,17 @@
 
 from __future__ import annotations
 
+import logging
 from typing import Any
+
+import grpc
 
 from ..const import ZWaveDeviceAttribute as Attribute
 from ..enums import GarageDoorState
+from ..exceptions import VivintSkyGrpcError
 from . import VivintDevice
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class GarageDoor(VivintDevice):
@@ -44,10 +50,32 @@ class GarageDoor(VivintDevice):
         return self.data[Attribute.STATE]
 
     async def set_state(self, state: int) -> None:
-        """Set garage door's state."""
+        """Set garage door's state.
+
+        Opening and closing go through the garage service, which replaced the
+        door endpoint that now fails with a server error, and use that endpoint
+        only when the service doesn't support the request.
+        """
         assert self.alarm_panel
+        panel_id = self.alarm_panel.id
+        command = {
+            GarageDoorState.OPENING: self.api.open_garage_door,
+            GarageDoorState.CLOSING: self.api.close_garage_door,
+        }.get(GarageDoorState(state))
+        if command:
+            try:
+                await command(panel_id, self.id)
+                return
+            except VivintSkyGrpcError as err:
+                if err.code != grpc.StatusCode.UNIMPLEMENTED:
+                    raise
+                _LOGGER.debug(
+                    "%s isn't supported for garage door %s, using the door endpoint",
+                    err.method,
+                    self.id,
+                )
         await self.api.set_garage_door_state(
-            self.alarm_panel.id, self.alarm_panel.partition_id, self.id, state
+            panel_id, self.alarm_panel.partition_id, self.id, state
         )
 
     async def close(self) -> None:
