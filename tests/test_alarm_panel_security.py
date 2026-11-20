@@ -85,7 +85,8 @@ async def test_service_id_is_kept() -> None:
     panel, api = create_alarm_panel()
     await panel.arm_away()
     await panel.disarm()
-    api.get_security_state.assert_awaited_once()
+    api.get_security_state.assert_awaited_once_with(PANEL_ID)
+    api.disarm_security.assert_awaited_once_with(PANEL_ID, VENDOR_ID)
 
 
 @pytest.mark.parametrize("failing", ["get_security_state", "arm_security"])
@@ -140,10 +141,11 @@ def create_api() -> VivintSkyApi:
 
 async def call_service(
     rpc: str, response: object, call: str, *args: object
-) -> MagicMock:
+) -> tuple[MagicMock, object]:
     """Call an API method with the security service answering `response`.
 
-    Return the stub so a test can check the request it got.
+    Return the stub, so a test can check the request it got, and what the
+    method returned.
     """
     api = create_api()
     stub = MagicMock()
@@ -155,8 +157,8 @@ async def call_service(
     ):
         channel.return_value.__aenter__ = AsyncMock()
         channel.return_value.__aexit__ = AsyncMock(return_value=False)
-        await getattr(api, call)(*args)
-    return stub
+        result = await getattr(api, call)(*args)
+    return stub, result
 
 
 def sent(stub: MagicMock, rpc: str) -> tuple[object, list]:
@@ -168,12 +170,11 @@ def sent(stub: MagicMock, rpc: str) -> tuple[object, list]:
 
 async def test_api_gets_security_state() -> None:
     """The API asks for the system's state with the system and the token."""
-    stub = await call_service(
-        "GetSecurityState",
-        security_pb2.GetSecurityStateResponse(vendor_device_id=VENDOR_ID),
-        "get_security_state",
-        PANEL_ID,
+    response = security_pb2.GetSecurityStateResponse(vendor_device_id=VENDOR_ID)
+    stub, result = await call_service(
+        "GetSecurityState", response, "get_security_state", PANEL_ID
     )
+    assert result == response
     request, metadata = sent(stub, "GetSecurityState")
     assert request == security_pb2.GetSecurityStateRequest(system_id=PANEL_ID)
     assert metadata == [
@@ -184,7 +185,7 @@ async def test_api_gets_security_state() -> None:
 
 async def test_api_arms() -> None:
     """The API arms like the app: keeping the entry delay, without forcing it."""
-    stub = await call_service(
+    stub, _ = await call_service(
         "ArmSecurity",
         security_pb2.ArmSecurityResponse(result=True),
         "arm_security",
@@ -203,7 +204,7 @@ async def test_api_arms() -> None:
 
 async def test_api_disarms() -> None:
     """The API disarms the panel by its security service id."""
-    stub = await call_service(
+    stub, _ = await call_service(
         "DisarmSecurity",
         security_pb2.DisarmSecurityResponse(result=True),
         "disarm_security",
