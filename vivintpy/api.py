@@ -893,14 +893,6 @@ class VivintSkyApi:
             _LOGGER.debug("Response received: %s", str(response))
 
 
-def garage_vendor_device_id(panel_id: int, device_id: int) -> str:
-    """Return the id the garage service uses for a panel garage door.
-
-    Doors linked from another service, such as myQ, can use a different id.
-    """
-    return f"urn:vivint:panel:{panel_id}:{device_id}"
-
-
 def _describe_authorization_failure(
     resp: dict | None, query: dict[str, list[str]]
 ) -> str:

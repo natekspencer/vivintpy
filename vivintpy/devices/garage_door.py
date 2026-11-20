@@ -7,7 +7,6 @@ from typing import Any
 
 import grpc
 
-from ..api import garage_vendor_device_id
 from ..const import ZWaveDeviceAttribute as Attribute
 from ..enums import GarageDoorState
 from ..exceptions import VivintSkyApiError, VivintSkyGrpcError
@@ -85,10 +84,11 @@ class GarageDoor(VivintDevice):
     async def _vendor_device_id(self, panel_id: int) -> str:
         """Return the garage service's id for this door.
 
-        The service lists each door with its own id. A panel door's id is built
-        from the panel and device ids, but a door linked from another service,
-        such as myQ, can use a different one, so the door is matched by its
-        device id and then by its name.
+        The service lists each door with its own id, such as
+        "urn:vivint:panel:<panel id>:<device id>" for a panel door or
+        "urn:vivint:myq:<panel id>:<device id>" for a myQ door linked through
+        Vivint. The door is matched by the panel and device ids at the end of
+        its id, and then by its name.
 
         A matched id is kept for later commands. It's made of the panel and
         device ids, which don't change for this door.
@@ -105,9 +105,7 @@ class GarageDoor(VivintDevice):
             [(door.vendor_device_id, door.name) for door in doors] or "no doors",
         )
         ids = [door.vendor_device_id for door in doors]
-        if (expected := garage_vendor_device_id(panel_id, self.id)) in ids:
-            return expected
-        suffix = f":{self.id}"
+        suffix = f":{panel_id}:{self.id}"
         if len(matches := [i for i in ids if i.endswith(suffix)]) == 1:
             return matches[0]
         name = (self.name or "").strip().casefold()

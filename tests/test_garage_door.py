@@ -8,7 +8,7 @@ import grpc
 import pytest
 from aiohttp import ClientResponseError
 
-from vivintpy.api import AUTH_ENDPOINT, VivintSkyApi, garage_vendor_device_id
+from vivintpy.api import AUTH_ENDPOINT, VivintSkyApi
 from vivintpy.devices.garage_door import GarageDoor
 from vivintpy.enums import GarageDoorState
 from vivintpy.exceptions import (
@@ -81,11 +81,6 @@ def grpc_error(code: grpc.StatusCode) -> VivintSkyGrpcError:
     return VivintSkyGrpcError("OpenGarageDoor", code, "rejected")
 
 
-def test_vendor_device_id() -> None:
-    """The garage service names a panel door by its panel and device id."""
-    assert garage_vendor_device_id(PANEL_ID, DEVICE_ID) == VENDOR_ID
-
-
 async def test_open_uses_garage_service() -> None:
     """Opening a door goes through the garage service, not the door endpoint."""
     door, api = create_garage_door()
@@ -139,14 +134,28 @@ async def test_other_states_use_door_endpoint() -> None:
     ("doors", "expected"),
     [
         pytest.param(
-            [listed("urn:vivint:panel:1:450", "Garage"), listed(VENDOR_ID, "Shop")],
+            [
+                listed(f"urn:vivint:panel:{PANEL_ID}:450", "Garage"),
+                listed(VENDOR_ID, "Shop"),
+            ],
             VENDOR_ID,
-            id="panel id over name",
+            id="panel door by id over name",
         ),
         pytest.param(
-            [listed("urn:vivint:myq:45", "Shop"), listed("urn:vivint:myq:7", "Other")],
-            "urn:vivint:myq:45",
-            id="other id ending in the device id",
+            [
+                listed(f"urn:vivint:myq:{PANEL_ID}:7", "Garage"),
+                listed(f"urn:vivint:myq:{PANEL_ID}:45", "Shop"),
+            ],
+            f"urn:vivint:myq:{PANEL_ID}:45",
+            id="myq door by id over name",
+        ),
+        pytest.param(
+            [
+                listed("urn:vivint:myq:1:45", "Shop"),
+                listed("urn:vivint:myq:2:9", "Garage"),
+            ],
+            "urn:vivint:myq:2:9",
+            id="device id on another panel falls back to name",
         ),
         pytest.param(
             [listed("myq-abc123", "  garage "), listed("myq-def456", "Shop")],
