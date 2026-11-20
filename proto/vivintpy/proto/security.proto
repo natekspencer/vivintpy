@@ -1,0 +1,110 @@
+// Security service used by the Vivint app (26.11.400) to arm and disarm a system.
+// Reconstructed from the app's generated protobuf classes.
+syntax = "proto3";
+
+package securityprotobuf.v1;
+
+import "google/protobuf/timestamp.proto";
+
+service Security {
+  rpc GetSecurityState(GetSecurityStateRequest) returns (GetSecurityStateResponse);
+  rpc ArmSecurity(ArmSecurityRequest) returns (ArmSecurityResponse);
+  rpc DisarmSecurity(DisarmSecurityRequest) returns (DisarmSecurityResponse);
+  rpc TriggerAlarm(TriggerAlarmRequest) returns (TriggerAlarmResponse);
+}
+
+// Numbered differently from the REST API's armed states.
+enum SecurityState {
+  SECURITY_STATE_UNSPECIFIED = 0;
+  SECURITY_STATE_DISARMED = 1;
+  SECURITY_STATE_ARMING_AWAY_IN_EXIT_DELAY = 2;
+  SECURITY_STATE_ARMING_STAY_IN_EXIT_DELAY = 3;
+  SECURITY_STATE_ARMED_STAY = 4;
+  SECURITY_STATE_ARMED_AWAY = 5;
+  SECURITY_STATE_ARMED_STAY_IN_ENTRY_DELAY = 6;
+  SECURITY_STATE_ARMED_AWAY_IN_ENTRY_DELAY = 7;
+  SECURITY_STATE_ALARM = 8;
+  SECURITY_STATE_ALARM_FIRE = 9;
+  SECURITY_STATE_DISABLED = 10;
+  SECURITY_STATE_WALK_TEST = 11;
+}
+
+enum AlarmType {
+  ALARM_TYPE_UNSPECIFIED = 0;
+  ALARM_TYPE_ALARM = 1;
+  ALARM_TYPE_POLICE = 2;
+  ALARM_TYPE_FIRE = 3;
+  ALARM_TYPE_EMERGENCY = 4;
+  ALARM_TYPE_CARBON_MONOXIDE = 5;
+  ALARM_TYPE_EXIT_ERROR = 6;
+  ALARM_TYPE_SILENT_BURGLARY = 7;
+  ALARM_TYPE_TWENTY_FOUR_HOUR_AUDIBLE_ALARM = 8;
+  ALARM_TYPE_TWENTY_FOUR_HOUR_AUXILIARY_ALARM = 9;
+  ALARM_TYPE_AUXILIARY_ALARM = 10;
+  ALARM_TYPE_TWENTY_FOUR_HOUR_FIRE_ALARM = 11;
+  ALARM_TYPE_TAMPER_ALARM = 12;
+  ALARM_TYPE_APPLICATION_PANIC = 13;
+  ALARM_TYPE_MOVEMENT_ALARM = 14;
+  ALARM_TYPE_APPLICATION_EMERGENCY = 15;
+  ALARM_TYPE_APPLICATION_FIRE = 16;
+}
+
+message ZoneInAlarm {
+  string vendor_device_id = 1;
+  AlarmType alarm_type = 2;
+  google.protobuf.Timestamp time = 3;
+  string device_name = 4;
+}
+
+message GetSecurityStateRequest {
+  int64 system_id = 1;
+}
+
+message GetSecurityStateResponse {
+  // the security panel's id, which the arm and disarm requests take
+  string vendor_device_id = 1;
+  SecurityState security_state = 2;
+  bool ready_to_arm = 3;
+  google.protobuf.Timestamp last_updated = 4;
+  repeated ZoneInAlarm zones_in_alarm = 5;
+}
+
+message ArmSecurityRequest {
+  // The app's own enum names these UNSPECIFIED, ARMED_STAY and ARMED_AWAY.
+  enum ArmState {
+    ARM_STATE_UNSPECIFIED = 0;
+    ARM_STATE_ARMED_STAY = 2;
+    ARM_STATE_ARMED_AWAY = 3;
+  }
+
+  string vendor_device_id = 1;
+  ArmState arm_state = 2;
+  bool disable_entry_delay = 3;
+  bool force_arm = 4;
+}
+
+message ArmSecurityResponse {
+  bool result = 1;
+}
+
+message DisarmSecurityRequest {
+  string vendor_device_id = 1;
+}
+
+message DisarmSecurityResponse {
+  bool result = 1;
+}
+
+message TriggerAlarmRequest {
+  enum AlarmState {
+    ALARM_STATE_UNSPECIFIED = 0;
+    ALARM_STATE_ALARM_PANIC = 1;
+    ALARM_STATE_ALARM_FIRE = 2;
+    ALARM_STATE_ALARM_EMERGENCY = 3;
+  }
+
+  string vendor_device_id = 1;
+  AlarmState alarm_state = 2;
+}
+
+message TriggerAlarmResponse {}

@@ -33,7 +33,14 @@ from .exceptions import (
     VivintSkyApiMfaRequiredError,
     VivintSkyGrpcError,
 )
-from .proto import beam_pb2, beam_pb2_grpc, garage_pb2, garage_pb2_grpc
+from .proto import (
+    beam_pb2,
+    beam_pb2_grpc,
+    garage_pb2,
+    garage_pb2_grpc,
+    security_pb2,
+    security_pb2_grpc,
+)
 from .utils import generate_code_challenge, generate_state
 
 _LOGGER = logging.getLogger(__name__)
@@ -41,7 +48,7 @@ _LOGGER = logging.getLogger(__name__)
 API_ENDPOINT = "https://www.vivintsky.com/api"
 AUTH_ENDPOINT = "https://id.vivint.com"
 GRPC_ENDPOINT = "grpc.vivintsky.com:50051"
-GARAGE_TIMEOUT = 30
+SERVICE_TIMEOUT = 30
 
 PASSWORD_DEPRECATION = (
     "Passing password to the constructor is deprecated and will be removed in "
@@ -480,10 +487,77 @@ class VivintSkyApi:
             garage_pb2.CloseGarageDoorRequest(vendor_device_id=vendor_device_id),
         )
 
+    async def get_security_state(
+        self, system_id: int
+    ) -> security_pb2.GetSecurityStateResponse:
+        """Return a system's security state from the security service.
+
+        Its `vendor_device_id` is the security panel's id, which arming and
+        disarming take.
+        """
+        response: security_pb2.GetSecurityStateResponse = await self._service_request(
+            system_id,
+            security_pb2_grpc.SecurityStub,
+            "GetSecurityState",
+            security_pb2.GetSecurityStateRequest(system_id=system_id),
+        )
+        return response
+
+    async def arm_security(
+        self,
+        system_id: int,
+        vendor_device_id: str,
+        arm_state: security_pb2.ArmSecurityRequest.ArmState,
+    ) -> None:
+        """Arm a system through the security service.
+
+        `vendor_device_id` is the id `get_security_state` returns. Like the
+        Vivint app, this keeps the entry delay and doesn't force arm.
+        """
+        response = await self._service_request(
+            system_id,
+            security_pb2_grpc.SecurityStub,
+            "ArmSecurity",
+            security_pb2.ArmSecurityRequest(
+                vendor_device_id=vendor_device_id,
+                arm_state=arm_state,
+                disable_entry_delay=False,
+                force_arm=False,
+            ),
+        )
+        if not response.result:
+            raise VivintSkyApiError("The security service didn't arm the system")
+
+    async def disarm_security(self, system_id: int, vendor_device_id: str) -> None:
+        """Disarm a system through the security service.
+
+        `vendor_device_id` is the id `get_security_state` returns.
+        """
+        response = await self._service_request(
+            system_id,
+            security_pb2_grpc.SecurityStub,
+            "DisarmSecurity",
+            security_pb2.DisarmSecurityRequest(vendor_device_id=vendor_device_id),
+        )
+        if not response.result:
+            raise VivintSkyApiError("The security service didn't disarm the system")
+
     async def _garage_request(
         self, system_id: int, method: str, request: Message
     ) -> Any:
         """Send a request to the garage service and return its response."""
+        return await self._service_request(
+            system_id, garage_pb2_grpc.GarageStub, method, request
+        )
+
+    async def _service_request(
+        self,
+        system_id: int,
+        stub_class: Callable[[grpc.aio.Channel], Any],
+        method: str,
+        request: Message,
+    ) -> Any:
+        """Send a request to a system's gRPC service and return its response."""
         if not self.is_session_valid():
             await self.connect()
         assert self.__token
@@ -496,9 +570,9 @@ class VivintSkyApi:
             async with grpc.aio.secure_channel(
                 GRPC_ENDPOINT, credentials=creds
             ) as channel:
-                stub = garage_pb2_grpc.GarageStub(channel)  # type: ignore[no-untyped-call]
+                stub = stub_class(channel)
                 response = await getattr(stub, method)(
-                    request, metadata=metadata, timeout=GARAGE_TIMEOUT
+                    request, metadata=metadata, timeout=SERVICE_TIMEOUT
                 )
         except grpc.aio.AioRpcError as err:
             raise VivintSkyGrpcError(method, err.code(), err.details()) from err
