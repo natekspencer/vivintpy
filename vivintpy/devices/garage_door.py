@@ -7,9 +7,10 @@ from typing import Any
 
 import grpc
 
+from ..api import garage_vendor_device_id
 from ..const import ZWaveDeviceAttribute as Attribute
 from ..enums import GarageDoorState
-from ..exceptions import VivintSkyGrpcError
+from ..exceptions import VivintSkyApiError, VivintSkyGrpcError
 from . import VivintDevice
 
 _LOGGER = logging.getLogger(__name__)
@@ -64,7 +65,7 @@ class GarageDoor(VivintDevice):
         }.get(GarageDoorState(state))
         if command:
             try:
-                await command(panel_id, self.id)
+                await command(panel_id, await self._vendor_device_id(panel_id))
                 return
             except VivintSkyGrpcError as err:
                 if err.code != grpc.StatusCode.UNIMPLEMENTED:
@@ -76,6 +77,33 @@ class GarageDoor(VivintDevice):
                 )
         await self.api.set_garage_door_state(
             panel_id, self.alarm_panel.partition_id, self.id, state
+        )
+
+    async def _vendor_device_id(self, panel_id: int) -> str:
+        """Return the garage service's id for this door.
+
+        The service lists each door with its own id. A panel door's id is built
+        from the panel and device ids, but a door linked from another service,
+        such as myQ, can use a different one, so the door is matched by its
+        device id and then by its name.
+        """
+        doors = await self.api.get_garage_doors(panel_id)
+        _LOGGER.debug(
+            "Garage service lists %s",
+            [(door.vendor_device_id, door.name) for door in doors] or "no doors",
+        )
+        ids = [door.vendor_device_id for door in doors]
+        if (expected := garage_vendor_device_id(panel_id, self.id)) in ids:
+            return expected
+        suffix = f":{self.id}"
+        if len(matches := [i for i in ids if i.endswith(suffix)]) == 1:
+            return matches[0]
+        name = (self.name or "").strip().casefold()
+        named = [d for d in doors if name and d.name.strip().casefold() == name]
+        if len(named) == 1:
+            return named[0].vendor_device_id
+        raise VivintSkyApiError(
+            f"The garage service doesn't list a door matching {self.name} ({self.id})"
         )
 
     async def close(self) -> None:

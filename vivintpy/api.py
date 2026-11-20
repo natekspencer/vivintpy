@@ -458,24 +458,26 @@ class VivintSkyApi:
         )
         return list(response.garage_doors)
 
-    async def open_garage_door(self, panel_id: int, device_id: int) -> None:
-        """Open a garage door through the garage service."""
+    async def open_garage_door(self, system_id: int, vendor_device_id: str) -> None:
+        """Open a garage door through the garage service.
+
+        `vendor_device_id` is the id `get_garage_doors` lists for the door.
+        """
         await self._garage_request(
-            panel_id,
+            system_id,
             "OpenGarageDoor",
-            garage_pb2.OpenGarageDoorRequest(
-                vendor_device_id=garage_vendor_device_id(panel_id, device_id)
-            ),
+            garage_pb2.OpenGarageDoorRequest(vendor_device_id=vendor_device_id),
         )
 
-    async def close_garage_door(self, panel_id: int, device_id: int) -> None:
-        """Close a garage door through the garage service."""
+    async def close_garage_door(self, system_id: int, vendor_device_id: str) -> None:
+        """Close a garage door through the garage service.
+
+        `vendor_device_id` is the id `get_garage_doors` lists for the door.
+        """
         await self._garage_request(
-            panel_id,
+            system_id,
             "CloseGarageDoor",
-            garage_pb2.CloseGarageDoorRequest(
-                vendor_device_id=garage_vendor_device_id(panel_id, device_id)
-            ),
+            garage_pb2.CloseGarageDoorRequest(vendor_device_id=vendor_device_id),
         )
 
     async def _garage_request(
@@ -892,7 +894,10 @@ class VivintSkyApi:
 
 
 def garage_vendor_device_id(panel_id: int, device_id: int) -> str:
-    """Return the garage service's id for a panel garage door."""
+    """Return the id the garage service uses for a panel garage door.
+
+    Doors linked from another service, such as myQ, can use a different id.
+    """
     return f"urn:vivint:panel:{panel_id}:{device_id}"
 
 

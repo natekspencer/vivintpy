@@ -22,11 +22,25 @@ from vivintpy.system import System
 PANEL_ID = 8070719956882364
 PARTITION_ID = 1
 DEVICE_ID = 45
+VENDOR_ID = "urn:vivint:panel:8070719956882364:45"
 
 
-def create_garage_door() -> tuple[GarageDoor, MagicMock]:
-    """Return a garage door on a panel and the mocked API it uses."""
+def listed(vendor_device_id: str, name: str) -> garage_pb2.GarageDoorDevice:
+    """Return a door as the garage service lists it."""
+    return garage_pb2.GarageDoorDevice(vendor_device_id=vendor_device_id, name=name)
+
+
+def create_garage_door(
+    *doors: garage_pb2.GarageDoorDevice,
+) -> tuple[GarageDoor, MagicMock]:
+    """Return a garage door on a panel and the mocked API it uses.
+
+    The garage service lists `doors`, or just this door by its panel id.
+    """
     api = MagicMock()
+    api.get_garage_doors = AsyncMock(
+        return_value=list(doors) or [listed(VENDOR_ID, "Garage")]
+    )
     api.open_garage_door = AsyncMock()
     api.close_garage_door = AsyncMock()
     api.set_garage_door_state = AsyncMock()
@@ -69,17 +83,15 @@ def grpc_error(code: grpc.StatusCode) -> VivintSkyGrpcError:
 
 def test_vendor_device_id() -> None:
     """The garage service names a panel door by its panel and device id."""
-    assert (
-        garage_vendor_device_id(PANEL_ID, DEVICE_ID)
-        == "urn:vivint:panel:8070719956882364:45"
-    )
+    assert garage_vendor_device_id(PANEL_ID, DEVICE_ID) == VENDOR_ID
 
 
 async def test_open_uses_garage_service() -> None:
     """Opening a door goes through the garage service, not the door endpoint."""
     door, api = create_garage_door()
     await door.open()
-    api.open_garage_door.assert_awaited_once_with(PANEL_ID, DEVICE_ID)
+    api.get_garage_doors.assert_awaited_once_with(PANEL_ID)
+    api.open_garage_door.assert_awaited_once_with(PANEL_ID, VENDOR_ID)
     api.set_garage_door_state.assert_not_awaited()
 
 
@@ -87,14 +99,15 @@ async def test_close_uses_garage_service() -> None:
     """Closing a door goes through the garage service, not the door endpoint."""
     door, api = create_garage_door()
     await door.close()
-    api.close_garage_door.assert_awaited_once_with(PANEL_ID, DEVICE_ID)
+    api.close_garage_door.assert_awaited_once_with(PANEL_ID, VENDOR_ID)
     api.set_garage_door_state.assert_not_awaited()
 
 
-async def test_unimplemented_falls_back_to_door_endpoint() -> None:
+@pytest.mark.parametrize("failing", ["get_garage_doors", "open_garage_door"])
+async def test_unimplemented_falls_back_to_door_endpoint(failing: str) -> None:
     """A garage service without the method falls back to the door endpoint."""
     door, api = create_garage_door()
-    api.open_garage_door.side_effect = grpc_error(grpc.StatusCode.UNIMPLEMENTED)
+    getattr(api, failing).side_effect = grpc_error(grpc.StatusCode.UNIMPLEMENTED)
     await door.open()
     api.set_garage_door_state.assert_awaited_once_with(
         PANEL_ID, PARTITION_ID, DEVICE_ID, GarageDoorState.OPENING
@@ -114,11 +127,66 @@ async def test_other_states_use_door_endpoint() -> None:
     """States the garage service can't set still go to the door endpoint."""
     door, api = create_garage_door()
     await door.set_state(GarageDoorState.STOPPED)
+    api.get_garage_doors.assert_not_awaited()
     api.open_garage_door.assert_not_awaited()
     api.close_garage_door.assert_not_awaited()
     api.set_garage_door_state.assert_awaited_once_with(
         PANEL_ID, PARTITION_ID, DEVICE_ID, GarageDoorState.STOPPED
     )
+
+
+@pytest.mark.parametrize(
+    ("doors", "expected"),
+    [
+        pytest.param(
+            [listed("urn:vivint:panel:1:450", "Garage"), listed(VENDOR_ID, "Shop")],
+            VENDOR_ID,
+            id="panel id over name",
+        ),
+        pytest.param(
+            [listed("urn:vivint:myq:45", "Shop"), listed("urn:vivint:myq:7", "Other")],
+            "urn:vivint:myq:45",
+            id="other id ending in the device id",
+        ),
+        pytest.param(
+            [listed("myq-abc123", "  garage "), listed("myq-def456", "Shop")],
+            "myq-abc123",
+            id="name",
+        ),
+    ],
+)
+async def test_door_is_matched_to_the_listed_id(
+    doors: list[garage_pb2.GarageDoorDevice], expected: str
+) -> None:
+    """The command uses the id the garage service lists for this door."""
+    door, api = create_garage_door(*doors)
+    await door.open()
+    api.open_garage_door.assert_awaited_once_with(PANEL_ID, expected)
+
+
+@pytest.mark.parametrize(
+    "doors",
+    [
+        pytest.param([listed("myq-abc123", "Shop")], id="no match"),
+        pytest.param(
+            [listed("myq-abc123", "Garage"), listed("myq-def456", "Garage")],
+            id="two doors with the name",
+        ),
+        pytest.param([], id="no doors"),
+    ],
+)
+async def test_unmatched_door_is_not_sent(
+    doors: list[garage_pb2.GarageDoorDevice], caplog: pytest.LogCaptureFixture
+) -> None:
+    """A door the service doesn't clearly list raises and logs what was listed."""
+    door, api = create_garage_door()
+    api.get_garage_doors.return_value = doors
+    caplog.set_level(logging.DEBUG, logger="vivintpy.devices.garage_door")
+    with pytest.raises(VivintSkyApiError, match=r"matching Garage \(45\)"):
+        await door.open()
+    api.open_garage_door.assert_not_awaited()
+    api.set_garage_door_state.assert_not_awaited()
+    assert "Garage service lists" in caplog.text
 
 
 def create_api() -> VivintSkyApi:
@@ -150,7 +218,7 @@ async def test_api_sends_command(
     ],
     rpc: str,
 ) -> None:
-    """The API names the door by its vendor id and sends the system and token."""
+    """The API sends the door's vendor id, the system and the token."""
     api = create_api()
     stub = MagicMock()
     setattr(stub, rpc, AsyncMock(return_value=MagicMock()))
@@ -161,13 +229,13 @@ async def test_api_sends_command(
     ):
         channel.return_value.__aenter__ = AsyncMock()
         channel.return_value.__aexit__ = AsyncMock(return_value=False)
-        await getattr(api, method)(PANEL_ID, DEVICE_ID)
+        await getattr(api, method)(PANEL_ID, "myq-abc123")
 
     await_args = cast(AsyncMock, getattr(stub, rpc)).await_args
     assert await_args
     request = await_args.args[0]
     assert isinstance(request, request_type)
-    assert request.vendor_device_id == "urn:vivint:panel:8070719956882364:45"
+    assert request.vendor_device_id == "myq-abc123"
     assert await_args.kwargs["metadata"] == [
         ("authorization", "Bearer access"),
         ("x-viv-system-id", str(PANEL_ID)),
@@ -189,7 +257,7 @@ async def test_api_raises_status_code() -> None:
     ):
         channel.return_value.__aenter__ = AsyncMock()
         channel.return_value.__aexit__ = AsyncMock(return_value=False)
-        await api.open_garage_door(PANEL_ID, DEVICE_ID)
+        await api.open_garage_door(PANEL_ID, VENDOR_ID)
     assert err.value.code == grpc.StatusCode.UNIMPLEMENTED
 
 
