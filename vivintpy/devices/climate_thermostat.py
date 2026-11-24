@@ -132,11 +132,11 @@ class ClimateThermostat(Thermostat):
         merged.CopyFrom(self._device)
         if device.name:
             merged.name = device.name
-        # an update that carries the device's identity reports `is_online`, but an
-        # unset one reads as `False`, so that is only believed when it can't be unset
-        if (device.name or device.WhichOneof("details")) and (
-            device.is_online or snapshot or self._online_known
-        ):
+        # `is_online` is unset or `False` alike, so `False` is only believed in a full
+        # listing, or in an update that carries the device's identity once the service
+        # has reported the status; `True` can't come from an unset field
+        identity = device.name or device.WhichOneof("details")
+        if snapshot or device.is_online or (identity and self._online_known):
             merged.is_online = device.is_online
             self._online_known = True
         if kind := device.WhichOneof("details"):

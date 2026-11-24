@@ -78,7 +78,9 @@ class System(Entity):
         self._climate_lock = asyncio.Lock()
         self._climate_messages = 0
         self._climate_stopped = False
+        self._climate_stops = 0
         self._climate_resync = False
+        self._climate_resync_timer: asyncio.TimerHandle | None = None
         self._climate_resynced_at: float | None = None
 
     @property
@@ -187,19 +189,24 @@ class System(Entity):
         """
         # one load at a time, so an older response can't replace a newer one
         async with self._climate_lock:
-            if self.climate_updates_running:
+            if self._climate_stopped or self.climate_updates_running:
                 return
-            messages = self._climate_messages
+            messages, stops = self._climate_messages, self._climate_stops
             try:
                 devices = await self.api.get_climate_devices(self.id)
             except VivintSkyApiAuthenticationError:
                 raise
-            except VivintSkyApiError as err:
+            except (VivintSkyApiError, ClientError, TimeoutError) as err:
+                # the thermostats are optional, so the rest of a refresh carries on
                 _LOGGER.debug(
                     "Unable to load climate devices for system %s: %s", self.id, err
                 )
                 return
-            if self._climate_messages != messages or self.climate_updates_running:
+            if (
+                self._climate_messages != messages
+                or self._climate_stops != stops
+                or self.climate_updates_running
+            ):
                 _LOGGER.debug("Ignoring outdated climate devices for %s", self.id)
                 return
             self._apply_climate_devices(
@@ -217,16 +224,22 @@ class System(Entity):
     async def stop_climate_updates(self) -> None:
         """Stop receiving thermostat updates."""
         self._climate_stopped = True
-        for task in (self._climate_task, self._climate_refresh_task):
-            if task:
-                task.cancel()
-        await asyncio.gather(
-            *(t for t in (self._climate_task, self._climate_refresh_task) if t),
-            return_exceptions=True,
-        )
-        self._climate_task = self._climate_refresh_task = None
-        self._climate_stream_connected = False
-        self._climate_refresh_due = None
+        self._climate_stops += 1
+        if self._climate_resync_timer:
+            self._climate_resync_timer.cancel()
+            self._climate_resync_timer = None
+        stream, refresh = self._climate_task, self._climate_refresh_task
+        tasks = [task for task in (stream, refresh) if task]
+        for task in tasks:
+            task.cancel()
+        await asyncio.gather(*tasks, return_exceptions=True)
+        # a start that ran meanwhile owns the state of its own tasks
+        if self._climate_task is stream:
+            self._climate_task = None
+            self._climate_stream_connected = False
+        if self._climate_refresh_task is refresh:
+            self._climate_refresh_task = None
+            self._climate_refresh_due = None
 
     def request_climate_refresh(self) -> None:
         """Reload the thermostats soon, unless real time updates are running."""
@@ -278,6 +291,9 @@ class System(Entity):
                             response.deleted_device_ids,
                             snapshot=first,
                         )
+                        if first and self._climate_resync_timer:
+                            self._climate_resync_timer.cancel()
+                            self._climate_resync_timer = None
                         first = False
                         if self._climate_resync:
                             break
@@ -319,14 +335,38 @@ class System(Entity):
             self._request_climate_resync()
 
     def _request_climate_resync(self) -> None:
-        """Ask the stream to reconnect for a full listing, at most once per interval."""
+        """Ask the stream to reconnect for a full listing, at most once per interval.
+
+        A request that has to wait is kept, and the stream restarts when the interval
+        is over even if it sends nothing more.
+        """
         now = time.monotonic()
-        if (
-            self._climate_resynced_at is None
-            or now - self._climate_resynced_at >= CLIMATE_RESYNC_INTERVAL
-        ):
+        wait = (
+            0
+            if self._climate_resynced_at is None
+            else self._climate_resynced_at + CLIMATE_RESYNC_INTERVAL - now
+        )
+        if wait <= 0:
             self._climate_resynced_at = now
             self._climate_resync = True
+            return
+        if self._climate_resync_timer is None:
+            try:
+                loop = asyncio.get_running_loop()
+            except RuntimeError:
+                return
+            self._climate_resync_timer = loop.call_later(
+                wait, self._restart_climate_stream
+            )
+
+    def _restart_climate_stream(self) -> None:
+        """Reconnect the stream, which starts with a full listing."""
+        self._climate_resync_timer = None
+        if self._climate_stopped or self._climate_task is None:
+            return
+        self._climate_resynced_at = time.monotonic()
+        self._climate_task.cancel()
+        self._climate_task = asyncio.create_task(self._stream_climate_devices())
 
     def _climate_thermostats(self) -> dict[str, ClimateThermostat]:
         """Return the climate thermostats of the system by id."""

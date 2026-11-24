@@ -8,6 +8,7 @@ from collections.abc import AsyncIterator, Callable
 from typing import Any
 from unittest.mock import AsyncMock, MagicMock
 
+import aiohttp
 import grpc
 import jwt
 import pytest
@@ -710,7 +711,7 @@ async def test_snapshot_does_not_undo_a_deletion_from_the_stream() -> None:
     devices = system.alarm_panels[0].devices
 
     load = asyncio.create_task(system.load_climate_devices())
-    await api.started.wait()
+    await wait_for(api.started.is_set)
     system.update_climate_devices([], [DEVICE_URN])
     assert not devices
     api.release.set()
@@ -728,7 +729,7 @@ async def test_snapshot_keeps_a_thermostat_the_stream_recreates() -> None:
     devices = system.alarm_panels[0].devices
 
     load = asyncio.create_task(system.load_climate_devices())
-    await api.started.wait()
+    await wait_for(api.started.is_set)
     system.update_climate_devices([], [DEVICE_URN])
     system.update_climate_devices([make_device()], snapshot=True)
     api.release.set()
@@ -783,7 +784,7 @@ async def test_a_command_during_a_load_gets_another_load(
     system = make_system(api)
 
     system.request_climate_refresh()
-    await api.started.wait()
+    await wait_for(api.started.is_set)
     system.request_climate_refresh()
     api.release.set()
 
@@ -850,7 +851,7 @@ async def test_snapshot_does_not_overwrite_a_newer_stream_update() -> None:
     thermostat = system.alarm_panels[0].devices[0]
 
     load = asyncio.create_task(system.load_climate_devices())
-    await api.started.wait()
+    await wait_for(api.started.is_set)
     system.update_climate_devices([make_device(name="Renamed")])
     api.release.set()
     await load
@@ -1011,7 +1012,7 @@ async def test_load_is_discarded_after_a_full_listing_from_the_stream() -> None:
     devices = system.alarm_panels[0].devices
 
     load = asyncio.create_task(system.load_climate_devices())
-    await api.started.wait()
+    await wait_for(api.started.is_set)
     system.update_climate_devices([], snapshot=True)
     api.release.set()
     await load
@@ -1032,7 +1033,7 @@ async def test_load_does_not_restore_a_component_a_full_listing_dropped() -> Non
     listing.components.extend(kept)
 
     load = asyncio.create_task(system.load_climate_devices())
-    await api.started.wait()
+    await wait_for(api.started.is_set)
     system.update_climate_devices([listing], snapshot=True)
     api.release.set()
     await load
@@ -1130,7 +1131,7 @@ async def test_stopped_system_does_not_schedule_a_follow_up_load(
     system.update_climate_devices([make_device()], snapshot=True)
 
     load = asyncio.create_task(system.load_climate_devices())
-    await api.started.wait()
+    await wait_for(api.started.is_set)
     system.update_climate_devices([], [DEVICE_URN])
     system.update_climate_devices([make_device(name="Renamed")])
     await system.stop_climate_updates()
@@ -1189,7 +1190,7 @@ async def test_snapshot_does_not_overwrite_a_newer_offline_status() -> None:
     thermostat = system.alarm_panels[0].devices[0]
 
     load = asyncio.create_task(system.load_climate_devices())
-    await api.started.wait()
+    await wait_for(api.started.is_set)
     offline = make_device()
     offline.is_online = False
     system.update_climate_devices([offline])
@@ -1210,7 +1211,7 @@ async def test_full_listing_offline_status_is_not_overwritten_by_a_load() -> Non
     thermostat = system.alarm_panels[0].devices[0]
 
     load = asyncio.create_task(system.load_climate_devices())
-    await api.started.wait()
+    await wait_for(api.started.is_set)
     system.update_climate_devices([offline])
     api.release.set()
     await load
@@ -1267,7 +1268,7 @@ async def test_load_is_dropped_when_the_stream_reports_meanwhile() -> None:
     )
 
     load = asyncio.create_task(system.load_climate_devices())
-    await api.started.wait()
+    await wait_for(api.started.is_set)
     system.update_climate_devices([update])
     api.release.set()
     await load
@@ -1306,7 +1307,7 @@ async def test_load_is_dropped_when_the_stream_connects_meanwhile() -> None:
     system = make_system(api)
 
     load = asyncio.create_task(system.load_climate_devices())
-    await api.started.wait()
+    await wait_for(api.started.is_set)
     system._climate_stream_connected = True
     system._climate_task = asyncio.create_task(asyncio.sleep(10))
     api.release.set()
@@ -1550,3 +1551,153 @@ def test_get_devices_includes_climate_thermostats(
     assert panel.get_devices({ClimateThermostat}) == [thermostat]
     assert panel.get_devices({Camera}) == []
     assert thermostat in panel.get_devices()
+
+
+def test_online_update_applies_without_identity(
+    system: System, thermostat: ClimateThermostat
+) -> None:
+    """Test an explicit `True` brings a thermostat back online without its identity."""
+    offline = make_device()
+    offline.is_online = False
+    system.update_climate_devices([offline], snapshot=True)
+    assert not thermostat.is_online
+
+    system.update_climate_devices(
+        [climate_pb2.ClimateDevice(id=DEVICE_URN, is_online=True)]
+    )
+
+    assert thermostat.is_online
+
+
+def test_full_listing_without_identity_applies_an_offline_status(
+    system: System, thermostat: ClimateThermostat
+) -> None:
+    """Test a full listing that says offline wins over an earlier online status."""
+    assert thermostat.is_online
+
+    system.update_climate_devices(
+        [climate_pb2.ClimateDevice(id=DEVICE_URN, is_online=False)], snapshot=True
+    )
+
+    assert not thermostat.is_online
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("error", [TimeoutError("slow"), aiohttp.ClientError("down")])
+async def test_load_survives_a_network_error_signing_in(error: Exception) -> None:
+    """Test a refresh that can't reach the sign-in service still completes."""
+
+    class Api(FakeApi):
+        async def get_climate_devices(self, system_id: int) -> list[Any]:
+            raise error
+
+    await make_system(Api()).load_climate_devices()
+
+
+@pytest.mark.asyncio
+async def test_load_started_before_a_stop_is_discarded() -> None:
+    """Test a response that arrives after the updates were stopped isn't applied."""
+    api = SnapshotApi()
+    system = make_system(api)
+
+    load = asyncio.create_task(system.load_climate_devices())
+    await wait_for(api.started.is_set)
+    await system.stop_climate_updates()
+    system.start_climate_updates()
+    api.release.set()
+    await load
+    await system.stop_climate_updates()
+
+    assert not system.alarm_panels[0].devices
+
+
+@pytest.mark.asyncio
+async def test_stop_keeps_a_stream_started_meanwhile() -> None:
+    """Test a start that runs while a stop is finishing isn't forgotten by the stop."""
+    system = make_system(StreamApi())
+    system.start_climate_updates()
+    await wait_for(lambda: system.climate_updates_running)
+    assert system._climate_task
+    system._climate_task.add_done_callback(lambda _: system.start_climate_updates())
+
+    await system.stop_climate_updates()
+
+    assert system._climate_task
+    assert not system._climate_task.done()
+    await system.stop_climate_updates()
+
+
+class ScriptedApi(FakeApi):
+    """An API whose connections list the thermostats, and mention one in part."""
+
+    def __init__(self, listings: list[list[str]], mentions: list[str | None]) -> None:
+        super().__init__()
+        self.listings = listings
+        self.mentions = mentions
+        self.connections = 0
+
+    async def stream_climate_devices(
+        self, system_id: int
+    ) -> AsyncIterator[climate_pb2.GetClimateDevicesStreamingResponse]:
+        index = min(self.connections, len(self.listings) - 1)
+        self.connections += 1
+        yield climate_pb2.GetClimateDevicesStreamingResponse(
+            climate_devices=[make_device(id=i, name=i) for i in self.listings[index]]
+        )
+        if mention := self.mentions[min(index, len(self.mentions) - 1)]:
+            yield climate_pb2.GetClimateDevicesStreamingResponse(
+                climate_devices=[climate_pb2.ClimateDevice(id=mention)]
+            )
+        await asyncio.Event().wait()
+
+
+@pytest.mark.asyncio
+async def test_blocked_full_listing_request_is_kept(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Test a request the interval blocked reconnects once the interval is over."""
+    monkeypatch.setattr("vivintpy.system.CLIMATE_RESYNC_INTERVAL", 0.2)
+    a, b, c = (f"urn:vivint:google:{SYSTEM_ID}:{n}" for n in "abc")
+    # the second connection mentions c in part right away, inside the interval
+    api = ScriptedApi([[a], [a, b], [a, b, c]], [b, c, None])
+    system = make_system(api)
+
+    system.start_climate_updates()
+    await wait_for(lambda: {d.id for d in system.alarm_panels[0].devices} == {a, b, c})
+
+    assert api.connections == 3
+    await system.stop_climate_updates()
+
+
+@pytest.mark.asyncio
+async def test_stop_cancels_a_pending_full_listing_request(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Test a stopped system doesn't reconnect for a request that was waiting."""
+    monkeypatch.setattr("vivintpy.system.CLIMATE_RESYNC_INTERVAL", 0.1)
+    a, b = (f"urn:vivint:google:{SYSTEM_ID}:{n}" for n in "ab")
+    api = ScriptedApi([[a]], [b])
+    system = make_system(api)
+
+    system.start_climate_updates()
+    await wait_for(lambda: api.connections == 2)
+    await system.stop_climate_updates()
+    await asyncio.sleep(0.2)
+
+    assert api.connections == 2
+    assert system._climate_resync_timer is None
+
+
+@pytest.mark.asyncio
+async def test_metadata_waits_for_a_sign_in_and_reports_a_missing_token() -> None:
+    """Test a climate call that finds no token after signing in raises an auth error."""
+    api = make_api()
+    api._VivintSkyApi__token = None  # type: ignore[attr-defined]
+
+    async def connect(*_args: Any) -> dict:
+        return {}
+
+    api.connect = connect  # type: ignore[method-assign,assignment]
+
+    with pytest.raises(VivintSkyApiAuthenticationError):
+        await api._climate_metadata()

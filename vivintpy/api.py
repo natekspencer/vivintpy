@@ -1056,7 +1056,12 @@ class VivintSkyApi:
         """Return the call metadata for the climate service, reauthenticating if needed."""
         if not self.is_session_valid():
             await self.connect()
-        return [("authorization", f"Bearer {self.__token['access_token']}")]  # type: ignore[index]
+        # a sign-in clears the token while it replaces it, so wait for any to finish
+        async with self.__session_lock:
+            token = self.__token
+        if token is None:
+            raise VivintSkyApiAuthenticationError("Not signed in to Vivint")
+        return [("authorization", f"Bearer {token['access_token']}")]
 
     async def _send_grpc(
         self,
