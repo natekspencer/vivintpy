@@ -2309,6 +2309,11 @@
     "label": "76602 / 76606 / 76607 / ZWN3020",
     "manufacturer": "UltraPro"
   },
+  "0x0063:0x4944:0x3630": {
+    "description": "In-Wall Smart Toggle Dimmer, 800S",
+    "label": "76595 / ZWN3019",
+    "manufacturer": "Enbrighten"
+  },
   "0x0063:0x494d:0x3031": {
     "description": "In-Wall Motion Switch, 500S",
     "label": "24770 / ZW4006",
@@ -3059,6 +3064,11 @@
     "label": "ML LD300",
     "manufacturer": "Monster Cable"
   },
+  "0x007e:0x0300:0x014e": {
+    "description": "Scene Capable Switch On/Off",
+    "label": "IWS1000S",
+    "manufacturer": "Monster Cable"
+  },
   "0x007e:0x0400:0x014e": {
     "description": "Dimmer Switch 600W Incandescent",
     "label": "IWD600S",
@@ -3322,6 +3332,11 @@
   "0x0085:0x0003:0x0001": {
     "description": "Chain Actuator 230VAC",
     "label": "ZWS230",
+    "manufacturer": "Fakro"
+  },
+  "0x0085:0x0003:0x0002": {
+    "description": "Roller Shutter",
+    "label": "ARZ Z-Wave Solar",
     "manufacturer": "Fakro"
   },
   "0x0085:0x0003:0x0011": {
@@ -5456,12 +5471,12 @@
   },
   "0x0109:0x2009:0x0901": {
     "description": "AC/DC Siren",
-    "label": "ZM1602",
+    "label": "ZM1602-5",
     "manufacturer": "Vision Security"
   },
   "0x0109:0x2009:0x0903": {
     "description": "AC/DC Siren",
-    "label": "ZM1602",
+    "label": "ZM1602-5",
     "manufacturer": "Vision Security"
   },
   "0x0109:0x2009:0x0907": {
@@ -6045,8 +6060,8 @@
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0301:0x1001": {
-    "description": "Roller Shutter",
-    "label": "FGRM-222",
+    "description": "Roller Shutter 2",
+    "label": "FGR-222",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0301:0x3001": {
@@ -6055,8 +6070,8 @@
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0302:0x1000": {
-    "description": "Roller Shutter",
-    "label": "FGRM-222",
+    "description": "Roller Shutter 2",
+    "label": "FGR-222",
     "manufacturer": "Fibargroup"
   },
   "0x010f:0x0302:0x3000": {
@@ -7576,8 +7591,8 @@
   },
   "0x011a:0x0601:0x0901": {
     "description": "PIR Sensor",
-    "label": "ZWN-BPC",
-    "manufacturer": "Enerwave / Wenzhou MTLC Electric Appliances Co., Ltd."
+    "label": "ZWN-BPC-PLUS",
+    "manufacturer": "Wenzhou MTLC Electric Appliances Co., Ltd."
   },
   "0x011a:0x0601:0x0903": {
     "description": "Magnetic Door/Window Sensor",
@@ -9507,8 +9522,8 @@
     "manufacturer": "Popp & Co"
   },
   "0x0154:0x0004:0x0002": {
-    "description": "Solar Powered Outdoor Siren",
-    "label": "005107",
+    "description": "POPP Solar Outdoor Siren 2",
+    "label": "700854",
     "manufacturer": "Popp & Co"
   },
   "0x0154:0x0004:0x0003": {
@@ -10040,6 +10055,11 @@
     "description": "KAS-600 Z-Wave Electronic Lock",
     "label": "LS-8015-ZW",
     "manufacturer": "Locstar Technology Co., Ltd."
+  },
+  "0x015f:0x0004:0x7103": {
+    "description": "Non-Neutral Touch Panel Switch 1 Button",
+    "label": "MH-S311-SL",
+    "manufacturer": "McoHome Technology Co., Ltd."
   },
   "0x015f:0x0301:0x1001": {
     "description": "MCO HOME Micro Shutter",
@@ -11328,7 +11348,7 @@
   },
   "0x019b:0x0003:0x0202": {
     "description": "Floor Thermostat",
-    "label": "Z-TRM 2",
+    "label": "Z-TRM2fx",
     "manufacturer": "Heatit"
   },
   "0x019b:0x0003:0x0203": {
@@ -11841,10 +11861,40 @@
     "label": "HU03",
     "manufacturer": "Shenzhen Kaadas Intelligent Technology Co., Ltd."
   },
+  "0x021d:0x0003:0x00c7": {
+    "description": "Digital Mortise Door Lock",
+    "label": "KA211",
+    "manufacturer": "Kaadas"
+  },
+  "0x021d:0x0003:0x00c8": {
+    "description": "Digital Mortise Door Lock",
+    "label": "KA200",
+    "manufacturer": "Kaadas"
+  },
   "0x021d:0x0103:0x0003": {
     "description": "Digital Mortise Door Lock",
     "label": "ML2",
     "manufacturer": "Shenzhen Kaadas Intelligent Technology Co., Ltd."
+  },
+  "0x021d:0x0103:0x00c7": {
+    "description": "Digital Mortise Door Lock",
+    "label": "KA211",
+    "manufacturer": "Kaadas"
+  },
+  "0x021d:0x0103:0x00c8": {
+    "description": "Digital Mortise Door Lock",
+    "label": "KA200",
+    "manufacturer": "Kaadas"
+  },
+  "0x021d:0x0203:0x00c7": {
+    "description": "Digital Mortise Door Lock",
+    "label": "KA211",
+    "manufacturer": "Kaadas"
+  },
+  "0x021d:0x0203:0x00c8": {
+    "description": "Digital Mortise Door Lock",
+    "label": "KA200",
+    "manufacturer": "Kaadas"
   },
   "0x021d:0x0903:0x00d3": {
     "description": "Home Access Keyed Touchscreen Deadbolt",
@@ -12590,6 +12640,11 @@
     "description": "Ezlo Secure",
     "label": "EZLOSECURE",
     "manufacturer": "AdTrustMedia LLC dba: eZLO"
+  },
+  "0x025b:0x0201:0x000f": {
+    "description": "Z-Wave Plus Flood and Temperature Sensor",
+    "label": "Flood Sensor",
+    "manufacturer": "eZLO"
   },
   "0x025d:0x0100:0x0100": {
     "description": "",
@@ -13892,6 +13947,11 @@
     "label": "MS13ZS",
     "manufacturer": "Minoston"
   },
+  "0x0312:0xfe00:0xfe0e": {
+    "description": "Mini Plug with Power Meter",
+    "label": "MP21ZP / MP31ZP",
+    "manufacturer": "Minoston"
+  },
   "0x0312:0xff00:0xff01": {
     "description": "Smart On/Off Toggle Switch",
     "label": "MS12ZS",
@@ -14340,9 +14400,9 @@
     "manufacturer": "Sunricher"
   },
   "0x0330:0x0300:0xb302": {
-    "description": "4 Channel Dimmer Remote Control",
-    "label": "ZV9001K12-DIM-Z4",
-    "manufacturer": "Sunricher"
+    "description": "Remote Control - 12 Button",
+    "label": "VES-ZW-REM-010",
+    "manufacturer": "Vesternet"
   },
   "0x0330:0x0301:0xa101": {
     "description": "Wall Controller",
@@ -16009,6 +16069,21 @@
     "label": "SQR22101",
     "manufacturer": "Schneider Electric"
   },
+  "0x044a:0x0004:0x0002": {
+    "description": "Outdoor Siren",
+    "label": "Outdoor Siren",
+    "manufacturer": "Boundary"
+  },
+  "0x044a:0x0004:0x0003": {
+    "description": "PIR Motion Sensor",
+    "label": "Motion Sensor",
+    "manufacturer": "Boundary"
+  },
+  "0x044a:0x0004:0x0007": {
+    "description": "Door and Window Contact Sensor",
+    "label": "Contact Sensor",
+    "manufacturer": "Boundary"
+  },
   "0x044b:0x0004:0x0002": {
     "description": "Z-Wave Touchable Smart Valve",
     "label": "WP-02SF",
@@ -16606,5 +16681,5 @@
     "label": "BW8120",
     "manufacturer": "Remotec"
   },
-  "updated_at": "2026-11-16T23:47:33.406467"
+  "updated_at": "2026-11-24T02:29:17.766870"
 }
