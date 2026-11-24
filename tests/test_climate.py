@@ -38,6 +38,7 @@ from vivintpy.exceptions import (
     VivintSkyApiAuthenticationError,
     VivintSkyApiError,
     VivintSkyApiRateLimitError,
+    VivintSkyClimateAuthenticationError,
 )
 from vivintpy.proto import climate_pb2, climate_pb2_grpc
 from vivintpy.system import System
@@ -1701,3 +1702,159 @@ async def test_metadata_waits_for_a_sign_in_and_reports_a_missing_token() -> Non
 
     with pytest.raises(VivintSkyApiAuthenticationError):
         await api._climate_metadata()
+
+
+@pytest.mark.asyncio
+async def test_metadata_read_waits_for_the_session_lock() -> None:
+    """Test the token is read only after a sign-in holding the lock has finished."""
+    api = make_api()
+    lock = api._VivintSkyApi__session_lock  # type: ignore[attr-defined]
+
+    async with lock:
+        read = asyncio.create_task(api._climate_metadata())
+        await asyncio.sleep(0.05)
+        assert not read.done()
+        api._VivintSkyApi__token = {  # type: ignore[attr-defined]
+            "access_token": "replacement",
+            "id_token": jwt.encode({"exp": int(time.time()) + 3600}, "k" * 32),
+        }
+
+    assert await read == [("authorization", "Bearer replacement")]
+
+
+@pytest.mark.asyncio
+async def test_start_during_a_stop_gets_a_new_stream() -> None:
+    """Test a start requested while the old stream is being cancelled is honored."""
+    release = asyncio.Event()
+
+    class Api(StreamApi):
+        async def stream_climate_devices(self, system_id: int) -> Any:
+            try:
+                async for response in super().stream_climate_devices(system_id):
+                    yield response
+            except asyncio.CancelledError:
+                await release.wait()
+                raise
+
+    system = make_system(Api())
+    system.start_climate_updates()
+    await wait_for(lambda: system.climate_updates_running)
+    old = system._climate_task
+
+    stop = asyncio.create_task(system.stop_climate_updates())
+    await asyncio.sleep(0.05)
+    assert old and not old.done()
+    system.start_climate_updates()
+    release.set()
+    await stop
+
+    assert system._climate_task and system._climate_task is not old
+    assert not system._climate_task.done()
+    await system.stop_climate_updates()
+
+
+@pytest.mark.asyncio
+async def test_restarting_the_stream_clears_the_connected_flag() -> None:
+    """Test a replacement stream isn't reported as connected before it responds."""
+
+    class Api(FakeApi):
+        async def stream_climate_devices(self, system_id: int) -> Any:
+            await asyncio.Event().wait()
+            yield
+
+    system = make_system(Api())
+    system.start_climate_updates()
+    await asyncio.sleep(0)
+    system._climate_stream_connected = True
+
+    system._restart_climate_stream()
+
+    assert not system._climate_stream_connected
+    assert not system.climate_updates_running
+    await system.stop_climate_updates()
+
+
+@pytest.mark.asyncio
+async def test_climate_authentication_failure_does_not_stop_other_systems() -> None:
+    """Test later systems refresh, and the error reaches the caller afterwards."""
+    refreshed: list[int] = []
+
+    def fake_system(system_id: int, error: Exception | None) -> MagicMock:
+        system = MagicMock()
+        system.id = system_id
+
+        async def refresh() -> None:
+            refreshed.append(system_id)
+            if error:
+                raise error
+
+        system.refresh = refresh
+        return system
+
+    account = Account("user", client_session=MagicMock())
+    account.systems = [
+        fake_system(1, VivintSkyClimateAuthenticationError("rejected")),
+        fake_system(2, None),
+    ]
+    data = {
+        AuthUserAttribute.USERS: {
+            UserAttribute.SYSTEM: [
+                {SystemAttribute.PANEL_ID: 1},
+                {SystemAttribute.PANEL_ID: 2},
+            ]
+        }
+    }
+
+    with pytest.raises(VivintSkyClimateAuthenticationError):
+        await account.refresh(data)
+
+    assert refreshed == [1, 2]
+
+
+@pytest.mark.asyncio
+async def test_panel_authentication_failure_still_stops_the_refresh() -> None:
+    """Test a rejected sign-in in the panel calls propagates at once."""
+    refreshed: list[int] = []
+
+    def fake_system(system_id: int, error: Exception | None) -> MagicMock:
+        system = MagicMock()
+        system.id = system_id
+
+        async def refresh() -> None:
+            refreshed.append(system_id)
+            if error:
+                raise error
+
+        system.refresh = refresh
+        return system
+
+    account = Account("user", client_session=MagicMock())
+    account.systems = [
+        fake_system(1, VivintSkyApiAuthenticationError("rejected")),
+        fake_system(2, None),
+    ]
+    data = {
+        AuthUserAttribute.USERS: {
+            UserAttribute.SYSTEM: [
+                {SystemAttribute.PANEL_ID: 1},
+                {SystemAttribute.PANEL_ID: 2},
+            ]
+        }
+    }
+
+    with pytest.raises(VivintSkyApiAuthenticationError):
+        await account.refresh(data)
+
+    assert refreshed == [1]
+
+
+@pytest.mark.asyncio
+async def test_load_reports_a_rejected_sign_in_as_a_climate_error() -> None:
+    """Test a load wraps an authentication failure so a refresh can tell it apart."""
+
+    class Api(FakeApi):
+        async def get_climate_devices(self, system_id: int) -> list[Any]:
+            raise VivintSkyApiAuthenticationError("rejected")
+
+    with pytest.raises(VivintSkyClimateAuthenticationError):
+        await make_system(Api()).load_climate_devices()

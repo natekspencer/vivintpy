@@ -24,6 +24,8 @@ from .exceptions import (
     VivintError,
     VivintSkyApiAuthenticationError,
     VivintSkyApiError,
+    VivintSkyApiMfaRequiredError,
+    VivintSkyClimateAuthenticationError,
 )
 from .proto import climate_pb2
 from .spacemonkey import SpaceMonkeyDvr, find_dvr_service_id
@@ -194,8 +196,10 @@ class System(Entity):
             messages, stops = self._climate_messages, self._climate_stops
             try:
                 devices = await self.api.get_climate_devices(self.id)
-            except VivintSkyApiAuthenticationError:
+            except VivintSkyApiMfaRequiredError:
                 raise
+            except VivintSkyApiAuthenticationError as err:
+                raise VivintSkyClimateAuthenticationError(str(err)) from err
             except (VivintSkyApiError, ClientError, TimeoutError) as err:
                 # the thermostats are optional, so the rest of a refresh carries on
                 _LOGGER.debug(
@@ -228,18 +232,16 @@ class System(Entity):
         if self._climate_resync_timer:
             self._climate_resync_timer.cancel()
             self._climate_resync_timer = None
-        stream, refresh = self._climate_task, self._climate_refresh_task
-        tasks = [task for task in (stream, refresh) if task]
+        tasks = [
+            task for task in (self._climate_task, self._climate_refresh_task) if task
+        ]
+        # detached first, so a start that runs while they are cancelled gets new ones
+        self._climate_task = self._climate_refresh_task = None
+        self._climate_stream_connected = False
+        self._climate_refresh_due = None
         for task in tasks:
             task.cancel()
         await asyncio.gather(*tasks, return_exceptions=True)
-        # a start that ran meanwhile owns the state of its own tasks
-        if self._climate_task is stream:
-            self._climate_task = None
-            self._climate_stream_connected = False
-        if self._climate_refresh_task is refresh:
-            self._climate_refresh_task = None
-            self._climate_refresh_due = None
 
     def request_climate_refresh(self) -> None:
         """Reload the thermostats soon, unless real time updates are running."""
@@ -365,6 +367,8 @@ class System(Entity):
         if self._climate_stopped or self._climate_task is None:
             return
         self._climate_resynced_at = time.monotonic()
+        # the replacement says it is connected when its first response arrives
+        self._climate_stream_connected = False
         self._climate_task.cancel()
         self._climate_task = asyncio.create_task(self._stream_climate_devices())
 

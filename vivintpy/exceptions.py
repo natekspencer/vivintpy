@@ -24,6 +24,14 @@ class VivintSkyApiAuthenticationError(VivintSkyApiError):
     """VivintSky API authentication related error occurred."""
 
 
+class VivintSkyClimateAuthenticationError(VivintSkyApiAuthenticationError):
+    """The climate service rejected the credentials while loading thermostats.
+
+    Thermostats are optional, so a refresh of several systems carries on and raises
+    this once it is done.
+    """
+
+
 class VivintSkyApiMfaRequiredError(VivintSkyApiAuthenticationError):
     """VivintSky API MFA required related error occurred."""
 

@@ -22,7 +22,11 @@ from .const import (
     SystemAttribute,
     UserAttribute,
 )
-from .exceptions import VivintSkyApiAuthenticationError, VivintSkyApiError
+from .exceptions import (
+    VivintSkyApiAuthenticationError,
+    VivintSkyApiError,
+    VivintSkyClimateAuthenticationError,
+)
 from .pubnub import PN_CHANNEL, PN_SUBSCRIBE_KEY, VivintPubNubSubscribeListener
 from .system import System
 from .utils import first_or_none
@@ -181,6 +185,7 @@ class Account:
             except (ClientConnectionError, VivintSkyApiError):
                 _LOGGER.error("Unable to refresh system(s)")
 
+        climate_error: VivintSkyClimateAuthenticationError | None = None
         if authuser_data:
             # for each system_account, make another call to load all the devices
             for system_data in authuser_data[AuthUserAttribute.USERS][
@@ -194,7 +199,12 @@ class Account:
                     ),
                 )
                 if system:
-                    await system.refresh()
+                    try:
+                        await system.refresh()
+                    except VivintSkyClimateAuthenticationError as err:
+                        # the panel refreshed, so the other systems still can
+                        climate_error = climate_error or err
+                        continue
                     if self.__subscribe_for_realtime_updates:
                         # a disconnect stops the stream but keeps the system
                         system.start_climate_updates()
@@ -209,7 +219,11 @@ class Account:
                         is_admin=system_data.get(SystemAttribute.ADMIN, False),
                     )
                     self.systems.append(system)
-                    await system.load_climate_devices()
+                    try:
+                        await system.load_climate_devices()
+                    except VivintSkyClimateAuthenticationError as err:
+                        climate_error = climate_error or err
+                        continue
                     if self.__subscribe_for_realtime_updates:
                         system.start_climate_updates()
 
@@ -217,6 +231,8 @@ class Account:
                 "Refreshed %s system(s)",
                 len(authuser_data[AuthUserAttribute.USERS][UserAttribute.SYSTEM]),
             )
+            if climate_error:
+                raise climate_error
 
     async def subscribe_for_realtime_updates(
         self, authuser_data: dict | None = None
