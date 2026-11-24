@@ -1183,44 +1183,6 @@ async def test_connect_that_finishes_after_a_disconnect_is_rejected(
 
 
 @pytest.mark.asyncio
-async def test_snapshot_does_not_overwrite_a_newer_offline_status() -> None:
-    """Test a thermostat the stream reported offline isn't brought back by a load."""
-    api = SnapshotApi()
-    system = make_system(api)
-    system.update_climate_devices([make_device()], snapshot=True)
-    thermostat = system.alarm_panels[0].devices[0]
-
-    load = asyncio.create_task(system.load_climate_devices())
-    await wait_for(api.started.is_set)
-    offline = make_device()
-    offline.is_online = False
-    system.update_climate_devices([offline])
-    api.release.set()
-    await load
-
-    assert not thermostat.is_online  # type: ignore[attr-defined]
-
-
-@pytest.mark.asyncio
-async def test_full_listing_offline_status_is_not_overwritten_by_a_load() -> None:
-    """Test an offline status from a full listing counts as reported."""
-    api = SnapshotApi()
-    system = make_system(api)
-    offline = make_device()
-    offline.is_online = False
-    system.update_climate_devices([offline], snapshot=True)
-    thermostat = system.alarm_panels[0].devices[0]
-
-    load = asyncio.create_task(system.load_climate_devices())
-    await wait_for(api.started.is_set)
-    system.update_climate_devices([offline])
-    api.release.set()
-    await load
-
-    assert not thermostat.is_online  # type: ignore[attr-defined]
-
-
-@pytest.mark.asyncio
 async def test_stale_connect_leaves_a_newer_connections_flag_alone() -> None:
     """Test a connect that raises after a disconnect doesn't clear the realtime flag."""
     release = asyncio.Event()
@@ -1858,3 +1820,24 @@ async def test_load_reports_a_rejected_sign_in_as_a_climate_error() -> None:
 
     with pytest.raises(VivintSkyClimateAuthenticationError):
         await make_system(Api()).load_climate_devices()
+
+
+def test_update_that_omits_the_online_flag_does_not_make_a_thermostat_offline(
+    system: System, thermostat: ClimateThermostat
+) -> None:
+    """Test `False` is only believed from a full listing, as a missing flag reads so."""
+    assert thermostat.is_online
+
+    system.update_climate_devices(
+        [climate_pb2.ClimateDevice(id=DEVICE_URN, name="Den")]
+    )
+    assert thermostat.is_online
+    assert thermostat.name == "Den"
+
+    offline = make_device()
+    offline.is_online = False
+    system.update_climate_devices([offline])
+    assert thermostat.is_online
+
+    system.update_climate_devices([offline], snapshot=True)
+    assert not thermostat.is_online

@@ -421,7 +421,7 @@ class System(Entity):
             elif _panel_device_key(data.id) in legacy_keys:
                 continue
             elif snapshot:
-                device = ClimateThermostat(data, panel, snapshot=True)
+                device = ClimateThermostat(data, panel)
                 panel.devices.append(device)
                 panel.emit(DEVICE_DISCOVERED, {"device": device})
             else:

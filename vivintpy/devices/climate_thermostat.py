@@ -92,14 +92,9 @@ class ClimateThermostat(Thermostat):
         self,
         device: climate_pb2.ClimateDevice,
         alarm_panel: AlarmPanel,
-        *,
-        snapshot: bool = False,
     ) -> None:
-        """Initialize a thermostat, from a full listing if `snapshot`."""
+        """Initialize a thermostat."""
         self._device = device
-        # `is_online` has no presence tracking, so only `True` and a full listing say
-        # that the service reported it
-        self._online_known = bool(device.is_online) or snapshot
         super().__init__(self._build_data(device, alarm_panel), alarm_panel)
         self._set_manufacturer()
 
@@ -132,13 +127,10 @@ class ClimateThermostat(Thermostat):
         merged.CopyFrom(self._device)
         if device.name:
             merged.name = device.name
-        # `is_online` is unset or `False` alike, so `False` is only believed in a full
-        # listing, or in an update that carries the device's identity once the service
-        # has reported the status; `True` can't come from an unset field
-        identity = device.name or device.WhichOneof("details")
-        if snapshot or device.is_online or (identity and self._online_known):
+        # `is_online` has no presence tracking, so an update that leaves it out reads
+        # as `False`; only a full listing is believed about `False`
+        if snapshot or device.is_online:
             merged.is_online = device.is_online
-            self._online_known = True
         if kind := device.WhichOneof("details"):
             getattr(merged, kind).CopyFrom(getattr(device, kind))
         components = (
