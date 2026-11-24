@@ -149,7 +149,7 @@ def system() -> System:
 @pytest.fixture
 def thermostat(system: System) -> ClimateThermostat:
     """Return the thermostat of the system."""
-    system.update_climate_devices([make_device()])
+    system.update_climate_devices([make_device()], snapshot=True)
     return system.alarm_panels[0].devices[0]  # type: ignore[return-value]
 
 
@@ -269,7 +269,7 @@ def test_climate_devices_are_tracked(system: System) -> None:
     panel.on(DEVICE_DISCOVERED, lambda data: events.append(("added", data["device"])))
     panel.on(DEVICE_DELETED, lambda data: events.append(("deleted", data["device"])))
 
-    system.update_climate_devices([make_device()])
+    system.update_climate_devices([make_device()], snapshot=True)
     [device] = panel.devices
     assert events == [("added", device)]
 
@@ -604,7 +604,7 @@ def test_unset_set_points_are_none(system: System) -> None:
         if component.WhichOneof("value") == "setpoints":
             component.setpoints.maximum_temperature = 0
             component.setpoints.cool_setpoint = 0
-    system.update_climate_devices([device])
+    system.update_climate_devices([device], snapshot=True)
     thermostat = system.alarm_panels[0].devices[0]
 
     assert thermostat.maximum_temperature is None  # type: ignore[attr-defined]
@@ -706,7 +706,7 @@ async def test_snapshot_does_not_undo_a_deletion_from_the_stream() -> None:
     """Test a thermostat the stream deletes while a snapshot loads stays deleted."""
     api = SnapshotApi()
     system = make_system(api)
-    system.update_climate_devices([make_device()])
+    system.update_climate_devices([make_device()], snapshot=True)
     devices = system.alarm_panels[0].devices
 
     load = asyncio.create_task(system.load_climate_devices())
@@ -724,13 +724,13 @@ async def test_snapshot_keeps_a_thermostat_the_stream_recreates() -> None:
     """Test a thermostat deleted and then reported again during a load is kept."""
     api = SnapshotApi()
     system = make_system(api)
-    system.update_climate_devices([make_device()])
+    system.update_climate_devices([make_device()], snapshot=True)
     devices = system.alarm_panels[0].devices
 
     load = asyncio.create_task(system.load_climate_devices())
     await api.started.wait()
     system.update_climate_devices([], [DEVICE_URN])
-    system.update_climate_devices([make_device()])
+    system.update_climate_devices([make_device()], snapshot=True)
     api.release.set()
     await load
 
@@ -801,14 +801,14 @@ def test_climate_thermostat_is_removed_when_its_panel_thermostat_appears(
     deleted: list[dict] = []
     panel.on(DEVICE_DELETED, deleted.append)
     twin = make_device(id=f"urn:vivint:panel:{SYSTEM_ID}:12")
-    system.update_climate_devices([twin])
+    system.update_climate_devices([twin], snapshot=True)
     assert isinstance(panel.devices[0], ClimateThermostat)
 
     panel_thermostat = Thermostat(
         {"_id": 12, "t": "thermostat_device", "panid": SYSTEM_ID}, panel
     )
     panel.devices.append(panel_thermostat)
-    system.update_climate_devices([twin])
+    system.update_climate_devices([twin], snapshot=True)
 
     assert panel.devices == [panel_thermostat]
     assert len(deleted) == 1
@@ -846,7 +846,7 @@ async def test_snapshot_does_not_overwrite_a_newer_stream_update() -> None:
     """Test a stale snapshot doesn't undo a change the stream reported meanwhile."""
     api = SnapshotApi()
     system = make_system(api)
-    system.update_climate_devices([make_device()])
+    system.update_climate_devices([make_device()], snapshot=True)
     thermostat = system.alarm_panels[0].devices[0]
 
     load = asyncio.create_task(system.load_climate_devices())
@@ -938,7 +938,7 @@ async def test_other_errors_from_a_load_are_logged() -> None:
             raise VivintSkyApiError("outage")
 
     system = make_system(Api())
-    system.update_climate_devices([make_device()])
+    system.update_climate_devices([make_device()], snapshot=True)
 
     await system.load_climate_devices()
 
@@ -1024,7 +1024,7 @@ async def test_load_does_not_restore_a_component_a_full_listing_dropped() -> Non
     """Test an older response doesn't bring back a component the stream removed."""
     api = SnapshotApi()
     system = make_system(api)
-    system.update_climate_devices([make_device()])
+    system.update_climate_devices([make_device()], snapshot=True)
     thermostat = system.alarm_panels[0].devices[0]
     listing = make_device()
     kept = [c for c in listing.components if c.WhichOneof("value") != "fan_setting"]
@@ -1127,7 +1127,7 @@ async def test_stopped_system_does_not_schedule_a_follow_up_load(
     monkeypatch.setattr("vivintpy.system.CLIMATE_REFRESH_DELAY", 0.01)
     api = SnapshotApi()
     system = make_system(api)
-    system.update_climate_devices([make_device()])
+    system.update_climate_devices([make_device()], snapshot=True)
 
     load = asyncio.create_task(system.load_climate_devices())
     await api.started.wait()
@@ -1185,7 +1185,7 @@ async def test_snapshot_does_not_overwrite_a_newer_offline_status() -> None:
     """Test a thermostat the stream reported offline isn't brought back by a load."""
     api = SnapshotApi()
     system = make_system(api)
-    system.update_climate_devices([make_device()])
+    system.update_climate_devices([make_device()], snapshot=True)
     thermostat = system.alarm_panels[0].devices[0]
 
     load = asyncio.create_task(system.load_climate_devices())
@@ -1252,7 +1252,7 @@ async def test_load_is_dropped_when_the_stream_reports_meanwhile() -> None:
     """Test a response that the stream overtook doesn't replace what it reported."""
     api = SnapshotApi()
     system = make_system(api)
-    system.update_climate_devices([make_device()])
+    system.update_climate_devices([make_device()], snapshot=True)
     thermostat = system.alarm_panels[0].devices[0]
     update = climate_pb2.ClimateDevice(
         id=DEVICE_URN,
@@ -1316,21 +1316,142 @@ async def test_load_is_dropped_when_the_stream_connects_meanwhile() -> None:
     await system.stop_climate_updates()
 
 
-def test_update_without_identity_creates_a_thermostat_that_later_updates_fill_in(
+def test_update_for_an_unknown_thermostat_asks_for_a_full_listing(
     system: System,
 ) -> None:
-    """Test a thermostat first reported without its identity is created and named."""
+    """Test an update that can't describe a new thermostat requests a full listing."""
     other = f"urn:vivint:google:{SYSTEM_ID}:other"
-    partial = climate_pb2.ClimateDevice(id=other)
     devices = system.alarm_panels[0].devices
+    before = len(devices)
+
+    system.update_climate_devices([climate_pb2.ClimateDevice(id=other)])
+
+    assert len(devices) == before
+    assert system._climate_resync
+
+
+def test_full_listing_requests_are_throttled(system: System) -> None:
+    """Test unknown thermostats don't restart the stream more than once an interval."""
+    partial = climate_pb2.ClimateDevice(id=f"urn:vivint:google:{SYSTEM_ID}:other")
+    system.update_climate_devices([partial])
+    assert system._climate_resync
+    system._climate_resync = False
 
     system.update_climate_devices([partial])
 
-    created = next(d for d in devices if d.id == other)
-    assert created.name == ""
-    system.update_climate_devices([make_device(id=other, name="Bedroom")])
-    assert created.name == "Bedroom"
-    assert created.manufacturer == "Google"
+    assert not system._climate_resync
+
+
+def test_updates_for_panel_duplicates_do_not_request_a_full_listing(
+    system: System,
+) -> None:
+    """Test a climate twin of a panel thermostat is ignored without a restart."""
+    from vivintpy.devices.thermostat import Thermostat
+
+    panel = system.alarm_panels[0]
+    panel.devices.append(
+        Thermostat({"_id": 12, "t": "thermostat_device", "panid": SYSTEM_ID}, panel)
+    )
+
+    system.update_climate_devices([make_device(id=f"urn:vivint:panel:{SYSTEM_ID}:12")])
+
+    assert not system._climate_resync
+
+
+def test_urn_of_another_panel_is_not_a_duplicate(system: System) -> None:
+    """Test only a URN naming the same panel matches that panel's thermostat."""
+    from vivintpy.devices.thermostat import Thermostat
+
+    panel = system.alarm_panels[0]
+    panel.devices.append(
+        Thermostat({"_id": 12, "t": "thermostat_device", "panid": SYSTEM_ID}, panel)
+    )
+    other_panel = f"urn:vivint:panel:{SYSTEM_ID + 1}:12"
+
+    system.update_climate_devices([make_device(id=other_panel)], snapshot=True)
+
+    assert any(d.id == other_panel for d in panel.devices)
+
+
+class ResyncApi(FakeApi):
+    """An API whose stream learns of a new thermostat only on its second connection."""
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.connections = 0
+        self.other = f"urn:vivint:google:{SYSTEM_ID}:other"
+
+    async def stream_climate_devices(
+        self, system_id: int
+    ) -> AsyncIterator[climate_pb2.GetClimateDevicesStreamingResponse]:
+        self.connections += 1
+        listing = [make_device()]
+        if self.connections > 1:
+            listing.append(make_device(id=self.other, name="Bedroom"))
+        yield climate_pb2.GetClimateDevicesStreamingResponse(climate_devices=listing)
+        if self.connections == 1:
+            yield climate_pb2.GetClimateDevicesStreamingResponse(
+                climate_devices=[climate_pb2.ClimateDevice(id=self.other)]
+            )
+        await asyncio.Event().wait()
+
+
+@pytest.mark.asyncio
+async def test_stream_reconnects_for_a_full_listing_of_a_new_thermostat() -> None:
+    """Test a thermostat the stream first mentions in part is created after a resync."""
+    api = ResyncApi()
+    system = make_system(api)
+
+    system.start_climate_updates()
+    await wait_for(
+        lambda: (
+            {d.id for d in system.alarm_panels[0].devices} == {DEVICE_URN, api.other}
+        )
+    )
+
+    assert api.connections == 2
+    assert next(
+        d for d in system.alarm_panels[0].devices if d.id == api.other
+    ).name == ("Bedroom")
+    await system.stop_climate_updates()
+
+
+@pytest.mark.asyncio
+async def test_stream_stops_when_signing_in_fails() -> None:
+    """Test a rejected sign-in ends the stream instead of retrying with a dead token."""
+
+    class Api(FakeApi):
+        connections = 0
+
+        async def stream_climate_devices(self, system_id: int) -> Any:
+            self.connections += 1
+            if self.connections:
+                raise VivintSkyApiAuthenticationError("revoked")
+            yield
+
+    api = Api()
+    system = make_system(api)
+
+    system.start_climate_updates()
+    assert system._climate_task
+    await asyncio.wait_for(system._climate_task, 1)
+
+    assert api.connections == 1
+    assert not system.climate_updates_running
+
+
+@pytest.mark.asyncio
+async def test_command_finishing_after_a_stop_schedules_no_reload() -> None:
+    """Test a reload isn't scheduled once climate updates have been stopped."""
+    system = make_system(FakeApi())
+    await system.stop_climate_updates()
+
+    system.request_climate_refresh()
+
+    assert system._climate_refresh_task is None
+    system.start_climate_updates()
+    assert not system._climate_stopped
+    await system.stop_climate_updates()
 
 
 def test_update_sets_manufacturer_from_details(

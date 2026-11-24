@@ -38,6 +38,8 @@ FAN_MODES = {
 }
 FAN_MODE_NAMES = {mode: name for name, mode in FAN_MODES.items()}
 
+# `CapabilityType` has no 720-minute value, so that timer has no capability; it can still
+# be set with `set_state(fan_mode=FanMode.TIMER_720)`
 FAN_TIMER_CAPABILITIES = {
     FanMode.TIMER_15: CapabilityType.FAN15_MINUTE,
     FanMode.TIMER_30: CapabilityType.FAN30_MINUTE,

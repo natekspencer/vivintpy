@@ -8,7 +8,7 @@ import logging
 import ssl
 import urllib.parse
 import warnings
-from collections.abc import AsyncIterator, Callable
+from collections.abc import AsyncGenerator, Callable
 from typing import Any
 
 import aiohttp
@@ -973,7 +973,7 @@ class VivintSkyApi:
 
     async def stream_climate_devices(
         self, system_id: int
-    ) -> AsyncIterator[climate_pb2.GetClimateDevicesStreamingResponse]:
+    ) -> AsyncGenerator[climate_pb2.GetClimateDevicesStreamingResponse, None]:
         """Yield climate device updates for a system as they happen."""
         creds = grpc.ssl_channel_credentials()
         for attempt in (1, 2):

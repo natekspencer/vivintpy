@@ -4,7 +4,10 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import re
+import time
 from collections.abc import Iterable
+from contextlib import aclosing
 from datetime import datetime, timedelta
 
 from aiohttp import ClientError
@@ -43,6 +46,9 @@ HISTORY_TIME_TOLERANCE = timedelta(seconds=5)
 CLIMATE_RETRY_MIN = 5
 CLIMATE_RETRY_MAX = 300
 CLIMATE_REFRESH_DELAY = 2
+# the shortest time between asking the service for a full listing
+CLIMATE_RESYNC_INTERVAL = 60
+_PANEL_DEVICE_URN = re.compile(r"^urn:vivint:panel:(\d+):(\d+)$")
 
 
 class System(Entity):
@@ -71,6 +77,9 @@ class System(Entity):
         self._climate_refresh_due: float | None = None
         self._climate_lock = asyncio.Lock()
         self._climate_messages = 0
+        self._climate_stopped = False
+        self._climate_resync = False
+        self._climate_resynced_at: float | None = None
 
     @property
     def dvr(self) -> SpaceMonkeyDvr | None:
@@ -99,6 +108,7 @@ class System(Entity):
 
     async def refresh(self) -> None:
         """Reload a system's data from the VivintSky API."""
+        self._climate_stopped = False
         system_data = await self.api.get_system_data(self.id)
         self._refresh_dvr(system_data)
 
@@ -200,11 +210,13 @@ class System(Entity):
 
     def start_climate_updates(self) -> None:
         """Receive thermostat updates in real time."""
+        self._climate_stopped = False
         if self._climate_task is None or self._climate_task.done():
             self._climate_task = asyncio.create_task(self._stream_climate_devices())
 
     async def stop_climate_updates(self) -> None:
         """Stop receiving thermostat updates."""
+        self._climate_stopped = True
         for task in (self._climate_task, self._climate_refresh_task):
             if task:
                 task.cancel()
@@ -223,6 +235,8 @@ class System(Entity):
 
     def _schedule_climate_refresh(self) -> None:
         """Reload the thermostats after the delay, which each call starts again."""
+        if self._climate_stopped:
+            return
         # every command waits out the delay again, and one that completes while the
         # thermostats are loading gets another load
         self._climate_refresh_due = (
@@ -253,21 +267,33 @@ class System(Entity):
         while True:
             # the first message on each connection lists every thermostat
             first = True
+            self._climate_resync = False
             try:
-                async for response in self.api.stream_climate_devices(self.id):
-                    delay = CLIMATE_RETRY_MIN
-                    self._climate_stream_connected = True
-                    self.update_climate_devices(
-                        response.climate_devices,
-                        response.deleted_device_ids,
-                        snapshot=first,
-                    )
-                    first = False
+                async with aclosing(self.api.stream_climate_devices(self.id)) as stream:
+                    async for response in stream:
+                        delay = CLIMATE_RETRY_MIN
+                        self._climate_stream_connected = True
+                        self.update_climate_devices(
+                            response.climate_devices,
+                            response.deleted_device_ids,
+                            snapshot=first,
+                        )
+                        first = False
+                        if self._climate_resync:
+                            break
+            except VivintSkyApiAuthenticationError as err:
+                # signing in again would fail the same way, and requests report it
+                _LOGGER.debug("Climate updates for system %s stopped: %s", self.id, err)
+                self._climate_stream_connected = False
+                return
             except Exception as err:  # noqa: BLE001
                 _LOGGER.debug("Climate updates for system %s stopped: %s", self.id, err)
             else:
                 _LOGGER.debug("Climate updates for system %s ended", self.id)
             self._climate_stream_connected = False
+            if self._climate_resync:
+                # the service lists every thermostat when a connection starts
+                continue
             await asyncio.sleep(delay)
             delay = min(delay * 2, CLIMATE_RETRY_MAX)
 
@@ -281,14 +307,26 @@ class System(Entity):
         """Create, update and remove climate thermostats on the system's panel.
 
         With `snapshot`, `devices` is the complete list and any other known thermostat
-        is removed.
+        is removed. An update for a thermostat that isn't known yet only carries what
+        changed, so it asks the stream for a full listing instead of creating it.
         """
         devices = list(devices)
         removed_ids = set(deleted_ids)
         if snapshot:
             removed_ids |= self._climate_thermostats().keys() - {d.id for d in devices}
         self._climate_messages += 1
-        self._apply_climate_devices(devices, removed_ids, snapshot=snapshot)
+        if self._apply_climate_devices(devices, removed_ids, snapshot=snapshot):
+            self._request_climate_resync()
+
+    def _request_climate_resync(self) -> None:
+        """Ask the stream to reconnect for a full listing, at most once per interval."""
+        now = time.monotonic()
+        if (
+            self._climate_resynced_at is None
+            or now - self._climate_resynced_at >= CLIMATE_RESYNC_INTERVAL
+        ):
+            self._climate_resynced_at = now
+            self._climate_resync = True
 
     def _climate_thermostats(self) -> dict[str, ClimateThermostat]:
         """Return the climate thermostats of the system by id."""
@@ -305,14 +343,18 @@ class System(Entity):
         removed_ids: set[str],
         *,
         snapshot: bool,
-    ) -> None:
-        """Add, update and remove climate thermostats."""
+    ) -> bool:
+        """Add, update and remove climate thermostats.
+
+        Return `True` if an update was for a thermostat that isn't known, which only a
+        full listing can create.
+        """
         if not self.alarm_panels:
-            return
+            return False
         panel = self.alarm_panels[0]
         known = self._climate_thermostats()
-        legacy_ids = {
-            str(device.id)
+        legacy_keys = {
+            (str(panel_.id), str(device.id))
             for panel_ in self.alarm_panels
             for device in panel_.devices
             if isinstance(device, Thermostat)
@@ -322,25 +364,31 @@ class System(Entity):
         duplicate_ids = {
             device_id
             for device_id in known
-            if _legacy_device_id(device_id) in legacy_ids
+            if _panel_device_key(device_id) in legacy_keys
         }
         removed_ids |= duplicate_ids
 
+        unknown = False
         for data in devices:
             if data.id in duplicate_ids:
                 continue
             if existing := known.get(data.id):
                 existing.update_device(data, snapshot=snapshot)
-            elif _legacy_device_id(data.id) not in legacy_ids:
-                device = ClimateThermostat(data, panel, snapshot=snapshot)
+            elif _panel_device_key(data.id) in legacy_keys:
+                continue
+            elif snapshot:
+                device = ClimateThermostat(data, panel, snapshot=True)
                 panel.devices.append(device)
                 panel.emit(DEVICE_DISCOVERED, {"device": device})
+            else:
+                unknown = True
 
         for device_id in removed_ids:
             if removed := known.get(device_id):
                 owner = removed.alarm_panel or panel
                 owner.devices.remove(removed)
                 owner.emit(DEVICE_DELETED, {"device": removed})
+        return unknown
 
     def update_user_data(self, data: list[dict]) -> None:
         """Update user data."""
@@ -494,7 +542,8 @@ def _parse_timestamp(value: str | None) -> datetime | None:
         return None
 
 
-def _legacy_device_id(urn: str) -> str | None:
-    """Return the trailing numeric device id of a device URN, if it has one."""
-    _, _, device_id = urn.rpartition(":")
-    return device_id if device_id.isdigit() else None
+def _panel_device_key(urn: str) -> tuple[str, str] | None:
+    """Return the panel id and device id of a `urn:vivint:panel:<panel>:<device>`."""
+    if match := _PANEL_DEVICE_URN.match(urn):
+        return match.group(1), match.group(2)
+    return None
