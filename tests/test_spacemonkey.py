@@ -9,7 +9,7 @@ import ssl
 from collections.abc import AsyncIterator
 from datetime import UTC, datetime, timedelta
 from typing import Any, Self
-from unittest.mock import MagicMock
+from unittest.mock import AsyncMock, MagicMock
 
 import aiohttp
 import pytest
@@ -415,8 +415,11 @@ def system_data(dvr_service_id: str | None) -> dict:
 
 
 @pytest.mark.asyncio
-async def test_system_refresh_follows_the_dvr_service() -> None:
+async def test_system_refresh_follows_the_dvr_service(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     """Test a refresh creates, keeps, replaces and drops the DVR as the service changes."""
+    monkeypatch.setattr(System, "load_climate_devices", AsyncMock())
 
     class Api:
         data = system_data(None)
@@ -525,6 +528,7 @@ async def test_system_refresh_survives_a_failing_dvr_cleanup(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """Test a DVR that fails to close neither aborts the refresh nor is forgotten."""
+    monkeypatch.setattr(System, "load_climate_devices", AsyncMock())
 
     class Api:
         data = system_data("first")

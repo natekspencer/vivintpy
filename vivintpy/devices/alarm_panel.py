@@ -265,13 +265,12 @@ class AlarmPanel(VivintDevice):
     def get_devices(
         self, device_types: set[type[VivintDevice]] | None = None
     ) -> list[VivintDevice]:
-        """Get a list of associated devices."""
+        """Get a list of associated devices, including those of a subclass of a type."""
         devices: list[VivintDevice] = []
 
         if device_types:
-            devices = [
-                device for device in self.devices if device.__class__ in device_types
-            ]
+            types = tuple(device_types)
+            devices = [device for device in self.devices if isinstance(device, types)]
         else:
             devices = self.devices
 

@@ -8,7 +8,7 @@ import logging
 import ssl
 import urllib.parse
 import warnings
-from collections.abc import Callable
+from collections.abc import AsyncGenerator, Callable
 from typing import Any
 
 import aiohttp
@@ -31,11 +31,14 @@ from .exceptions import (
     VivintSkyApiAuthenticationError,
     VivintSkyApiError,
     VivintSkyApiMfaRequiredError,
+    VivintSkyApiRateLimitError,
     VivintSkyGrpcError,
 )
 from .proto import (
     beam_pb2,
     beam_pb2_grpc,
+    climate_pb2,
+    climate_pb2_grpc,
     garage_pb2,
     garage_pb2_grpc,
     security_pb2,
@@ -49,6 +52,12 @@ API_ENDPOINT = "https://www.vivintsky.com/api"
 AUTH_ENDPOINT = "https://id.vivint.com"
 GRPC_ENDPOINT = "grpc.vivintsky.com:50051"
 SERVICE_TIMEOUT = 30
+CLIMATE_TIMEOUT = 20
+CLIMATE_STREAM_OPTIONS = (
+    ("grpc.keepalive_time_ms", 60_000),
+    ("grpc.keepalive_timeout_ms", 20_000),
+    ("grpc.keepalive_permit_without_calls", 1),
+)
 
 PASSWORD_DEPRECATION = (
     "Passing password to the constructor is deprecated and will be removed in "
@@ -952,6 +961,108 @@ class VivintSkyApi:
             resp.raise_for_status()
             return None
 
+    async def get_climate_devices(
+        self, system_id: int
+    ) -> list[climate_pb2.ClimateDevice]:
+        """Return the climate devices (thermostats) of a system."""
+        response = await self.climate_request(
+            "GetClimateDevices",
+            climate_pb2.GetClimateDevicesRequest(system_id=system_id),
+        )
+        return list(response.climate_devices)
+
+    async def stream_climate_devices(
+        self, system_id: int
+    ) -> AsyncGenerator[climate_pb2.GetClimateDevicesStreamingResponse, None]:
+        """Yield climate device updates for a system as they happen."""
+        creds = grpc.ssl_channel_credentials()
+        for attempt in (1, 2):
+            metadata = [
+                *await self._climate_metadata(),
+                ("x-viv-system-id", str(system_id)),
+            ]
+            received = False
+            try:
+                async with grpc.aio.secure_channel(
+                    GRPC_ENDPOINT, credentials=creds, options=CLIMATE_STREAM_OPTIONS
+                ) as channel:
+                    stub = climate_pb2_grpc.ClimatePublicStub(channel)  # type: ignore[no-untyped-call]
+                    call = stub.GetClimateDevicesStreaming(
+                        climate_pb2.GetClimateDevicesStreamingRequest(
+                            system_id=system_id
+                        ),
+                        metadata=metadata,
+                    )
+                    async for response in call:
+                        received = True
+                        yield response
+                return
+            except grpc.aio.AioRpcError as err:
+                if (
+                    attempt == 1
+                    and not received
+                    and err.code() == grpc.StatusCode.UNAUTHENTICATED
+                ):
+                    await self._reauthenticate(metadata)
+                    continue
+                raise VivintSkyApiError(
+                    _describe_rpc_error("GetClimateDevicesStreaming", err)
+                ) from err
+
+    async def climate_request(self, method: str, request: Message) -> Any:
+        """Send a request to the climate service and return its response."""
+        creds = grpc.ssl_channel_credentials()
+        for attempt in (1, 2):
+            metadata = await self._climate_metadata()
+            try:
+                async with grpc.aio.secure_channel(
+                    GRPC_ENDPOINT, credentials=creds
+                ) as channel:
+                    stub = climate_pb2_grpc.ClimatePublicStub(channel)  # type: ignore[no-untyped-call]
+                    response = await getattr(stub, method)(
+                        request, metadata=metadata, timeout=CLIMATE_TIMEOUT
+                    )
+            except grpc.aio.AioRpcError as err:
+                if attempt == 1 and err.code() == grpc.StatusCode.UNAUTHENTICATED:
+                    await self._reauthenticate(metadata)
+                    continue
+                if err.code() == grpc.StatusCode.RESOURCE_EXHAUSTED:
+                    raise VivintSkyApiRateLimitError(
+                        _describe_rpc_error(method, err)
+                    ) from err
+                raise VivintSkyApiError(_describe_rpc_error(method, err)) from err
+            # the response has device names, serial numbers and network details
+            _LOGGER.debug("Response received from %s", method)
+            return response
+
+    async def _reauthenticate(self, metadata: list[tuple[str, str]]) -> None:
+        """Sign in again after the service rejected the token in `metadata`.
+
+        Signing in replaces the token only once it succeeds, and a request that finds
+        the token already replaced doesn't sign in again.
+        """
+        rejected = metadata[0][1].removeprefix("Bearer ")
+        async with self.__session_lock:
+            token = self.__token
+            if not token or token.get("access_token") != rejected:
+                return
+            try:
+                await self.__get_vivintsky_session(self.__username, self.__password)
+            except VivintSkyApiMfaRequiredError:
+                self.__mfa_password = self.__password
+                raise
+
+    async def _climate_metadata(self) -> list[tuple[str, str]]:
+        """Return the call metadata for the climate service, reauthenticating if needed."""
+        if not self.is_session_valid():
+            await self.connect()
+        # a sign-in clears the token while it replaces it, so wait for any to finish
+        async with self.__session_lock:
+            token = self.__token
+        if token is None:
+            raise VivintSkyApiAuthenticationError("Not signed in to Vivint")
+        return [("authorization", f"Bearer {token['access_token']}")]
+
     async def _send_grpc(
         self,
         callback: Callable[[beam_pb2_grpc.BeamStub, list[tuple[str, str]]], Message],
@@ -977,3 +1088,8 @@ def _describe_authorization_failure(
     if resp and (message := resp.get("message") or resp.get("location")):
         return str(message)[:200]
     return "no response"
+
+
+def _describe_rpc_error(method: str, err: grpc.aio.AioRpcError) -> str:
+    """Return a readable description of a failed gRPC call."""
+    return f"{method} failed: {err.code().name}: {err.details()}"

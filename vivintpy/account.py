@@ -22,7 +22,11 @@ from .const import (
     SystemAttribute,
     UserAttribute,
 )
-from .exceptions import VivintSkyApiAuthenticationError, VivintSkyApiError
+from .exceptions import (
+    VivintSkyApiAuthenticationError,
+    VivintSkyApiError,
+    VivintSkyClimateAuthenticationError,
+)
 from .pubnub import PN_CHANNEL, PN_SUBSCRIBE_KEY, VivintPubNubSubscribeListener
 from .system import System
 from .utils import first_or_none
@@ -50,6 +54,7 @@ class Account:
             warnings.warn(PASSWORD_DEPRECATION, DeprecationWarning, stacklevel=2)
         self.__connected = False
         self.__load_devices = False
+        self.__disconnects = 0
         self.__subscribe_for_realtime_updates = False
         self.__pubnub: PubNubAsyncio | None = None
         self.__pubnub_listener: VivintPubNubSubscribeListener | None = None
@@ -95,7 +100,10 @@ class Account:
         self.__subscribe_for_realtime_updates = subscribe_for_realtime_updates
 
         # initialize the vivintsky cloud session
+        disconnects = self.__disconnects
         authuser_data = await self.api.connect(password)
+        if disconnects != self.__disconnects:
+            raise VivintSkyApiError("The account was disconnected while connecting")
         self.__connected = True
 
         # subscribe to pubnub for realtime updates
@@ -111,8 +119,14 @@ class Account:
     async def disconnect(self) -> None:
         """Disconnect from the API."""
         _LOGGER.debug("Disconnecting from VivintSky")
+        # so a refresh or a subscription that is still running can't start the streams
+        self.__disconnects += 1
+        self.__subscribe_for_realtime_updates = False
         for system in self.systems:
             system.cancel_changed_by_lookup()
+        await asyncio.gather(
+            *(system.stop_climate_updates() for system in self.systems)
+        )
         if self.connected and self.__pubnub:
             self.__pubnub.remove_listener(self.__pubnub_listener)
             await self.__pubnub_unsubscribe_all()
@@ -171,6 +185,7 @@ class Account:
             except (ClientConnectionError, VivintSkyApiError):
                 _LOGGER.error("Unable to refresh system(s)")
 
+        climate_error: VivintSkyClimateAuthenticationError | None = None
         if authuser_data:
             # for each system_account, make another call to load all the devices
             for system_data in authuser_data[AuthUserAttribute.USERS][
@@ -184,24 +199,40 @@ class Account:
                     ),
                 )
                 if system:
-                    await system.refresh()
+                    try:
+                        await system.refresh()
+                    except VivintSkyClimateAuthenticationError as err:
+                        # the panel refreshed, so the other systems still can
+                        climate_error = climate_error or err
+                        continue
+                    if self.__subscribe_for_realtime_updates:
+                        # a disconnect stops the stream but keeps the system
+                        system.start_climate_updates()
                 else:
                     full_system_data = await self.api.get_system_data(
                         system_data[SystemAttribute.PANEL_ID]
                     )
-                    self.systems.append(
-                        System(
-                            data=full_system_data,
-                            api=self.api,
-                            name=system_data.get(SystemAttribute.SYSTEM_NICKNAME),
-                            is_admin=system_data.get(SystemAttribute.ADMIN, False),
-                        )
+                    system = System(
+                        data=full_system_data,
+                        api=self.api,
+                        name=system_data.get(SystemAttribute.SYSTEM_NICKNAME),
+                        is_admin=system_data.get(SystemAttribute.ADMIN, False),
                     )
+                    self.systems.append(system)
+                    try:
+                        await system.load_climate_devices()
+                    except VivintSkyClimateAuthenticationError as err:
+                        climate_error = climate_error or err
+                        continue
+                    if self.__subscribe_for_realtime_updates:
+                        system.start_climate_updates()
 
             _LOGGER.debug(
                 "Refreshed %s system(s)",
                 len(authuser_data[AuthUserAttribute.USERS][UserAttribute.SYSTEM]),
             )
+            if climate_error:
+                raise climate_error
 
     async def subscribe_for_realtime_updates(
         self, authuser_data: dict | None = None
@@ -212,7 +243,11 @@ class Account:
 
         # make a call to vivint's authuser endpoint to get message broadcast channel if not supplied
         if not authuser_data:
+            disconnects = self.__disconnects
             authuser_data = await self.api.get_authuser_data()
+            if disconnects != self.__disconnects:
+                _LOGGER.debug("Not subscribing to PubNub, as the account disconnected")
+                return
 
         user_data = authuser_data[AuthUserAttribute.USERS]
 
@@ -234,6 +269,11 @@ class Account:
         # only now, so that a failed subscribe can be tried again
         self.__pubnub = pubnub
         self.__pubnub_listener = listener
+
+        # thermostat updates follow the same option, including when it's set here
+        self.__subscribe_for_realtime_updates = True
+        for system in self.systems:
+            system.start_climate_updates()
 
     def handle_pubnub_message(self, message: dict) -> None:
         """Handle a pubnub message."""
